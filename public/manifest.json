@@ -1,0 +1,17 @@
+{
+  "name": "Pipo - Hotspot Sicilia",
+  "short_name": "Pipo",
+  "description": "Scopri i borghi più belli e gli hotspot nascosti della Sicilia",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    }
+  ]
+}
