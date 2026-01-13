@@ -15,13 +15,13 @@ export const useSiteContent = (key: string) => {
     queryKey: ["site-content", key],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("site_content")
+        .from("site_content" as any)
         .select("*")
         .eq("key", key)
         .single();
 
       if (error) throw error;
-      return data as SiteContent;
+      return data as unknown as SiteContent;
     },
   });
 };
@@ -33,7 +33,7 @@ export const useUpdateSiteContent = () => {
   return useMutation({
     mutationFn: async ({ key, content }: { key: string; content: string }) => {
       const { data, error } = await supabase
-        .from("site_content")
+        .from("site_content" as any)
         .upsert({ key, content }, { onConflict: "key" })
         .select()
         .single();
