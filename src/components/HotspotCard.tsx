@@ -70,7 +70,7 @@ const HotspotCard = ({ hotspot }: HotspotCardProps) => {
         {/* Bottone Naviga */}
         <button
           onClick={handleNavigate}
-          className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 bg-olive text-olive-foreground rounded-lg font-medium text-sm transition-all duration-200 hover:bg-olive/90"
+          className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 bg-olive text-olive-foreground rounded-lg font-brand font-black italic text-sm transition-all duration-200 hover:bg-olive/90"
         >
           <Navigation className="w-4 h-4" />
           NAVIGA
