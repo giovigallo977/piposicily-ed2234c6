@@ -20,15 +20,17 @@ interface HeaderProps {
   categories?: string[];
   selectedCategory: string | null;
   onCategoryChange: (category: string | null) => void;
+  headerTitle?: string;
+  headerSubtitle?: string;
 }
 
-const Header = ({ categories = [], selectedCategory, onCategoryChange }: HeaderProps) => {
+const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTitle, headerSubtitle }: HeaderProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/40">
       <div className="container mx-auto px-6 py-4">
-        {/* Top row: Logo centered */}
+        {/* Row 1: Logo centered */}
         <div className="flex items-center justify-center">
           <h1 className="font-brand text-2xl font-black italic tracking-tight text-foreground">
             Pipo
@@ -41,7 +43,21 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange }: HeaderP
           />
         </div>
 
-        {/* Second row: Hamburger left, Filter right */}
+        {/* Row 2: Title */}
+        {headerTitle && (
+          <h2 className="font-heading text-xl font-bold text-foreground text-center mt-2">
+            {headerTitle}
+          </h2>
+        )}
+
+        {/* Row 3: Subtitle */}
+        {headerSubtitle && (
+          <p className="font-body text-sm text-muted-foreground text-center mt-1">
+            {headerSubtitle}
+          </p>
+        )}
+
+        {/* Row 4: Hamburger left, Filter right */}
         <div className="flex items-center justify-between mt-3">
           {/* Hamburger Menu - Left */}
           <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
