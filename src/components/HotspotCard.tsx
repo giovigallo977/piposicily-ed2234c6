@@ -40,7 +40,7 @@ const HotspotCard = ({ hotspot }: HotspotCardProps) => {
             <h2 className="font-heading text-xl font-bold text-foreground leading-tight">
               {hotspot.titolo}
             </h2>
-            <p className="mt-1.5 font-body text-sm text-muted-foreground line-clamp-1">
+            <p className="mt-1.5 font-body text-sm text-muted-foreground">
               {hotspot.descrizione_breve}
             </p>
           </div>
