@@ -34,8 +34,24 @@ Ogni decisione strutturale documentata qui è DEFINITIVA. Le modifiche future de
 - Bottoni sempre con colore distintivo
 - Icone accompagnano sempre il testo dell'azione
 
+## Comportamento PWA - Immutabile
+
+### Auto-Update Obbligatorio
+- La PWA DEVE aggiornarsi automaticamente senza intervento utente
+- `skipWaiting: true` e `clientsClaim: true` sono OBBLIGATORI
+- Check aggiornamenti ogni 60 secondi
+- Check aggiornamenti quando l'utente torna all'app (visibility change)
+- Reload automatico quando nuovo service worker prende controllo
+
+### Caching Strategy
+- API Supabase: NetworkFirst (5 min cache)
+- Immagini: CacheFirst (7 giorni cache)
+- Assets statici: precached automaticamente
+
 ## Regole per AI Future
 1. Prima di modificare layout, verificare questo file
 2. Le strutture qui documentate sono LOCKED
 3. Nuove feature devono integrarsi senza rompere l'esistente
 4. In caso di dubbio, chiedere conferma all'utente
+5. MAI rimuovere o modificare la configurazione auto-update PWA
+6. MAI disabilitare skipWaiting o clientsClaim
