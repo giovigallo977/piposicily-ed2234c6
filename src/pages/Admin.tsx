@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useHotspots, useCreateHotspot, useUpdateHotspot, useDeleteHotspot, Hotspot, HotspotInsert } from "@/hooks/useHotspots";
 import { useSiteContent, useUpdateSiteContent } from "@/hooks/useSiteContent";
+import { ImageUpload, MultiImageUpload } from "@/components/ImageUpload";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Plus, Pencil, Trash2, LogOut, ArrowLeft, Image, X, FileText, MapPin } from "lucide-react";
+import { Loader2, Plus, Pencil, Trash2, LogOut, ArrowLeft, FileText, MapPin } from "lucide-react";
 import pipoAlien from "@/assets/pipo-alien.png";
 
 const emptyHotspot: HotspotInsert = {
@@ -40,7 +41,6 @@ const Admin = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingHotspot, setEditingHotspot] = useState<Hotspot | null>(null);
   const [formData, setFormData] = useState<HotspotInsert>(emptyHotspot);
-  const [galleryInput, setGalleryInput] = useState("");
   const [missionText, setMissionText] = useState("");
 
   useEffect(() => {
@@ -58,7 +58,6 @@ const Admin = () => {
   const handleOpenCreate = () => {
     setEditingHotspot(null);
     setFormData({ ...emptyHotspot, ordine: (hotspots?.length ?? 0) + 1 });
-    setGalleryInput("");
     setIsDialogOpen(true);
   };
 
@@ -69,12 +68,11 @@ const Admin = () => {
       descrizione_breve: hotspot.descrizione_breve,
       descrizione_completa: hotspot.descrizione_completa,
       foto_principale: hotspot.foto_principale,
-      foto_gallery: hotspot.foto_gallery,
+      foto_gallery: hotspot.foto_gallery || [],
       link_google_maps: hotspot.link_google_maps,
       categoria: hotspot.categoria,
       ordine: hotspot.ordine,
     });
-    setGalleryInput("");
     setIsDialogOpen(true);
   };
 
@@ -92,23 +90,6 @@ const Admin = () => {
 
   const handleDelete = async (id: string) => {
     await deleteMutation.mutateAsync(id);
-  };
-
-  const handleAddGalleryImage = () => {
-    if (galleryInput.trim()) {
-      setFormData({
-        ...formData,
-        foto_gallery: [...formData.foto_gallery, galleryInput.trim()],
-      });
-      setGalleryInput("");
-    }
-  };
-
-  const handleRemoveGalleryImage = (index: number) => {
-    setFormData({
-      ...formData,
-      foto_gallery: formData.foto_gallery.filter((_, i) => i !== index),
-    });
   };
 
   const handleSignOut = async () => {
@@ -244,43 +225,23 @@ const Admin = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="foto_principale">Foto Principale (URL)</Label>
-                        <Input
-                          id="foto_principale"
-                          value={formData.foto_principale}
-                          onChange={(e) => setFormData({ ...formData, foto_principale: e.target.value })}
-                          placeholder="https://esempio.com/foto.jpg"
+                        <Label>Foto Principale</Label>
+                        <ImageUpload
+                          value={formData.foto_principale || ""}
+                          onChange={(url) => setFormData({ ...formData, foto_principale: url })}
+                          onRemove={() => setFormData({ ...formData, foto_principale: "" })}
+                          folder="main"
                         />
                       </div>
 
                       <div className="space-y-2">
-                        <Label>Gallery (URL immagini)</Label>
-                        <div className="flex gap-2">
-                          <Input
-                            value={galleryInput}
-                            onChange={(e) => setGalleryInput(e.target.value)}
-                            placeholder="https://esempio.com/foto-gallery.jpg"
-                          />
-                          <Button type="button" variant="outline" onClick={handleAddGalleryImage}>
-                            <Image className="h-4 w-4" />
-                          </Button>
-                        </div>
-                        {formData.foto_gallery.length > 0 && (
-                          <div className="flex flex-wrap gap-2 mt-2">
-                            {formData.foto_gallery.map((url, index) => (
-                              <div key={index} className="flex items-center gap-1 bg-muted px-2 py-1 rounded text-xs">
-                                <span className="max-w-[150px] truncate">{url}</span>
-                                <button
-                                  type="button"
-                                  onClick={() => handleRemoveGalleryImage(index)}
-                                  className="hover:text-destructive"
-                                >
-                                  <X className="h-3 w-3" />
-                                </button>
-                              </div>
-                            ))}
-                          </div>
-                        )}
+                        <Label>Gallery</Label>
+                        <MultiImageUpload
+                          values={formData.foto_gallery?.filter(Boolean) || []}
+                          onChange={(urls) => setFormData({ ...formData, foto_gallery: urls })}
+                          folder="gallery"
+                          maxImages={10}
+                        />
                       </div>
 
                       <div className="space-y-2">
@@ -362,15 +323,17 @@ const Admin = () => {
                       </div>
                     </CardHeader>
                     <CardContent>
-                      <div className="flex flex-wrap gap-2 text-xs">
+                      <div className="flex flex-wrap gap-2 text-xs items-center">
                         {hotspot.foto_principale && (
-                          <span className="bg-green-100 text-green-800 px-2 py-1 rounded">
-                            📷 Foto principale
-                          </span>
+                          <img 
+                            src={hotspot.foto_principale} 
+                            alt={hotspot.titolo}
+                            className="h-12 w-12 object-cover rounded"
+                          />
                         )}
-                        {hotspot.foto_gallery.filter(Boolean).length > 0 && (
+                        {(hotspot.foto_gallery?.filter(Boolean).length || 0) > 0 && (
                           <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                            🖼️ {hotspot.foto_gallery.filter(Boolean).length} foto gallery
+                            🖼️ {hotspot.foto_gallery?.filter(Boolean).length} foto gallery
                           </span>
                         )}
                         {hotspot.link_google_maps && (
