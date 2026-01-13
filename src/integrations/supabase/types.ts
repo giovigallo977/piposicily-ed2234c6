@@ -14,7 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      hotspots: {
+        Row: {
+          created_at: string
+          descrizione_breve: string
+          descrizione_completa: string
+          foto_gallery: string[] | null
+          foto_principale: string | null
+          id: string
+          link_google_maps: string | null
+          ordine: number | null
+          titolo: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          descrizione_breve: string
+          descrizione_completa: string
+          foto_gallery?: string[] | null
+          foto_principale?: string | null
+          id?: string
+          link_google_maps?: string | null
+          ordine?: number | null
+          titolo: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          descrizione_breve?: string
+          descrizione_completa?: string
+          foto_gallery?: string[] | null
+          foto_principale?: string | null
+          id?: string
+          link_google_maps?: string | null
+          ordine?: number | null
+          titolo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
