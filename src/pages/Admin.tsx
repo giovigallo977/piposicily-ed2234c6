@@ -36,12 +36,16 @@ const Admin = () => {
   
   // Site content
   const { data: missionContent, isLoading: missionLoading } = useSiteContent("mission");
+  const { data: headerTitleContent, isLoading: headerTitleLoading } = useSiteContent("header_title");
+  const { data: headerSubtitleContent, isLoading: headerSubtitleLoading } = useSiteContent("header_subtitle");
   const updateSiteContent = useUpdateSiteContent();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingHotspot, setEditingHotspot] = useState<Hotspot | null>(null);
   const [formData, setFormData] = useState<HotspotInsert>(emptyHotspot);
   const [missionText, setMissionText] = useState("");
+  const [headerTitle, setHeaderTitle] = useState("");
+  const [headerSubtitle, setHeaderSubtitle] = useState("");
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -54,6 +58,18 @@ const Admin = () => {
       setMissionText(missionContent.content);
     }
   }, [missionContent]);
+
+  useEffect(() => {
+    if (headerTitleContent?.content) {
+      setHeaderTitle(headerTitleContent.content);
+    }
+  }, [headerTitleContent]);
+
+  useEffect(() => {
+    if (headerSubtitleContent?.content) {
+      setHeaderSubtitle(headerSubtitleContent.content);
+    }
+  }, [headerSubtitleContent]);
 
   const handleOpenCreate = () => {
     setEditingHotspot(null);
@@ -99,6 +115,11 @@ const Admin = () => {
 
   const handleSaveMission = async () => {
     await updateSiteContent.mutateAsync({ key: "mission", content: missionText });
+  };
+
+  const handleSaveHeader = async () => {
+    await updateSiteContent.mutateAsync({ key: "header_title", content: headerTitle });
+    await updateSiteContent.mutateAsync({ key: "header_subtitle", content: headerSubtitle });
   };
 
   if (authLoading || isLoading) {
@@ -359,6 +380,58 @@ const Admin = () => {
             <TabsContent value="contenuti" className="space-y-6">
               <h2 className="font-heading text-2xl font-bold">Gestione Contenuti</h2>
               
+              {/* Header Content */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="h-5 w-5" />
+                    Intestazione Homepage
+                  </CardTitle>
+                  <CardDescription>
+                    Titolo e sottotitolo mostrati sotto il logo Pipo nella home page.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {(headerTitleLoading || headerSubtitleLoading) ? (
+                    <div className="flex justify-center py-8">
+                      <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                    </div>
+                  ) : (
+                    <>
+                      <div className="space-y-2">
+                        <Label htmlFor="header_title">Titolo Header</Label>
+                        <Input
+                          id="header_title"
+                          value={headerTitle}
+                          onChange={(e) => setHeaderTitle(e.target.value)}
+                          placeholder="Es: Scopri la Sicilia autentica"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="header_subtitle">Sottotitolo Header</Label>
+                        <Input
+                          id="header_subtitle"
+                          value={headerSubtitle}
+                          onChange={(e) => setHeaderSubtitle(e.target.value)}
+                          placeholder="Es: I luoghi più belli selezionati per te"
+                        />
+                      </div>
+                      <div className="flex justify-end">
+                        <Button 
+                          onClick={handleSaveHeader}
+                          disabled={updateSiteContent.isPending || (headerTitle === headerTitleContent?.content && headerSubtitle === headerSubtitleContent?.content)}
+                        >
+                          {updateSiteContent.isPending && (
+                            <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                          )}
+                          Salva Intestazione
+                        </Button>
+                      </div>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+
               {/* Mission Content */}
               <Card>
                 <CardHeader>

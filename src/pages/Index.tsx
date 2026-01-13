@@ -2,12 +2,14 @@ import { useState, useMemo } from "react";
 import Header from "@/components/Header";
 import HotspotCard from "@/components/HotspotCard";
 import { useHotspots } from "@/hooks/useHotspots";
-import { useHotspotCategories } from "@/hooks/useSiteContent";
+import { useHotspotCategories, useSiteContent } from "@/hooks/useSiteContent";
 import { Loader2 } from "lucide-react";
 
 const Index = () => {
   const { data: hotspots, isLoading, error } = useHotspots();
   const { data: categories = [] } = useHotspotCategories();
+  const { data: headerTitleContent } = useSiteContent("header_title");
+  const { data: headerSubtitleContent } = useSiteContent("header_subtitle");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const filteredHotspots = useMemo(() => {
@@ -22,6 +24,8 @@ const Index = () => {
         categories={categories}
         selectedCategory={selectedCategory}
         onCategoryChange={setSelectedCategory}
+        headerTitle={headerTitleContent?.content}
+        headerSubtitle={headerSubtitleContent?.content}
       />
       
       <main className="container mx-auto px-4 py-6">
