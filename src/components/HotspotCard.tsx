@@ -37,10 +37,10 @@ const HotspotCard = ({ hotspot }: HotspotCardProps) => {
         {/* Header con titolo e bottone espansione */}
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
-            <h2 className="font-display text-xl font-semibold text-foreground leading-tight">
+            <h2 className="font-heading text-xl font-bold text-foreground leading-tight">
               {hotspot.titolo}
             </h2>
-            <p className="mt-1.5 text-sm text-muted-foreground line-clamp-1">
+            <p className="mt-1.5 font-body text-sm text-muted-foreground line-clamp-1">
               {hotspot.descrizioneBreve}
             </p>
           </div>
@@ -78,7 +78,7 @@ const HotspotCard = ({ hotspot }: HotspotCardProps) => {
         >
           <div className="overflow-hidden">
             {/* Descrizione completa */}
-            <p className="text-sm text-muted-foreground leading-relaxed">
+            <p className="font-body text-sm text-muted-foreground leading-relaxed">
               {hotspot.descrizioneCompleta}
             </p>
 
