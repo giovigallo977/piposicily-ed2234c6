@@ -58,6 +58,18 @@ const HotspotCard = ({ hotspot }: HotspotCardProps) => {
           </div>
         </div>
 
+        {/* Riga Tag */}
+        {hotspot.tags && hotspot.tags.length > 0 && (
+          <p className="mt-1 font-body text-sm text-muted-foreground">
+            {hotspot.tags.map((tag, i) => (
+              <span key={i}>
+                {i > 0 && " • "}
+                {tag}
+              </span>
+            ))}
+          </p>
+        )}
+
         {/* Descrizione breve - riga orizzontale completa */}
         <p className="mt-2 font-body text-sm text-muted-foreground leading-relaxed">
           {hotspot.descrizione_breve}

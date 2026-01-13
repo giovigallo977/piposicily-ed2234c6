@@ -23,6 +23,7 @@ const emptyHotspot: HotspotInsert = {
   foto_gallery: [],
   link_google_maps: "",
   categoria: "",
+  tags: [],
   ordine: 0,
 };
 
@@ -87,6 +88,7 @@ const Admin = () => {
       foto_gallery: hotspot.foto_gallery || [],
       link_google_maps: hotspot.link_google_maps,
       categoria: hotspot.categoria,
+      tags: hotspot.tags || [],
       ordine: hotspot.ordine,
     });
     setIsDialogOpen(true);
@@ -243,6 +245,40 @@ const Admin = () => {
                           rows={4}
                           required
                         />
+                      </div>
+
+                      {/* Tag */}
+                      <div className="space-y-2">
+                        <Label>Tag (opzionali - max 3)</Label>
+                        <div className="grid grid-cols-3 gap-2">
+                          <Input
+                            placeholder="Es: Silenzio"
+                            value={formData.tags?.[0] || ""}
+                            onChange={(e) => {
+                              const newTags = [...(formData.tags || [])];
+                              newTags[0] = e.target.value;
+                              setFormData({ ...formData, tags: newTags });
+                            }}
+                          />
+                          <Input
+                            placeholder="Es: Camminate"
+                            value={formData.tags?.[1] || ""}
+                            onChange={(e) => {
+                              const newTags = [...(formData.tags || [])];
+                              newTags[1] = e.target.value;
+                              setFormData({ ...formData, tags: newTags });
+                            }}
+                          />
+                          <Input
+                            placeholder="Es: Aria fresca"
+                            value={formData.tags?.[2] || ""}
+                            onChange={(e) => {
+                              const newTags = [...(formData.tags || [])];
+                              newTags[2] = e.target.value;
+                              setFormData({ ...formData, tags: newTags });
+                            }}
+                          />
+                        </div>
                       </div>
 
                       <div className="space-y-2">

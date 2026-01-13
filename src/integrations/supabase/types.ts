@@ -25,6 +25,7 @@ export type Database = {
           id: string
           link_google_maps: string | null
           ordine: number | null
+          tags: string[] | null
           titolo: string
           updated_at: string
         }
@@ -38,6 +39,7 @@ export type Database = {
           id?: string
           link_google_maps?: string | null
           ordine?: number | null
+          tags?: string[] | null
           titolo: string
           updated_at?: string
         }
@@ -51,6 +53,7 @@ export type Database = {
           id?: string
           link_google_maps?: string | null
           ordine?: number | null
+          tags?: string[] | null
           titolo?: string
           updated_at?: string
         }
