@@ -52,7 +52,7 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
 
         {/* Row 3: Subtitle */}
         {headerSubtitle && (
-          <p className="font-body text-sm text-muted-foreground text-center mt-1">
+          <p className="font-body text-sm text-foreground text-center mt-1">
             {headerSubtitle}
           </p>
         )}
