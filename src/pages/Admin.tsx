@@ -247,6 +247,26 @@ const Admin = () => {
                         />
                       </div>
 
+                      <div className="space-y-2">
+                        <Label>Foto Principale</Label>
+                        <ImageUpload
+                          value={formData.foto_principale || ""}
+                          onChange={(url) => setFormData({ ...formData, foto_principale: url })}
+                          onRemove={() => setFormData({ ...formData, foto_principale: "" })}
+                          folder="main"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label>Gallery</Label>
+                        <MultiImageUpload
+                          values={formData.foto_gallery?.filter(Boolean) || []}
+                          onChange={(urls) => setFormData({ ...formData, foto_gallery: urls })}
+                          folder="gallery"
+                          maxImages={10}
+                        />
+                      </div>
+
                       {/* Tag */}
                       <div className="space-y-2">
                         <Label>Tag (opzionali - max 3)</Label>
@@ -279,26 +299,6 @@ const Admin = () => {
                             }}
                           />
                         </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label>Foto Principale</Label>
-                        <ImageUpload
-                          value={formData.foto_principale || ""}
-                          onChange={(url) => setFormData({ ...formData, foto_principale: url })}
-                          onRemove={() => setFormData({ ...formData, foto_principale: "" })}
-                          folder="main"
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label>Gallery</Label>
-                        <MultiImageUpload
-                          values={formData.foto_gallery?.filter(Boolean) || []}
-                          onChange={(urls) => setFormData({ ...formData, foto_gallery: urls })}
-                          folder="gallery"
-                          maxImages={10}
-                        />
                       </div>
 
                       <div className="space-y-2">
