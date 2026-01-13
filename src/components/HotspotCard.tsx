@@ -36,14 +36,9 @@ const HotspotCard = ({ hotspot }: HotspotCardProps) => {
       <div className="p-5">
         {/* Header con titolo e bottone espansione */}
         <div className="flex items-start justify-between gap-4">
-          <div className="flex-1 min-w-0">
-            <h2 className="font-heading text-xl font-bold text-foreground leading-tight">
-              {hotspot.titolo}
-            </h2>
-            <p className="mt-1.5 font-body text-sm text-muted-foreground">
-              {hotspot.descrizione_breve}
-            </p>
-          </div>
+          <h2 className="font-heading text-xl font-bold text-foreground leading-tight flex-1 min-w-0">
+            {hotspot.titolo}
+          </h2>
           
           {/* Categoria e bottone espansione */}
           <div className="flex items-center gap-2 flex-shrink-0">
@@ -66,6 +61,11 @@ const HotspotCard = ({ hotspot }: HotspotCardProps) => {
             </button>
           </div>
         </div>
+
+        {/* Descrizione breve - riga orizzontale completa */}
+        <p className="mt-2 font-body text-sm text-muted-foreground leading-relaxed">
+          {hotspot.descrizione_breve}
+        </p>
 
         {/* Bottone Naviga */}
         <button
