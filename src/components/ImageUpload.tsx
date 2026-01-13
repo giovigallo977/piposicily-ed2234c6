@@ -4,6 +4,90 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Upload, X, ImageIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const TARGET_SIZE = 4 * 1024 * 1024; // 4MB target after compression
+
+// Compress image using canvas
+const compressImage = (file: File, maxSizeMB: number = 4): Promise<File> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target?.result as string;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let width = img.width;
+        let height = img.height;
+
+        // Calculate scale factor based on file size
+        const scaleFactor = Math.sqrt(TARGET_SIZE / file.size);
+        
+        // Reduce dimensions proportionally
+        if (scaleFactor < 1) {
+          width = Math.floor(width * scaleFactor);
+          height = Math.floor(height * scaleFactor);
+        }
+
+        // Max dimensions 2000px
+        const maxDimension = 2000;
+        if (width > maxDimension || height > maxDimension) {
+          if (width > height) {
+            height = Math.floor((height / width) * maxDimension);
+            width = maxDimension;
+          } else {
+            width = Math.floor((width / height) * maxDimension);
+            height = maxDimension;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          reject(new Error("Could not get canvas context"));
+          return;
+        }
+
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Start with quality 0.8 and reduce if needed
+        let quality = 0.8;
+        const tryCompress = () => {
+          canvas.toBlob(
+            (blob) => {
+              if (!blob) {
+                reject(new Error("Could not compress image"));
+                return;
+              }
+
+              // If still too large and quality can be reduced, try again
+              if (blob.size > TARGET_SIZE && quality > 0.3) {
+                quality -= 0.1;
+                tryCompress();
+                return;
+              }
+
+              const compressedFile = new File([blob], file.name, {
+                type: "image/jpeg",
+                lastModified: Date.now(),
+              });
+              resolve(compressedFile);
+            },
+            "image/jpeg",
+            quality
+          );
+        };
+
+        tryCompress();
+      };
+      img.onerror = () => reject(new Error("Could not load image"));
+    };
+    reader.onerror = () => reject(new Error("Could not read file"));
+  });
+};
+
 interface ImageUploadProps {
   value?: string;
   onChange: (url: string) => void;
@@ -22,11 +106,12 @@ export const ImageUpload = ({
   className = "",
 }: ImageUploadProps) => {
   const [isUploading, setIsUploading] = useState(false);
+  const [isCompressing, setIsCompressing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+    let file = e.target.files?.[0];
     if (!file) return;
 
     // Validate file type
@@ -39,14 +124,31 @@ export const ImageUpload = ({
       return;
     }
 
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
+    // Compress if file is larger than 5MB
+    if (file.size > MAX_FILE_SIZE) {
+      setIsCompressing(true);
       toast({
-        title: "Errore",
-        description: "L'immagine non può superare i 5MB.",
-        variant: "destructive",
+        title: "Compressione in corso",
+        description: `Immagine di ${(file.size / 1024 / 1024).toFixed(1)}MB, ridimensionamento automatico...`,
       });
-      return;
+
+      try {
+        file = await compressImage(file);
+        toast({
+          title: "Immagine compressa",
+          description: `Nuova dimensione: ${(file.size / 1024 / 1024).toFixed(1)}MB`,
+        });
+      } catch (error) {
+        console.error("Compression error:", error);
+        toast({
+          title: "Errore",
+          description: "Impossibile comprimere l'immagine.",
+          variant: "destructive",
+        });
+        setIsCompressing(false);
+        return;
+      }
+      setIsCompressing(false);
     }
 
     setIsUploading(true);
@@ -88,6 +190,8 @@ export const ImageUpload = ({
     }
   };
 
+  const isProcessing = isUploading || isCompressing;
+
   return (
     <div className={`space-y-2 ${className}`}>
       <input
@@ -120,11 +224,16 @@ export const ImageUpload = ({
           type="button"
           variant="outline"
           onClick={() => fileInputRef.current?.click()}
-          disabled={isUploading}
+          disabled={isProcessing}
           className="h-24 w-24 flex flex-col items-center justify-center gap-1"
         >
-          {isUploading ? (
-            <Loader2 className="h-6 w-6 animate-spin" />
+          {isProcessing ? (
+            <>
+              <Loader2 className="h-6 w-6 animate-spin" />
+              <span className="text-xs text-muted-foreground">
+                {isCompressing ? "Compressione..." : "Caricamento..."}
+              </span>
+            </>
           ) : (
             <>
               <ImageIcon className="h-6 w-6 text-muted-foreground" />
@@ -140,13 +249,13 @@ export const ImageUpload = ({
           variant="ghost"
           size="sm"
           onClick={() => fileInputRef.current?.click()}
-          disabled={isUploading}
+          disabled={isProcessing}
           className="text-xs"
         >
-          {isUploading ? (
+          {isProcessing ? (
             <>
               <Loader2 className="h-3 w-3 animate-spin mr-1" />
-              Caricamento...
+              {isCompressing ? "Compressione..." : "Caricamento..."}
             </>
           ) : (
             <>
@@ -196,11 +305,24 @@ export const MultiImageUpload = ({
     const uploadedUrls: string[] = [];
 
     try {
-      for (const file of files) {
+      for (let file of files) {
         if (!file.type.startsWith("image/")) continue;
-        if (file.size > 5 * 1024 * 1024) continue;
 
-        const fileExt = file.name.split(".").pop();
+        // Compress if file is larger than 5MB
+        if (file.size > MAX_FILE_SIZE) {
+          toast({
+            title: "Compressione",
+            description: `Ridimensionamento immagine ${file.name}...`,
+          });
+          try {
+            file = await compressImage(file);
+          } catch (error) {
+            console.error("Compression error:", error);
+            continue;
+          }
+        }
+
+        const fileExt = "jpg"; // Always save as jpg after compression
         const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
 
         const { error: uploadError } = await supabase.storage
@@ -291,7 +413,7 @@ export const MultiImageUpload = ({
       </div>
 
       <p className="text-xs text-muted-foreground">
-        {values.length}/{maxImages} immagini • Max 5MB per immagine
+        {values.length}/{maxImages} immagini • Immagini grandi verranno compresse automaticamente
       </p>
     </div>
   );
