@@ -40,8 +40,8 @@ All colors MUST be HSL.
 
     --radius: 0.5rem;
 
-    /* Olive green for navigation button */
-    --olive: 75 25% 35%;
+    /* Pipo green for navigation button - matches the alien */
+    --olive: 120 35% 45%;
     --olive-foreground: 0 0% 100%;
 
     --sidebar-background: 0 0% 98%;

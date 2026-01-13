@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       hotspots: {
         Row: {
+          categoria: string | null
           created_at: string
           descrizione_breve: string
           descrizione_completa: string
@@ -28,6 +29,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          categoria?: string | null
           created_at?: string
           descrizione_breve: string
           descrizione_completa: string
@@ -40,6 +42,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          categoria?: string | null
           created_at?: string
           descrizione_breve?: string
           descrizione_completa?: string

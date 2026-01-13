@@ -27,15 +27,7 @@ const Index = () => {
           {hotspots?.map((hotspot) => (
             <HotspotCard 
               key={hotspot.id} 
-              hotspot={{
-                id: parseInt(hotspot.id.slice(0, 8), 16),
-                titolo: hotspot.titolo,
-                descrizioneBreve: hotspot.descrizione_breve,
-                descrizioneCompleta: hotspot.descrizione_completa,
-                fotoPrincipale: hotspot.foto_principale,
-                fotoGallery: hotspot.foto_gallery,
-                linkGoogleMaps: hotspot.link_google_maps,
-              }} 
+              hotspot={hotspot} 
             />
           ))}
           

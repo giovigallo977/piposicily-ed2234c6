@@ -19,6 +19,7 @@ const emptyHotspot: HotspotInsert = {
   foto_principale: "",
   foto_gallery: [],
   link_google_maps: "",
+  categoria: "",
   ordine: 0,
 };
 
@@ -57,6 +58,7 @@ const Admin = () => {
       foto_principale: hotspot.foto_principale,
       foto_gallery: hotspot.foto_gallery,
       link_google_maps: hotspot.link_google_maps,
+      categoria: hotspot.categoria,
       ordine: hotspot.ordine,
     });
     setGalleryInput("");
@@ -166,14 +168,25 @@ const Admin = () => {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="ordine">Ordine</Label>
+                      <Label htmlFor="categoria">Categoria</Label>
                       <Input
-                        id="ordine"
-                        type="number"
-                        value={formData.ordine}
-                        onChange={(e) => setFormData({ ...formData, ordine: parseInt(e.target.value) || 0 })}
+                        id="categoria"
+                        value={formData.categoria}
+                        onChange={(e) => setFormData({ ...formData, categoria: e.target.value })}
+                        placeholder="Es: Borgo, Spiaggia, Montagna..."
                       />
                     </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="ordine">Ordine</Label>
+                    <Input
+                      id="ordine"
+                      type="number"
+                      value={formData.ordine}
+                      onChange={(e) => setFormData({ ...formData, ordine: parseInt(e.target.value) || 0 })}
+                      className="w-24"
+                    />
                   </div>
 
                   <div className="space-y-2">
@@ -279,6 +292,11 @@ const Admin = () => {
                       <p className="text-sm text-muted-foreground mt-1">{hotspot.descrizione_breve}</p>
                     </div>
                     <div className="flex items-center gap-2">
+                      {hotspot.categoria && (
+                        <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
+                          {hotspot.categoria}
+                        </span>
+                      )}
                       <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
                         #{hotspot.ordine}
                       </span>

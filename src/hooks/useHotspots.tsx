@@ -10,6 +10,7 @@ export interface Hotspot {
   foto_principale: string;
   foto_gallery: string[];
   link_google_maps: string;
+  categoria: string;
   ordine: number;
   created_at: string;
   updated_at: string;
