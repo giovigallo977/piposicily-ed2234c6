@@ -5,10 +5,10 @@ import { Loader2, Upload, X, ImageIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const TARGET_SIZE = 4 * 1024 * 1024; // 4MB target after compression
+const TARGET_SIZE = 4.5 * 1024 * 1024; // 4.5MB target - stay close to limit
 
-// Compress image using canvas
-const compressImage = (file: File, maxSizeMB: number = 4): Promise<File> => {
+// High-quality image compression - preserves format and maximizes quality
+const compressImage = (file: File): Promise<File> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -20,23 +20,14 @@ const compressImage = (file: File, maxSizeMB: number = 4): Promise<File> => {
         let width = img.width;
         let height = img.height;
 
-        // Calculate scale factor based on file size
-        const scaleFactor = Math.sqrt(TARGET_SIZE / file.size);
-        
-        // Reduce dimensions proportionally
-        if (scaleFactor < 1) {
-          width = Math.floor(width * scaleFactor);
-          height = Math.floor(height * scaleFactor);
-        }
-
-        // Max dimensions 2000px
-        const maxDimension = 2000;
+        // Only reduce dimensions if really necessary - keep max 3000px for quality
+        const maxDimension = 3000;
         if (width > maxDimension || height > maxDimension) {
           if (width > height) {
-            height = Math.floor((height / width) * maxDimension);
+            height = Math.round((height / width) * maxDimension);
             width = maxDimension;
           } else {
-            width = Math.floor((width / height) * maxDimension);
+            width = Math.round((width / height) * maxDimension);
             height = maxDimension;
           }
         }
@@ -44,17 +35,69 @@ const compressImage = (file: File, maxSizeMB: number = 4): Promise<File> => {
         canvas.width = width;
         canvas.height = height;
 
-        const ctx = canvas.getContext("2d");
+        const ctx = canvas.getContext("2d", { alpha: true });
         if (!ctx) {
           reject(new Error("Could not get canvas context"));
           return;
         }
 
+        // High quality rendering
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
         ctx.drawImage(img, 0, 0, width, height);
 
-        // Start with quality 0.8 and reduce if needed
-        let quality = 0.8;
+        // Determine output format - preserve PNG for transparency
+        const isPng = file.type === "image/png";
+        const outputType = isPng ? "image/png" : "image/jpeg";
+        const extension = isPng ? "png" : "jpg";
+
+        // For PNG, try to compress by reducing dimensions gradually if too large
+        // For JPEG, start with very high quality (0.95) and reduce only if needed
+        let quality = 0.95;
+        let currentWidth = width;
+        let currentHeight = height;
+
         const tryCompress = () => {
+          // For PNG that's still too large, reduce dimensions slightly
+          if (isPng && currentWidth > 1500) {
+            const tempCanvas = document.createElement("canvas");
+            currentWidth = Math.round(currentWidth * 0.9);
+            currentHeight = Math.round(currentHeight * 0.9);
+            tempCanvas.width = currentWidth;
+            tempCanvas.height = currentHeight;
+            const tempCtx = tempCanvas.getContext("2d", { alpha: true });
+            if (tempCtx) {
+              tempCtx.imageSmoothingEnabled = true;
+              tempCtx.imageSmoothingQuality = "high";
+              tempCtx.drawImage(canvas, 0, 0, currentWidth, currentHeight);
+              
+              tempCanvas.toBlob(
+                (blob) => {
+                  if (!blob) {
+                    reject(new Error("Could not compress image"));
+                    return;
+                  }
+
+                  if (blob.size > TARGET_SIZE && currentWidth > 1000) {
+                    canvas.width = currentWidth;
+                    canvas.height = currentHeight;
+                    ctx.drawImage(tempCanvas, 0, 0);
+                    tryCompress();
+                    return;
+                  }
+
+                  const compressedFile = new File([blob], file.name.replace(/\.[^.]+$/, `.${extension}`), {
+                    type: outputType,
+                    lastModified: Date.now(),
+                  });
+                  resolve(compressedFile);
+                },
+                outputType
+              );
+              return;
+            }
+          }
+
           canvas.toBlob(
             (blob) => {
               if (!blob) {
@@ -62,21 +105,22 @@ const compressImage = (file: File, maxSizeMB: number = 4): Promise<File> => {
                 return;
               }
 
-              // If still too large and quality can be reduced, try again
-              if (blob.size > TARGET_SIZE && quality > 0.3) {
-                quality -= 0.1;
+              // For JPEG: if still too large and quality can be reduced, try again
+              // But never go below 0.7 to preserve quality
+              if (!isPng && blob.size > TARGET_SIZE && quality > 0.7) {
+                quality -= 0.05;
                 tryCompress();
                 return;
               }
 
-              const compressedFile = new File([blob], file.name, {
-                type: "image/jpeg",
+              const compressedFile = new File([blob], file.name.replace(/\.[^.]+$/, `.${extension}`), {
+                type: outputType,
                 lastModified: Date.now(),
               });
               resolve(compressedFile);
             },
-            "image/jpeg",
-            quality
+            outputType,
+            isPng ? undefined : quality
           );
         };
 
