@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Upload, X, ImageIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const TARGET_SIZE = 4.5 * 1024 * 1024; // 4.5MB target - stay close to limit
+const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB - compress earlier for mobile
+const TARGET_SIZE = 1.5 * 1024 * 1024; // 1.5MB target - faster uploads on mobile
 
-// High-quality image compression - preserves format and maximizes quality
+// Fast mobile-optimized image compression
 const compressImage = (file: File): Promise<File> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -20,8 +20,8 @@ const compressImage = (file: File): Promise<File> => {
         let width = img.width;
         let height = img.height;
 
-        // Only reduce dimensions if really necessary - keep max 3000px for quality
-        const maxDimension = 3000;
+        // Mobile-friendly max dimension - 1600px is plenty for display
+        const maxDimension = 1600;
         if (width > maxDimension || height > maxDimension) {
           if (width > height) {
             height = Math.round((height / width) * maxDimension);
@@ -52,8 +52,8 @@ const compressImage = (file: File): Promise<File> => {
         const extension = isPng ? "png" : "jpg";
 
         // For PNG, try to compress by reducing dimensions gradually if too large
-        // For JPEG, start with very high quality (0.95) and reduce only if needed
-        let quality = 0.95;
+        // For JPEG, start with good quality (0.85) - faster compression for mobile
+        let quality = 0.85;
         let currentWidth = width;
         let currentHeight = height;
 
@@ -106,9 +106,9 @@ const compressImage = (file: File): Promise<File> => {
               }
 
               // For JPEG: if still too large and quality can be reduced, try again
-              // But never go below 0.7 to preserve quality
-              if (!isPng && blob.size > TARGET_SIZE && quality > 0.7) {
-                quality -= 0.05;
+              // Go down to 0.6 for mobile - still good quality, much faster
+              if (!isPng && blob.size > TARGET_SIZE && quality > 0.6) {
+                quality -= 0.1; // Bigger steps for faster compression
                 tryCompress();
                 return;
               }

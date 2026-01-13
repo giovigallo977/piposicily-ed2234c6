@@ -10,10 +10,6 @@ interface HotspotCardProps {
 const HotspotCard = ({ hotspot }: HotspotCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const handleNavigate = () => {
-    window.open(hotspot.link_google_maps, "_blank", "noopener,noreferrer");
-  };
-
   return (
     <article className="bg-card rounded-[20px] overflow-hidden shadow-sm border border-border/50">
       {/* Immagine principale */}
@@ -67,14 +63,18 @@ const HotspotCard = ({ hotspot }: HotspotCardProps) => {
           {hotspot.descrizione_breve}
         </p>
 
-        {/* Bottone Naviga */}
-        <button
-          onClick={handleNavigate}
-          className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 bg-olive text-olive-foreground rounded-lg font-brand font-black italic text-sm transition-all duration-200 hover:bg-olive/90"
-        >
-          <Navigation className="w-4 h-4" />
-          NAVIGA
-        </button>
+        {/* Link Naviga - usa <a> per mobile compatibility */}
+        {hotspot.link_google_maps && (
+          <a
+            href={hotspot.link_google_maps}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 bg-olive text-olive-foreground rounded-lg font-brand font-black italic text-sm transition-all duration-200 hover:bg-olive/90"
+          >
+            <Navigation className="w-4 h-4" />
+            NAVIGA
+          </a>
+        )}
 
         {/* Contenuto espanso con accordion */}
         <div
