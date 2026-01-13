@@ -16,6 +16,9 @@ export default {
       fontFamily: {
         display: ['"Playfair Display"', 'Georgia', 'serif'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
+        brand: ['Inter', 'system-ui', 'sans-serif'],
+        heading: ['"Proxima Nova"', 'Inter', 'system-ui', 'sans-serif'],
+        body: ['"Proxima Nova"', 'Inter', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
