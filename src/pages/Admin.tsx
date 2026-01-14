@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useHotspots, useCreateHotspot, useUpdateHotspot, useDeleteHotspot, Hotspot, HotspotInsert } from "@/hooks/useHotspots";
 import { useSiteContent, useUpdateSiteContent } from "@/hooks/useSiteContent";
 import { ImageUpload, MultiImageUpload } from "@/components/ImageUpload";
+import { EmojiPicker } from "@/components/EmojiPicker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -226,25 +227,33 @@ const Admin = () => {
 
                       <div className="space-y-2">
                         <Label htmlFor="descrizione_breve">Descrizione Breve *</Label>
-                        <Input
-                          id="descrizione_breve"
-                          value={formData.descrizione_breve}
-                          onChange={(e) => setFormData({ ...formData, descrizione_breve: e.target.value })}
-                          placeholder="Una frase breve (max ~60 caratteri)"
-                          required
-                        />
+                        <div className="flex gap-2">
+                          <Input
+                            id="descrizione_breve"
+                            value={formData.descrizione_breve}
+                            onChange={(e) => setFormData({ ...formData, descrizione_breve: e.target.value })}
+                            placeholder="Una frase breve (max ~60 caratteri)"
+                            required
+                            className="flex-1"
+                          />
+                          <EmojiPicker onSelect={(emoji) => setFormData({ ...formData, descrizione_breve: formData.descrizione_breve + emoji })} />
+                        </div>
                       </div>
 
                       <div className="space-y-2">
                         <Label htmlFor="descrizione_completa">Descrizione Completa *</Label>
-                        <Textarea
-                          id="descrizione_completa"
-                          value={formData.descrizione_completa}
-                          onChange={(e) => setFormData({ ...formData, descrizione_completa: e.target.value })}
-                          placeholder="Descrizione dettagliata del luogo..."
-                          rows={4}
-                          required
-                        />
+                        <div className="flex gap-2 items-start">
+                          <Textarea
+                            id="descrizione_completa"
+                            value={formData.descrizione_completa}
+                            onChange={(e) => setFormData({ ...formData, descrizione_completa: e.target.value })}
+                            placeholder="Descrizione dettagliata del luogo..."
+                            rows={4}
+                            required
+                            className="flex-1"
+                          />
+                          <EmojiPicker onSelect={(emoji) => setFormData({ ...formData, descrizione_completa: formData.descrizione_completa + emoji })} />
+                        </div>
                       </div>
 
                       <div className="space-y-2">
@@ -436,21 +445,29 @@ const Admin = () => {
                     <>
                       <div className="space-y-2">
                         <Label htmlFor="header_title">Titolo Header</Label>
-                        <Input
-                          id="header_title"
-                          value={headerTitle}
-                          onChange={(e) => setHeaderTitle(e.target.value)}
-                          placeholder="Es: Scopri la Sicilia autentica"
-                        />
+                        <div className="flex gap-2">
+                          <Input
+                            id="header_title"
+                            value={headerTitle}
+                            onChange={(e) => setHeaderTitle(e.target.value)}
+                            placeholder="Es: Scopri la Sicilia autentica"
+                            className="flex-1"
+                          />
+                          <EmojiPicker onSelect={(emoji) => setHeaderTitle(headerTitle + emoji)} />
+                        </div>
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="header_subtitle">Sottotitolo Header</Label>
-                        <Input
-                          id="header_subtitle"
-                          value={headerSubtitle}
-                          onChange={(e) => setHeaderSubtitle(e.target.value)}
-                          placeholder="Es: I luoghi più belli selezionati per te"
-                        />
+                        <div className="flex gap-2">
+                          <Input
+                            id="header_subtitle"
+                            value={headerSubtitle}
+                            onChange={(e) => setHeaderSubtitle(e.target.value)}
+                            placeholder="Es: I luoghi più belli selezionati per te"
+                            className="flex-1"
+                          />
+                          <EmojiPicker onSelect={(emoji) => setHeaderSubtitle(headerSubtitle + emoji)} />
+                        </div>
                       </div>
                       <div className="flex justify-end">
                         <Button 
@@ -486,13 +503,16 @@ const Admin = () => {
                     </div>
                   ) : (
                     <>
-                      <Textarea
-                        value={missionText}
-                        onChange={(e) => setMissionText(e.target.value)}
-                        placeholder="Scrivi qui il testo della missione di Pipo..."
-                        rows={8}
-                        className="resize-y"
-                      />
+                      <div className="flex gap-2 items-start">
+                        <Textarea
+                          value={missionText}
+                          onChange={(e) => setMissionText(e.target.value)}
+                          placeholder="Scrivi qui il testo della missione di Pipo..."
+                          rows={8}
+                          className="resize-y flex-1"
+                        />
+                        <EmojiPicker onSelect={(emoji) => setMissionText(missionText + emoji)} />
+                      </div>
                       <div className="flex justify-end">
                         <Button 
                           onClick={handleSaveMission}
