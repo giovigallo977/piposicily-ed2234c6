@@ -8,9 +8,25 @@ import useEmblaCarousel from "embla-carousel-react";
 
 interface HotspotCardProps {
   hotspot: Hotspot;
+  index?: number;
 }
 
-const HotspotCard = ({ hotspot }: HotspotCardProps) => {
+// Playful color rotation for badges and accents
+const badgeColors = [
+  { bg: "bg-sunny-yellow", text: "text-forest-green" },
+  { bg: "bg-lavender-vivid", text: "text-purple-900" },
+  { bg: "bg-mint", text: "text-forest-green" },
+  { bg: "bg-magenta/20", text: "text-magenta" },
+];
+
+const borderColors = [
+  "border-sunny-yellow",
+  "border-lavender-vivid", 
+  "border-mint",
+  "border-magenta/30",
+];
+
+const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
@@ -46,10 +62,15 @@ const HotspotCard = ({ hotspot }: HotspotCardProps) => {
 
   const validGalleryPhotos = hotspot.foto_gallery?.filter(Boolean) || [];
 
+  const colorIndex = index % badgeColors.length;
+  const badgeColor = badgeColors[colorIndex];
+  const borderColor = borderColors[colorIndex];
+
   return (
     <>
       <article className={cn(
-        "bg-card rounded-3xl overflow-hidden shadow-lg shadow-olive/10 border border-mint transition-all duration-200",
+        "bg-card rounded-3xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-2",
+        borderColor,
         isTranslating && "opacity-75"
       )}>
         {/* Immagine principale */}
@@ -79,13 +100,17 @@ const HotspotCard = ({ hotspot }: HotspotCardProps) => {
             {/* Categoria e bottone espansione */}
             <div className="flex items-center gap-2 flex-shrink-0">
               {translated.categoria && (
-                <span className="px-3 py-1.5 bg-lavender text-foreground text-xs font-semibold rounded-full">
+                <span className={cn(
+                  "px-3 py-1.5 text-xs font-bold rounded-full shadow-sm",
+                  badgeColor.bg,
+                  badgeColor.text
+                )}>
                   {translated.categoria}
                 </span>
               )}
               <button
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="w-10 h-10 rounded-full bg-olive flex items-center justify-center transition-all duration-200 hover:bg-olive/80 hover:scale-110 hover:shadow-lg hover:shadow-olive/30"
+                className="w-11 h-11 rounded-full bg-olive ring-2 ring-white flex items-center justify-center transition-all duration-300 hover:bg-olive/90 hover:scale-115 hover:shadow-xl hover:shadow-olive/40 active:scale-95"
                 aria-expanded={isExpanded}
                 aria-label={isExpanded ? t("hideDetails") : t("showDetails")}
               >
@@ -131,9 +156,9 @@ const HotspotCard = ({ hotspot }: HotspotCardProps) => {
                   href={hotspot.link_google_maps}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-4 inline-flex items-center gap-2 px-5 py-3 bg-olive text-olive-foreground rounded-full font-brand font-black italic text-sm transition-all duration-200 hover:bg-olive/90 hover:scale-105 hover:shadow-lg hover:shadow-olive/30"
+                  className="mt-4 inline-flex items-center gap-2 px-6 py-3.5 bg-sunny-yellow text-forest-green rounded-full font-brand font-black italic text-sm transition-all duration-300 hover:scale-105 hover:rotate-1 hover:shadow-xl shadow-lg shadow-sunny-yellow/40 active:scale-95"
                 >
-                  <span className="text-base">👽</span>
+                  <span className="text-lg">👽</span>
                   <Navigation className="w-4 h-4" />
                   {t("meetPipo")}
                 </a>
@@ -141,21 +166,27 @@ const HotspotCard = ({ hotspot }: HotspotCardProps) => {
 
               {/* Galleria foto */}
               {validGalleryPhotos.length > 0 && (
-                <div className="mt-5 grid grid-cols-3 gap-2.5">
-                  {validGalleryPhotos.map((foto, index) => (
-                    <div
-                      key={index}
-                      className="aspect-square rounded-2xl overflow-hidden bg-muted cursor-pointer transition-all duration-200 hover:scale-105 shadow-md hover:shadow-lg"
-                      onClick={() => openLightbox(index)}
-                    >
-                      <img
-                        src={foto}
-                        alt={`${translated.titolo} - ${t("photo")} ${index + 1}`}
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                      />
-                    </div>
-                  ))}
+                <div className="mt-5 grid grid-cols-3 gap-3">
+                  {validGalleryPhotos.map((foto, photoIndex) => {
+                    const photoColorIndex = photoIndex % borderColors.length;
+                    return (
+                      <div
+                        key={photoIndex}
+                        className={cn(
+                          "aspect-square rounded-2xl overflow-hidden bg-muted cursor-pointer transition-all duration-300 hover:scale-110 hover:rotate-2 shadow-lg hover:shadow-xl border-2",
+                          borderColors[photoColorIndex]
+                        )}
+                        onClick={() => openLightbox(photoIndex)}
+                      >
+                        <img
+                          src={foto}
+                          alt={`${translated.titolo} - ${t("photo")} ${photoIndex + 1}`}
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                        />
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>
