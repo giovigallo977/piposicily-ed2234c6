@@ -101,7 +101,7 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
         {/* Row 3: Claim completo in Bebas Neue verde Pipo */}
         <div className="flex flex-col items-center mt-3 gap-1 px-4">
           {displayClaims.map((claim, index) => (
-            <p key={index} className="font-claim text-olive text-base tracking-wide text-center leading-tight">
+            <p key={index} className="font-claim text-olive text-lg tracking-wide text-center leading-tight">
               <span className="font-bold">{claim.label}</span> {claim.content}
             </p>
           ))}
