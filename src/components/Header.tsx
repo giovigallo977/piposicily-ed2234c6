@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Menu, Filter } from "lucide-react";
 import pipoAlien from "@/assets/pipo-alien.png";
 import { useTranslatedContent } from "@/hooks/useTranslation";
+import { useLanguage, Language } from "@/contexts/LanguageContext";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,7 +17,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { useLanguage } from "@/contexts/LanguageContext";
 
 interface HeaderProps {
   categories?: string[];
@@ -28,7 +28,7 @@ interface HeaderProps {
 
 const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTitle, headerSubtitle }: HeaderProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { t } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
   
   // Translate dynamic content
   const { translatedText: translatedTitle, isTranslating: titleLoading } = useTranslatedContent(headerTitle);
@@ -76,13 +76,15 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
                 <Menu className="w-5 h-5 text-foreground" />
               </button>
             </SheetTrigger>
-            <SheetContent side="left" className="w-[280px] bg-background">
+            <SheetContent side="left" className="w-[280px] bg-background flex flex-col">
               <SheetHeader>
                 <SheetTitle className="font-brand text-xl font-black italic">
                   {t("menu")}
                 </SheetTitle>
               </SheetHeader>
-              <nav className="mt-6 space-y-2">
+              
+              {/* Navigation links */}
+              <nav className="mt-6 flex-1">
                 <Link
                   to="/missione"
                   onClick={() => setMenuOpen(false)}
@@ -91,6 +93,33 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
                   {t("missionTitle")}
                 </Link>
               </nav>
+
+              {/* Language selector at bottom */}
+              <div className="pt-4 border-t border-border/30">
+                <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
+                  <button
+                    onClick={() => setLanguage("it")}
+                    className={`px-2 py-1 rounded transition-colors ${
+                      language === "it"
+                        ? "text-foreground font-medium"
+                        : "hover:text-foreground/70"
+                    }`}
+                  >
+                    IT
+                  </button>
+                  <span className="text-border">|</span>
+                  <button
+                    onClick={() => setLanguage("en")}
+                    className={`px-2 py-1 rounded transition-colors ${
+                      language === "en"
+                        ? "text-foreground font-medium"
+                        : "hover:text-foreground/70"
+                    }`}
+                  >
+                    EN
+                  </button>
+                </div>
+              </div>
             </SheetContent>
           </Sheet>
 
