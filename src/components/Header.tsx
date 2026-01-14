@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Menu, Filter } from "lucide-react";
 import pipoAlien from "@/assets/pipo-alien.png";
 import { useTranslatedContent } from "@/hooks/useTranslation";
+import { useTranslatedCategories } from "@/hooks/useTranslatedCategories";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import {
@@ -35,6 +36,7 @@ interface ClaimData {
 const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTitle, headerSubtitle }: HeaderProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const { language, setLanguage, t } = useLanguage();
+  const { translatedCategories, getTranslatedCategory } = useTranslatedCategories(categories);
   
   // Fetch claims content from database
   const { data: claimsData } = useSiteContent("claims");
@@ -190,7 +192,7 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
               >
                 <Filter className={`w-5 h-5 ${selectedCategory ? "text-white" : "text-purple-900"}`} />
                 {selectedCategory && (
-                  <span className="text-sm font-medium">{selectedCategory}</span>
+                  <span className="text-sm font-medium">{getTranslatedCategory(selectedCategory)}</span>
                 )}
               </button>
             </DropdownMenuTrigger>
@@ -201,13 +203,13 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
               >
                 {t("allCategories")}
               </DropdownMenuItem>
-              {categories.map((category) => (
+              {categories.map((category, index) => (
                 <DropdownMenuItem
                   key={category}
                   onClick={() => onCategoryChange(category)}
                   className={`cursor-pointer ${selectedCategory === category ? "bg-muted" : ""}`}
                 >
-                  {category}
+                  {translatedCategories[index] || category}
                 </DropdownMenuItem>
               ))}
               {categories.length === 0 && (
