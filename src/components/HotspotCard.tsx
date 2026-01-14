@@ -121,9 +121,9 @@ const HotspotCard = ({ hotspot }: HotspotCardProps) => {
           >
             <div className="overflow-hidden">
               {/* Descrizione completa */}
-              <p className="font-body text-sm text-foreground leading-relaxed">
-                {translated.descrizione_completa}
-              </p>
+                <p className="font-body text-sm text-foreground leading-relaxed whitespace-pre-line">
+                  {translated.descrizione_completa}
+                </p>
 
               {/* Link Naviga - usa <a> per mobile compatibility */}
               {hotspot.link_google_maps && (
