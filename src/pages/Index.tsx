@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import Header from "@/components/Header";
 import HotspotCard from "@/components/HotspotCard";
+import LanguageSelector from "@/components/LanguageSelector";
 import { useHotspots } from "@/hooks/useHotspots";
 import { useHotspotCategories, useSiteContent } from "@/hooks/useSiteContent";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -21,7 +22,7 @@ const Index = () => {
   }, [hotspots, selectedCategory]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       <Header 
         categories={categories}
         selectedCategory={selectedCategory}
@@ -30,7 +31,7 @@ const Index = () => {
         headerSubtitle={headerSubtitleContent?.content}
       />
       
-      <main className="container mx-auto px-4 py-6">
+      <main className="container mx-auto px-4 py-6 flex-1">
         <div className="max-w-lg mx-auto space-y-6">
           {isLoading && (
             <div className="flex justify-center py-12">
@@ -64,6 +65,11 @@ const Index = () => {
           )}
         </div>
       </main>
+
+      {/* Footer with language selector */}
+      <footer className="py-6 border-t border-border/30">
+        <LanguageSelector />
+      </footer>
     </div>
   );
 };
