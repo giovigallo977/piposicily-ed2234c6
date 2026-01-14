@@ -6,7 +6,7 @@ Ogni decisione strutturale documentata qui è DEFINITIVA. Le modifiche future de
 ## Identità Visiva
 
 ### Colori Brand
-- **Verde Pipo (olive)**: HSL `90 60% 35%` - Usato per azioni primarie (NAVIGA)
+- **Verde Pipo (olive)**: `#3a9f6d` / HSL `152 46% 43%` - Usato per azioni primarie (NAVIGA, espansione card)
 - **Foreground**: Toni caldi neutri (30 10% 15%)
 - **Background**: Bianco puro
 

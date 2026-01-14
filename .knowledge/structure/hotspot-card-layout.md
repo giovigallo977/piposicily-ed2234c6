@@ -32,7 +32,7 @@ La struttura delle card hotspot è DEFINITIVA e non deve essere modificata da fu
 - Galleria foto (griglia 3 colonne)
 
 ## Colori Fissi
-- Verde Pipo (olive): `90 60% 35%` HSL
+- Verde Pipo (olive): `#3a9f6d` / HSL `152 46% 43%`
 - Card: bordi arrotondati 20px
 - Sfondo card: bg-card
 
