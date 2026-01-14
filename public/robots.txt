@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://pipo.lovable.app/sitemap.xml
+Sitemap: https://pipo2.lovable.app/sitemap.xml
 
 # Disallow admin routes
 Disallow: /admin

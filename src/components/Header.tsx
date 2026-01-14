@@ -61,18 +61,29 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
   // Split translated contents back
   const translatedClaimArray = translatedClaimContents?.split("|||") || [];
   
-  // Build final claims with translations
-  const finalClaims = parsedClaims.map((claim, index) => ({
-    label: claim.label,
-    content: translatedClaimArray[index] || claim.content,
-  }));
+  // Label translation mapping
+  const labelTranslations: Record<string, keyof typeof import("@/contexts/LanguageContext").translations.it> = {
+    "TI AIUTA A:": "claimTiAiuta",
+    "QUANDO:": "claimQuando",
+    "RISOLVE:": "claimRisolve",
+    "COME:": "claimCome",
+  };
+  
+  // Build final claims with translations (both labels and content)
+  const finalClaims = parsedClaims.map((claim, index) => {
+    const labelKey = labelTranslations[claim.label];
+    return {
+      label: labelKey ? t(labelKey) : claim.label,
+      content: translatedClaimArray[index] || claim.content,
+    };
+  });
   
   // Fallback if no claims in database
   const displayClaims = finalClaims.length > 0 ? finalClaims : [
-    { label: "TI AIUTA A:", content: "TROVARE IL TUO ANGOLO DI PACE FUORI DAI RADAR." },
-    { label: "QUANDO:", content: "NON SAI DOVE ANDARE E VUOI DECIDERE IN 30 SECONDI." },
-    { label: "RISOLVE:", content: "IL RISCHIO DI FINIRE NEI SOLITI POSTI AFFOLLATI O SU STRADE IMPRATICABILI." },
-    { label: "COME:", content: "SOLO LUOGHI SELEZIONATI DA UN ALIENO, CON INFO REALI SU ASFALTO, CIBO E NATURA." },
+    { label: t("claimTiAiuta"), content: "TROVARE IL TUO ANGOLO DI PACE FUORI DAI RADAR." },
+    { label: t("claimQuando"), content: "NON SAI DOVE ANDARE E VUOI DECIDERE IN 30 SECONDI." },
+    { label: t("claimRisolve"), content: "IL RISCHIO DI FINIRE NEI SOLITI POSTI AFFOLLATI O SU STRADE IMPRATICABILI." },
+    { label: t("claimCome"), content: "SOLO LUOGHI SELEZIONATI DA UN ALIENO, CON INFO REALI SU ASFALTO, CIBO E NATURA." },
   ];
 
   return (
