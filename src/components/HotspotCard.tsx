@@ -45,14 +45,14 @@ const HotspotCard = ({ hotspot }: HotspotCardProps) => {
             )}
             <button
               onClick={() => setIsExpanded(!isExpanded)}
-              className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center transition-all duration-200 hover:bg-secondary/80"
+              className="w-8 h-8 rounded-full bg-olive flex items-center justify-center transition-all duration-200 hover:bg-olive/80"
               aria-expanded={isExpanded}
               aria-label={isExpanded ? "Chiudi dettagli" : "Mostra dettagli"}
             >
               {isExpanded ? (
-                <Minus className="w-4 h-4 text-foreground" />
+                <Minus className="w-4 h-4 text-olive-foreground" />
               ) : (
-                <Plus className="w-4 h-4 text-foreground" />
+                <Plus className="w-4 h-4 text-olive-foreground" />
               )}
             </button>
           </div>
