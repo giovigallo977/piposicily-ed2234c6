@@ -57,12 +57,18 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
           </h2>
         )}
 
-        {/* Row 3: Subtitle */}
-        {(headerSubtitle || translatedSubtitle) && (
-          <p className={`font-body font-medium text-base text-foreground text-center mt-1 transition-opacity ${subtitleLoading ? 'opacity-50' : ''}`}>
-            {translatedSubtitle || headerSubtitle}
+        {/* Row 3: Claim in Bebas Neue verde Pipo */}
+        <div className="flex flex-col items-center mt-3 gap-0">
+          <p className="font-claim text-olive text-xl tracking-wide text-center leading-tight">
+            TROVA IL TUO ANGOLO DI PACE
           </p>
-        )}
+          <p className="font-claim text-olive text-xl tracking-wide text-center leading-tight">
+            FUORI DAI RADAR
+          </p>
+          <p className="font-claim text-olive text-xl tracking-wide text-center leading-tight">
+            IN 30 SECONDI
+          </p>
+        </div>
 
         {/* Row 4: Hamburger left, Filter right */}
         <div className="flex items-center justify-between mt-3">
