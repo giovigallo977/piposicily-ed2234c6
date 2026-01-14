@@ -57,16 +57,19 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
           </h2>
         )}
 
-        {/* Row 3: Claim in Bebas Neue verde Pipo */}
-        <div className="flex flex-col items-center mt-3 gap-0">
-          <p className="font-claim text-olive text-xl tracking-wide text-center leading-tight">
-            TROVA IL TUO ANGOLO DI PACE
+        {/* Row 3: Claim completo in Bebas Neue verde Pipo */}
+        <div className="flex flex-col items-center mt-3 gap-1 px-4">
+          <p className="font-claim text-olive text-base tracking-wide text-center leading-tight">
+            <span className="font-bold">TI AIUTA A:</span> TROVARE IL TUO ANGOLO DI PACE FUORI DAI RADAR.
           </p>
-          <p className="font-claim text-olive text-xl tracking-wide text-center leading-tight">
-            FUORI DAI RADAR
+          <p className="font-claim text-olive text-base tracking-wide text-center leading-tight">
+            <span className="font-bold">QUANDO:</span> NON SAI DOVE ANDARE E VUOI DECIDERE IN 30 SECONDI.
           </p>
-          <p className="font-claim text-olive text-xl tracking-wide text-center leading-tight">
-            IN 30 SECONDI
+          <p className="font-claim text-olive text-base tracking-wide text-center leading-tight">
+            <span className="font-bold">RISOLVE:</span> IL RISCHIO DI FINIRE NEI SOLITI POSTI AFFOLLATI O SU STRADE IMPRATICABILI.
+          </p>
+          <p className="font-claim text-olive text-base tracking-wide text-center leading-tight">
+            <span className="font-bold">COME:</span> SOLO LUOGHI SELEZIONATI DA UN ALIENO, CON INFO REALI SU ASFALTO, CIBO E NATURA.
           </p>
         </div>
 
