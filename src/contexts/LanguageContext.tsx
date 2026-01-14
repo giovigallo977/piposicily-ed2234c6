@@ -33,6 +33,11 @@ export const translations = {
     language: "Lingua",
     languageIt: "Italiano",
     languageEn: "English",
+    // Claim labels
+    claimTiAiuta: "TI AIUTA A:",
+    claimQuando: "QUANDO:",
+    claimRisolve: "RISOLVE:",
+    claimCome: "COME:",
   },
   en: {
     back: "Back",
@@ -57,6 +62,11 @@ export const translations = {
     language: "Language",
     languageIt: "Italiano",
     languageEn: "English",
+    // Claim labels
+    claimTiAiuta: "IT HELPS YOU:",
+    claimQuando: "WHEN:",
+    claimRisolve: "IT SOLVES:",
+    claimCome: "HOW:",
   },
 } as const;
 
