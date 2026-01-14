@@ -44,7 +44,11 @@ All colors MUST be HSL.
     --olive: 152 46% 43%;
     --olive-foreground: 0 0% 100%;
 
-    /* Soft & Playful palette */
+    /* Playful Vivid Palette */
+    --forest-green: 152 60% 25%;
+    --magenta: 320 80% 60%;
+    --lavender-vivid: 270 60% 70%;
+    --sunny-yellow: 48 95% 65%;
     --mint: 152 40% 95%;
     --lavender: 260 40% 93%;
     --warm-yellow: 48 96% 89%;

@@ -21,7 +21,7 @@ const Index = () => {
   }, [hotspots, selectedCategory]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-mint via-background to-background">
+    <div className="min-h-screen bg-background">
       <Header 
         categories={categories}
         selectedCategory={selectedCategory}
@@ -44,10 +44,11 @@ const Index = () => {
             </div>
           )}
           
-          {filteredHotspots.map((hotspot) => (
+          {filteredHotspots.map((hotspot, index) => (
             <HotspotCard 
               key={hotspot.id} 
-              hotspot={hotspot} 
+              hotspot={hotspot}
+              index={index}
             />
           ))}
           

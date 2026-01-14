@@ -35,7 +35,7 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
   const { translatedText: translatedSubtitle, isTranslating: subtitleLoading } = useTranslatedContent(headerSubtitle);
 
   return (
-    <header className="sticky top-0 z-50 bg-gradient-to-b from-mint to-background/95 backdrop-blur-sm border-b border-mint">
+    <header className="sticky top-0 z-50 bg-background backdrop-blur-sm border-b border-border/30">
       <div className="container mx-auto px-6 py-4">
         {/* Row 1: Logo centered */}
         <div className="flex items-center justify-center">
@@ -70,10 +70,10 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
           <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
             <SheetTrigger asChild>
               <button
-                className="p-2.5 rounded-full bg-mint hover:bg-olive/20 transition-all duration-200 hover:scale-105 shadow-sm"
+                className="p-2.5 rounded-full bg-sunny-yellow hover:bg-sunny-yellow/80 transition-all duration-200 hover:scale-110 hover:rotate-3 shadow-md hover:shadow-lg"
                 aria-label={t("menu")}
               >
-                <Menu className="w-5 h-5 text-foreground" />
+                <Menu className="w-5 h-5 text-forest-green" />
               </button>
             </SheetTrigger>
             <SheetContent side="left" className="w-[280px] bg-background flex flex-col">
@@ -127,14 +127,14 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
-                className={`p-2.5 rounded-full transition-all duration-200 flex items-center gap-2 shadow-sm hover:scale-105 ${
+                className={`p-2.5 rounded-full transition-all duration-300 flex items-center gap-2 shadow-md hover:shadow-lg hover:scale-110 hover:-rotate-3 ${
                   selectedCategory 
-                    ? "bg-olive text-olive-foreground" 
-                    : "bg-mint hover:bg-olive/20"
+                    ? "bg-magenta text-white" 
+                    : "bg-lavender-vivid hover:bg-lavender-vivid/80"
                 }`}
                 aria-label={t("filter")}
               >
-                <Filter className="w-5 h-5" />
+                <Filter className={`w-5 h-5 ${selectedCategory ? "text-white" : "text-purple-900"}`} />
                 {selectedCategory && (
                   <span className="text-sm font-medium">{selectedCategory}</span>
                 )}
