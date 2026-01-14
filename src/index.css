@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Nunito:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -43,6 +43,11 @@ All colors MUST be HSL.
     /* Pipo green #3a9f6d - colore brand principale */
     --olive: 152 46% 43%;
     --olive-foreground: 0 0% 100%;
+
+    /* Soft & Playful palette */
+    --mint: 152 40% 95%;
+    --lavender: 260 40% 93%;
+    --warm-yellow: 48 96% 89%;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;

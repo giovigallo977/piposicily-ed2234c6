@@ -35,7 +35,7 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
   const { translatedText: translatedSubtitle, isTranslating: subtitleLoading } = useTranslatedContent(headerSubtitle);
 
   return (
-    <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/40">
+    <header className="sticky top-0 z-50 bg-gradient-to-b from-mint to-background/95 backdrop-blur-sm border-b border-mint">
       <div className="container mx-auto px-6 py-4">
         {/* Row 1: Logo centered */}
         <div className="flex items-center justify-center">
@@ -70,7 +70,7 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
           <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
             <SheetTrigger asChild>
               <button
-                className="p-2 rounded-lg hover:bg-muted transition-colors"
+                className="p-2.5 rounded-full bg-mint hover:bg-olive/20 transition-all duration-200 hover:scale-105 shadow-sm"
                 aria-label={t("menu")}
               >
                 <Menu className="w-5 h-5 text-foreground" />
@@ -127,10 +127,10 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
-                className={`p-2 rounded-lg transition-colors flex items-center gap-2 ${
+                className={`p-2.5 rounded-full transition-all duration-200 flex items-center gap-2 shadow-sm hover:scale-105 ${
                   selectedCategory 
                     ? "bg-olive text-olive-foreground" 
-                    : "hover:bg-muted"
+                    : "bg-mint hover:bg-olive/20"
                 }`}
                 aria-label={t("filter")}
               >

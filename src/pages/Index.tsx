@@ -21,7 +21,7 @@ const Index = () => {
   }, [hotspots, selectedCategory]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-b from-mint via-background to-background">
       <Header 
         categories={categories}
         selectedCategory={selectedCategory}

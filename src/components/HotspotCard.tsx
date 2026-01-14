@@ -49,7 +49,7 @@ const HotspotCard = ({ hotspot }: HotspotCardProps) => {
   return (
     <>
       <article className={cn(
-        "bg-card rounded-[20px] overflow-hidden shadow-sm border border-border/50 transition-opacity",
+        "bg-card rounded-3xl overflow-hidden shadow-lg shadow-olive/10 border border-mint transition-all duration-200",
         isTranslating && "opacity-75"
       )}>
         {/* Immagine principale */}
@@ -79,20 +79,20 @@ const HotspotCard = ({ hotspot }: HotspotCardProps) => {
             {/* Categoria e bottone espansione */}
             <div className="flex items-center gap-2 flex-shrink-0">
               {translated.categoria && (
-                <span className="px-3 py-1 bg-primary/10 text-primary text-xs font-medium rounded-full">
+                <span className="px-3 py-1.5 bg-lavender text-foreground text-xs font-semibold rounded-full">
                   {translated.categoria}
                 </span>
               )}
               <button
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="w-8 h-8 rounded-full bg-olive flex items-center justify-center transition-all duration-200 hover:bg-olive/80"
+                className="w-10 h-10 rounded-full bg-olive flex items-center justify-center transition-all duration-200 hover:bg-olive/80 hover:scale-110 hover:shadow-lg hover:shadow-olive/30"
                 aria-expanded={isExpanded}
                 aria-label={isExpanded ? t("hideDetails") : t("showDetails")}
               >
                 {isExpanded ? (
-                  <Minus className="w-4 h-4 text-olive-foreground" />
+                  <Minus className="w-5 h-5 text-olive-foreground" />
                 ) : (
-                  <Plus className="w-4 h-4 text-olive-foreground" />
+                  <Plus className="w-5 h-5 text-olive-foreground" />
                 )}
               </button>
             </div>
@@ -131,8 +131,9 @@ const HotspotCard = ({ hotspot }: HotspotCardProps) => {
                   href={hotspot.link_google_maps}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 bg-olive text-olive-foreground rounded-lg font-brand font-black italic text-sm transition-all duration-200 hover:bg-olive/90"
+                  className="mt-4 inline-flex items-center gap-2 px-5 py-3 bg-olive text-olive-foreground rounded-full font-brand font-black italic text-sm transition-all duration-200 hover:bg-olive/90 hover:scale-105 hover:shadow-lg hover:shadow-olive/30"
                 >
+                  <span className="text-base">👽</span>
                   <Navigation className="w-4 h-4" />
                   {t("meetPipo")}
                 </a>
@@ -140,11 +141,11 @@ const HotspotCard = ({ hotspot }: HotspotCardProps) => {
 
               {/* Galleria foto */}
               {validGalleryPhotos.length > 0 && (
-                <div className="mt-4 grid grid-cols-3 gap-2">
+                <div className="mt-5 grid grid-cols-3 gap-2.5">
                   {validGalleryPhotos.map((foto, index) => (
                     <div
                       key={index}
-                      className="aspect-square rounded-lg overflow-hidden bg-muted cursor-pointer transition-transform duration-200 hover:scale-105"
+                      className="aspect-square rounded-2xl overflow-hidden bg-muted cursor-pointer transition-all duration-200 hover:scale-105 shadow-md hover:shadow-lg"
                       onClick={() => openLightbox(index)}
                     >
                       <img

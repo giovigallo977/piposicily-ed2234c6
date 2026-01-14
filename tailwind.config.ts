@@ -18,7 +18,8 @@ export default {
         sans: ['Inter', 'system-ui', 'sans-serif'],
         brand: ['Inter', 'system-ui', 'sans-serif'],
         heading: ['"Proxima Nova"', 'Inter', 'system-ui', 'sans-serif'],
-        body: ['"Proxima Nova"', 'Inter', 'system-ui', 'sans-serif'],
+        body: ['Nunito', '"Proxima Nova"', 'Inter', 'system-ui', 'sans-serif'],
+        friendly: ['Nunito', 'system-ui', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -58,6 +59,9 @@ export default {
           DEFAULT: "hsl(var(--olive))",
           foreground: "hsl(var(--olive-foreground))",
         },
+        mint: "hsl(var(--mint))",
+        lavender: "hsl(var(--lavender))",
+        "warm-yellow": "hsl(var(--warm-yellow))",
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
