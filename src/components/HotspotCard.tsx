@@ -72,19 +72,6 @@ const HotspotCard = ({ hotspot }: HotspotCardProps) => {
           {hotspot.descrizione_breve}
         </p>
 
-        {/* Link Naviga - usa <a> per mobile compatibility */}
-        {hotspot.link_google_maps && (
-          <a
-            href={hotspot.link_google_maps}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 bg-olive text-olive-foreground rounded-lg font-brand font-black italic text-sm transition-all duration-200 hover:bg-olive/90"
-          >
-            <Navigation className="w-4 h-4" />
-            INCONTRA PIPO
-          </a>
-        )}
-
         {/* Contenuto espanso con accordion */}
         <div
           className={cn(
@@ -97,6 +84,19 @@ const HotspotCard = ({ hotspot }: HotspotCardProps) => {
             <p className="font-body text-sm text-muted-foreground leading-relaxed">
               {hotspot.descrizione_completa}
             </p>
+
+            {/* Link Naviga - usa <a> per mobile compatibility */}
+            {hotspot.link_google_maps && (
+              <a
+                href={hotspot.link_google_maps}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 bg-olive text-olive-foreground rounded-lg font-brand font-black italic text-sm transition-all duration-200 hover:bg-olive/90"
+              >
+                <Navigation className="w-4 h-4" />
+                INCONTRA PIPO
+              </a>
+            )}
 
             {/* Galleria foto */}
             {hotspot.foto_gallery && hotspot.foto_gallery.length > 0 && (
