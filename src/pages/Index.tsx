@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import HotspotCard from "@/components/HotspotCard";
 import { useHotspots } from "@/hooks/useHotspots";
 import { useHotspotCategories, useSiteContent } from "@/hooks/useSiteContent";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Loader2 } from "lucide-react";
 
 const Index = () => {
@@ -11,6 +12,7 @@ const Index = () => {
   const { data: headerTitleContent } = useSiteContent("header_title");
   const { data: headerSubtitleContent } = useSiteContent("header_subtitle");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const { t } = useLanguage();
 
   const filteredHotspots = useMemo(() => {
     if (!hotspots) return [];
@@ -38,7 +40,7 @@ const Index = () => {
           
           {error && (
             <div className="text-center py-12 text-muted-foreground">
-              <p>Errore nel caricamento degli hotspot.</p>
+              <p>{t("loadingHotspotsError")}</p>
             </div>
           )}
           
@@ -51,13 +53,13 @@ const Index = () => {
           
           {!isLoading && filteredHotspots.length === 0 && hotspots && hotspots.length > 0 && (
             <div className="text-center py-12 text-muted-foreground">
-              <p>Nessun hotspot in questa categoria.</p>
+              <p>{t("noHotspotsCategory")}</p>
             </div>
           )}
           
           {!isLoading && hotspots?.length === 0 && (
             <div className="text-center py-12 text-muted-foreground">
-              <p>Nessun hotspot disponibile.</p>
+              <p>{t("noHotspots")}</p>
             </div>
           )}
         </div>

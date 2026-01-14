@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Menu, Filter, X } from "lucide-react";
+import { Menu, Filter, Globe } from "lucide-react";
 import pipoAlien from "@/assets/pipo-alien.png";
+import { useLanguage, Language } from "@/contexts/LanguageContext";
+import { useTranslatedContent } from "@/hooks/useTranslation";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import {
   Sheet,
@@ -26,6 +29,15 @@ interface HeaderProps {
 
 const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTitle, headerSubtitle }: HeaderProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { language, setLanguage, t } = useLanguage();
+  
+  // Translate dynamic content
+  const { translatedText: translatedTitle, isTranslating: titleLoading } = useTranslatedContent(headerTitle);
+  const { translatedText: translatedSubtitle, isTranslating: subtitleLoading } = useTranslatedContent(headerSubtitle);
+
+  const handleLanguageChange = (lang: Language) => {
+    setLanguage(lang);
+  };
 
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/40">
@@ -44,16 +56,16 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
         </div>
 
         {/* Row 2: Title */}
-        {headerTitle && (
-          <h2 className="font-heading text-xl font-bold text-foreground text-center mt-2">
-            {headerTitle}
+        {(headerTitle || translatedTitle) && (
+          <h2 className={`font-heading text-xl font-bold text-foreground text-center mt-2 transition-opacity ${titleLoading ? 'opacity-50' : ''}`}>
+            {translatedTitle || headerTitle}
           </h2>
         )}
 
         {/* Row 3: Subtitle */}
-        {headerSubtitle && (
-          <p className="font-body font-medium text-base text-foreground text-center mt-1">
-            {headerSubtitle}
+        {(headerSubtitle || translatedSubtitle) && (
+          <p className={`font-body font-medium text-base text-foreground text-center mt-1 transition-opacity ${subtitleLoading ? 'opacity-50' : ''}`}>
+            {translatedSubtitle || headerSubtitle}
           </p>
         )}
 
@@ -64,7 +76,7 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
             <SheetTrigger asChild>
               <button
                 className="p-2 rounded-lg hover:bg-muted transition-colors"
-                aria-label="Menu"
+                aria-label={t("menu")}
               >
                 <Menu className="w-5 h-5 text-foreground" />
               </button>
@@ -72,17 +84,49 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
             <SheetContent side="left" className="w-[280px] bg-background">
               <SheetHeader>
                 <SheetTitle className="font-brand text-xl font-black italic">
-                  Menu
+                  {t("menu")}
                 </SheetTitle>
               </SheetHeader>
-              <nav className="mt-6">
+              <nav className="mt-6 space-y-2">
                 <Link
                   to="/missione"
                   onClick={() => setMenuOpen(false)}
                   className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted transition-colors text-foreground font-medium"
                 >
-                  La missione di Pipo
+                  {t("missionTitle")}
                 </Link>
+                
+                {/* Language Selector */}
+                <div className="px-4 py-3">
+                  <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2">
+                    <Globe className="w-4 h-4" />
+                    <span>{t("language")}</span>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleLanguageChange("it")}
+                      className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
+                        language === "it" 
+                          ? "bg-olive text-olive-foreground" 
+                          : "hover:bg-muted text-foreground"
+                      }`}
+                    >
+                      <span className="text-lg">🇮🇹</span>
+                      <span className="text-sm font-medium">{t("languageIt")}</span>
+                    </button>
+                    <button
+                      onClick={() => handleLanguageChange("en")}
+                      className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
+                        language === "en" 
+                          ? "bg-olive text-olive-foreground" 
+                          : "hover:bg-muted text-foreground"
+                      }`}
+                    >
+                      <span className="text-lg">🇬🇧</span>
+                      <span className="text-sm font-medium">{t("languageEn")}</span>
+                    </button>
+                  </div>
+                </div>
               </nav>
             </SheetContent>
           </Sheet>
@@ -96,7 +140,7 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
                     ? "bg-olive text-olive-foreground" 
                     : "hover:bg-muted"
                 }`}
-                aria-label="Filtra per categoria"
+                aria-label={t("filter")}
               >
                 <Filter className="w-5 h-5" />
                 {selectedCategory && (
@@ -109,7 +153,7 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
                 onClick={() => onCategoryChange(null)}
                 className={`cursor-pointer ${!selectedCategory ? "bg-muted" : ""}`}
               >
-                Tutte le categorie
+                {t("allCategories")}
               </DropdownMenuItem>
               {categories.map((category) => (
                 <DropdownMenuItem
@@ -122,7 +166,7 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
               ))}
               {categories.length === 0 && (
                 <DropdownMenuItem disabled className="text-muted-foreground">
-                  Nessuna categoria disponibile
+                  {t("noCategoryAvailable")}
                 </DropdownMenuItem>
               )}
             </DropdownMenuContent>

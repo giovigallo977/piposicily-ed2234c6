@@ -1,10 +1,15 @@
 import { Link } from "react-router-dom";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { useSiteContent } from "@/hooks/useSiteContent";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslatedContent } from "@/hooks/useTranslation";
 import pipoAlien from "@/assets/pipo-alien.png";
 
 const Mission = () => {
   const { data: missionContent, isLoading, error } = useSiteContent("mission");
+  const { t } = useLanguage();
+  
+  const { translatedText: translatedMission, isTranslating } = useTranslatedContent(missionContent?.content);
 
   return (
     <div className="min-h-screen bg-background">
@@ -16,7 +21,7 @@ const Mission = () => {
             className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
-            <span className="font-medium">Indietro</span>
+            <span className="font-medium">{t("back")}</span>
           </Link>
         </div>
       </header>
@@ -32,7 +37,7 @@ const Mission = () => {
               draggable={false}
             />
             <h1 className="font-brand text-3xl font-black italic tracking-tight text-foreground">
-              La missione di Pipo
+              {t("missionTitle")}
             </h1>
           </div>
 
@@ -45,14 +50,14 @@ const Mission = () => {
 
           {error && (
             <div className="text-center py-12 text-muted-foreground">
-              <p>Errore nel caricamento del contenuto.</p>
+              <p>{t("loadingContentError")}</p>
             </div>
           )}
 
           {missionContent && (
-            <div className="prose prose-lg max-w-none">
+            <div className={`prose prose-lg max-w-none transition-opacity ${isTranslating ? 'opacity-50' : ''}`}>
               <p className="text-foreground leading-relaxed whitespace-pre-wrap">
-                {missionContent.content}
+                {translatedMission || missionContent.content}
               </p>
             </div>
           )}

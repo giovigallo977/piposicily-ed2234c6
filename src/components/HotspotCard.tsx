@@ -2,6 +2,8 @@ import { useState, useCallback, useEffect } from "react";
 import { Plus, Minus, Navigation, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Hotspot } from "@/hooks/useHotspots";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslatedHotspot } from "@/hooks/useTranslation";
 import useEmblaCarousel from "embla-carousel-react";
 
 interface HotspotCardProps {
@@ -12,6 +14,14 @@ const HotspotCard = ({ hotspot }: HotspotCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
+  const { t } = useLanguage();
+
+  const { translated, isTranslating } = useTranslatedHotspot({
+    titolo: hotspot.titolo,
+    descrizione_breve: hotspot.descrizione_breve,
+    descrizione_completa: hotspot.descrizione_completa,
+    categoria: hotspot.categoria,
+  });
 
   const [emblaRef, emblaApi] = useEmblaCarousel({ startIndex: currentPhotoIndex });
 
@@ -38,19 +48,22 @@ const HotspotCard = ({ hotspot }: HotspotCardProps) => {
 
   return (
     <>
-      <article className="bg-card rounded-[20px] overflow-hidden shadow-sm border border-border/50">
+      <article className={cn(
+        "bg-card rounded-[20px] overflow-hidden shadow-sm border border-border/50 transition-opacity",
+        isTranslating && "opacity-75"
+      )}>
         {/* Immagine principale */}
         <div className="aspect-[4/3] bg-muted overflow-hidden">
           {hotspot.foto_principale ? (
             <img
               src={hotspot.foto_principale}
-              alt={hotspot.titolo}
+              alt={translated.titolo}
               className="w-full h-full object-cover"
               loading="lazy"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-muted">
-              <span className="text-muted-foreground text-sm">Foto</span>
+              <span className="text-muted-foreground text-sm">{t("photo")}</span>
             </div>
           )}
         </div>
@@ -60,21 +73,21 @@ const HotspotCard = ({ hotspot }: HotspotCardProps) => {
           {/* Header con titolo e bottone espansione */}
           <div className="flex items-start justify-between gap-4">
             <h2 className="font-heading text-xl font-bold text-foreground leading-tight flex-1 min-w-0">
-              {hotspot.titolo}
+              {translated.titolo}
             </h2>
             
             {/* Categoria e bottone espansione */}
             <div className="flex items-center gap-2 flex-shrink-0">
-              {hotspot.categoria && (
+              {translated.categoria && (
                 <span className="px-3 py-1 bg-primary/10 text-primary text-xs font-medium rounded-full">
-                  {hotspot.categoria}
+                  {translated.categoria}
                 </span>
               )}
               <button
                 onClick={() => setIsExpanded(!isExpanded)}
                 className="w-8 h-8 rounded-full bg-olive flex items-center justify-center transition-all duration-200 hover:bg-olive/80"
                 aria-expanded={isExpanded}
-                aria-label={isExpanded ? "Chiudi dettagli" : "Mostra dettagli"}
+                aria-label={isExpanded ? t("hideDetails") : t("showDetails")}
               >
                 {isExpanded ? (
                   <Minus className="w-4 h-4 text-olive-foreground" />
@@ -96,7 +109,7 @@ const HotspotCard = ({ hotspot }: HotspotCardProps) => {
 
           {/* Descrizione breve - riga orizzontale completa */}
           <p className="mt-2 font-body text-sm text-foreground leading-relaxed">
-            {hotspot.descrizione_breve}
+            {translated.descrizione_breve}
           </p>
 
           {/* Contenuto espanso con accordion */}
@@ -109,7 +122,7 @@ const HotspotCard = ({ hotspot }: HotspotCardProps) => {
             <div className="overflow-hidden">
               {/* Descrizione completa */}
               <p className="font-body text-sm text-foreground leading-relaxed">
-                {hotspot.descrizione_completa}
+                {translated.descrizione_completa}
               </p>
 
               {/* Link Naviga - usa <a> per mobile compatibility */}
@@ -121,7 +134,7 @@ const HotspotCard = ({ hotspot }: HotspotCardProps) => {
                   className="mt-4 inline-flex items-center gap-2 px-4 py-2.5 bg-olive text-olive-foreground rounded-lg font-brand font-black italic text-sm transition-all duration-200 hover:bg-olive/90"
                 >
                   <Navigation className="w-4 h-4" />
-                  INCONTRA PIPO
+                  {t("meetPipo")}
                 </a>
               )}
 
@@ -136,7 +149,7 @@ const HotspotCard = ({ hotspot }: HotspotCardProps) => {
                     >
                       <img
                         src={foto}
-                        alt={`${hotspot.titolo} - foto ${index + 1}`}
+                        alt={`${translated.titolo} - ${t("photo")} ${index + 1}`}
                         className="w-full h-full object-cover"
                         loading="lazy"
                       />
@@ -159,7 +172,7 @@ const HotspotCard = ({ hotspot }: HotspotCardProps) => {
           <button
             className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors"
             onClick={closeLightbox}
-            aria-label="Chiudi"
+            aria-label={t("close")}
           >
             <X className="w-6 h-6" />
           </button>
@@ -178,7 +191,7 @@ const HotspotCard = ({ hotspot }: HotspotCardProps) => {
                   >
                     <img
                       src={foto}
-                      alt={`${hotspot.titolo} - foto ${index + 1}`}
+                      alt={`${translated.titolo} - ${t("photo")} ${index + 1}`}
                       className="max-h-[80vh] max-w-full object-contain rounded-lg"
                     />
                   </div>
@@ -192,14 +205,14 @@ const HotspotCard = ({ hotspot }: HotspotCardProps) => {
                 <button
                   className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors"
                   onClick={scrollPrev}
-                  aria-label="Foto precedente"
+                  aria-label={t("previousPhoto")}
                 >
                   <ChevronLeft className="w-6 h-6" />
                 </button>
                 <button
                   className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-white/20 transition-colors"
                   onClick={scrollNext}
-                  aria-label="Foto successiva"
+                  aria-label={t("nextPhoto")}
                 >
                   <ChevronRight className="w-6 h-6" />
                 </button>
@@ -222,7 +235,7 @@ const HotspotCard = ({ hotspot }: HotspotCardProps) => {
                     setCurrentPhotoIndex(index);
                     emblaApi?.scrollTo(index);
                   }}
-                  aria-label={`Vai alla foto ${index + 1}`}
+                  aria-label={`${t("goToPhoto")} ${index + 1}`}
                 />
               ))}
             </div>
