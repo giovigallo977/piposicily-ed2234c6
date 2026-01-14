@@ -68,7 +68,7 @@ const HotspotCard = ({ hotspot }: HotspotCardProps) => {
         )}
 
         {/* Descrizione breve - riga orizzontale completa */}
-        <p className="mt-2 font-body text-sm text-muted-foreground leading-relaxed">
+        <p className="mt-2 font-body text-sm text-foreground leading-relaxed">
           {hotspot.descrizione_breve}
         </p>
 
@@ -81,7 +81,7 @@ const HotspotCard = ({ hotspot }: HotspotCardProps) => {
         >
           <div className="overflow-hidden">
             {/* Descrizione completa */}
-            <p className="font-body text-sm text-muted-foreground leading-relaxed">
+            <p className="font-body text-sm text-foreground leading-relaxed">
               {hotspot.descrizione_completa}
             </p>
 
