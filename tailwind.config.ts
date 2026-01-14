@@ -20,6 +20,7 @@ export default {
         heading: ['"Proxima Nova"', 'Inter', 'system-ui', 'sans-serif'],
         body: ['Nunito', '"Proxima Nova"', 'Inter', 'system-ui', 'sans-serif'],
         friendly: ['Nunito', 'system-ui', 'sans-serif'],
+        claim: ['"Bebas Neue"', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
