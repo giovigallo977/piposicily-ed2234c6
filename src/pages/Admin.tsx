@@ -40,6 +40,10 @@ const Admin = () => {
   const { data: missionContent, isLoading: missionLoading } = useSiteContent("mission");
   const { data: headerTitleContent, isLoading: headerTitleLoading } = useSiteContent("header_title");
   const { data: headerSubtitleContent, isLoading: headerSubtitleLoading } = useSiteContent("header_subtitle");
+  const { data: claimTiAiutaContent, isLoading: claimTiAiutaLoading } = useSiteContent("claim_ti_aiuta");
+  const { data: claimQuandoContent, isLoading: claimQuandoLoading } = useSiteContent("claim_quando");
+  const { data: claimRisolveContent, isLoading: claimRisolveLoading } = useSiteContent("claim_risolve");
+  const { data: claimComeContent, isLoading: claimComeLoading } = useSiteContent("claim_come");
   const updateSiteContent = useUpdateSiteContent();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -48,6 +52,10 @@ const Admin = () => {
   const [missionText, setMissionText] = useState("");
   const [headerTitle, setHeaderTitle] = useState("");
   const [headerSubtitle, setHeaderSubtitle] = useState("");
+  const [claimTiAiuta, setClaimTiAiuta] = useState("");
+  const [claimQuando, setClaimQuando] = useState("");
+  const [claimRisolve, setClaimRisolve] = useState("");
+  const [claimCome, setClaimCome] = useState("");
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -72,6 +80,22 @@ const Admin = () => {
       setHeaderSubtitle(headerSubtitleContent.content);
     }
   }, [headerSubtitleContent]);
+
+  useEffect(() => {
+    if (claimTiAiutaContent?.content) setClaimTiAiuta(claimTiAiutaContent.content);
+  }, [claimTiAiutaContent]);
+
+  useEffect(() => {
+    if (claimQuandoContent?.content) setClaimQuando(claimQuandoContent.content);
+  }, [claimQuandoContent]);
+
+  useEffect(() => {
+    if (claimRisolveContent?.content) setClaimRisolve(claimRisolveContent.content);
+  }, [claimRisolveContent]);
+
+  useEffect(() => {
+    if (claimComeContent?.content) setClaimCome(claimComeContent.content);
+  }, [claimComeContent]);
 
   const handleOpenCreate = () => {
     setEditingHotspot(null);
@@ -124,6 +148,20 @@ const Admin = () => {
     await updateSiteContent.mutateAsync({ key: "header_title", content: headerTitle });
     await updateSiteContent.mutateAsync({ key: "header_subtitle", content: headerSubtitle });
   };
+
+  const handleSaveClaim = async () => {
+    await updateSiteContent.mutateAsync({ key: "claim_ti_aiuta", content: claimTiAiuta });
+    await updateSiteContent.mutateAsync({ key: "claim_quando", content: claimQuando });
+    await updateSiteContent.mutateAsync({ key: "claim_risolve", content: claimRisolve });
+    await updateSiteContent.mutateAsync({ key: "claim_come", content: claimCome });
+  };
+
+  const isClaimLoading = claimTiAiutaLoading || claimQuandoLoading || claimRisolveLoading || claimComeLoading;
+  const isClaimUnchanged = 
+    claimTiAiuta === claimTiAiutaContent?.content && 
+    claimQuando === claimQuandoContent?.content && 
+    claimRisolve === claimRisolveContent?.content && 
+    claimCome === claimComeContent?.content;
 
   if (authLoading || isLoading) {
     return (
@@ -478,6 +516,76 @@ const Admin = () => {
                             <Loader2 className="h-4 w-4 animate-spin mr-2" />
                           )}
                           Salva Intestazione
+                        </Button>
+                      </div>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Claim Content */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="h-5 w-5" />
+                    Claim Homepage
+                  </CardTitle>
+                  <CardDescription>
+                    Le 4 frasi del claim mostrate sotto il logo nella homepage.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {isClaimLoading ? (
+                    <div className="flex justify-center py-8">
+                      <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                    </div>
+                  ) : (
+                    <>
+                      <div className="space-y-2">
+                        <Label htmlFor="claim_ti_aiuta">TI AIUTA A:</Label>
+                        <Input
+                          id="claim_ti_aiuta"
+                          value={claimTiAiuta}
+                          onChange={(e) => setClaimTiAiuta(e.target.value)}
+                          placeholder="TROVARE IL TUO ANGOLO DI PACE..."
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="claim_quando">QUANDO:</Label>
+                        <Input
+                          id="claim_quando"
+                          value={claimQuando}
+                          onChange={(e) => setClaimQuando(e.target.value)}
+                          placeholder="NON SAI DOVE ANDARE..."
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="claim_risolve">RISOLVE:</Label>
+                        <Input
+                          id="claim_risolve"
+                          value={claimRisolve}
+                          onChange={(e) => setClaimRisolve(e.target.value)}
+                          placeholder="IL RISCHIO DI FINIRE..."
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="claim_come">COME:</Label>
+                        <Input
+                          id="claim_come"
+                          value={claimCome}
+                          onChange={(e) => setClaimCome(e.target.value)}
+                          placeholder="SOLO LUOGHI SELEZIONATI..."
+                        />
+                      </div>
+                      <div className="flex justify-end">
+                        <Button 
+                          onClick={handleSaveClaim}
+                          disabled={updateSiteContent.isPending || isClaimUnchanged}
+                        >
+                          {updateSiteContent.isPending && (
+                            <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                          )}
+                          Salva Claim
                         </Button>
                       </div>
                     </>

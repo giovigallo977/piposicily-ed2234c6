@@ -4,6 +4,7 @@ import { Menu, Filter } from "lucide-react";
 import pipoAlien from "@/assets/pipo-alien.png";
 import { useTranslatedContent } from "@/hooks/useTranslation";
 import { useLanguage, Language } from "@/contexts/LanguageContext";
+import { useSiteContent } from "@/hooks/useSiteContent";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,9 +31,27 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
   const [menuOpen, setMenuOpen] = useState(false);
   const { language, setLanguage, t } = useLanguage();
   
+  // Fetch claim content from database
+  const { data: claimTiAiutaData } = useSiteContent("claim_ti_aiuta");
+  const { data: claimQuandoData } = useSiteContent("claim_quando");
+  const { data: claimRisolveData } = useSiteContent("claim_risolve");
+  const { data: claimComeData } = useSiteContent("claim_come");
+  
   // Translate dynamic content
   const { translatedText: translatedTitle, isTranslating: titleLoading } = useTranslatedContent(headerTitle);
   const { translatedText: translatedSubtitle, isTranslating: subtitleLoading } = useTranslatedContent(headerSubtitle);
+  
+  // Translate claim content
+  const { translatedText: translatedTiAiuta } = useTranslatedContent(claimTiAiutaData?.content);
+  const { translatedText: translatedQuando } = useTranslatedContent(claimQuandoData?.content);
+  const { translatedText: translatedRisolve } = useTranslatedContent(claimRisolveData?.content);
+  const { translatedText: translatedCome } = useTranslatedContent(claimComeData?.content);
+  
+  // Fallback values
+  const claimTiAiuta = translatedTiAiuta || claimTiAiutaData?.content || "TROVARE IL TUO ANGOLO DI PACE FUORI DAI RADAR.";
+  const claimQuando = translatedQuando || claimQuandoData?.content || "NON SAI DOVE ANDARE E VUOI DECIDERE IN 30 SECONDI.";
+  const claimRisolve = translatedRisolve || claimRisolveData?.content || "IL RISCHIO DI FINIRE NEI SOLITI POSTI AFFOLLATI O SU STRADE IMPRATICABILI.";
+  const claimCome = translatedCome || claimComeData?.content || "SOLO LUOGHI SELEZIONATI DA UN ALIENO, CON INFO REALI SU ASFALTO, CIBO E NATURA.";
 
   return (
     <header className="sticky top-0 z-50 bg-background backdrop-blur-sm border-b border-border/30">
@@ -60,16 +79,16 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
         {/* Row 3: Claim completo in Bebas Neue verde Pipo */}
         <div className="flex flex-col items-center mt-3 gap-1 px-4">
           <p className="font-claim text-olive text-base tracking-wide text-center leading-tight">
-            <span className="font-bold">TI AIUTA A:</span> TROVARE IL TUO ANGOLO DI PACE FUORI DAI RADAR.
+            <span className="font-bold">TI AIUTA A:</span> {claimTiAiuta}
           </p>
           <p className="font-claim text-olive text-base tracking-wide text-center leading-tight">
-            <span className="font-bold">QUANDO:</span> NON SAI DOVE ANDARE E VUOI DECIDERE IN 30 SECONDI.
+            <span className="font-bold">QUANDO:</span> {claimQuando}
           </p>
           <p className="font-claim text-olive text-base tracking-wide text-center leading-tight">
-            <span className="font-bold">RISOLVE:</span> IL RISCHIO DI FINIRE NEI SOLITI POSTI AFFOLLATI O SU STRADE IMPRATICABILI.
+            <span className="font-bold">RISOLVE:</span> {claimRisolve}
           </p>
           <p className="font-claim text-olive text-base tracking-wide text-center leading-tight">
-            <span className="font-bold">COME:</span> SOLO LUOGHI SELEZIONATI DA UN ALIENO, CON INFO REALI SU ASFALTO, CIBO E NATURA.
+            <span className="font-bold">COME:</span> {claimCome}
           </p>
         </div>
 
