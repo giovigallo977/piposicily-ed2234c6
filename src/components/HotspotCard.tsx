@@ -69,8 +69,7 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
   return (
     <>
       <article className={cn(
-        "bg-card rounded-3xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-2",
-        borderColor,
+        "bg-card rounded-3xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1",
         isTranslating && "opacity-75"
       )}>
         {/* Immagine principale */}
@@ -172,10 +171,7 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
                     return (
                       <div
                         key={photoIndex}
-                        className={cn(
-                          "aspect-square rounded-2xl overflow-hidden bg-muted cursor-pointer transition-all duration-300 hover:scale-110 hover:rotate-2 shadow-lg hover:shadow-xl border-2",
-                          borderColors[photoColorIndex]
-                        )}
+                        className="aspect-square rounded-2xl overflow-hidden bg-muted cursor-pointer transition-all duration-300 hover:scale-110 hover:rotate-2 shadow-lg hover:shadow-xl"
                         onClick={() => openLightbox(photoIndex)}
                       >
                         <img
