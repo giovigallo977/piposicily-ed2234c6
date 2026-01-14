@@ -1,15 +1,13 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Menu, Filter, Globe } from "lucide-react";
+import { Menu, Filter } from "lucide-react";
 import pipoAlien from "@/assets/pipo-alien.png";
-import { useLanguage, Language } from "@/contexts/LanguageContext";
 import { useTranslatedContent } from "@/hooks/useTranslation";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import {
   Sheet,
@@ -18,6 +16,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface HeaderProps {
   categories?: string[];
@@ -29,15 +28,11 @@ interface HeaderProps {
 
 const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTitle, headerSubtitle }: HeaderProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { language, setLanguage, t } = useLanguage();
+  const { t } = useLanguage();
   
   // Translate dynamic content
   const { translatedText: translatedTitle, isTranslating: titleLoading } = useTranslatedContent(headerTitle);
   const { translatedText: translatedSubtitle, isTranslating: subtitleLoading } = useTranslatedContent(headerSubtitle);
-
-  const handleLanguageChange = (lang: Language) => {
-    setLanguage(lang);
-  };
 
   return (
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/40">
@@ -95,38 +90,6 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
                 >
                   {t("missionTitle")}
                 </Link>
-                
-                {/* Language Selector */}
-                <div className="px-4 py-3">
-                  <div className="flex items-center gap-2 text-muted-foreground text-sm mb-2">
-                    <Globe className="w-4 h-4" />
-                    <span>{t("language")}</span>
-                  </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => handleLanguageChange("it")}
-                      className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
-                        language === "it" 
-                          ? "bg-olive text-olive-foreground" 
-                          : "hover:bg-muted text-foreground"
-                      }`}
-                    >
-                      <span className="text-lg">🇮🇹</span>
-                      <span className="text-sm font-medium">{t("languageIt")}</span>
-                    </button>
-                    <button
-                      onClick={() => handleLanguageChange("en")}
-                      className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
-                        language === "en" 
-                          ? "bg-olive text-olive-foreground" 
-                          : "hover:bg-muted text-foreground"
-                      }`}
-                    >
-                      <span className="text-lg">🇬🇧</span>
-                      <span className="text-sm font-medium">{t("languageEn")}</span>
-                    </button>
-                  </div>
-                </div>
               </nav>
             </SheetContent>
           </Sheet>
