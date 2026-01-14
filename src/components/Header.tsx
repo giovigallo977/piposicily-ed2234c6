@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Menu, Filter } from "lucide-react";
 import pipoAlien from "@/assets/pipo-alien.png";
 import { useTranslatedContent } from "@/hooks/useTranslation";
-import { useLanguage, Language } from "@/contexts/LanguageContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import {
   DropdownMenu,
@@ -27,31 +27,53 @@ interface HeaderProps {
   headerSubtitle?: string;
 }
 
+interface ClaimData {
+  label: string;
+  content: string;
+}
+
 const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTitle, headerSubtitle }: HeaderProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const { language, setLanguage, t } = useLanguage();
   
-  // Fetch claim content from database
-  const { data: claimTiAiutaData } = useSiteContent("claim_ti_aiuta");
-  const { data: claimQuandoData } = useSiteContent("claim_quando");
-  const { data: claimRisolveData } = useSiteContent("claim_risolve");
-  const { data: claimComeData } = useSiteContent("claim_come");
+  // Fetch claims content from database
+  const { data: claimsData } = useSiteContent("claims");
+  
+  // Parse claims
+  const parsedClaims: ClaimData[] = claimsData?.content 
+    ? (() => {
+        try {
+          return JSON.parse(claimsData.content);
+        } catch {
+          return [];
+        }
+      })()
+    : [];
   
   // Translate dynamic content
   const { translatedText: translatedTitle, isTranslating: titleLoading } = useTranslatedContent(headerTitle);
   const { translatedText: translatedSubtitle, isTranslating: subtitleLoading } = useTranslatedContent(headerSubtitle);
   
-  // Translate claim content
-  const { translatedText: translatedTiAiuta } = useTranslatedContent(claimTiAiutaData?.content);
-  const { translatedText: translatedQuando } = useTranslatedContent(claimQuandoData?.content);
-  const { translatedText: translatedRisolve } = useTranslatedContent(claimRisolveData?.content);
-  const { translatedText: translatedCome } = useTranslatedContent(claimComeData?.content);
+  // Translate each claim content
+  const claimContents = parsedClaims.map(c => c.content).join("|||");
+  const { translatedText: translatedClaimContents } = useTranslatedContent(claimContents);
   
-  // Fallback values
-  const claimTiAiuta = translatedTiAiuta || claimTiAiutaData?.content || "TROVARE IL TUO ANGOLO DI PACE FUORI DAI RADAR.";
-  const claimQuando = translatedQuando || claimQuandoData?.content || "NON SAI DOVE ANDARE E VUOI DECIDERE IN 30 SECONDI.";
-  const claimRisolve = translatedRisolve || claimRisolveData?.content || "IL RISCHIO DI FINIRE NEI SOLITI POSTI AFFOLLATI O SU STRADE IMPRATICABILI.";
-  const claimCome = translatedCome || claimComeData?.content || "SOLO LUOGHI SELEZIONATI DA UN ALIENO, CON INFO REALI SU ASFALTO, CIBO E NATURA.";
+  // Split translated contents back
+  const translatedClaimArray = translatedClaimContents?.split("|||") || [];
+  
+  // Build final claims with translations
+  const finalClaims = parsedClaims.map((claim, index) => ({
+    label: claim.label,
+    content: translatedClaimArray[index] || claim.content,
+  }));
+  
+  // Fallback if no claims in database
+  const displayClaims = finalClaims.length > 0 ? finalClaims : [
+    { label: "TI AIUTA A:", content: "TROVARE IL TUO ANGOLO DI PACE FUORI DAI RADAR." },
+    { label: "QUANDO:", content: "NON SAI DOVE ANDARE E VUOI DECIDERE IN 30 SECONDI." },
+    { label: "RISOLVE:", content: "IL RISCHIO DI FINIRE NEI SOLITI POSTI AFFOLLATI O SU STRADE IMPRATICABILI." },
+    { label: "COME:", content: "SOLO LUOGHI SELEZIONATI DA UN ALIENO, CON INFO REALI SU ASFALTO, CIBO E NATURA." },
+  ];
 
   return (
     <header className="sticky top-0 z-50 bg-background backdrop-blur-sm border-b border-border/30">
@@ -78,18 +100,11 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
 
         {/* Row 3: Claim completo in Bebas Neue verde Pipo */}
         <div className="flex flex-col items-center mt-3 gap-1 px-4">
-          <p className="font-claim text-olive text-base tracking-wide text-center leading-tight">
-            <span className="font-bold">TI AIUTA A:</span> {claimTiAiuta}
-          </p>
-          <p className="font-claim text-olive text-base tracking-wide text-center leading-tight">
-            <span className="font-bold">QUANDO:</span> {claimQuando}
-          </p>
-          <p className="font-claim text-olive text-base tracking-wide text-center leading-tight">
-            <span className="font-bold">RISOLVE:</span> {claimRisolve}
-          </p>
-          <p className="font-claim text-olive text-base tracking-wide text-center leading-tight">
-            <span className="font-bold">COME:</span> {claimCome}
-          </p>
+          {displayClaims.map((claim, index) => (
+            <p key={index} className="font-claim text-olive text-base tracking-wide text-center leading-tight">
+              <span className="font-bold">{claim.label}</span> {claim.content}
+            </p>
+          ))}
         </div>
 
         {/* Row 4: Hamburger left, Filter right */}

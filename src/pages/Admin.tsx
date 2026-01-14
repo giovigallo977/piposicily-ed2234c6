@@ -5,6 +5,7 @@ import { useHotspots, useCreateHotspot, useUpdateHotspot, useDeleteHotspot, Hots
 import { useSiteContent, useUpdateSiteContent } from "@/hooks/useSiteContent";
 import { ImageUpload, MultiImageUpload } from "@/components/ImageUpload";
 import { EmojiPicker } from "@/components/EmojiPicker";
+import { SortableClaimItem, ClaimItem } from "@/components/admin/SortableClaimItem";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,6 +15,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, Plus, Pencil, Trash2, LogOut, ArrowLeft, FileText, MapPin } from "lucide-react";
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import pipoAlien from "@/assets/pipo-alien.png";
 
 const emptyHotspot: HotspotInsert = {
@@ -40,10 +43,7 @@ const Admin = () => {
   const { data: missionContent, isLoading: missionLoading } = useSiteContent("mission");
   const { data: headerTitleContent, isLoading: headerTitleLoading } = useSiteContent("header_title");
   const { data: headerSubtitleContent, isLoading: headerSubtitleLoading } = useSiteContent("header_subtitle");
-  const { data: claimTiAiutaContent, isLoading: claimTiAiutaLoading } = useSiteContent("claim_ti_aiuta");
-  const { data: claimQuandoContent, isLoading: claimQuandoLoading } = useSiteContent("claim_quando");
-  const { data: claimRisolveContent, isLoading: claimRisolveLoading } = useSiteContent("claim_risolve");
-  const { data: claimComeContent, isLoading: claimComeLoading } = useSiteContent("claim_come");
+  const { data: claimsContent, isLoading: claimsLoading } = useSiteContent("claims");
   const updateSiteContent = useUpdateSiteContent();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -52,10 +52,16 @@ const Admin = () => {
   const [missionText, setMissionText] = useState("");
   const [headerTitle, setHeaderTitle] = useState("");
   const [headerSubtitle, setHeaderSubtitle] = useState("");
-  const [claimTiAiuta, setClaimTiAiuta] = useState("");
-  const [claimQuando, setClaimQuando] = useState("");
-  const [claimRisolve, setClaimRisolve] = useState("");
-  const [claimCome, setClaimCome] = useState("");
+  const [claims, setClaims] = useState<ClaimItem[]>([]);
+  const [originalClaimsJson, setOriginalClaimsJson] = useState("");
+  
+  // Drag and drop sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -82,20 +88,21 @@ const Admin = () => {
   }, [headerSubtitleContent]);
 
   useEffect(() => {
-    if (claimTiAiutaContent?.content) setClaimTiAiuta(claimTiAiutaContent.content);
-  }, [claimTiAiutaContent]);
-
-  useEffect(() => {
-    if (claimQuandoContent?.content) setClaimQuando(claimQuandoContent.content);
-  }, [claimQuandoContent]);
-
-  useEffect(() => {
-    if (claimRisolveContent?.content) setClaimRisolve(claimRisolveContent.content);
-  }, [claimRisolveContent]);
-
-  useEffect(() => {
-    if (claimComeContent?.content) setClaimCome(claimComeContent.content);
-  }, [claimComeContent]);
+    if (claimsContent?.content) {
+      try {
+        const parsed = JSON.parse(claimsContent.content);
+        const claimsWithIds = parsed.map((item: { label: string; content: string }, index: number) => ({
+          id: `claim-${index}`,
+          label: item.label,
+          content: item.content,
+        }));
+        setClaims(claimsWithIds);
+        setOriginalClaimsJson(claimsContent.content);
+      } catch (e) {
+        console.error("Error parsing claims:", e);
+      }
+    }
+  }, [claimsContent]);
 
   const handleOpenCreate = () => {
     setEditingHotspot(null);
@@ -150,18 +157,40 @@ const Admin = () => {
   };
 
   const handleSaveClaim = async () => {
-    await updateSiteContent.mutateAsync({ key: "claim_ti_aiuta", content: claimTiAiuta });
-    await updateSiteContent.mutateAsync({ key: "claim_quando", content: claimQuando });
-    await updateSiteContent.mutateAsync({ key: "claim_risolve", content: claimRisolve });
-    await updateSiteContent.mutateAsync({ key: "claim_come", content: claimCome });
+    const claimsData = claims.map(({ label, content }) => ({ label, content }));
+    await updateSiteContent.mutateAsync({ key: "claims", content: JSON.stringify(claimsData) });
   };
 
-  const isClaimLoading = claimTiAiutaLoading || claimQuandoLoading || claimRisolveLoading || claimComeLoading;
-  const isClaimUnchanged = 
-    claimTiAiuta === claimTiAiutaContent?.content && 
-    claimQuando === claimQuandoContent?.content && 
-    claimRisolve === claimRisolveContent?.content && 
-    claimCome === claimComeContent?.content;
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      setClaims((items) => {
+        const oldIndex = items.findIndex((item) => item.id === active.id);
+        const newIndex = items.findIndex((item) => item.id === over.id);
+        return arrayMove(items, oldIndex, newIndex);
+      });
+    }
+  };
+
+  const handleClaimUpdate = (id: string, field: "label" | "content", value: string) => {
+    setClaims((items) =>
+      items.map((item) => (item.id === id ? { ...item, [field]: value } : item))
+    );
+  };
+
+  const handleClaimDelete = (id: string) => {
+    setClaims((items) => items.filter((item) => item.id !== id));
+  };
+
+  const handleAddClaim = () => {
+    setClaims((items) => [
+      ...items,
+      { id: `claim-${Date.now()}`, label: "", content: "" },
+    ]);
+  };
+
+  const currentClaimsJson = JSON.stringify(claims.map(({ label, content }) => ({ label, content })));
+  const isClaimUnchanged = currentClaimsJson === originalClaimsJson;
 
   if (authLoading || isLoading) {
     return (
@@ -531,53 +560,48 @@ const Admin = () => {
                     Claim Homepage
                   </CardTitle>
                   <CardDescription>
-                    Le 4 frasi del claim mostrate sotto il logo nella homepage.
+                    Le frasi del claim mostrate sotto il logo. Trascina per riordinare.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {isClaimLoading ? (
+                  {claimsLoading ? (
                     <div className="flex justify-center py-8">
                       <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                     </div>
                   ) : (
                     <>
-                      <div className="space-y-2">
-                        <Label htmlFor="claim_ti_aiuta">TI AIUTA A:</Label>
-                        <Input
-                          id="claim_ti_aiuta"
-                          value={claimTiAiuta}
-                          onChange={(e) => setClaimTiAiuta(e.target.value)}
-                          placeholder="TROVARE IL TUO ANGOLO DI PACE..."
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="claim_quando">QUANDO:</Label>
-                        <Input
-                          id="claim_quando"
-                          value={claimQuando}
-                          onChange={(e) => setClaimQuando(e.target.value)}
-                          placeholder="NON SAI DOVE ANDARE..."
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="claim_risolve">RISOLVE:</Label>
-                        <Input
-                          id="claim_risolve"
-                          value={claimRisolve}
-                          onChange={(e) => setClaimRisolve(e.target.value)}
-                          placeholder="IL RISCHIO DI FINIRE..."
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="claim_come">COME:</Label>
-                        <Input
-                          id="claim_come"
-                          value={claimCome}
-                          onChange={(e) => setClaimCome(e.target.value)}
-                          placeholder="SOLO LUOGHI SELEZIONATI..."
-                        />
-                      </div>
-                      <div className="flex justify-end">
+                      <DndContext
+                        sensors={sensors}
+                        collisionDetection={closestCenter}
+                        onDragEnd={handleDragEnd}
+                      >
+                        <SortableContext
+                          items={claims.map((c) => c.id)}
+                          strategy={verticalListSortingStrategy}
+                        >
+                          <div className="space-y-2">
+                            {claims.map((claim) => (
+                              <SortableClaimItem
+                                key={claim.id}
+                                claim={claim}
+                                onUpdate={handleClaimUpdate}
+                                onDelete={handleClaimDelete}
+                                canDelete={claims.length > 1}
+                              />
+                            ))}
+                          </div>
+                        </SortableContext>
+                      </DndContext>
+                      
+                      <div className="flex justify-between pt-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={handleAddClaim}
+                        >
+                          <Plus className="h-4 w-4 mr-2" />
+                          Aggiungi riga
+                        </Button>
                         <Button 
                           onClick={handleSaveClaim}
                           disabled={updateSiteContent.isPending || isClaimUnchanged}
