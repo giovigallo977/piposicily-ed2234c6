@@ -10,15 +10,52 @@ Ogni decisione strutturale documentata qui è DEFINITIVA. Le modifiche future de
 - **Foreground**: Toni caldi neutri (30 10% 15%)
 - **Background**: Bianco puro
 
+### Palette Soft & Playful (2025)
+- **Mint**: HSL `152 40% 95%` - Verde menta chiaro per sfondi e bordi
+- **Lavender**: HSL `260 40% 93%` - Lavanda pastello per badge categoria
+- **Warm Yellow**: HSL `48 96% 89%` - Accento opzionale per highlight
+
 ### Tipografia
 - **Titoli**: Proxima Nova Bold (font-heading)
-- **Body**: Proxima Nova Regular (font-body)
+- **Body**: Nunito / Proxima Nova Regular (font-body, font-friendly)
 - **Brand/CTA**: Inter Black Italic (font-brand)
 
-### Spaziatura
+### Spaziatura e Forme
 - Padding card: 20px (p-5)
-- Border radius card: 20px (rounded-[20px])
+- Border radius card: 24px (rounded-3xl)
+- Border radius bottoni: pill (rounded-full)
 - Gap tra elementi: coerente e generoso
+
+### Stile Componenti
+
+#### Cards
+- Background: bianco con bordo mint (`border-mint`)
+- Ombra: morbida con tinta verde (`shadow-lg shadow-olive/10`)
+- Transizioni smooth al hover
+
+#### Bottoni
+- Forma: pill/rounded-full
+- Bottone espansione: 40x40px con scala al hover
+- CTA: include emoji/icona, effetto scala al hover
+- Background: olive con ombra al hover
+
+#### Badge Categoria
+- Background: lavanda pastello (`bg-lavender`)
+- Testo: foreground con font semibold
+- Forma: pill (`rounded-full`)
+
+#### Header
+- Background: gradient da mint a background
+- Bottoni menu/filtro: stile pill con sfondo mint
+- Ombra sottile al hover
+
+#### Sfondo Pagina
+- Gradient: mint in alto che sfuma verso background
+
+### Animazioni
+- Scala hover: 1.05-1.10 per elementi interattivi
+- Durata transizioni: 200ms
+- Ombre enhanced al hover per profondità
 
 ## Principi UX Immutabili
 
