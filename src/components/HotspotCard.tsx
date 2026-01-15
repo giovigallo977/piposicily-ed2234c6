@@ -4,27 +4,14 @@ import { cn } from "@/lib/utils";
 import type { Hotspot } from "@/hooks/useHotspots";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedHotspot } from "@/hooks/useTranslation";
+import { useCardStyle } from "@/hooks/useCardStyle";
+import { fontSizeToClass } from "@/types/styles";
 import useEmblaCarousel from "embla-carousel-react";
 
 interface HotspotCardProps {
   hotspot: Hotspot;
   index?: number;
 }
-
-// Playful color rotation for badges and accents
-const badgeColors = [
-  { bg: "bg-sunny-yellow", text: "text-forest-green" },
-  { bg: "bg-lavender-vivid", text: "text-purple-900" },
-  { bg: "bg-mint", text: "text-forest-green" },
-  { bg: "bg-magenta/20", text: "text-magenta" },
-];
-
-const borderColors = [
-  "border-sunny-yellow",
-  "border-lavender-vivid", 
-  "border-mint",
-  "border-magenta/30",
-];
 
 const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -37,6 +24,26 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
     descrizione_breve: hotspot.descrizione_breve,
     descrizione_completa: hotspot.descrizione_completa,
     categoria: hotspot.categoria,
+  });
+
+  // Get merged styles (global + hotspot overrides)
+  const cardStyle = useCardStyle({
+    style_card_bg_color: hotspot.style_card_bg_color,
+    style_badge_bg_color: hotspot.style_badge_bg_color,
+    style_badge_text_color: hotspot.style_badge_text_color,
+    style_expand_btn_color: hotspot.style_expand_btn_color,
+    style_cta_btn_color: hotspot.style_cta_btn_color,
+    style_cta_btn_text_color: hotspot.style_cta_btn_text_color,
+    style_font_color: hotspot.style_font_color,
+    style_title_font: hotspot.style_title_font,
+    style_title_font_bold: hotspot.style_title_font_bold,
+    style_title_font_size: hotspot.style_title_font_size,
+    style_body_font: hotspot.style_body_font,
+    style_body_font_bold: hotspot.style_body_font_bold,
+    style_body_font_size: hotspot.style_body_font_size,
+    style_button_font: hotspot.style_button_font,
+    style_button_font_bold: hotspot.style_button_font_bold,
+    style_button_font_size: hotspot.style_button_font_size,
   });
 
   const [emblaRef, emblaApi] = useEmblaCarousel({ startIndex: currentPhotoIndex });
@@ -62,16 +69,15 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
 
   const validGalleryPhotos = hotspot.foto_gallery?.filter(Boolean) || [];
 
-  const colorIndex = index % badgeColors.length;
-  const badgeColor = badgeColors[colorIndex];
-  const borderColor = borderColors[colorIndex];
-
   return (
     <>
-      <article className={cn(
-        "bg-card rounded-3xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1",
-        isTranslating && "opacity-75"
-      )}>
+      <article 
+        className={cn(
+          "rounded-3xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1",
+          isTranslating && "opacity-75"
+        )}
+        style={{ backgroundColor: cardStyle.cardBgColor }}
+      >
         {/* Immagine principale */}
         <div className="aspect-[4/3] bg-muted overflow-hidden">
           {hotspot.foto_principale ? (
@@ -92,31 +98,41 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
         <div className="p-5">
           {/* Header con titolo e bottone espansione */}
           <div className="flex items-start justify-between gap-4">
-            <h2 className="font-heading text-xl font-bold text-foreground leading-tight flex-1 min-w-0">
+            <h2 
+              className={cn("leading-tight flex-1 min-w-0", fontSizeToClass(cardStyle.titleFontSize))}
+              style={{ 
+                fontFamily: cardStyle.titleFontFamily,
+                fontWeight: cardStyle.titleFontBold ? 700 : 400,
+                color: cardStyle.fontColor,
+              }}
+            >
               {translated.titolo}
             </h2>
             
             {/* Categoria e bottone espansione */}
             <div className="flex items-center gap-2 flex-shrink-0">
               {translated.categoria && (
-                <span className={cn(
-                  "px-3 py-1.5 text-xs font-bold rounded-full shadow-sm",
-                  badgeColor.bg,
-                  badgeColor.text
-                )}>
+                <span 
+                  className="px-3 py-1.5 text-xs font-bold rounded-full shadow-sm"
+                  style={{ 
+                    backgroundColor: cardStyle.badgeBgColor,
+                    color: cardStyle.badgeTextColor,
+                  }}
+                >
                   {translated.categoria}
                 </span>
               )}
               <button
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="w-11 h-11 rounded-full bg-olive ring-2 ring-white flex items-center justify-center transition-all duration-300 hover:bg-olive/90 hover:scale-115 hover:shadow-xl hover:shadow-olive/40 active:scale-95"
+                className="w-11 h-11 rounded-full ring-2 ring-white flex items-center justify-center transition-all duration-300 hover:scale-115 hover:shadow-xl active:scale-95"
+                style={{ backgroundColor: cardStyle.expandBtnColor }}
                 aria-expanded={isExpanded}
                 aria-label={isExpanded ? t("hideDetails") : t("showDetails")}
               >
                 {isExpanded ? (
-                  <Minus className="w-5 h-5 text-olive-foreground" />
+                  <Minus className="w-5 h-5 text-white" />
                 ) : (
-                  <Plus className="w-5 h-5 text-olive-foreground" />
+                  <Plus className="w-5 h-5 text-white" />
                 )}
               </button>
             </div>
@@ -124,7 +140,14 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
 
           {/* Riga Tag */}
           {hotspot.tags && hotspot.tags.length > 0 && (
-            <p className="mt-1 font-body text-sm text-foreground">
+            <p 
+              className={cn("mt-1", fontSizeToClass(cardStyle.bodyFontSize))}
+              style={{ 
+                fontFamily: cardStyle.bodyFontFamily,
+                fontWeight: cardStyle.bodyFontBold ? 700 : 400,
+                color: cardStyle.fontColor,
+              }}
+            >
               {hotspot.tags.map((tag, i) => (
                 <span key={i}>• {tag} </span>
               ))}
@@ -132,7 +155,14 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
           )}
 
           {/* Descrizione breve - riga orizzontale completa */}
-          <p className="mt-2 font-body text-sm text-foreground leading-relaxed">
+          <p 
+            className={cn("mt-2 leading-relaxed", fontSizeToClass(cardStyle.bodyFontSize))}
+            style={{ 
+              fontFamily: cardStyle.bodyFontFamily,
+              fontWeight: cardStyle.bodyFontBold ? 700 : 400,
+              color: cardStyle.fontColor,
+            }}
+          >
             {translated.descrizione_breve}
           </p>
 
@@ -145,9 +175,16 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
           >
             <div className="overflow-hidden">
               {/* Descrizione completa */}
-                <p className="font-body text-sm text-foreground leading-relaxed whitespace-pre-line">
-                  {translated.descrizione_completa}
-                </p>
+              <p 
+                className={cn("leading-relaxed whitespace-pre-line", fontSizeToClass(cardStyle.bodyFontSize))}
+                style={{ 
+                  fontFamily: cardStyle.bodyFontFamily,
+                  fontWeight: cardStyle.bodyFontBold ? 700 : 400,
+                  color: cardStyle.fontColor,
+                }}
+              >
+                {translated.descrizione_completa}
+              </p>
 
               {/* Link Naviga - usa <a> per mobile compatibility */}
               {hotspot.link_google_maps && (
@@ -155,7 +192,16 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
                   href={hotspot.link_google_maps}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-4 inline-flex items-center gap-2 px-6 py-3.5 bg-sunny-yellow text-forest-green rounded-full font-brand font-black italic text-sm transition-all duration-300 hover:scale-105 hover:rotate-1 hover:shadow-xl shadow-lg shadow-sunny-yellow/40 active:scale-95"
+                  className={cn(
+                    "mt-4 inline-flex items-center gap-2 px-6 py-3.5 rounded-full italic transition-all duration-300 hover:scale-105 hover:rotate-1 hover:shadow-xl shadow-lg active:scale-95",
+                    fontSizeToClass(cardStyle.buttonFontSize)
+                  )}
+                  style={{ 
+                    backgroundColor: cardStyle.ctaBtnColor,
+                    color: cardStyle.ctaBtnTextColor,
+                    fontFamily: cardStyle.buttonFontFamily,
+                    fontWeight: cardStyle.buttonFontBold ? 700 : 400,
+                  }}
                 >
                   <span className="text-lg">👽</span>
                   <Navigation className="w-4 h-4" />
@@ -166,23 +212,20 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
               {/* Galleria foto */}
               {validGalleryPhotos.length > 0 && (
                 <div className="mt-5 grid grid-cols-3 gap-3">
-                  {validGalleryPhotos.map((foto, photoIndex) => {
-                    const photoColorIndex = photoIndex % borderColors.length;
-                    return (
-                      <div
-                        key={photoIndex}
-                        className="aspect-square rounded-2xl overflow-hidden bg-muted cursor-pointer transition-all duration-300 hover:scale-110 hover:rotate-2 shadow-lg hover:shadow-xl"
-                        onClick={() => openLightbox(photoIndex)}
-                      >
-                        <img
-                          src={foto}
-                          alt={`${translated.titolo} - ${t("photo")} ${photoIndex + 1}`}
-                          className="w-full h-full object-cover"
-                          loading="lazy"
-                        />
-                      </div>
-                    );
-                  })}
+                  {validGalleryPhotos.map((foto, photoIndex) => (
+                    <div
+                      key={photoIndex}
+                      className="aspect-square rounded-2xl overflow-hidden bg-muted cursor-pointer transition-all duration-300 hover:scale-110 hover:rotate-2 shadow-lg hover:shadow-xl"
+                      onClick={() => openLightbox(photoIndex)}
+                    >
+                      <img
+                        src={foto}
+                        alt={`${translated.titolo} - ${t("photo")} ${photoIndex + 1}`}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                    </div>
+                  ))}
                 </div>
               )}
             </div>

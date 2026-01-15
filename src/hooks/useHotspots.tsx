@@ -1,8 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { HotspotStyleOverrides } from "@/types/styles";
 
-export interface Hotspot {
+export interface Hotspot extends HotspotStyleOverrides {
   id: string;
   titolo: string;
   descrizione_breve: string;
