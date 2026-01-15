@@ -25,6 +25,22 @@ export type Database = {
           id: string
           link_google_maps: string | null
           ordine: number | null
+          style_badge_bg_color: string | null
+          style_badge_text_color: string | null
+          style_body_font: string | null
+          style_body_font_bold: boolean | null
+          style_body_font_size: string | null
+          style_button_font: string | null
+          style_button_font_bold: boolean | null
+          style_button_font_size: string | null
+          style_card_bg_color: string | null
+          style_cta_btn_color: string | null
+          style_cta_btn_text_color: string | null
+          style_expand_btn_color: string | null
+          style_font_color: string | null
+          style_title_font: string | null
+          style_title_font_bold: boolean | null
+          style_title_font_size: string | null
           tags: string[] | null
           titolo: string
           updated_at: string
@@ -39,6 +55,22 @@ export type Database = {
           id?: string
           link_google_maps?: string | null
           ordine?: number | null
+          style_badge_bg_color?: string | null
+          style_badge_text_color?: string | null
+          style_body_font?: string | null
+          style_body_font_bold?: boolean | null
+          style_body_font_size?: string | null
+          style_button_font?: string | null
+          style_button_font_bold?: boolean | null
+          style_button_font_size?: string | null
+          style_card_bg_color?: string | null
+          style_cta_btn_color?: string | null
+          style_cta_btn_text_color?: string | null
+          style_expand_btn_color?: string | null
+          style_font_color?: string | null
+          style_title_font?: string | null
+          style_title_font_bold?: boolean | null
+          style_title_font_size?: string | null
           tags?: string[] | null
           titolo: string
           updated_at?: string
@@ -53,6 +85,22 @@ export type Database = {
           id?: string
           link_google_maps?: string | null
           ordine?: number | null
+          style_badge_bg_color?: string | null
+          style_badge_text_color?: string | null
+          style_body_font?: string | null
+          style_body_font_bold?: boolean | null
+          style_body_font_size?: string | null
+          style_button_font?: string | null
+          style_button_font_bold?: boolean | null
+          style_button_font_size?: string | null
+          style_card_bg_color?: string | null
+          style_cta_btn_color?: string | null
+          style_cta_btn_text_color?: string | null
+          style_expand_btn_color?: string | null
+          style_font_color?: string | null
+          style_title_font?: string | null
+          style_title_font_bold?: boolean | null
+          style_title_font_size?: string | null
           tags?: string[] | null
           titolo?: string
           updated_at?: string
@@ -79,6 +127,75 @@ export type Database = {
           created_at?: string
           id?: string
           key?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      style_settings: {
+        Row: {
+          badge_bg_color: string | null
+          badge_text_color: string | null
+          body_font: string | null
+          body_font_bold: boolean | null
+          body_font_size: string | null
+          button_font: string | null
+          button_font_bold: boolean | null
+          button_font_size: string | null
+          card_bg_color: string | null
+          created_at: string
+          cta_btn_color: string | null
+          cta_btn_text_color: string | null
+          expand_btn_color: string | null
+          font_color: string | null
+          id: string
+          key: string
+          title_font: string | null
+          title_font_bold: boolean | null
+          title_font_size: string | null
+          updated_at: string
+        }
+        Insert: {
+          badge_bg_color?: string | null
+          badge_text_color?: string | null
+          body_font?: string | null
+          body_font_bold?: boolean | null
+          body_font_size?: string | null
+          button_font?: string | null
+          button_font_bold?: boolean | null
+          button_font_size?: string | null
+          card_bg_color?: string | null
+          created_at?: string
+          cta_btn_color?: string | null
+          cta_btn_text_color?: string | null
+          expand_btn_color?: string | null
+          font_color?: string | null
+          id?: string
+          key: string
+          title_font?: string | null
+          title_font_bold?: boolean | null
+          title_font_size?: string | null
+          updated_at?: string
+        }
+        Update: {
+          badge_bg_color?: string | null
+          badge_text_color?: string | null
+          body_font?: string | null
+          body_font_bold?: boolean | null
+          body_font_size?: string | null
+          button_font?: string | null
+          button_font_bold?: boolean | null
+          button_font_size?: string | null
+          card_bg_color?: string | null
+          created_at?: string
+          cta_btn_color?: string | null
+          cta_btn_text_color?: string | null
+          expand_btn_color?: string | null
+          font_color?: string | null
+          id?: string
+          key?: string
+          title_font?: string | null
+          title_font_bold?: boolean | null
+          title_font_size?: string | null
           updated_at?: string
         }
         Relationships: []
