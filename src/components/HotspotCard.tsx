@@ -5,7 +5,7 @@ import type { Hotspot } from "@/hooks/useHotspots";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedHotspot } from "@/hooks/useTranslation";
 import { useCardStyle } from "@/hooks/useCardStyle";
-import { fontSizeToClass } from "@/types/styles";
+import { fontSizeToClass, fontSizeToPx } from "@/types/styles";
 import useEmblaCarousel from "embla-carousel-react";
 
 interface HotspotCardProps {
@@ -36,14 +36,17 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
     style_cta_btn_text_color: hotspot.style_cta_btn_text_color,
     style_font_color: hotspot.style_font_color,
     style_title_font: hotspot.style_title_font,
-    style_title_font_bold: hotspot.style_title_font_bold,
+    style_title_font_weight: hotspot.style_title_font_weight,
     style_title_font_size: hotspot.style_title_font_size,
     style_body_font: hotspot.style_body_font,
-    style_body_font_bold: hotspot.style_body_font_bold,
+    style_body_font_weight: hotspot.style_body_font_weight,
     style_body_font_size: hotspot.style_body_font_size,
     style_button_font: hotspot.style_button_font,
-    style_button_font_bold: hotspot.style_button_font_bold,
+    style_button_font_weight: hotspot.style_button_font_weight,
     style_button_font_size: hotspot.style_button_font_size,
+    style_tag_font: hotspot.style_tag_font,
+    style_tag_font_weight: hotspot.style_tag_font_weight,
+    style_tag_font_size: hotspot.style_tag_font_size,
   });
 
   const [emblaRef, emblaApi] = useEmblaCarousel({ startIndex: currentPhotoIndex });
@@ -102,8 +105,9 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
               className={cn("leading-tight flex-1 min-w-0", fontSizeToClass(cardStyle.titleFontSize))}
               style={{ 
                 fontFamily: cardStyle.titleFontFamily,
-                fontWeight: cardStyle.titleFontBold ? 700 : 400,
+                fontWeight: cardStyle.titleFontWeight,
                 color: cardStyle.fontColor,
+                fontSize: fontSizeToPx(cardStyle.titleFontSize),
               }}
             >
               {translated.titolo}
@@ -141,11 +145,12 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
           {/* Riga Tag */}
           {hotspot.tags && hotspot.tags.length > 0 && (
             <p 
-              className={cn("mt-1", fontSizeToClass(cardStyle.bodyFontSize))}
+              className={cn("mt-1", fontSizeToClass(cardStyle.tagFontSize))}
               style={{ 
-                fontFamily: cardStyle.bodyFontFamily,
-                fontWeight: cardStyle.bodyFontBold ? 700 : 400,
+                fontFamily: cardStyle.tagFontFamily,
+                fontWeight: cardStyle.tagFontWeight,
                 color: cardStyle.fontColor,
+                fontSize: fontSizeToPx(cardStyle.tagFontSize),
               }}
             >
               {hotspot.tags.map((tag, i) => (
@@ -159,8 +164,9 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
             className={cn("mt-2 leading-relaxed", fontSizeToClass(cardStyle.bodyFontSize))}
             style={{ 
               fontFamily: cardStyle.bodyFontFamily,
-              fontWeight: cardStyle.bodyFontBold ? 700 : 400,
+              fontWeight: cardStyle.bodyFontWeight,
               color: cardStyle.fontColor,
+              fontSize: fontSizeToPx(cardStyle.bodyFontSize),
             }}
           >
             {translated.descrizione_breve}
@@ -179,8 +185,9 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
                 className={cn("leading-relaxed whitespace-pre-line", fontSizeToClass(cardStyle.bodyFontSize))}
                 style={{ 
                   fontFamily: cardStyle.bodyFontFamily,
-                  fontWeight: cardStyle.bodyFontBold ? 700 : 400,
+                  fontWeight: cardStyle.bodyFontWeight,
                   color: cardStyle.fontColor,
+                  fontSize: fontSizeToPx(cardStyle.bodyFontSize),
                 }}
               >
                 {translated.descrizione_completa}
@@ -200,7 +207,8 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
                     backgroundColor: cardStyle.ctaBtnColor,
                     color: cardStyle.ctaBtnTextColor,
                     fontFamily: cardStyle.buttonFontFamily,
-                    fontWeight: cardStyle.buttonFontBold ? 700 : 400,
+                    fontWeight: cardStyle.buttonFontWeight,
+                    fontSize: fontSizeToPx(cardStyle.buttonFontSize),
                   }}
                 >
                   <span className="text-lg">👽</span>
