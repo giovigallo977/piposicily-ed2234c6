@@ -30,17 +30,23 @@ export type Database = {
           style_body_font: string | null
           style_body_font_bold: boolean | null
           style_body_font_size: string | null
+          style_body_font_weight: number | null
           style_button_font: string | null
           style_button_font_bold: boolean | null
           style_button_font_size: string | null
+          style_button_font_weight: number | null
           style_card_bg_color: string | null
           style_cta_btn_color: string | null
           style_cta_btn_text_color: string | null
           style_expand_btn_color: string | null
           style_font_color: string | null
+          style_tag_font: string | null
+          style_tag_font_size: string | null
+          style_tag_font_weight: number | null
           style_title_font: string | null
           style_title_font_bold: boolean | null
           style_title_font_size: string | null
+          style_title_font_weight: number | null
           tags: string[] | null
           titolo: string
           updated_at: string
@@ -60,17 +66,23 @@ export type Database = {
           style_body_font?: string | null
           style_body_font_bold?: boolean | null
           style_body_font_size?: string | null
+          style_body_font_weight?: number | null
           style_button_font?: string | null
           style_button_font_bold?: boolean | null
           style_button_font_size?: string | null
+          style_button_font_weight?: number | null
           style_card_bg_color?: string | null
           style_cta_btn_color?: string | null
           style_cta_btn_text_color?: string | null
           style_expand_btn_color?: string | null
           style_font_color?: string | null
+          style_tag_font?: string | null
+          style_tag_font_size?: string | null
+          style_tag_font_weight?: number | null
           style_title_font?: string | null
           style_title_font_bold?: boolean | null
           style_title_font_size?: string | null
+          style_title_font_weight?: number | null
           tags?: string[] | null
           titolo: string
           updated_at?: string
@@ -90,17 +102,23 @@ export type Database = {
           style_body_font?: string | null
           style_body_font_bold?: boolean | null
           style_body_font_size?: string | null
+          style_body_font_weight?: number | null
           style_button_font?: string | null
           style_button_font_bold?: boolean | null
           style_button_font_size?: string | null
+          style_button_font_weight?: number | null
           style_card_bg_color?: string | null
           style_cta_btn_color?: string | null
           style_cta_btn_text_color?: string | null
           style_expand_btn_color?: string | null
           style_font_color?: string | null
+          style_tag_font?: string | null
+          style_tag_font_size?: string | null
+          style_tag_font_weight?: number | null
           style_title_font?: string | null
           style_title_font_bold?: boolean | null
           style_title_font_size?: string | null
+          style_title_font_weight?: number | null
           tags?: string[] | null
           titolo?: string
           updated_at?: string
@@ -138,20 +156,31 @@ export type Database = {
           body_font: string | null
           body_font_bold: boolean | null
           body_font_size: string | null
+          body_font_weight: number | null
           button_font: string | null
           button_font_bold: boolean | null
           button_font_size: string | null
+          button_font_weight: number | null
           card_bg_color: string | null
           created_at: string
           cta_btn_color: string | null
           cta_btn_text_color: string | null
           expand_btn_color: string | null
+          filter_btn_active_bg_color: string | null
+          filter_btn_bg_color: string | null
+          filter_btn_icon_color: string | null
           font_color: string | null
+          hamburger_btn_bg_color: string | null
+          hamburger_btn_icon_color: string | null
           id: string
           key: string
+          tag_font: string | null
+          tag_font_size: string | null
+          tag_font_weight: number | null
           title_font: string | null
           title_font_bold: boolean | null
           title_font_size: string | null
+          title_font_weight: number | null
           updated_at: string
         }
         Insert: {
@@ -160,20 +189,31 @@ export type Database = {
           body_font?: string | null
           body_font_bold?: boolean | null
           body_font_size?: string | null
+          body_font_weight?: number | null
           button_font?: string | null
           button_font_bold?: boolean | null
           button_font_size?: string | null
+          button_font_weight?: number | null
           card_bg_color?: string | null
           created_at?: string
           cta_btn_color?: string | null
           cta_btn_text_color?: string | null
           expand_btn_color?: string | null
+          filter_btn_active_bg_color?: string | null
+          filter_btn_bg_color?: string | null
+          filter_btn_icon_color?: string | null
           font_color?: string | null
+          hamburger_btn_bg_color?: string | null
+          hamburger_btn_icon_color?: string | null
           id?: string
           key: string
+          tag_font?: string | null
+          tag_font_size?: string | null
+          tag_font_weight?: number | null
           title_font?: string | null
           title_font_bold?: boolean | null
           title_font_size?: string | null
+          title_font_weight?: number | null
           updated_at?: string
         }
         Update: {
@@ -182,20 +222,31 @@ export type Database = {
           body_font?: string | null
           body_font_bold?: boolean | null
           body_font_size?: string | null
+          body_font_weight?: number | null
           button_font?: string | null
           button_font_bold?: boolean | null
           button_font_size?: string | null
+          button_font_weight?: number | null
           card_bg_color?: string | null
           created_at?: string
           cta_btn_color?: string | null
           cta_btn_text_color?: string | null
           expand_btn_color?: string | null
+          filter_btn_active_bg_color?: string | null
+          filter_btn_bg_color?: string | null
+          filter_btn_icon_color?: string | null
           font_color?: string | null
+          hamburger_btn_bg_color?: string | null
+          hamburger_btn_icon_color?: string | null
           id?: string
           key?: string
+          tag_font?: string | null
+          tag_font_size?: string | null
+          tag_font_weight?: number | null
           title_font?: string | null
           title_font_bold?: boolean | null
           title_font_size?: string | null
+          title_font_weight?: number | null
           updated_at?: string
         }
         Relationships: []

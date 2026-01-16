@@ -1,8 +1,8 @@
 import { ColorPicker } from "./ColorPicker";
 import { FontSelector } from "./FontSelector";
-import { HotspotStyleOverrides, StyleSettings, StyleSettingsUpdate } from "@/types/styles";
+import { HotspotStyleOverrides, StyleSettings, StyleSettingsUpdate, fontNameToValue } from "@/types/styles";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Palette, Type } from "lucide-react";
+import { Palette, Type, Layout } from "lucide-react";
 
 interface StyleEditorProps {
   // For global styles
@@ -29,18 +29,23 @@ export const StyleEditor = ({
     if (mode === 'hotspot') {
       return (hotspotStyles?.[hotspotKey] as string) || '';
     }
-    return (globalStyles?.[globalKey] as string) || '';
+    const value = globalStyles?.[globalKey];
+    // For font fields, convert simple names to CSS values
+    if (globalKey.includes('_font') && !globalKey.includes('_font_')) {
+      return fontNameToValue(value as string || '');
+    }
+    return (value as string) || '';
   };
 
-  const getBoolValue = (globalKey: keyof StyleSettings, hotspotKey: keyof HotspotStyleOverrides): boolean => {
+  const getNumberValue = (globalKey: keyof StyleSettings, hotspotKey: keyof HotspotStyleOverrides, defaultValue: number): number => {
     if (mode === 'hotspot') {
-      return (hotspotStyles?.[hotspotKey] as boolean) ?? false;
+      return (hotspotStyles?.[hotspotKey] as number) ?? defaultValue;
     }
-    return (globalStyles?.[globalKey] as boolean) ?? false;
+    return (globalStyles?.[globalKey] as number) ?? defaultValue;
   };
 
   // Handle changes based on mode
-  const handleChange = (globalKey: keyof StyleSettingsUpdate, hotspotKey: keyof HotspotStyleOverrides, value: string | boolean) => {
+  const handleChange = (globalKey: keyof StyleSettingsUpdate, hotspotKey: keyof HotspotStyleOverrides, value: string | number | boolean) => {
     if (mode === 'hotspot' && onHotspotChange) {
       onHotspotChange({ [hotspotKey]: value || null });
     } else if (mode === 'global' && onGlobalChange) {
@@ -53,7 +58,7 @@ export const StyleEditor = ({
       {!compact && (
         <div className="flex items-center gap-2 mb-4">
           <Palette className="h-5 w-5 text-olive" />
-          <h3 className="font-semibold">Colori</h3>
+          <h3 className="font-semibold">Colori Schede</h3>
         </div>
       )}
       <div className={`grid ${compact ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-4'} gap-4`}>
@@ -103,6 +108,53 @@ export const StyleEditor = ({
     </div>
   );
 
+  const GlobalButtonsSection = () => {
+    if (mode !== 'global') return null;
+    
+    return (
+      <div className={compact ? "space-y-3" : ""}>
+        {!compact && (
+          <div className="flex items-center gap-2 mb-4">
+            <Layout className="h-5 w-5 text-olive" />
+            <h3 className="font-semibold">Pulsanti Globali (Header)</h3>
+          </div>
+        )}
+        <div className={`grid ${compact ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-3'} gap-4`}>
+          <ColorPicker
+            label="Hamburger (BG)"
+            value={getValue('hamburger_btn_bg_color', 'style_card_bg_color')}
+            onChange={(v) => handleChange('hamburger_btn_bg_color', 'style_card_bg_color', v)}
+            description="Sfondo pulsante menu"
+          />
+          <ColorPicker
+            label="Hamburger (Icona)"
+            value={getValue('hamburger_btn_icon_color', 'style_card_bg_color')}
+            onChange={(v) => handleChange('hamburger_btn_icon_color', 'style_card_bg_color', v)}
+            description="Colore icona menu"
+          />
+          <ColorPicker
+            label="Filtro (BG)"
+            value={getValue('filter_btn_bg_color', 'style_card_bg_color')}
+            onChange={(v) => handleChange('filter_btn_bg_color', 'style_card_bg_color', v)}
+            description="Sfondo pulsante filtro"
+          />
+          <ColorPicker
+            label="Filtro (Icona)"
+            value={getValue('filter_btn_icon_color', 'style_card_bg_color')}
+            onChange={(v) => handleChange('filter_btn_icon_color', 'style_card_bg_color', v)}
+            description="Colore icona filtro"
+          />
+          <ColorPicker
+            label="Filtro Attivo (BG)"
+            value={getValue('filter_btn_active_bg_color', 'style_card_bg_color')}
+            onChange={(v) => handleChange('filter_btn_active_bg_color', 'style_card_bg_color', v)}
+            description="Sfondo quando filtro è attivo"
+          />
+        </div>
+      </div>
+    );
+  };
+
   const FontsSection = () => (
     <div className={compact ? "space-y-3" : ""}>
       {!compact && (
@@ -116,31 +168,37 @@ export const StyleEditor = ({
           label="🔤 Font Titoli"
           fontValue={getValue('title_font', 'style_title_font')}
           onFontChange={(v) => handleChange('title_font', 'style_title_font', v)}
-          boldValue={getBoolValue('title_font_bold', 'style_title_font_bold')}
-          onBoldChange={(v) => handleChange('title_font_bold', 'style_title_font_bold', v)}
-          sizeValue={getValue('title_font_size', 'style_title_font_size')}
+          weightValue={getNumberValue('title_font_weight', 'style_title_font_weight', 700)}
+          onWeightChange={(v) => handleChange('title_font_weight', 'style_title_font_weight', v)}
+          sizeValue={getValue('title_font_size', 'style_title_font_size') || '20'}
           onSizeChange={(v) => handleChange('title_font_size', 'style_title_font_size', v)}
-          sizeType="title"
         />
         <FontSelector
           label="📝 Font Testi"
           fontValue={getValue('body_font', 'style_body_font')}
           onFontChange={(v) => handleChange('body_font', 'style_body_font', v)}
-          boldValue={getBoolValue('body_font_bold', 'style_body_font_bold')}
-          onBoldChange={(v) => handleChange('body_font_bold', 'style_body_font_bold', v)}
-          sizeValue={getValue('body_font_size', 'style_body_font_size')}
+          weightValue={getNumberValue('body_font_weight', 'style_body_font_weight', 400)}
+          onWeightChange={(v) => handleChange('body_font_weight', 'style_body_font_weight', v)}
+          sizeValue={getValue('body_font_size', 'style_body_font_size') || '14'}
           onSizeChange={(v) => handleChange('body_font_size', 'style_body_font_size', v)}
-          sizeType="body"
+        />
+        <FontSelector
+          label="🏷️ Font Tag"
+          fontValue={getValue('tag_font', 'style_tag_font')}
+          onFontChange={(v) => handleChange('tag_font', 'style_tag_font', v)}
+          weightValue={getNumberValue('tag_font_weight', 'style_tag_font_weight', 400)}
+          onWeightChange={(v) => handleChange('tag_font_weight', 'style_tag_font_weight', v)}
+          sizeValue={getValue('tag_font_size', 'style_tag_font_size') || '14'}
+          onSizeChange={(v) => handleChange('tag_font_size', 'style_tag_font_size', v)}
         />
         <FontSelector
           label="🔘 Font Pulsanti"
           fontValue={getValue('button_font', 'style_button_font')}
           onFontChange={(v) => handleChange('button_font', 'style_button_font', v)}
-          boldValue={getBoolValue('button_font_bold', 'style_button_font_bold')}
-          onBoldChange={(v) => handleChange('button_font_bold', 'style_button_font_bold', v)}
-          sizeValue={getValue('button_font_size', 'style_button_font_size')}
+          weightValue={getNumberValue('button_font_weight', 'style_button_font_weight', 700)}
+          onWeightChange={(v) => handleChange('button_font_weight', 'style_button_font_weight', v)}
+          sizeValue={getValue('button_font_size', 'style_button_font_size') || '14'}
           onSizeChange={(v) => handleChange('button_font_size', 'style_button_font_size', v)}
-          sizeType="button"
         />
       </div>
     </div>
@@ -161,7 +219,7 @@ export const StyleEditor = ({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Palette className="h-5 w-5" />
-            Colori
+            Colori Schede
           </CardTitle>
           <CardDescription>
             Personalizza i colori delle schede hotspot
@@ -172,6 +230,23 @@ export const StyleEditor = ({
         </CardContent>
       </Card>
 
+      {mode === 'global' && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Layout className="h-5 w-5" />
+              Pulsanti Globali
+            </CardTitle>
+            <CardDescription>
+              Colori dei pulsanti hamburger e filtro nell'header
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <GlobalButtonsSection />
+          </CardContent>
+        </Card>
+      )}
+
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -179,7 +254,7 @@ export const StyleEditor = ({
             Tipografia
           </CardTitle>
           <CardDescription>
-            Configura font, dimensioni e stili del testo
+            Configura font, dimensioni e pesi del testo
           </CardDescription>
         </CardHeader>
         <CardContent>

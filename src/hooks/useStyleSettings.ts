@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { StyleSettings, StyleSettingsUpdate, DEFAULT_STYLES } from "@/types/styles";
+import { StyleSettings, StyleSettingsUpdate, DEFAULT_STYLES, GlobalButtonStyles, fontNameToValue } from "@/types/styles";
 
 export const useStyleSettings = () => {
   return useQuery({
@@ -26,9 +26,33 @@ export const useStyleSettings = () => {
         } as StyleSettings;
       }
       
-      return data as StyleSettings;
+      // Map database values to our interface, normalizing font names to CSS values
+      return {
+        ...data,
+        title_font: fontNameToValue(data.title_font || 'Bebas Neue'),
+        body_font: fontNameToValue(data.body_font || 'Nunito'),
+        button_font: fontNameToValue(data.button_font || 'Nunito'),
+        tag_font: fontNameToValue(data.tag_font || 'Nunito'),
+        title_font_weight: data.title_font_weight ?? (data.title_font_bold ? 700 : 400),
+        body_font_weight: data.body_font_weight ?? (data.body_font_bold ? 700 : 400),
+        button_font_weight: data.button_font_weight ?? (data.button_font_bold ? 700 : 400),
+        tag_font_weight: data.tag_font_weight ?? 400,
+      } as StyleSettings;
     },
   });
+};
+
+export const useGlobalButtonStyles = (): GlobalButtonStyles & { isLoading: boolean } => {
+  const { data, isLoading } = useStyleSettings();
+  
+  return {
+    hamburgerBtnBgColor: data?.hamburger_btn_bg_color || DEFAULT_STYLES.hamburger_btn_bg_color,
+    hamburgerBtnIconColor: data?.hamburger_btn_icon_color || DEFAULT_STYLES.hamburger_btn_icon_color,
+    filterBtnBgColor: data?.filter_btn_bg_color || DEFAULT_STYLES.filter_btn_bg_color,
+    filterBtnIconColor: data?.filter_btn_icon_color || DEFAULT_STYLES.filter_btn_icon_color,
+    filterBtnActiveBgColor: data?.filter_btn_active_bg_color || DEFAULT_STYLES.filter_btn_active_bg_color,
+    isLoading,
+  };
 };
 
 export const useUpdateStyleSettings = () => {

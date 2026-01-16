@@ -1,31 +1,29 @@
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { AVAILABLE_FONTS, FONT_SIZES } from "@/types/styles";
+import { Input } from "@/components/ui/input";
+import { AVAILABLE_FONTS, FONT_WEIGHTS, FONT_SIZE_SCALE } from "@/types/styles";
 
 interface FontSelectorProps {
   label: string;
   fontValue: string;
   onFontChange: (value: string) => void;
-  boldValue: boolean;
-  onBoldChange: (value: boolean) => void;
+  weightValue: number;
+  onWeightChange: (value: number) => void;
   sizeValue: string;
   onSizeChange: (value: string) => void;
-  sizeType: 'title' | 'body' | 'button';
+  showSizeInput?: boolean; // Show numeric input instead of dropdown
 }
 
 export const FontSelector = ({
   label,
   fontValue,
   onFontChange,
-  boldValue,
-  onBoldChange,
+  weightValue,
+  onWeightChange,
   sizeValue,
   onSizeChange,
-  sizeType,
+  showSizeInput = true,
 }: FontSelectorProps) => {
-  const sizes = FONT_SIZES[sizeType];
-
   return (
     <div className="space-y-3 p-3 bg-muted/50 rounded-lg">
       <Label className="text-sm font-semibold">{label}</Label>
@@ -52,35 +50,50 @@ export const FontSelector = ({
           </Select>
         </div>
 
-        {/* Size */}
+        {/* Size - Numeric Input or Dropdown */}
         <div className="space-y-1">
-          <Label className="text-xs text-muted-foreground">Dimensione</Label>
-          <Select value={sizeValue} onValueChange={onSizeChange}>
+          <Label className="text-xs text-muted-foreground">Dimensione (px)</Label>
+          {showSizeInput ? (
+            <Input
+              type="number"
+              min={10}
+              max={72}
+              value={sizeValue}
+              onChange={(e) => onSizeChange(e.target.value)}
+              className="h-9 text-xs"
+              placeholder="16"
+            />
+          ) : (
+            <Select value={sizeValue} onValueChange={onSizeChange}>
+              <SelectTrigger className="h-9 text-xs">
+                <SelectValue placeholder="Dimensione" />
+              </SelectTrigger>
+              <SelectContent>
+                {FONT_SIZE_SCALE.map((size) => (
+                  <SelectItem key={size.value} value={size.value}>
+                    {size.label}px
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        </div>
+
+        {/* Weight - 3 levels */}
+        <div className="space-y-1">
+          <Label className="text-xs text-muted-foreground">Peso</Label>
+          <Select value={String(weightValue)} onValueChange={(v) => onWeightChange(Number(v))}>
             <SelectTrigger className="h-9 text-xs">
-              <SelectValue placeholder="Dimensione" />
+              <SelectValue placeholder="Peso" />
             </SelectTrigger>
             <SelectContent>
-              {sizes.map((size) => (
-                <SelectItem key={size.value} value={size.value}>
-                  {size.label}
+              {FONT_WEIGHTS.map((weight) => (
+                <SelectItem key={weight.value} value={String(weight.value)}>
+                  {weight.label}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
-        </div>
-
-        {/* Bold */}
-        <div className="flex items-end pb-1">
-          <div className="flex items-center gap-2">
-            <Checkbox
-              id={`bold-${label}`}
-              checked={boldValue}
-              onCheckedChange={(checked) => onBoldChange(checked === true)}
-            />
-            <Label htmlFor={`bold-${label}`} className="text-xs font-medium cursor-pointer">
-              Bold
-            </Label>
-          </div>
         </div>
       </div>
 
@@ -89,12 +102,11 @@ export const FontSelector = ({
         className="p-2 bg-background rounded border text-center"
         style={{ 
           fontFamily: fontValue,
-          fontWeight: boldValue ? 700 : 400,
+          fontWeight: weightValue,
+          fontSize: `${sizeValue}px`,
         }}
       >
-        <span className={`text-${sizeValue}`}>
-          Anteprima testo
-        </span>
+        Anteprima testo
       </div>
     </div>
   );

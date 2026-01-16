@@ -6,6 +6,7 @@ import { useTranslatedContent } from "@/hooks/useTranslation";
 import { useTranslatedCategories } from "@/hooks/useTranslatedCategories";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSiteContent } from "@/hooks/useSiteContent";
+import { useGlobalButtonStyles } from "@/hooks/useStyleSettings";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -37,6 +38,9 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
   const [menuOpen, setMenuOpen] = useState(false);
   const { language, setLanguage, t } = useLanguage();
   const { translatedCategories, getTranslatedCategory } = useTranslatedCategories(categories);
+  
+  // Fetch global button styles
+  const buttonStyles = useGlobalButtonStyles();
   
   // Fetch claims content from database
   const { data: claimsData } = useSiteContent("claims");
@@ -126,10 +130,16 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
           <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
             <SheetTrigger asChild>
               <button
-                className="p-2.5 rounded-full bg-sunny-yellow hover:bg-sunny-yellow/80 transition-all duration-200 hover:scale-110 hover:rotate-3 shadow-md hover:shadow-lg"
+                className="p-2.5 rounded-full transition-all duration-200 hover:scale-110 hover:rotate-3 shadow-md hover:shadow-lg"
+                style={{ 
+                  backgroundColor: buttonStyles.hamburgerBtnBgColor,
+                }}
                 aria-label={t("menu")}
               >
-                <Menu className="w-5 h-5 text-forest-green" />
+                <Menu 
+                  className="w-5 h-5" 
+                  style={{ color: buttonStyles.hamburgerBtnIconColor }}
+                />
               </button>
             </SheetTrigger>
             <SheetContent side="left" className="w-[280px] bg-background flex flex-col">
@@ -183,16 +193,22 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
-                className={`p-2.5 rounded-full transition-all duration-300 flex items-center gap-2 shadow-md hover:shadow-lg hover:scale-110 hover:-rotate-3 ${
-                  selectedCategory 
-                    ? "bg-magenta text-white" 
-                    : "bg-lavender-vivid hover:bg-lavender-vivid/80"
-                }`}
+                className="p-2.5 rounded-full transition-all duration-300 flex items-center gap-2 shadow-md hover:shadow-lg hover:scale-110 hover:-rotate-3"
+                style={{ 
+                  backgroundColor: selectedCategory 
+                    ? buttonStyles.filterBtnActiveBgColor 
+                    : buttonStyles.filterBtnBgColor,
+                }}
                 aria-label={t("filter")}
               >
-                <Filter className={`w-5 h-5 ${selectedCategory ? "text-white" : "text-purple-900"}`} />
+                <Filter 
+                  className="w-5 h-5" 
+                  style={{ 
+                    color: selectedCategory ? '#FFFFFF' : buttonStyles.filterBtnIconColor 
+                  }}
+                />
                 {selectedCategory && (
-                  <span className="text-sm font-medium">{getTranslatedCategory(selectedCategory)}</span>
+                  <span className="text-sm font-medium text-white">{getTranslatedCategory(selectedCategory)}</span>
                 )}
               </button>
             </DropdownMenuTrigger>
