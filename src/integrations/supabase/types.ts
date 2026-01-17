@@ -50,6 +50,7 @@ export type Database = {
           tags: string[] | null
           titolo: string
           updated_at: string
+          zona: string | null
         }
         Insert: {
           categoria?: string | null
@@ -86,6 +87,7 @@ export type Database = {
           tags?: string[] | null
           titolo: string
           updated_at?: string
+          zona?: string | null
         }
         Update: {
           categoria?: string | null
@@ -122,6 +124,7 @@ export type Database = {
           tags?: string[] | null
           titolo?: string
           updated_at?: string
+          zona?: string | null
         }
         Relationships: []
       }

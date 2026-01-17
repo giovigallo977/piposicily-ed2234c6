@@ -187,6 +187,21 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
                 {translated.descrizione_completa}
               </p>
 
+              {/* Zona badge - above the CTA button */}
+              {hotspot.zona && (
+                <div className="mt-4">
+                  <span 
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium shadow-sm"
+                    style={{ 
+                      backgroundColor: cardStyle.badgeBgColor,
+                      color: cardStyle.badgeTextColor,
+                    }}
+                  >
+                    📍 zona {hotspot.zona}
+                  </span>
+                </div>
+              )}
+
               {/* Link Naviga - usa <a> per mobile compatibility */}
               {hotspot.link_google_maps && (
                 <a

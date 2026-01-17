@@ -3,11 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useHotspots, useCreateHotspot, useUpdateHotspot, useDeleteHotspot, Hotspot, HotspotInsert } from "@/hooks/useHotspots";
 import { useSiteContent, useUpdateSiteContent } from "@/hooks/useSiteContent";
-import { useStyleSettings, useUpdateStyleSettings } from "@/hooks/useStyleSettings";
 import { ImageUpload, MultiImageUpload } from "@/components/ImageUpload";
 import { EmojiPicker } from "@/components/EmojiPicker";
 import { SortableClaimItem, ClaimItem } from "@/components/admin/SortableClaimItem";
-import { StyleEditor } from "@/components/admin/StyleEditor";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,11 +14,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Loader2, Plus, Pencil, Trash2, LogOut, ArrowLeft, FileText, MapPin, Palette, ChevronDown } from "lucide-react";
+import { Loader2, Plus, Pencil, Trash2, LogOut, ArrowLeft, FileText, MapPin } from "lucide-react";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { HotspotStyleOverrides, StyleSettingsUpdate } from "@/types/styles";
 import pipoAlien from "@/assets/pipo-alien.png";
 
 const emptyHotspot: HotspotInsert = {
@@ -31,25 +27,9 @@ const emptyHotspot: HotspotInsert = {
   foto_gallery: [],
   link_google_maps: "",
   categoria: "",
+  zona: "",
   tags: [],
   ordine: 0,
-  // Style overrides - all null by default
-  style_card_bg_color: null,
-  style_badge_bg_color: null,
-  style_badge_text_color: null,
-  style_expand_btn_color: null,
-  style_cta_btn_color: null,
-  style_cta_btn_text_color: null,
-  style_font_color: null,
-  style_title_font: null,
-  style_title_font_bold: null,
-  style_title_font_size: null,
-  style_body_font: null,
-  style_body_font_bold: null,
-  style_body_font_size: null,
-  style_button_font: null,
-  style_button_font_bold: null,
-  style_button_font_size: null,
 };
 
 const Admin = () => {
@@ -67,11 +47,6 @@ const Admin = () => {
   const { data: claimsContent, isLoading: claimsLoading } = useSiteContent("claims");
   const updateSiteContent = useUpdateSiteContent();
 
-  // Style settings
-  const { data: styleSettings, isLoading: stylesLoading } = useStyleSettings();
-  const updateStyleSettings = useUpdateStyleSettings();
-  const [localStyleSettings, setLocalStyleSettings] = useState<StyleSettingsUpdate>({});
-
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingHotspot, setEditingHotspot] = useState<Hotspot | null>(null);
   const [formData, setFormData] = useState<HotspotInsert>(emptyHotspot);
@@ -80,7 +55,6 @@ const Admin = () => {
   const [headerSubtitle, setHeaderSubtitle] = useState("");
   const [claims, setClaims] = useState<ClaimItem[]>([]);
   const [originalClaimsJson, setOriginalClaimsJson] = useState("");
-  const [styleOverridesOpen, setStyleOverridesOpen] = useState(false);
   
   // Drag and drop sensors
   const sensors = useSensors(
@@ -131,34 +105,9 @@ const Admin = () => {
     }
   }, [claimsContent]);
 
-  // Initialize local style settings when loaded
-  useEffect(() => {
-    if (styleSettings) {
-      setLocalStyleSettings({
-        card_bg_color: styleSettings.card_bg_color,
-        badge_bg_color: styleSettings.badge_bg_color,
-        badge_text_color: styleSettings.badge_text_color,
-        expand_btn_color: styleSettings.expand_btn_color,
-        cta_btn_color: styleSettings.cta_btn_color,
-        cta_btn_text_color: styleSettings.cta_btn_text_color,
-        font_color: styleSettings.font_color,
-        title_font: styleSettings.title_font,
-        title_font_bold: styleSettings.title_font_bold,
-        title_font_size: styleSettings.title_font_size,
-        body_font: styleSettings.body_font,
-        body_font_bold: styleSettings.body_font_bold,
-        body_font_size: styleSettings.body_font_size,
-        button_font: styleSettings.button_font,
-        button_font_bold: styleSettings.button_font_bold,
-        button_font_size: styleSettings.button_font_size,
-      });
-    }
-  }, [styleSettings]);
-
   const handleOpenCreate = () => {
     setEditingHotspot(null);
     setFormData({ ...emptyHotspot, ordine: (hotspots?.length ?? 0) + 1 });
-    setStyleOverridesOpen(false);
     setIsDialogOpen(true);
   };
 
@@ -172,30 +121,10 @@ const Admin = () => {
       foto_gallery: hotspot.foto_gallery || [],
       link_google_maps: hotspot.link_google_maps,
       categoria: hotspot.categoria,
+      zona: hotspot.zona || "",
       tags: hotspot.tags || [],
       ordine: hotspot.ordine,
-      // Style overrides
-      style_card_bg_color: hotspot.style_card_bg_color,
-      style_badge_bg_color: hotspot.style_badge_bg_color,
-      style_badge_text_color: hotspot.style_badge_text_color,
-      style_expand_btn_color: hotspot.style_expand_btn_color,
-      style_cta_btn_color: hotspot.style_cta_btn_color,
-      style_cta_btn_text_color: hotspot.style_cta_btn_text_color,
-      style_font_color: hotspot.style_font_color,
-      style_title_font: hotspot.style_title_font,
-      style_title_font_bold: hotspot.style_title_font_bold,
-      style_title_font_size: hotspot.style_title_font_size,
-      style_body_font: hotspot.style_body_font,
-      style_body_font_bold: hotspot.style_body_font_bold,
-      style_body_font_size: hotspot.style_body_font_size,
-      style_button_font: hotspot.style_button_font,
-      style_button_font_bold: hotspot.style_button_font_bold,
-      style_button_font_size: hotspot.style_button_font_size,
     });
-    // Check if any style override is set
-    const hasOverrides = hotspot.style_card_bg_color || hotspot.style_badge_bg_color || 
-      hotspot.style_font_color || hotspot.style_title_font;
-    setStyleOverridesOpen(!!hasOverrides);
     setIsDialogOpen(true);
   };
 
@@ -234,10 +163,6 @@ const Admin = () => {
     await updateSiteContent.mutateAsync({ key: "claims", content: JSON.stringify(claimsData) });
   };
 
-  const handleSaveStyles = async () => {
-    await updateStyleSettings.mutateAsync(localStyleSettings);
-  };
-
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (over && active.id !== over.id) {
@@ -266,31 +191,8 @@ const Admin = () => {
     ]);
   };
 
-  const handleHotspotStyleChange = (updates: HotspotStyleOverrides) => {
-    setFormData((prev) => ({ ...prev, ...updates }));
-  };
-
   const currentClaimsJson = JSON.stringify(claims.map(({ label, content }) => ({ label, content })));
   const isClaimUnchanged = currentClaimsJson === originalClaimsJson;
-
-  // Check if styles have changed
-  const isStylesUnchanged = styleSettings && 
-    localStyleSettings.card_bg_color === styleSettings.card_bg_color &&
-    localStyleSettings.badge_bg_color === styleSettings.badge_bg_color &&
-    localStyleSettings.badge_text_color === styleSettings.badge_text_color &&
-    localStyleSettings.expand_btn_color === styleSettings.expand_btn_color &&
-    localStyleSettings.cta_btn_color === styleSettings.cta_btn_color &&
-    localStyleSettings.cta_btn_text_color === styleSettings.cta_btn_text_color &&
-    localStyleSettings.font_color === styleSettings.font_color &&
-    localStyleSettings.title_font === styleSettings.title_font &&
-    localStyleSettings.title_font_bold === styleSettings.title_font_bold &&
-    localStyleSettings.title_font_size === styleSettings.title_font_size &&
-    localStyleSettings.body_font === styleSettings.body_font &&
-    localStyleSettings.body_font_bold === styleSettings.body_font_bold &&
-    localStyleSettings.body_font_size === styleSettings.body_font_size &&
-    localStyleSettings.button_font === styleSettings.button_font &&
-    localStyleSettings.button_font_bold === styleSettings.button_font_bold &&
-    localStyleSettings.button_font_size === styleSettings.button_font_size;
 
   if (authLoading || isLoading) {
     return (
@@ -329,7 +231,7 @@ const Admin = () => {
       <main className="container mx-auto px-4 py-6">
         <div className="max-w-4xl mx-auto">
           <Tabs defaultValue="hotspots" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="hotspots" className="flex items-center gap-2">
                 <MapPin className="h-4 w-4" />
                 Hotspots
@@ -337,10 +239,6 @@ const Admin = () => {
               <TabsTrigger value="contenuti" className="flex items-center gap-2">
                 <FileText className="h-4 w-4" />
                 Contenuti
-              </TabsTrigger>
-              <TabsTrigger value="stili" className="flex items-center gap-2">
-                <Palette className="h-4 w-4" />
-                Stili
               </TabsTrigger>
             </TabsList>
 
@@ -385,15 +283,25 @@ const Admin = () => {
                         </div>
                       </div>
 
-                      <div className="space-y-2">
-                        <Label htmlFor="ordine">Ordine</Label>
-                        <Input
-                          id="ordine"
-                          type="number"
-                          value={formData.ordine}
-                          onChange={(e) => setFormData({ ...formData, ordine: parseInt(e.target.value) || 0 })}
-                          className="w-24"
-                        />
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="zona">Zona</Label>
+                          <Input
+                            id="zona"
+                            value={formData.zona || ""}
+                            onChange={(e) => setFormData({ ...formData, zona: e.target.value })}
+                            placeholder="Es: Messina, Palermo, Catania..."
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="ordine">Ordine</Label>
+                          <Input
+                            id="ordine"
+                            type="number"
+                            value={formData.ordine}
+                            onChange={(e) => setFormData({ ...formData, ordine: parseInt(e.target.value) || 0 })}
+                          />
+                        </div>
                       </div>
 
                       <div className="space-y-2">
@@ -491,32 +399,6 @@ const Admin = () => {
                         />
                       </div>
 
-                      {/* Style Overrides Section */}
-                      <Collapsible open={styleOverridesOpen} onOpenChange={setStyleOverridesOpen}>
-                        <CollapsibleTrigger asChild>
-                          <Button type="button" variant="outline" className="w-full justify-between">
-                            <span className="flex items-center gap-2">
-                              <Palette className="h-4 w-4" />
-                              Stile Personalizzato (opzionale)
-                            </span>
-                            <ChevronDown className={`h-4 w-4 transition-transform ${styleOverridesOpen ? 'rotate-180' : ''}`} />
-                          </Button>
-                        </CollapsibleTrigger>
-                        <CollapsibleContent className="pt-4">
-                          <div className="p-4 border rounded-lg bg-muted/30 space-y-4">
-                            <p className="text-xs text-muted-foreground">
-                              Lascia vuoti i campi per usare gli stili globali. Compila solo quelli che vuoi personalizzare per questa scheda.
-                            </p>
-                            <StyleEditor
-                              mode="hotspot"
-                              hotspotStyles={formData}
-                              onHotspotChange={handleHotspotStyleChange}
-                              compact
-                            />
-                          </div>
-                        </CollapsibleContent>
-                      </Collapsible>
-
                       <div className="flex justify-end gap-2 pt-4">
                         <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
                           Annulla
@@ -552,9 +434,9 @@ const Admin = () => {
                               {hotspot.categoria}
                             </span>
                           )}
-                          {(hotspot.style_card_bg_color || hotspot.style_font_color) && (
-                            <span className="text-xs bg-lavender-vivid/20 text-lavender-vivid px-2 py-1 rounded-full">
-                              🎨 Custom
+                          {hotspot.zona && (
+                            <span className="text-xs bg-olive/10 text-olive px-2 py-1 rounded-full">
+                              📍 {hotspot.zona}
                             </span>
                           )}
                           <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
@@ -621,38 +503,6 @@ const Admin = () => {
                   </div>
                 )}
               </div>
-            </TabsContent>
-
-            {/* Tab Stili Globali */}
-            <TabsContent value="stili" className="space-y-6">
-              <div className="flex items-center justify-between">
-                <h2 className="font-heading text-2xl font-bold">Stili Globali</h2>
-                <Button 
-                  onClick={handleSaveStyles}
-                  disabled={updateStyleSettings.isPending || isStylesUnchanged}
-                >
-                  {updateStyleSettings.isPending && (
-                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                  )}
-                  Salva Stili
-                </Button>
-              </div>
-              
-              <p className="text-muted-foreground text-sm">
-                Questi stili vengono applicati a tutte le schede hotspot. Puoi sovrascrivere singoli valori per ogni scheda nel suo dialog di modifica.
-              </p>
-
-              {stylesLoading ? (
-                <div className="flex justify-center py-12">
-                  <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                </div>
-              ) : (
-                <StyleEditor
-                  mode="global"
-                  globalStyles={styleSettings}
-                  onGlobalChange={(updates) => setLocalStyleSettings((prev) => ({ ...prev, ...updates }))}
-                />
-              )}
             </TabsContent>
 
             {/* Tab Contenuti */}
