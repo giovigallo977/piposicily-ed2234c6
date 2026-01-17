@@ -93,151 +93,173 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
   ];
 
   return (
-    <header className="sticky top-0 z-50 bg-background backdrop-blur-sm border-b border-border/30">
-      <div className="container mx-auto px-6 py-4">
-        {/* Row 1: Logo centered */}
-        <div className="flex items-center justify-center">
-          <h1 className="font-brand text-2xl font-black italic tracking-tight text-foreground">
-            Pipo
-          </h1>
-          <img
-            src={pipoAlien}
-            alt="Logo Pipo"
-            className="h-9 w-9 object-contain ml-2"
-            draggable={false}
-          />
+    <>
+      {/* Scrollable header section - will scroll away */}
+      <header className="bg-background">
+        <div className="container mx-auto px-6 py-4">
+          {/* Row 1: Logo centered */}
+          <div className="flex items-center justify-center">
+            <h1 className="font-brand text-2xl font-black italic tracking-tight text-foreground">
+              Pipo
+            </h1>
+            <img
+              src={pipoAlien}
+              alt="Logo Pipo"
+              className="h-9 w-9 object-contain ml-2"
+              draggable={false}
+            />
+          </div>
+
+          {/* Row 2: Title - "esplorazioni alien in sicilia" in Inter Semibold 600 verde pipo */}
+          {(headerTitle || translatedTitle) && (
+            <h2 
+              className={`font-sans text-xl text-center mt-2 transition-opacity uppercase ${titleLoading ? 'opacity-50' : ''}`}
+              style={{ fontWeight: 600, color: 'hsl(152, 46%, 43%)' }}
+            >
+              {translatedTitle || headerTitle}
+            </h2>
+          )}
+
+          {/* Row 3: Claim completo in Bebas Neue verde Pipo */}
+          <div className="flex flex-col items-center mt-3 gap-1 px-4">
+            {displayClaims.map((claim, index) => (
+              <p key={index} className="font-claim text-olive text-lg tracking-wide text-center leading-tight">
+                <span className="font-bold">{claim.label}</span> {claim.content}
+              </p>
+            ))}
+          </div>
         </div>
+      </header>
 
-        {/* Row 2: Title */}
-        {(headerTitle || translatedTitle) && (
-          <h2 className={`font-heading text-xl font-bold text-foreground text-center mt-2 transition-opacity ${titleLoading ? 'opacity-50' : ''}`}>
-            {translatedTitle || headerTitle}
-          </h2>
-        )}
-
-        {/* Row 3: Claim completo in Bebas Neue verde Pipo */}
-        <div className="flex flex-col items-center mt-3 gap-1 px-4">
-          {displayClaims.map((claim, index) => (
-            <p key={index} className="font-claim text-olive text-lg tracking-wide text-center leading-tight">
-              <span className="font-bold">{claim.label}</span> {claim.content}
-            </p>
-          ))}
-        </div>
-
-        {/* Row 4: Hamburger left, Filter right */}
-        <div className="flex items-center justify-between mt-3">
-          {/* Hamburger Menu - Left */}
-          <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
-            <SheetTrigger asChild>
-              <button
-                className="p-2.5 rounded-full transition-all duration-200 hover:scale-110 hover:rotate-3 shadow-md hover:shadow-lg"
-                style={{ 
-                  backgroundColor: buttonStyles.hamburgerBtnBgColor,
-                }}
-                aria-label={t("menu")}
-              >
-                <Menu 
-                  className="w-5 h-5" 
-                  style={{ color: buttonStyles.hamburgerBtnIconColor }}
-                />
-              </button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-[280px] bg-background flex flex-col">
-              <SheetHeader>
-                <SheetTitle className="font-brand text-xl font-black italic">
-                  {t("menu")}
-                </SheetTitle>
-              </SheetHeader>
-              
-              {/* Navigation links */}
-              <nav className="mt-6 flex-1">
-                <Link
-                  to="/missione"
-                  onClick={() => setMenuOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted transition-colors text-foreground font-medium"
-                >
-                  {t("missionTitle")}
-                </Link>
-              </nav>
-
-              {/* Language selector at bottom */}
-              <div className="pt-4 border-t border-border/30">
-                <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
-                  <button
-                    onClick={() => setLanguage("it")}
-                    className={`px-2 py-1 rounded transition-colors ${
-                      language === "it"
-                        ? "text-foreground font-medium"
-                        : "hover:text-foreground/70"
-                    }`}
-                  >
-                    IT
-                  </button>
-                  <span className="text-border">|</span>
-                  <button
-                    onClick={() => setLanguage("en")}
-                    className={`px-2 py-1 rounded transition-colors ${
-                      language === "en"
-                        ? "text-foreground font-medium"
-                        : "hover:text-foreground/70"
-                    }`}
-                  >
-                    EN
-                  </button>
-                </div>
-              </div>
-            </SheetContent>
-          </Sheet>
-
-          {/* Filter Button - Right */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button
-                className="p-2.5 rounded-full transition-all duration-300 flex items-center gap-2 shadow-md hover:shadow-lg hover:scale-110 hover:-rotate-3"
-                style={{ 
-                  backgroundColor: selectedCategory 
-                    ? buttonStyles.filterBtnActiveBgColor 
-                    : buttonStyles.filterBtnBgColor,
-                }}
-                aria-label={t("filter")}
-              >
-                <Filter 
-                  className="w-5 h-5" 
+      {/* Sticky button bar - becomes fixed when scrolled */}
+      <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/30 shadow-sm">
+        <div className="container mx-auto px-6 py-3">
+          <div className="flex items-center justify-between">
+            {/* Hamburger Menu - Left */}
+            <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
+              <SheetTrigger asChild>
+                <button
+                  className="p-2.5 rounded-full transition-all duration-200 hover:scale-110 hover:rotate-3 shadow-md hover:shadow-lg"
                   style={{ 
-                    color: selectedCategory ? '#FFFFFF' : buttonStyles.filterBtnIconColor 
+                    backgroundColor: buttonStyles.hamburgerBtnBgColor,
                   }}
-                />
-                {selectedCategory && (
-                  <span className="text-sm font-medium text-white">{getTranslatedCategory(selectedCategory)}</span>
-                )}
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 bg-background border border-border">
-              <DropdownMenuItem
-                onClick={() => onCategoryChange(null)}
-                className={`cursor-pointer ${!selectedCategory ? "bg-muted" : ""}`}
-              >
-                {t("allCategories")}
-              </DropdownMenuItem>
-              {categories.map((category, index) => (
-                <DropdownMenuItem
-                  key={category}
-                  onClick={() => onCategoryChange(category)}
-                  className={`cursor-pointer ${selectedCategory === category ? "bg-muted" : ""}`}
+                  aria-label={t("menu")}
                 >
-                  {translatedCategories[index] || category}
+                  <Menu 
+                    className="w-5 h-5" 
+                    style={{ color: buttonStyles.hamburgerBtnIconColor }}
+                  />
+                </button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-[280px] bg-background flex flex-col">
+                <SheetHeader>
+                  <SheetTitle className="font-brand text-xl font-black italic">
+                    {t("menu")}
+                  </SheetTitle>
+                </SheetHeader>
+                
+                {/* Navigation links */}
+                <nav className="mt-6 flex-1">
+                  <Link
+                    to="/missione"
+                    onClick={() => setMenuOpen(false)}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted transition-colors text-foreground font-medium"
+                  >
+                    {t("missionTitle")}
+                  </Link>
+                </nav>
+
+                {/* Language selector at bottom */}
+                <div className="pt-4 border-t border-border/30">
+                  <div className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
+                    <button
+                      onClick={() => setLanguage("it")}
+                      className={`px-2 py-1 rounded transition-colors ${
+                        language === "it"
+                          ? "text-foreground font-medium"
+                          : "hover:text-foreground/70"
+                      }`}
+                    >
+                      IT
+                    </button>
+                    <span className="text-border">|</span>
+                    <button
+                      onClick={() => setLanguage("en")}
+                      className={`px-2 py-1 rounded transition-colors ${
+                        language === "en"
+                          ? "text-foreground font-medium"
+                          : "hover:text-foreground/70"
+                      }`}
+                    >
+                      EN
+                    </button>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
+
+            {/* Center button - Scappa in 30 secondi */}
+            <button
+              className="px-5 py-2.5 rounded-full font-sans font-semibold text-sm text-white transition-all duration-300 hover:scale-105 hover:shadow-lg shadow-md"
+              style={{ backgroundColor: 'hsl(152, 46%, 43%)' }}
+              onClick={() => {
+                // TODO: Open wizard
+                console.log("Scappa in 30 secondi clicked");
+              }}
+            >
+              Scappa in 30 secondi
+            </button>
+
+            {/* Filter Button - Right */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className="p-2.5 rounded-full transition-all duration-300 flex items-center gap-2 shadow-md hover:shadow-lg hover:scale-110 hover:-rotate-3"
+                  style={{ 
+                    backgroundColor: selectedCategory 
+                      ? buttonStyles.filterBtnActiveBgColor 
+                      : buttonStyles.filterBtnBgColor,
+                  }}
+                  aria-label={t("filter")}
+                >
+                  <Filter 
+                    className="w-5 h-5" 
+                    style={{ 
+                      color: selectedCategory ? '#FFFFFF' : buttonStyles.filterBtnIconColor 
+                    }}
+                  />
+                  {selectedCategory && (
+                    <span className="text-sm font-medium text-white">{getTranslatedCategory(selectedCategory)}</span>
+                  )}
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48 bg-background border border-border">
+                <DropdownMenuItem
+                  onClick={() => onCategoryChange(null)}
+                  className={`cursor-pointer ${!selectedCategory ? "bg-muted" : ""}`}
+                >
+                  {t("allCategories")}
                 </DropdownMenuItem>
-              ))}
-              {categories.length === 0 && (
-                <DropdownMenuItem disabled className="text-muted-foreground">
-                  {t("noCategoryAvailable")}
-                </DropdownMenuItem>
-              )}
-            </DropdownMenuContent>
-          </DropdownMenu>
+                {categories.map((category, index) => (
+                  <DropdownMenuItem
+                    key={category}
+                    onClick={() => onCategoryChange(category)}
+                    className={`cursor-pointer ${selectedCategory === category ? "bg-muted" : ""}`}
+                  >
+                    {translatedCategories[index] || category}
+                  </DropdownMenuItem>
+                ))}
+                {categories.length === 0 && (
+                  <DropdownMenuItem disabled className="text-muted-foreground">
+                    {t("noCategoryAvailable")}
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </div>
-    </header>
+    </>
   );
 };
 

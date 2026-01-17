@@ -102,10 +102,9 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
           {/* Header con titolo e bottone espansione */}
           <div className="flex items-start justify-between gap-4">
             <h2 
-              className={cn("leading-tight flex-1 min-w-0", fontSizeToClass(cardStyle.titleFontSize))}
+              className="leading-tight flex-1 min-w-0 font-sans font-semibold uppercase"
               style={{ 
-                fontFamily: cardStyle.titleFontFamily,
-                fontWeight: cardStyle.titleFontWeight,
+                fontWeight: 600,
                 color: cardStyle.fontColor,
                 fontSize: fontSizeToPx(cardStyle.titleFontSize),
               }}
@@ -142,15 +141,12 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
             </div>
           </div>
 
-          {/* Riga Tag */}
+          {/* Riga Tag - Roboto Mono */}
           {hotspot.tags && hotspot.tags.length > 0 && (
             <p 
-              className={cn("mt-1", fontSizeToClass(cardStyle.tagFontSize))}
+              className="mt-1 font-mono text-sm"
               style={{ 
-                fontFamily: cardStyle.tagFontFamily,
-                fontWeight: cardStyle.tagFontWeight,
                 color: cardStyle.fontColor,
-                fontSize: fontSizeToPx(cardStyle.tagFontSize),
               }}
             >
               {hotspot.tags.map((tag, i) => (
@@ -159,12 +155,11 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
             </p>
           )}
 
-          {/* Descrizione breve - riga orizzontale completa */}
+          {/* Descrizione breve - Inter Regular 400 */}
           <p 
-            className={cn("mt-2 leading-relaxed", fontSizeToClass(cardStyle.bodyFontSize))}
+            className="mt-2 leading-relaxed font-sans"
             style={{ 
-              fontFamily: cardStyle.bodyFontFamily,
-              fontWeight: cardStyle.bodyFontWeight,
+              fontWeight: 400,
               color: cardStyle.fontColor,
               fontSize: fontSizeToPx(cardStyle.bodyFontSize),
             }}
@@ -180,12 +175,11 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
             )}
           >
             <div className="overflow-hidden">
-              {/* Descrizione completa */}
+              {/* Descrizione completa - Inter Regular 400 */}
               <p 
-                className={cn("leading-relaxed whitespace-pre-line", fontSizeToClass(cardStyle.bodyFontSize))}
+                className="leading-relaxed whitespace-pre-line font-sans"
                 style={{ 
-                  fontFamily: cardStyle.bodyFontFamily,
-                  fontWeight: cardStyle.bodyFontWeight,
+                  fontWeight: 400,
                   color: cardStyle.fontColor,
                   fontSize: fontSizeToPx(cardStyle.bodyFontSize),
                 }}

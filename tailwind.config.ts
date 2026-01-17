@@ -21,6 +21,7 @@ export default {
         body: ['Nunito', '"Proxima Nova"', 'Inter', 'system-ui', 'sans-serif'],
         friendly: ['Nunito', 'system-ui', 'sans-serif'],
         claim: ['"Bebas Neue"', 'sans-serif'],
+        mono: ['"Roboto Mono"', 'monospace'],
       },
       colors: {
         border: "hsl(var(--border))",
