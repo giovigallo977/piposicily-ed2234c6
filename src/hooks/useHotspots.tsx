@@ -12,6 +12,7 @@ export interface Hotspot extends HotspotStyleOverrides {
   foto_gallery: string[];
   link_google_maps: string;
   categoria: string;
+  zona: string;
   tags: string[];
   ordine: number;
   created_at: string;

@@ -36,7 +36,10 @@ const Mission = () => {
               className="h-20 w-20 object-contain mb-4"
               draggable={false}
             />
-            <h1 className="font-brand text-3xl font-black italic tracking-tight text-foreground">
+            <h1 
+              className="font-sans text-3xl tracking-tight text-foreground uppercase"
+              style={{ fontWeight: 600 }}
+            >
               {t("missionTitle")}
             </h1>
           </div>
@@ -56,7 +59,10 @@ const Mission = () => {
 
           {missionContent && (
             <div className={`prose prose-lg max-w-none transition-opacity ${isTranslating ? 'opacity-50' : ''}`}>
-              <p className="text-foreground leading-relaxed whitespace-pre-wrap">
+              <p 
+                className="text-foreground leading-relaxed whitespace-pre-wrap font-sans"
+                style={{ fontWeight: 400 }}
+              >
                 {translatedMission || missionContent.content}
               </p>
             </div>
