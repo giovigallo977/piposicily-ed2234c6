@@ -27,6 +27,7 @@ interface HeaderProps {
   onCategoryChange: (category: string | null) => void;
   headerTitle?: string;
   headerSubtitle?: string;
+  onScappaClick?: () => void;
 }
 
 interface ClaimData {
@@ -34,7 +35,7 @@ interface ClaimData {
   content: string;
 }
 
-const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTitle, headerSubtitle }: HeaderProps) => {
+const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTitle, headerSubtitle, onScappaClick }: HeaderProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const { language, setLanguage, t } = useLanguage();
   const { translatedCategories, getTranslatedCategory } = useTranslatedCategories(categories);
@@ -196,19 +197,16 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
             <button
               className="px-5 py-2.5 rounded-full font-sans font-semibold text-sm text-white transition-all duration-300 hover:scale-105 hover:shadow-lg shadow-md"
               style={{ backgroundColor: 'hsl(152, 46%, 43%)' }}
-              onClick={() => {
-                // TODO: Open wizard
-                console.log("Scappa in 30 secondi clicked");
-              }}
+              onClick={onScappaClick}
             >
               Scappa in 30 secondi
             </button>
 
-            {/* Filter Button - Right */}
+            {/* Filter Button - Right - no border */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
-                  className="p-2.5 rounded-full transition-all duration-300 flex items-center gap-2 hover:scale-110 hover:-rotate-3 border-2 border-black bg-transparent"
+                  className="p-2.5 rounded-full transition-all duration-300 flex items-center gap-2 hover:scale-110 hover:-rotate-3 bg-transparent"
                   aria-label={t("filter")}
                 >
                   <Filter className="w-5 h-5 text-black" />

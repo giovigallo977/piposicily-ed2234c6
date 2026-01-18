@@ -196,24 +196,14 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
                   </span>
                 </div>
               )}
-
-              {/* Link Naviga - usa <a> per mobile compatibility */}
+              {/* Link Naviga - verde Pipo con testo bianco */}
               {hotspot.link_google_maps && (
                 <a
                   href={hotspot.link_google_maps}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={cn(
-                    "mt-4 inline-flex items-center gap-2 px-6 py-3.5 rounded-full italic transition-all duration-300 hover:scale-105 hover:rotate-1 hover:shadow-xl shadow-lg active:scale-95",
-                    fontSizeToClass(cardStyle.buttonFontSize)
-                  )}
-                  style={{ 
-                    backgroundColor: cardStyle.ctaBtnColor,
-                    color: cardStyle.ctaBtnTextColor,
-                    fontFamily: cardStyle.buttonFontFamily,
-                    fontWeight: cardStyle.buttonFontWeight,
-                    fontSize: fontSizeToPx(cardStyle.buttonFontSize),
-                  }}
+                  className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-sans font-semibold text-sm text-white transition-all duration-300 hover:scale-105 hover:shadow-lg shadow-md active:scale-95"
+                  style={{ backgroundColor: 'hsl(152, 46%, 43%)' }}
                 >
                   <span className="text-lg">👽</span>
                   <Navigation className="w-4 h-4" />
