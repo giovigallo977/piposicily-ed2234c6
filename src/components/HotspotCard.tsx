@@ -102,49 +102,43 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
           {/* Header con titolo e bottone espansione */}
           <div className="flex items-start justify-between gap-4">
             <h2 
-              className="leading-tight flex-1 min-w-0 font-sans font-semibold uppercase"
+              className="leading-tight flex-1 min-w-0 font-sans uppercase text-2xl"
               style={{ 
-                fontWeight: 600,
+                fontWeight: 800,
                 color: cardStyle.fontColor,
-                fontSize: fontSizeToPx(cardStyle.titleFontSize),
               }}
             >
               {translated.titolo}
             </h2>
             
-            {/* Categoria e bottone espansione */}
-            <div className="flex items-center gap-2 flex-shrink-0">
-              {translated.categoria && (
-                <span 
-                  className="px-3 py-1.5 text-xs font-bold rounded-full shadow-sm"
-                  style={{ 
-                    backgroundColor: cardStyle.badgeBgColor,
-                    color: cardStyle.badgeTextColor,
-                  }}
-                >
-                  {translated.categoria}
-                </span>
+            {/* Bottone espansione - nero con + bianco */}
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="w-11 h-11 rounded-full ring-2 ring-white flex items-center justify-center transition-all duration-300 hover:scale-115 hover:shadow-xl active:scale-95 flex-shrink-0 bg-black"
+              aria-expanded={isExpanded}
+              aria-label={isExpanded ? t("hideDetails") : t("showDetails")}
+            >
+              {isExpanded ? (
+                <Minus className="w-5 h-5 text-white" />
+              ) : (
+                <Plus className="w-5 h-5 text-white" />
               )}
-              <button
-                onClick={() => setIsExpanded(!isExpanded)}
-                className="w-11 h-11 rounded-full ring-2 ring-white flex items-center justify-center transition-all duration-300 hover:scale-115 hover:shadow-xl active:scale-95"
-                style={{ backgroundColor: cardStyle.expandBtnColor }}
-                aria-expanded={isExpanded}
-                aria-label={isExpanded ? t("hideDetails") : t("showDetails")}
-              >
-                {isExpanded ? (
-                  <Minus className="w-5 h-5 text-white" />
-                ) : (
-                  <Plus className="w-5 h-5 text-white" />
-                )}
-              </button>
-            </div>
+            </button>
           </div>
+
+          {/* Categoria sotto il titolo - nero con testo bianco */}
+          {translated.categoria && (
+            <div className="mt-2">
+              <span className="px-3 py-1.5 text-xs font-bold rounded-full shadow-sm bg-black text-white">
+                {translated.categoria}
+              </span>
+            </div>
+          )}
 
           {/* Riga Tag - Roboto Mono */}
           {hotspot.tags && hotspot.tags.length > 0 && (
             <p 
-              className="mt-1 font-mono text-sm"
+              className="mt-2 font-mono text-sm"
               style={{ 
                 color: cardStyle.fontColor,
               }}
