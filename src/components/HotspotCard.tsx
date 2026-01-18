@@ -102,34 +102,35 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
           {/* Header con titolo e bottone espansione */}
           <div className="flex items-start justify-between gap-4">
             <h2 
-              className="leading-tight flex-1 min-w-0 font-sans uppercase text-2xl"
+              className="leading-tight flex-1 min-w-0 font-sans text-xl"
               style={{ 
-                fontWeight: 800,
+                fontWeight: 700,
                 color: cardStyle.fontColor,
               }}
             >
               {translated.titolo}
             </h2>
             
-            {/* Bottone espansione - nero con + bianco */}
+            {/* Bottone espansione - grigio chiaro con icona nera sottile */}
             <button
               onClick={() => setIsExpanded(!isExpanded)}
-              className="w-11 h-11 rounded-full ring-2 ring-white flex items-center justify-center transition-all duration-300 hover:scale-115 hover:shadow-xl active:scale-95 flex-shrink-0 bg-black"
+              className="w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95 flex-shrink-0"
+              style={{ backgroundColor: '#E5E5E5' }}
               aria-expanded={isExpanded}
               aria-label={isExpanded ? t("hideDetails") : t("showDetails")}
             >
               {isExpanded ? (
-                <Minus className="w-5 h-5 text-white" />
+                <Minus className="w-5 h-5 text-black" strokeWidth={1.5} />
               ) : (
-                <Plus className="w-5 h-5 text-white" />
+                <Plus className="w-5 h-5 text-black" strokeWidth={1.5} />
               )}
             </button>
           </div>
 
           {/* Categoria sotto il titolo - nero con testo bianco */}
           {translated.categoria && (
-            <div className="mt-2">
-              <span className="px-3 py-1.5 text-xs font-bold rounded-full shadow-sm bg-black text-white">
+            <div className="mt-3 mb-1">
+              <span className="px-3 py-1.5 text-xs font-bold rounded-full bg-black text-white">
                 {translated.categoria}
               </span>
             </div>
