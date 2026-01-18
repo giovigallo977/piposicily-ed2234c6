@@ -139,16 +139,10 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
             <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
               <SheetTrigger asChild>
                 <button
-                  className="p-2.5 rounded-full transition-all duration-200 hover:scale-110 hover:rotate-3 shadow-md hover:shadow-lg"
-                  style={{ 
-                    backgroundColor: buttonStyles.hamburgerBtnBgColor,
-                  }}
+                  className="p-2.5 rounded-full transition-all duration-200 hover:scale-110 hover:rotate-3 bg-transparent"
                   aria-label={t("menu")}
                 >
-                  <Menu 
-                    className="w-5 h-5" 
-                    style={{ color: buttonStyles.hamburgerBtnIconColor }}
-                  />
+                  <Menu className="w-6 h-6 text-black" />
                 </button>
               </SheetTrigger>
               <SheetContent side="left" className="w-[280px] bg-background flex flex-col">
@@ -214,22 +208,12 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
-                  className="p-2.5 rounded-full transition-all duration-300 flex items-center gap-2 shadow-md hover:shadow-lg hover:scale-110 hover:-rotate-3"
-                  style={{ 
-                    backgroundColor: selectedCategory 
-                      ? buttonStyles.filterBtnActiveBgColor 
-                      : buttonStyles.filterBtnBgColor,
-                  }}
+                  className="p-2.5 rounded-full transition-all duration-300 flex items-center gap-2 hover:scale-110 hover:-rotate-3 border-2 border-black bg-transparent"
                   aria-label={t("filter")}
                 >
-                  <Filter 
-                    className="w-5 h-5" 
-                    style={{ 
-                      color: selectedCategory ? '#FFFFFF' : buttonStyles.filterBtnIconColor 
-                    }}
-                  />
+                  <Filter className="w-5 h-5 text-black" />
                   {selectedCategory && (
-                    <span className="text-sm font-medium text-white">{getTranslatedCategory(selectedCategory)}</span>
+                    <span className="text-sm font-medium text-black">{getTranslatedCategory(selectedCategory)}</span>
                   )}
                 </button>
               </DropdownMenuTrigger>
