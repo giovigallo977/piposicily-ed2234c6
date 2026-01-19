@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Nunito:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Nunito:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&family=Rubik+Lines&family=Suez+One&family=Young+Serif&family=Cardo:wght@400;700&family=Cinzel:wght@400;500;600;700&family=Eczar:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -40,8 +40,8 @@ All colors MUST be HSL.
 
     --radius: 0.5rem;
 
-    /* Pipo green #3a9f6d - colore brand principale */
-    --olive: 152 46% 43%;
+    /* Pipo green #52C471 - colore brand principale */
+    --olive: 138 52% 55%;
     --olive-foreground: 0 0% 100%;
 
     /* Playful Vivid Palette */
