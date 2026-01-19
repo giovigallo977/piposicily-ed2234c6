@@ -14,6 +14,7 @@ const Index = () => {
   const { data: headerSubtitleContent } = useSiteContent("header_subtitle");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedZone, setSelectedZone] = useState<string | null>(null);
+  const [selectedMood, setSelectedMood] = useState<string | null>(null);
   const [wizardOpen, setWizardOpen] = useState(false);
   const { t } = useLanguage();
 
@@ -22,6 +23,14 @@ const Index = () => {
     if (!hotspots) return [];
     const uniqueZones = [...new Set(hotspots.map(h => h.zona).filter(Boolean))];
     return uniqueZones as string[];
+  }, [hotspots]);
+
+  // Extract unique moods (tags) from hotspots
+  const moods = useMemo(() => {
+    if (!hotspots) return [];
+    const allTags = hotspots.flatMap(h => h.tags || []).filter(Boolean);
+    const uniqueTags = [...new Set(allTags)];
+    return uniqueTags as string[];
   }, [hotspots]);
 
   const filteredHotspots = useMemo(() => {
@@ -34,13 +43,16 @@ const Index = () => {
     if (selectedCategory) {
       result = result.filter((h) => h.categoria === selectedCategory);
     }
+    if (selectedMood) {
+      result = result.filter((h) => h.tags?.includes(selectedMood));
+    }
     
     return result;
-  }, [hotspots, selectedCategory, selectedZone]);
+  }, [hotspots, selectedCategory, selectedZone, selectedMood]);
 
-  const handleWizardResult = (zone: string | null, category: string | null) => {
+  const handleWizardResult = (zone: string | null, mood: string | null) => {
     setSelectedZone(zone);
-    setSelectedCategory(category);
+    setSelectedMood(mood);
   };
 
   const handleOpenWizard = () => {
@@ -62,12 +74,12 @@ const Index = () => {
         open={wizardOpen}
         onOpenChange={setWizardOpen}
         zones={zones}
-        categories={categories}
+        moods={moods}
         onResult={handleWizardResult}
       />
       
       {/* Active filters indicator */}
-      {(selectedZone || selectedCategory) && (
+      {(selectedZone || selectedCategory || selectedMood) && (
         <div className="container mx-auto px-4 py-3">
           <div className="max-w-lg mx-auto flex flex-wrap items-center gap-2">
             {selectedZone && (
@@ -76,6 +88,15 @@ const Index = () => {
                 className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium bg-olive text-white"
               >
                 📍 {selectedZone}
+                <span className="ml-1">×</span>
+              </button>
+            )}
+            {selectedMood && (
+              <button
+                onClick={() => setSelectedMood(null)}
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium bg-olive text-white"
+              >
+                🎭 {selectedMood}
                 <span className="ml-1">×</span>
               </button>
             )}
@@ -92,6 +113,7 @@ const Index = () => {
               onClick={() => {
                 setSelectedZone(null);
                 setSelectedCategory(null);
+                setSelectedMood(null);
               }}
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >

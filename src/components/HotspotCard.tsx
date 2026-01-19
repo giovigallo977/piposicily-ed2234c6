@@ -8,6 +8,18 @@ import { useCardStyle } from "@/hooks/useCardStyle";
 import { fontSizeToClass, fontSizeToPx } from "@/types/styles";
 import useEmblaCarousel from "embla-carousel-react";
 
+// Font personalizzato per ogni categoria
+const getCategoryFont = (category: string): string => {
+  const categoryLower = category.toLowerCase();
+  if (categoryLower.includes('borgo fantasma')) return '"Rubik Lines", cursive';
+  if (categoryLower.includes('natura')) return '"Suez One", serif';
+  if (categoryLower.includes('arte') || categoryLower.includes('cultura')) return '"Young Serif", serif';
+  if (categoryLower.includes('castello')) return '"Cardo", serif';
+  if (categoryLower.includes('archeologia')) return '"Cinzel", serif';
+  if (categoryLower.includes('borgo')) return '"Eczar", serif';
+  return 'Inter, sans-serif';
+};
+
 interface HotspotCardProps {
   hotspot: Hotspot;
   index?: number;
@@ -127,10 +139,13 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
             </button>
           </div>
 
-          {/* Categoria sotto il titolo - nero con testo bianco */}
+          {/* Categoria sotto il titolo - nero con testo bianco, font personalizzato per categoria */}
           {translated.categoria && (
-            <div className="mt-3 mb-1">
-              <span className="px-3 py-1.5 text-xs font-bold rounded-full bg-black text-white">
+            <div className="mt-2.5 mb-2.5">
+              <span 
+                className="px-3 py-1.5 text-xs font-bold rounded-full bg-black text-white"
+                style={{ fontFamily: getCategoryFont(translated.categoria) }}
+              >
                 {translated.categoria}
               </span>
             </div>
@@ -196,14 +211,13 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
                   </span>
                 </div>
               )}
-              {/* Link Naviga - verde Pipo con testo bianco */}
+              {/* Link Naviga - verde Pipo #52C471 con testo bianco */}
               {hotspot.link_google_maps && (
                 <a
                   href={hotspot.link_google_maps}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-sans font-semibold text-sm text-white transition-all duration-300 hover:scale-105 hover:shadow-lg shadow-md active:scale-95"
-                  style={{ backgroundColor: 'hsl(152, 46%, 43%)' }}
+                  className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-sans font-semibold text-sm text-white transition-all duration-300 hover:scale-105 hover:shadow-lg shadow-md active:scale-95 bg-olive"
                 >
                   <span className="text-lg">👽</span>
                   <Navigation className="w-4 h-4" />

@@ -12,14 +12,14 @@ interface ScappaWizardProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   zones: string[];
-  categories: string[];
-  onResult: (zone: string | null, category: string | null) => void;
+  moods: string[];
+  onResult: (zone: string | null, mood: string | null) => void;
 }
 
-const ScappaWizard = ({ open, onOpenChange, zones, categories, onResult }: ScappaWizardProps) => {
+const ScappaWizard = ({ open, onOpenChange, zones, moods, onResult }: ScappaWizardProps) => {
   const [step, setStep] = useState(1);
   const [selectedZone, setSelectedZone] = useState<string | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedMood, setSelectedMood] = useState<string | null>(null);
   const { t } = useLanguage();
 
   const handleZoneSelect = (zone: string) => {
@@ -27,20 +27,20 @@ const ScappaWizard = ({ open, onOpenChange, zones, categories, onResult }: Scapp
     setStep(2);
   };
 
-  const handleCategorySelect = (category: string | null) => {
-    setSelectedCategory(category);
-    onResult(selectedZone, category);
+  const handleMoodSelect = (mood: string | null) => {
+    setSelectedMood(mood);
+    onResult(selectedZone, mood);
     handleClose();
   };
 
   const handleClose = () => {
     setStep(1);
     setSelectedZone(null);
-    setSelectedCategory(null);
+    setSelectedMood(null);
     onOpenChange(false);
   };
 
-  const handleSkipCategory = () => {
+  const handleSkipMood = () => {
     onResult(selectedZone, null);
     handleClose();
   };
@@ -49,13 +49,13 @@ const ScappaWizard = ({ open, onOpenChange, zones, categories, onResult }: Scapp
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md bg-background border-0 rounded-3xl shadow-2xl p-0 overflow-hidden">
         {/* Header */}
-        <DialogHeader className="p-6 pb-4 text-center" style={{ backgroundColor: 'hsl(152, 46%, 43%)' }}>
+        <DialogHeader className="p-6 pb-4 text-center bg-olive">
           <DialogTitle className="text-white font-sans font-bold text-xl flex items-center justify-center gap-2">
             <span className="text-2xl">👽</span>
             Scappa in 30 secondi
           </DialogTitle>
           <p className="text-white/90 text-sm mt-1">
-            {step === 1 ? "Dove vuoi andare?" : "Cosa cerchi?"}
+            {step === 1 ? "Dove vuoi andare?" : "Che mood cerchi?"}
           </p>
         </DialogHeader>
 
@@ -103,14 +103,13 @@ const ScappaWizard = ({ open, onOpenChange, zones, categories, onResult }: Scapp
           {step === 2 && (
             <div className="space-y-3">
               <p className="text-center text-sm text-muted-foreground mb-4">
-                Scegli una categoria o mostra tutto
+                Scegli un mood o mostra tutto
               </p>
-              <div className="grid gap-3">
+              <div className="grid gap-3 max-h-64 overflow-y-auto">
                 {/* Show all option */}
                 <button
-                  onClick={handleSkipCategory}
-                  className="flex items-center justify-between w-full px-5 py-4 rounded-2xl transition-all duration-200 hover:scale-[1.02] group"
-                  style={{ backgroundColor: 'hsl(152, 46%, 43%)' }}
+                  onClick={handleSkipMood}
+                  className="flex items-center justify-between w-full px-5 py-4 rounded-2xl transition-all duration-200 hover:scale-[1.02] group bg-olive"
                 >
                   <span className="flex items-center gap-3 text-white">
                     <span className="text-xl">🎲</span>
@@ -119,15 +118,15 @@ const ScappaWizard = ({ open, onOpenChange, zones, categories, onResult }: Scapp
                   <ArrowRight className="w-5 h-5 text-white/80" />
                 </button>
 
-                {categories.map((category) => (
+                {moods.map((mood) => (
                   <button
-                    key={category}
-                    onClick={() => handleCategorySelect(category)}
+                    key={mood}
+                    onClick={() => handleMoodSelect(mood)}
                     className="flex items-center justify-between w-full px-5 py-4 rounded-2xl bg-gray-100 hover:bg-gray-200 transition-all duration-200 hover:scale-[1.02] group"
                   >
                     <span className="flex items-center gap-3">
                       <Clock className="w-5 h-5 text-olive" />
-                      <span className="font-medium">{category}</span>
+                      <span className="font-medium">{mood}</span>
                     </span>
                     <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-olive transition-colors" />
                   </button>
