@@ -111,11 +111,11 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
             />
           </div>
 
-          {/* Row 2: Title - "esplorazioni alien in sicilia" in Inter Semibold 600 verde pipo */}
+          {/* Row 2: Title - "esplorazioni alien in sicilia" in Inter Semibold 600 verde pipo #52C471 */}
           {(headerTitle || translatedTitle) && (
             <h2 
-              className={`font-sans text-xl text-center mt-2 transition-opacity uppercase ${titleLoading ? 'opacity-50' : ''}`}
-              style={{ fontWeight: 600, color: 'hsl(152, 46%, 43%)' }}
+              className={`font-sans text-xl text-center mt-2 transition-opacity uppercase text-olive ${titleLoading ? 'opacity-50' : ''}`}
+              style={{ fontWeight: 600 }}
             >
               {translatedTitle || headerTitle}
             </h2>
@@ -193,10 +193,9 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
               </SheetContent>
             </Sheet>
 
-            {/* Center button - Scappa in 30 secondi */}
+            {/* Center button - Scappa in 30 secondi - verde pipo #52C471 */}
             <button
-              className="px-5 py-2.5 rounded-full font-sans font-semibold text-sm text-white transition-all duration-300 hover:scale-105 hover:shadow-lg shadow-md"
-              style={{ backgroundColor: 'hsl(152, 46%, 43%)' }}
+              className="px-5 py-2.5 rounded-full font-sans font-semibold text-sm text-white transition-all duration-300 hover:scale-105 hover:shadow-lg shadow-md bg-olive"
               onClick={onScappaClick}
             >
               Scappa in 30 secondi

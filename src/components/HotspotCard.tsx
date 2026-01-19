@@ -118,6 +118,7 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
               style={{ 
                 fontWeight: 700,
                 color: cardStyle.fontColor,
+                fontFamily: getCategoryFont(translated.categoria || ''),
               }}
             >
               {translated.titolo}
@@ -139,13 +140,10 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
             </button>
           </div>
 
-          {/* Categoria sotto il titolo - nero con testo bianco, font personalizzato per categoria */}
+          {/* Categoria sotto il titolo - nero con testo bianco */}
           {translated.categoria && (
             <div className="mt-2.5 mb-2.5">
-              <span 
-                className="px-3 py-1.5 text-xs font-bold rounded-full bg-black text-white"
-                style={{ fontFamily: getCategoryFont(translated.categoria) }}
-              >
+              <span className="px-3 py-1.5 text-xs font-bold rounded-full bg-black text-white">
                 {translated.categoria}
               </span>
             </div>
