@@ -201,16 +201,16 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
               Scappa in 30 secondi
             </button>
 
-            {/* Filter Button - Right - no border */}
+            {/* Filter Button - Right - nero con icona bianca */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
-                  className="p-2.5 rounded-full transition-all duration-300 flex items-center gap-2 hover:scale-110 hover:-rotate-3 bg-transparent"
+                  className="p-2.5 rounded-full transition-all duration-300 flex items-center gap-2 hover:scale-110 hover:-rotate-3 bg-black"
                   aria-label={t("filter")}
                 >
-                  <Filter className="w-5 h-5 text-black" />
+                  <Filter className="w-5 h-5 text-white" />
                   {selectedCategory && (
-                    <span className="text-sm font-medium text-black">{getTranslatedCategory(selectedCategory)}</span>
+                    <span className="text-sm font-medium text-white pr-1">{getTranslatedCategory(selectedCategory)}</span>
                   )}
                 </button>
               </DropdownMenuTrigger>
