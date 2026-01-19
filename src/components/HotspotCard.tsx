@@ -140,9 +140,9 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
             </button>
           </div>
 
-          {/* Categoria sotto il titolo - nero con testo bianco */}
+          {/* Categoria sotto il titolo - nero con testo bianco, centrato tra titolo e tag */}
           {translated.categoria && (
-            <div className="mt-2.5 mb-2.5">
+            <div className="mt-4 mb-4">
               <span className="px-3 py-1.5 text-xs font-bold rounded-full bg-black text-white">
                 {translated.categoria}
               </span>
