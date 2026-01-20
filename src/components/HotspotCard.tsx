@@ -195,16 +195,10 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
                 {translated.descrizione_completa}
               </p>
 
-              {/* Zona badge - above the CTA button */}
+              {/* Zona badge - above the CTA button - nero con testo bianco */}
               {hotspot.zona && (
                 <div className="mt-4">
-                  <span 
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium shadow-sm"
-                    style={{ 
-                      backgroundColor: cardStyle.badgeBgColor,
-                      color: cardStyle.badgeTextColor,
-                    }}
-                  >
+                  <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium shadow-sm bg-black text-white">
                     📍 zona {hotspot.zona}
                   </span>
                 </div>
