@@ -52,10 +52,10 @@ const ScappaWizard = ({ open, onOpenChange, zones, moods, onResult }: ScappaWiza
         <DialogHeader className="p-6 pb-4 text-center bg-olive">
           <DialogTitle className="text-white font-sans font-bold text-xl flex items-center justify-center gap-2">
             <span className="text-2xl">👽</span>
-            Scappa in 30 secondi
+            Decidi in 30 secondi
           </DialogTitle>
           <p className="text-white/90 text-sm mt-1">
-            {step === 1 ? "Dove vuoi andare?" : "Che mood cerchi?"}
+            {step === 1 ? "Da dove parti?" : "Cosa cerchi ora?"}
           </p>
         </DialogHeader>
 
@@ -74,7 +74,7 @@ const ScappaWizard = ({ open, onOpenChange, zones, moods, onResult }: ScappaWiza
           {step === 1 && (
             <div className="space-y-3">
               <p className="text-center text-sm text-muted-foreground mb-4">
-                Seleziona la zona che vuoi esplorare
+                Seleziona la zona da cui parti
               </p>
               {zones.length > 0 ? (
                 <div className="grid gap-3">
@@ -103,7 +103,7 @@ const ScappaWizard = ({ open, onOpenChange, zones, moods, onResult }: ScappaWiza
           {step === 2 && (
             <div className="space-y-3">
               <p className="text-center text-sm text-muted-foreground mb-4">
-                Scegli un mood o mostra tutto
+                Scegli cosa cerchi o mostra tutto
               </p>
               <div className="grid gap-3 max-h-64 overflow-y-auto">
                 {/* Show all option */}

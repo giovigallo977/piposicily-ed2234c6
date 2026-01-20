@@ -193,24 +193,24 @@ const Header = ({ categories = [], selectedCategory, onCategoryChange, headerTit
               </SheetContent>
             </Sheet>
 
-            {/* Center button - Scappa in 30 secondi - verde pipo #52C471 */}
+            {/* Center button - Decidi in 30 secondi - verde pipo #52C471 */}
             <button
               className="px-5 py-2.5 rounded-full font-sans font-semibold text-sm text-white transition-all duration-300 hover:scale-105 hover:shadow-lg shadow-md bg-olive"
               onClick={onScappaClick}
             >
-              Scappa in 30 secondi
+              Decidi in 30 secondi
             </button>
 
-            {/* Filter Button - Right - nero con icona bianca */}
+            {/* Filter Button - Right - trasparente con icona nera */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button
-                  className="p-2.5 rounded-full transition-all duration-300 flex items-center gap-2 hover:scale-110 hover:-rotate-3 bg-black"
+                  className="p-2.5 rounded-full transition-all duration-300 flex items-center gap-2 hover:scale-110 hover:-rotate-3 bg-transparent"
                   aria-label={t("filter")}
                 >
-                  <Filter className="w-5 h-5 text-white" />
+                  <Filter className="w-5 h-5 text-black" />
                   {selectedCategory && (
-                    <span className="text-sm font-medium text-white pr-1">{getTranslatedCategory(selectedCategory)}</span>
+                    <span className="text-sm font-medium text-black">{getTranslatedCategory(selectedCategory)}</span>
                   )}
                 </button>
               </DropdownMenuTrigger>
