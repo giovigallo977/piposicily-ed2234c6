@@ -5,6 +5,7 @@ import type { Hotspot } from "@/hooks/useHotspots";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedHotspot } from "@/hooks/useTranslation";
 import { useCardStyle } from "@/hooks/useCardStyle";
+import { useAnalytics } from "@/hooks/useAnalytics";
 import { fontSizeToClass, fontSizeToPx } from "@/types/styles";
 import useEmblaCarousel from "embla-carousel-react";
 
@@ -12,7 +13,7 @@ import useEmblaCarousel from "embla-carousel-react";
 const getCategoryFont = (category: string): string => {
   const categoryLower = category.toLowerCase();
   if (categoryLower.includes('borgo fantasma')) return '"Rubik Lines", cursive';
-  if (categoryLower.includes('natura')) return '"Suez One", serif';
+  if (categoryLower.includes('natura')) return '"Oswald", sans-serif';
   if (categoryLower.includes('arte') || categoryLower.includes('cultura')) return '"Young Serif", serif';
   if (categoryLower.includes('castello')) return '"Cardo", serif';
   if (categoryLower.includes('archeologia')) return '"Cinzel", serif';
@@ -30,6 +31,7 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const { t } = useLanguage();
+  const { trackHotspotExpand, trackHotspotNavigate } = useAnalytics();
 
   const { translated, isTranslating } = useTranslatedHotspot({
     titolo: hotspot.titolo,
@@ -126,7 +128,13 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
             
             {/* Bottone espansione - grigio chiaro con icona nera sottile */}
             <button
-              onClick={() => setIsExpanded(!isExpanded)}
+              onClick={() => {
+                const newState = !isExpanded;
+                setIsExpanded(newState);
+                if (newState) {
+                  trackHotspotExpand(hotspot.id, hotspot.titolo);
+                }
+              }}
               className="w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95 flex-shrink-0"
               style={{ backgroundColor: '#E5E5E5' }}
               aria-expanded={isExpanded}
@@ -209,6 +217,7 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
                   href={hotspot.link_google_maps}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => trackHotspotNavigate(hotspot.id, hotspot.titolo)}
                   className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-sans font-semibold text-sm text-white transition-all duration-300 hover:scale-105 hover:shadow-lg shadow-md active:scale-95 bg-olive"
                 >
                   <span className="text-lg">👽</span>

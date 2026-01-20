@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { X, MapPin, Clock, ArrowRight } from "lucide-react";
+import { MapPin, ArrowRight } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useAnalytics } from "@/hooks/useAnalytics";
 import {
   Dialog,
   DialogContent,
@@ -21,14 +22,20 @@ const ScappaWizard = ({ open, onOpenChange, zones, moods, onResult }: ScappaWiza
   const [selectedZone, setSelectedZone] = useState<string | null>(null);
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
   const { t } = useLanguage();
+  const { trackWizardZonaSelected, trackWizardMoodSelected, trackWizardCompleted } = useAnalytics();
 
   const handleZoneSelect = (zone: string) => {
     setSelectedZone(zone);
+    trackWizardZonaSelected(zone);
     setStep(2);
   };
 
   const handleMoodSelect = (mood: string | null) => {
     setSelectedMood(mood);
+    if (mood) {
+      trackWizardMoodSelected(selectedZone, mood);
+    }
+    trackWizardCompleted(selectedZone, mood);
     onResult(selectedZone, mood);
     handleClose();
   };
@@ -41,6 +48,7 @@ const ScappaWizard = ({ open, onOpenChange, zones, moods, onResult }: ScappaWiza
   };
 
   const handleSkipMood = () => {
+    trackWizardCompleted(selectedZone, null);
     onResult(selectedZone, null);
     handleClose();
   };
@@ -125,7 +133,7 @@ const ScappaWizard = ({ open, onOpenChange, zones, moods, onResult }: ScappaWiza
                     className="flex items-center justify-between w-full px-5 py-4 rounded-2xl bg-gray-100 hover:bg-gray-200 transition-all duration-200 hover:scale-[1.02] group"
                   >
                     <span className="flex items-center gap-3">
-                      <Clock className="w-5 h-5 text-olive" />
+                      <span className="text-lg">🎭</span>
                       <span className="font-medium">{mood}</span>
                     </span>
                     <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-olive transition-colors" />
