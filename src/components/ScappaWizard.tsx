@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MapPin, ArrowRight } from "lucide-react";
+import { MapPin, Sparkles, Compass, ArrowRight, ArrowLeft } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import {
@@ -14,11 +14,13 @@ interface ScappaWizardProps {
   onOpenChange: (open: boolean) => void;
   zones: string[];
   moods: string[];
-  onResult: (zone: string | null, mood: string | null) => void;
+  onResult: (zone: string | null, mood: string | null, exploreAll?: boolean) => void;
 }
 
+type WizardStep = "main" | "zona" | "mood";
+
 const ScappaWizard = ({ open, onOpenChange, zones, moods, onResult }: ScappaWizardProps) => {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState<WizardStep>("main");
   const [selectedZone, setSelectedZone] = useState<string | null>(null);
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
   const { t } = useLanguage();
@@ -27,30 +29,45 @@ const ScappaWizard = ({ open, onOpenChange, zones, moods, onResult }: ScappaWiza
   const handleZoneSelect = (zone: string) => {
     setSelectedZone(zone);
     trackWizardZonaSelected(zone);
-    setStep(2);
+    trackWizardCompleted(zone, null);
+    onResult(zone, null);
+    handleClose();
   };
 
-  const handleMoodSelect = (mood: string | null) => {
+  const handleMoodSelect = (mood: string) => {
     setSelectedMood(mood);
-    if (mood) {
-      trackWizardMoodSelected(selectedZone, mood);
-    }
-    trackWizardCompleted(selectedZone, mood);
-    onResult(selectedZone, mood);
+    trackWizardMoodSelected(null, mood);
+    trackWizardCompleted(null, mood);
+    onResult(null, mood);
+    handleClose();
+  };
+
+  const handleExploreAll = () => {
+    trackWizardCompleted(null, null);
+    onResult(null, null, true);
     handleClose();
   };
 
   const handleClose = () => {
-    setStep(1);
+    setStep("main");
     setSelectedZone(null);
     setSelectedMood(null);
     onOpenChange(false);
   };
 
-  const handleSkipMood = () => {
-    trackWizardCompleted(selectedZone, null);
-    onResult(selectedZone, null);
-    handleClose();
+  const handleBack = () => {
+    setStep("main");
+  };
+
+  const getStepTitle = () => {
+    switch (step) {
+      case "main":
+        return "Come vuoi esplorare?";
+      case "zona":
+        return "Da dove parti?";
+      case "mood":
+        return "Cosa cerchi ora?";
+    }
   };
 
   return (
@@ -63,34 +80,76 @@ const ScappaWizard = ({ open, onOpenChange, zones, moods, onResult }: ScappaWiza
             Decidi in 30 secondi
           </DialogTitle>
           <p className="text-white/90 text-sm mt-1">
-            {step === 1 ? "Da dove parti?" : "Cosa cerchi ora?"}
+            {getStepTitle()}
           </p>
         </DialogHeader>
 
         {/* Step indicator */}
         <div className="flex justify-center gap-2 py-3">
           <div 
-            className={`w-2 h-2 rounded-full transition-all ${step === 1 ? 'bg-olive w-6' : 'bg-gray-300'}`} 
+            className={`w-2 h-2 rounded-full transition-all ${step === "main" ? 'bg-olive w-6' : 'bg-gray-300'}`} 
           />
           <div 
-            className={`w-2 h-2 rounded-full transition-all ${step === 2 ? 'bg-olive w-6' : 'bg-gray-300'}`} 
+            className={`w-2 h-2 rounded-full transition-all ${step === "zona" || step === "mood" ? 'bg-olive w-6' : 'bg-gray-300'}`} 
           />
         </div>
 
         {/* Content */}
         <div className="px-6 pb-6">
-          {step === 1 && (
+          {/* Main menu - 3 options */}
+          {step === "main" && (
+            <div className="space-y-3">
+              {/* Zona option */}
+              <button
+                onClick={() => setStep("zona")}
+                className="flex items-center justify-between w-full px-5 py-4 rounded-full bg-gray-100 hover:bg-gray-200 transition-all duration-200 hover:scale-[1.02] group"
+              >
+                <span className="flex items-center gap-3">
+                  <MapPin className="w-5 h-5 text-olive" />
+                  <span className="font-semibold">Zona</span>
+                </span>
+                <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-olive transition-colors" />
+              </button>
+
+              {/* Mood option */}
+              <button
+                onClick={() => setStep("mood")}
+                className="flex items-center justify-between w-full px-5 py-4 rounded-full bg-gray-100 hover:bg-gray-200 transition-all duration-200 hover:scale-[1.02] group"
+              >
+                <span className="flex items-center gap-3">
+                  <Sparkles className="w-5 h-5 text-olive" />
+                  <span className="font-semibold">Mood</span>
+                </span>
+                <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-olive transition-colors" />
+              </button>
+
+              {/* Esplora in libertà option */}
+              <button
+                onClick={handleExploreAll}
+                className="flex items-center justify-between w-full px-5 py-4 rounded-full bg-olive hover:bg-olive/90 transition-all duration-200 hover:scale-[1.02] group"
+              >
+                <span className="flex items-center gap-3 text-white">
+                  <Compass className="w-5 h-5" />
+                  <span className="font-semibold">Esplora in libertà</span>
+                </span>
+                <ArrowRight className="w-5 h-5 text-white/80" />
+              </button>
+            </div>
+          )}
+
+          {/* Zona selection */}
+          {step === "zona" && (
             <div className="space-y-3">
               <p className="text-center text-sm text-muted-foreground mb-4">
                 Seleziona la zona da cui parti
               </p>
               {zones.length > 0 ? (
-                <div className="grid gap-3">
+                <div className="grid gap-3 max-h-64 overflow-y-auto">
                   {zones.map((zone) => (
                     <button
                       key={zone}
                       onClick={() => handleZoneSelect(zone)}
-                      className="flex items-center justify-between w-full px-5 py-4 rounded-2xl bg-gray-100 hover:bg-gray-200 transition-all duration-200 hover:scale-[1.02] group"
+                      className="flex items-center justify-between w-full px-5 py-4 rounded-full bg-gray-100 hover:bg-gray-200 transition-all duration-200 hover:scale-[1.02] group"
                     >
                       <span className="flex items-center gap-3">
                         <MapPin className="w-5 h-5 text-olive" />
@@ -105,35 +164,33 @@ const ScappaWizard = ({ open, onOpenChange, zones, moods, onResult }: ScappaWiza
                   Nessuna zona disponibile
                 </p>
               )}
+
+              {/* Back button */}
+              <button
+                onClick={handleBack}
+                className="w-full mt-4 py-3 text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center gap-2"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Torna indietro
+              </button>
             </div>
           )}
 
-          {step === 2 && (
+          {/* Mood selection */}
+          {step === "mood" && (
             <div className="space-y-3">
               <p className="text-center text-sm text-muted-foreground mb-4">
-                Scegli cosa cerchi o mostra tutto
+                Scegli l'atmosfera che cerchi
               </p>
               <div className="grid gap-3 max-h-64 overflow-y-auto">
-                {/* Show all option */}
-                <button
-                  onClick={handleSkipMood}
-                  className="flex items-center justify-between w-full px-5 py-4 rounded-2xl transition-all duration-200 hover:scale-[1.02] group bg-olive"
-                >
-                  <span className="flex items-center gap-3 text-white">
-                    <span className="text-xl">🎲</span>
-                    <span className="font-semibold">Mostra tutto</span>
-                  </span>
-                  <ArrowRight className="w-5 h-5 text-white/80" />
-                </button>
-
                 {moods.map((mood) => (
                   <button
                     key={mood}
                     onClick={() => handleMoodSelect(mood)}
-                    className="flex items-center justify-between w-full px-5 py-4 rounded-2xl bg-gray-100 hover:bg-gray-200 transition-all duration-200 hover:scale-[1.02] group"
+                    className="flex items-center justify-between w-full px-5 py-4 rounded-full bg-gray-100 hover:bg-gray-200 transition-all duration-200 hover:scale-[1.02] group"
                   >
                     <span className="flex items-center gap-3">
-                      <span className="text-lg">🎭</span>
+                      <Sparkles className="w-5 h-5 text-olive" />
                       <span className="font-medium">{mood}</span>
                     </span>
                     <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-olive transition-colors" />
@@ -143,10 +200,11 @@ const ScappaWizard = ({ open, onOpenChange, zones, moods, onResult }: ScappaWiza
 
               {/* Back button */}
               <button
-                onClick={() => setStep(1)}
-                className="w-full mt-4 py-3 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                onClick={handleBack}
+                className="w-full mt-4 py-3 text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center gap-2"
               >
-                ← Torna indietro
+                <ArrowLeft className="w-4 h-4" />
+                Torna indietro
               </button>
             </div>
           )}
