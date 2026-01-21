@@ -58,12 +58,19 @@ const Index = () => {
     setWizardOpen(true);
   };
 
+  const handleExploreAll = () => {
+    setSelectedZone(null);
+    setSelectedMood(null);
+    setSelectedCategory(null);
+    setShowHotspots(true);
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <MinimalHeader />
       
       {!showHotspots && (
-        <HeroSection onCtaClick={handleOpenWizard} />
+        <HeroSection onCtaClick={handleOpenWizard} onExploreClick={handleExploreAll} />
       )}
 
       <ScappaWizard
