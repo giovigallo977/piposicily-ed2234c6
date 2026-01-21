@@ -4,17 +4,27 @@ import HeroSection from "@/components/HeroSection";
 import HotspotCard from "@/components/HotspotCard";
 import ScappaWizard from "@/components/ScappaWizard";
 import { useHotspots } from "@/hooks/useHotspots";
+import { useHotspotCategories } from "@/hooks/useSiteContent";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Loader2 } from "lucide-react";
+import { useTranslatedCategories } from "@/hooks/useTranslatedCategories";
+import { Loader2, Filter, ArrowLeft } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Index = () => {
   const { data: hotspots, isLoading, error } = useHotspots();
+  const { data: categories = [] } = useHotspotCategories();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedZone, setSelectedZone] = useState<string | null>(null);
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
   const [wizardOpen, setWizardOpen] = useState(false);
   const [showHotspots, setShowHotspots] = useState(false);
   const { t } = useLanguage();
+  const { translatedCategories, getTranslatedCategory } = useTranslatedCategories(categories);
 
   // Extract unique zones from hotspots
   const zones = useMemo(() => {
@@ -48,9 +58,15 @@ const Index = () => {
     return result;
   }, [hotspots, selectedCategory, selectedZone, selectedMood]);
 
-  const handleWizardResult = (zone: string | null, mood: string | null) => {
-    setSelectedZone(zone);
-    setSelectedMood(mood);
+  const handleWizardResult = (zone: string | null, mood: string | null, exploreAll?: boolean) => {
+    if (exploreAll) {
+      setSelectedZone(null);
+      setSelectedMood(null);
+      setSelectedCategory(null);
+    } else {
+      setSelectedZone(zone);
+      setSelectedMood(mood);
+    }
     setShowHotspots(true);
   };
 
@@ -58,11 +74,11 @@ const Index = () => {
     setWizardOpen(true);
   };
 
-  const handleExploreAll = () => {
+  const handleBackToHome = () => {
     setSelectedZone(null);
-    setSelectedMood(null);
     setSelectedCategory(null);
-    setShowHotspots(true);
+    setSelectedMood(null);
+    setShowHotspots(false);
   };
 
   return (
@@ -70,7 +86,7 @@ const Index = () => {
       <MinimalHeader />
       
       {!showHotspots && (
-        <HeroSection onCtaClick={handleOpenWizard} onExploreClick={handleExploreAll} />
+        <HeroSection onCtaClick={handleOpenWizard} />
       )}
 
       <ScappaWizard
@@ -81,48 +97,80 @@ const Index = () => {
         onResult={handleWizardResult}
       />
       
-      {/* Active filters indicator - only show when hotspots are visible */}
-      {showHotspots && (selectedZone || selectedCategory || selectedMood) && (
-        <div className="container mx-auto px-4 py-3">
-          <div className="max-w-lg mx-auto flex flex-wrap items-center gap-2">
-            {selectedZone && (
+      {/* Sticky bar when showing hotspots */}
+      {showHotspots && (
+        <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/30 shadow-sm">
+          <div className="container mx-auto px-4 py-3">
+            <div className="max-w-lg mx-auto flex items-center justify-between">
+              {/* Back button */}
               <button
-                onClick={() => setSelectedZone(null)}
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium bg-olive text-white"
+                onClick={handleBackToHome}
+                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
-                📍 {selectedZone}
-                <span className="ml-1">×</span>
+                <ArrowLeft className="w-4 h-4" />
+                Home
               </button>
-            )}
-            {selectedMood && (
-              <button
-                onClick={() => setSelectedMood(null)}
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium bg-olive text-white"
-              >
-                🎭 {selectedMood}
-                <span className="ml-1">×</span>
-              </button>
-            )}
-            {selectedCategory && (
-              <button
-                onClick={() => setSelectedCategory(null)}
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-sm font-medium bg-black text-white"
-              >
-                {selectedCategory}
-                <span className="ml-1">×</span>
-              </button>
-            )}
-            <button
-              onClick={() => {
-                setSelectedZone(null);
-                setSelectedCategory(null);
-                setSelectedMood(null);
-                setShowHotspots(false);
-              }}
-              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Torna alla home
-            </button>
+
+              {/* Active filters */}
+              <div className="flex items-center gap-2 flex-wrap justify-center flex-1 mx-4">
+                {selectedZone && (
+                  <button
+                    onClick={() => setSelectedZone(null)}
+                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-olive text-white"
+                  >
+                    📍 {selectedZone}
+                    <span className="ml-1">×</span>
+                  </button>
+                )}
+                {selectedMood && (
+                  <button
+                    onClick={() => setSelectedMood(null)}
+                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-olive text-white"
+                  >
+                    🎭 {selectedMood}
+                    <span className="ml-1">×</span>
+                  </button>
+                )}
+                {selectedCategory && (
+                  <button
+                    onClick={() => setSelectedCategory(null)}
+                    className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-black text-white"
+                  >
+                    {selectedCategory}
+                    <span className="ml-1">×</span>
+                  </button>
+                )}
+              </div>
+
+              {/* Category filter dropdown */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    className="p-2 rounded-full transition-all duration-200 hover:scale-110 bg-transparent"
+                    aria-label={t("filter")}
+                  >
+                    <Filter className="w-5 h-5 text-black" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48 bg-background border border-border">
+                  <DropdownMenuItem
+                    onClick={() => setSelectedCategory(null)}
+                    className={`cursor-pointer ${!selectedCategory ? "bg-muted" : ""}`}
+                  >
+                    {t("allCategories")}
+                  </DropdownMenuItem>
+                  {categories.map((category, index) => (
+                    <DropdownMenuItem
+                      key={category}
+                      onClick={() => setSelectedCategory(category)}
+                      className={`cursor-pointer ${selectedCategory === category ? "bg-muted" : ""}`}
+                    >
+                      {translatedCategories[index] || category}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
         </div>
       )}
