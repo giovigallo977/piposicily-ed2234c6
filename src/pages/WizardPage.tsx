@@ -152,32 +152,18 @@ const WizardPage = () => {
         {/* ZONA STEP */}
         {step === "zona" && (
           <>
-            {/* Alien with speech bubble */}
-            <div className="relative mb-6">
-              <img
-                src={pipoAlien}
-                alt="Pipo"
-                className="h-16 w-16 object-contain"
-                draggable={false}
-              />
-              <div className="absolute -right-20 top-0 bg-white border border-muted rounded-xl px-3 py-1 text-sm font-sans italic">
-                Muoviti
-                <div className="absolute left-0 top-1/2 -translate-x-1 -translate-y-1/2 w-2 h-2 bg-white border-l border-b border-muted transform rotate-45" />
-              </div>
-            </div>
-
             {/* Title */}
             <h1 className="font-bubbles text-[28px] text-foreground text-center mb-8">
               Zona
             </h1>
 
-            {/* Zone list */}
+            {/* Zone list - centered */}
             <div className="w-full max-w-xs space-y-4">
               {zones.map((zone) => (
                 <button
                   key={zone}
                   onClick={() => handleZoneSelect(zone)}
-                  className="flex items-center gap-4 w-full py-2 group"
+                  className="flex items-center justify-center gap-4 w-full py-2 group"
                 >
                   <MapPin className="w-6 h-6 text-red-600 fill-red-600" />
                   <span className="font-sans text-xl font-bold italic text-foreground">
