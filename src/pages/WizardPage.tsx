@@ -1,5 +1,5 @@
-import { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useMemo, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ChevronsLeft, ArrowRight, MapPin } from "lucide-react";
 import pipoAlien from "@/assets/pipo-alien-new.png";
 import { useHotspots } from "@/hooks/useHotspots";
@@ -11,7 +11,19 @@ type WizardStep = "main" | "zona" | "mood";
 
 const WizardPage = () => {
   const navigate = useNavigate();
-  const [step, setStep] = useState<WizardStep>("main");
+  const [searchParams] = useSearchParams();
+  
+  // Initialize step from URL param (for back navigation from Explore)
+  const initialStep = (searchParams.get("step") as WizardStep) || "main";
+  const [step, setStep] = useState<WizardStep>(initialStep);
+  
+  // Update step when URL changes (e.g., browser back button)
+  useEffect(() => {
+    const urlStep = searchParams.get("step") as WizardStep;
+    if (urlStep && urlStep !== step) {
+      setStep(urlStep);
+    }
+  }, [searchParams]);
   const { data: hotspots } = useHotspots();
   const { trackWizardZonaSelected, trackWizardMoodSelected, trackWizardCompleted } = useAnalytics();
 
@@ -39,8 +51,16 @@ const WizardPage = () => {
     if (step === "main") {
       navigate("/");
     } else {
+      // Update URL when going back to main
+      navigate("/wizard", { replace: true });
       setStep("main");
     }
+  };
+  
+  // Update URL when changing steps (for proper back navigation)
+  const handleStepChange = (newStep: WizardStep) => {
+    navigate(`/wizard?step=${newStep}`, { replace: true });
+    setStep(newStep);
   };
 
   const handleZoneSelect = (zone: string) => {
@@ -103,7 +123,7 @@ const WizardPage = () => {
                 {/* Menu options */}
                 <div className="space-y-4">
                   <button
-                    onClick={() => setStep("zona")}
+                    onClick={() => handleStepChange("zona")}
                     className="flex items-center justify-between w-full py-2 group"
                   >
                     <span className="font-sans text-xl font-bold italic text-foreground">
@@ -116,7 +136,7 @@ const WizardPage = () => {
                   </button>
 
                   <button
-                    onClick={() => setStep("mood")}
+                    onClick={() => handleStepChange("mood")}
                     className="flex items-center justify-between w-full py-2 group"
                   >
                     <span className="font-sans text-xl font-bold italic text-foreground">

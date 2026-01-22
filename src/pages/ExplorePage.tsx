@@ -28,6 +28,16 @@ const ExplorePage = () => {
   // Get filter from URL params
   const zonaParam = searchParams.get("zona");
   const moodParam = searchParams.get("mood");
+  
+  // Determine the source step for back navigation
+  const getBackDestination = () => {
+    if (moodParam) {
+      return "/wizard?step=mood";
+    } else if (zonaParam) {
+      return "/wizard?step=zona";
+    }
+    return "/wizard";
+  };
 
   const filteredHotspots = useMemo(() => {
     if (!hotspots) return [];
@@ -50,7 +60,7 @@ const ExplorePage = () => {
   }, [hotspots, zonaParam, moodParam, selectedCategory]);
 
   const handleBack = () => {
-    navigate("/wizard");
+    navigate(getBackDestination());
   };
 
   return (
