@@ -5,7 +5,6 @@ import { useHotspots, useCreateHotspot, useUpdateHotspot, useDeleteHotspot, Hots
 import { useSiteContent, useUpdateSiteContent } from "@/hooks/useSiteContent";
 import { ImageUpload, MultiImageUpload } from "@/components/ImageUpload";
 import { EmojiPicker } from "@/components/EmojiPicker";
-import { SortableClaimItem, ClaimItem } from "@/components/admin/SortableClaimItem";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,8 +14,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, Plus, Pencil, Trash2, LogOut, ArrowLeft, FileText, MapPin } from "lucide-react";
-import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
-import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import pipoAlien from "@/assets/pipo-alien.png";
 
 const emptyHotspot: HotspotInsert = {
@@ -44,7 +41,6 @@ const Admin = () => {
   const { data: missionContent, isLoading: missionLoading } = useSiteContent("mission");
   const { data: headerTitleContent, isLoading: headerTitleLoading } = useSiteContent("header_title");
   const { data: headerSubtitleContent, isLoading: headerSubtitleLoading } = useSiteContent("header_subtitle");
-  const { data: claimsContent, isLoading: claimsLoading } = useSiteContent("claims");
   const updateSiteContent = useUpdateSiteContent();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -53,16 +49,6 @@ const Admin = () => {
   const [missionText, setMissionText] = useState("");
   const [headerTitle, setHeaderTitle] = useState("");
   const [headerSubtitle, setHeaderSubtitle] = useState("");
-  const [claims, setClaims] = useState<ClaimItem[]>([]);
-  const [originalClaimsJson, setOriginalClaimsJson] = useState("");
-  
-  // Drag and drop sensors
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -87,23 +73,6 @@ const Admin = () => {
       setHeaderSubtitle(headerSubtitleContent.content);
     }
   }, [headerSubtitleContent]);
-
-  useEffect(() => {
-    if (claimsContent?.content) {
-      try {
-        const parsed = JSON.parse(claimsContent.content);
-        const claimsWithIds = parsed.map((item: { label: string; content: string }, index: number) => ({
-          id: `claim-${index}`,
-          label: item.label,
-          content: item.content,
-        }));
-        setClaims(claimsWithIds);
-        setOriginalClaimsJson(claimsContent.content);
-      } catch (e) {
-        console.error("Error parsing claims:", e);
-      }
-    }
-  }, [claimsContent]);
 
   const handleOpenCreate = () => {
     setEditingHotspot(null);
@@ -157,42 +126,6 @@ const Admin = () => {
     await updateSiteContent.mutateAsync({ key: "header_title", content: headerTitle });
     await updateSiteContent.mutateAsync({ key: "header_subtitle", content: headerSubtitle });
   };
-
-  const handleSaveClaim = async () => {
-    const claimsData = claims.map(({ label, content }) => ({ label, content }));
-    await updateSiteContent.mutateAsync({ key: "claims", content: JSON.stringify(claimsData) });
-  };
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (over && active.id !== over.id) {
-      setClaims((items) => {
-        const oldIndex = items.findIndex((item) => item.id === active.id);
-        const newIndex = items.findIndex((item) => item.id === over.id);
-        return arrayMove(items, oldIndex, newIndex);
-      });
-    }
-  };
-
-  const handleClaimUpdate = (id: string, field: "label" | "content", value: string) => {
-    setClaims((items) =>
-      items.map((item) => (item.id === id ? { ...item, [field]: value } : item))
-    );
-  };
-
-  const handleClaimDelete = (id: string) => {
-    setClaims((items) => items.filter((item) => item.id !== id));
-  };
-
-  const handleAddClaim = () => {
-    setClaims((items) => [
-      ...items,
-      { id: `claim-${Date.now()}`, label: "", content: "" },
-    ]);
-  };
-
-  const currentClaimsJson = JSON.stringify(claims.map(({ label, content }) => ({ label, content })));
-  const isClaimUnchanged = currentClaimsJson === originalClaimsJson;
 
   if (authLoading || isLoading) {
     return (
@@ -418,85 +351,92 @@ const Admin = () => {
                 </Dialog>
               </div>
 
-              {/* Hotspots List */}
+              {/* Hotspots list */}
               <div className="space-y-4">
-                {hotspots?.map((hotspot) => (
-                  <Card key={hotspot.id}>
-                    <CardHeader className="pb-2">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <CardTitle className="font-heading text-lg">{hotspot.titolo}</CardTitle>
-                          <p className="text-sm text-muted-foreground mt-1">{hotspot.descrizione_breve}</p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {hotspot.categoria && (
-                            <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
-                              {hotspot.categoria}
-                            </span>
-                          )}
-                          {hotspot.zona && (
-                            <span className="text-xs bg-olive/10 text-olive px-2 py-1 rounded-full">
-                              📍 {hotspot.zona}
-                            </span>
-                          )}
-                          <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
-                            #{hotspot.ordine}
-                          </span>
-                          <Button variant="ghost" size="icon" onClick={() => handleOpenEdit(hotspot)}>
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Eliminare "{hotspot.titolo}"?</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Questa azione non può essere annullata.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel>Annulla</AlertDialogCancel>
-                                <AlertDialogAction 
-                                  onClick={() => handleDelete(hotspot.id)}
-                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                >
-                                  Elimina
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex flex-wrap gap-2 text-xs items-center">
+                {hotspots && hotspots.length > 0 ? (
+                  hotspots.map((hotspot) => (
+                    <Card key={hotspot.id} className="overflow-hidden">
+                      <div className="flex items-start gap-4 p-4">
+                        {/* Image thumbnail */}
                         {hotspot.foto_principale && (
-                          <img 
-                            src={hotspot.foto_principale} 
-                            alt={hotspot.titolo}
-                            className="h-12 w-12 object-cover rounded"
-                          />
+                          <div className="flex-shrink-0">
+                            <img
+                              src={hotspot.foto_principale}
+                              alt={hotspot.titolo}
+                              className="w-20 h-20 object-cover rounded-lg"
+                            />
+                          </div>
                         )}
-                        {(hotspot.foto_gallery?.filter(Boolean).length || 0) > 0 && (
-                          <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                            🖼️ {hotspot.foto_gallery?.filter(Boolean).length} foto gallery
-                          </span>
-                        )}
-                        {hotspot.link_google_maps && (
-                          <span className="bg-orange-100 text-orange-800 px-2 py-1 rounded">
-                            📍 Maps
-                          </span>
-                        )}
+                        
+                        {/* Content */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-2">
+                            <div>
+                              <h3 className="font-semibold text-lg truncate">{hotspot.titolo}</h3>
+                              <div className="flex flex-wrap gap-2 mt-1">
+                                {hotspot.categoria && (
+                                  <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-muted text-muted-foreground">
+                                    {hotspot.categoria}
+                                  </span>
+                                )}
+                                {hotspot.zona && (
+                                  <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-olive/20 text-olive">
+                                    📍 {hotspot.zona}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                                {hotspot.descrizione_breve}
+                              </p>
+                              {hotspot.tags && hotspot.tags.length > 0 && (
+                                <div className="flex flex-wrap gap-1 mt-2">
+                                  {hotspot.tags.filter(Boolean).map((tag, i) => (
+                                    <span key={i} className="inline-flex items-center px-1.5 py-0.5 rounded text-xs bg-muted/50 text-muted-foreground font-mono">
+                                      {tag}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                            <div className="flex items-center gap-1 flex-shrink-0">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => handleOpenEdit(hotspot)}
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                              <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                  <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                  <AlertDialogHeader>
+                                    <AlertDialogTitle>Eliminare questo hotspot?</AlertDialogTitle>
+                                    <AlertDialogDescription>
+                                      Questa azione non può essere annullata. L'hotspot "{hotspot.titolo}" sarà eliminato definitivamente.
+                                    </AlertDialogDescription>
+                                  </AlertDialogHeader>
+                                  <AlertDialogFooter>
+                                    <AlertDialogCancel>Annulla</AlertDialogCancel>
+                                    <AlertDialogAction 
+                                      onClick={() => handleDelete(hotspot.id)}
+                                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                    >
+                                      Elimina
+                                    </AlertDialogAction>
+                                  </AlertDialogFooter>
+                                </AlertDialogContent>
+                              </AlertDialog>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                    </CardContent>
-                  </Card>
-                ))}
-
-                {hotspots?.length === 0 && (
+                    </Card>
+                  ))
+                ) : (
                   <div className="text-center py-12 text-muted-foreground">
                     <p>Nessun hotspot presente.</p>
                     <p className="text-sm mt-1">Clicca "Nuovo Hotspot" per iniziare.</p>
@@ -562,71 +502,6 @@ const Admin = () => {
                             <Loader2 className="h-4 w-4 animate-spin mr-2" />
                           )}
                           Salva Intestazione
-                        </Button>
-                      </div>
-                    </>
-                  )}
-                </CardContent>
-              </Card>
-
-              {/* Claim Content */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <FileText className="h-5 w-5" />
-                    Claim Homepage
-                  </CardTitle>
-                  <CardDescription>
-                    Le frasi del claim mostrate sotto il logo. Trascina per riordinare.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {claimsLoading ? (
-                    <div className="flex justify-center py-8">
-                      <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                    </div>
-                  ) : (
-                    <>
-                      <DndContext
-                        sensors={sensors}
-                        collisionDetection={closestCenter}
-                        onDragEnd={handleDragEnd}
-                      >
-                        <SortableContext
-                          items={claims.map((c) => c.id)}
-                          strategy={verticalListSortingStrategy}
-                        >
-                          <div className="space-y-2">
-                            {claims.map((claim) => (
-                              <SortableClaimItem
-                                key={claim.id}
-                                claim={claim}
-                                onUpdate={handleClaimUpdate}
-                                onDelete={handleClaimDelete}
-                                canDelete={claims.length > 1}
-                              />
-                            ))}
-                          </div>
-                        </SortableContext>
-                      </DndContext>
-                      
-                      <div className="flex justify-between pt-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={handleAddClaim}
-                        >
-                          <Plus className="h-4 w-4 mr-2" />
-                          Aggiungi riga
-                        </Button>
-                        <Button 
-                          onClick={handleSaveClaim}
-                          disabled={updateSiteContent.isPending || isClaimUnchanged}
-                        >
-                          {updateSiteContent.isPending && (
-                            <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                          )}
-                          Salva Claim
                         </Button>
                       </div>
                     </>

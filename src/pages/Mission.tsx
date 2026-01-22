@@ -3,7 +3,7 @@ import { ArrowLeft, Loader2 } from "lucide-react";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedContent } from "@/hooks/useTranslation";
-import pipoAlien from "@/assets/pipo-alien.png";
+import pipoAlien from "@/assets/pipo-alien-new.png";
 
 const Mission = () => {
   const { data: missionContent, isLoading, error } = useSiteContent("mission");
@@ -27,19 +27,17 @@ const Mission = () => {
       </header>
 
       <main className="container mx-auto px-6 py-12">
-        <div className="max-w-2xl mx-auto">
-          {/* Pipo logo centered */}
+        <div className="max-w-md mx-auto">
+          {/* Pipo logo centered - using new alien from homepage */}
           <div className="flex flex-col items-center mb-10">
             <img
               src={pipoAlien}
               alt="Pipo"
-              className="h-20 w-20 object-contain mb-4"
+              className="h-16 w-16 object-contain mb-6"
               draggable={false}
             />
-            <h1 
-              className="font-sans text-3xl tracking-tight text-foreground uppercase"
-              style={{ fontWeight: 600 }}
-            >
+            {/* Title in Rubik Bubbles like homepage */}
+            <h1 className="font-bubbles text-[28px] text-foreground text-center">
               {t("missionTitle")}
             </h1>
           </div>
@@ -58,11 +56,9 @@ const Mission = () => {
           )}
 
           {missionContent && (
-            <div className={`prose prose-lg max-w-none transition-opacity ${isTranslating ? 'opacity-50' : ''}`}>
-              <p 
-                className="text-foreground leading-relaxed whitespace-pre-wrap font-sans"
-                style={{ fontWeight: 400 }}
-              >
+            <div className={`transition-opacity ${isTranslating ? 'opacity-50' : ''}`}>
+              {/* Text in Inter 22 bold italic like mockup */}
+              <p className="text-[22px] font-bold italic text-foreground leading-relaxed whitespace-pre-wrap font-sans text-center">
                 {translatedMission || missionContent.content}
               </p>
             </div>

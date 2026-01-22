@@ -26,8 +26,8 @@ const HeroSection = ({ onCtaClick }: HeroSectionProps) => {
           Portami via in 30 secondi
         </button>
         
-        {/* Sublabel */}
-        <p className="text-[22px] text-muted-foreground mt-6 font-sans">
+        {/* Sublabel - same size as micro-proof (15px) */}
+        <p className="text-[15px] text-muted-foreground mt-6 font-sans">
           Zona → Mood → Esplora in libertà
         </p>
       </div>

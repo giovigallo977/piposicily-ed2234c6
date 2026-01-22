@@ -37,7 +37,10 @@ const ExplorePage = () => {
       result = result.filter((h) => h.zona === zonaParam);
     }
     if (moodParam) {
-      result = result.filter((h) => h.tags?.includes(moodParam));
+      // Check if any tag (trimmed) matches the mood param
+      result = result.filter((h) => 
+        h.tags?.some(tag => tag.trim() === moodParam)
+      );
     }
     if (selectedCategory) {
       result = result.filter((h) => h.categoria === selectedCategory);
