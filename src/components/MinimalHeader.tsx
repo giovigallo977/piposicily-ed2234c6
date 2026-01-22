@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Menu } from "lucide-react";
-import pipoAlien from "@/assets/pipo-alien.png";
+import pipoAlien from "@/assets/pipo-alien-new.png";
 import { useLanguage } from "@/contexts/LanguageContext";
 import {
   Sheet,
@@ -31,7 +31,7 @@ const MinimalHeader = () => {
             </SheetTrigger>
             <SheetContent side="left" className="w-[280px] bg-background flex flex-col">
               <SheetHeader>
-                <SheetTitle className="font-brand text-xl font-black italic">
+                <SheetTitle className="font-bubbles text-xl">
                   {t("menu")}
                 </SheetTitle>
               </SheetHeader>
@@ -41,7 +41,7 @@ const MinimalHeader = () => {
                 <Link
                   to="/missione"
                   onClick={() => setMenuOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted transition-colors text-foreground font-medium"
+                  className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted transition-colors text-foreground font-sans font-bold italic text-lg"
                 >
                   {t("missionTitle")}
                 </Link>
@@ -76,15 +76,15 @@ const MinimalHeader = () => {
             </SheetContent>
           </Sheet>
 
-          {/* Logo centered */}
+          {/* Logo centered - "Pipo" in corsivo con alieno */}
           <div className="flex items-center">
-            <h1 className="font-brand text-xl font-black italic tracking-tight text-foreground">
+            <h1 className="font-sans text-xl font-bold italic tracking-tight text-foreground">
               Pipo
             </h1>
             <img
               src={pipoAlien}
               alt="Logo Pipo"
-              className="h-7 w-7 object-contain ml-2"
+              className="h-10 w-10 object-contain ml-2"
               draggable={false}
             />
           </div>
