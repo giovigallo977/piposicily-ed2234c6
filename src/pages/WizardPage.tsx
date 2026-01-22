@@ -4,6 +4,8 @@ import { ChevronsLeft, ArrowRight, MapPin } from "lucide-react";
 import pipoAlien from "@/assets/pipo-alien-new.png";
 import { useHotspots } from "@/hooks/useHotspots";
 import { useAnalytics } from "@/hooks/useAnalytics";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslatedContent } from "@/hooks/useTranslation";
 
 type WizardStep = "main" | "zona" | "mood";
 
@@ -21,9 +23,14 @@ const WizardPage = () => {
   }, [hotspots]);
 
   // Extract unique moods (tags) from hotspots - NO DUPLICATES
+  // Trim whitespace to handle "Pace" vs "Pace " as duplicates
   const moods = useMemo(() => {
     if (!hotspots) return [];
-    const allTags = hotspots.flatMap(h => h.tags || []).filter(Boolean);
+    const allTags = hotspots
+      .flatMap(h => h.tags || [])
+      .filter(Boolean)
+      .map(tag => tag.trim()) // Trim whitespace
+      .filter(tag => tag.length > 0); // Remove empty after trim
     const uniqueTags = [...new Set(allTags)];
     return uniqueTags as string[];
   }, [hotspots]);
@@ -142,8 +149,8 @@ const WizardPage = () => {
               </div>
             </div>
 
-            {/* Bottom text */}
-            <p className="text-muted-foreground font-sans italic text-lg mt-6">
+            {/* Bottom text - same font family as Zona/Mood but not bold/italic, gray */}
+            <p className="text-muted-foreground font-sans text-xl mt-6">
               adesso tocca a te
             </p>
           </>
@@ -196,20 +203,6 @@ const WizardPage = () => {
                   </span>
                 </button>
               ))}
-            </div>
-
-            {/* Alien at bottom with speech bubble */}
-            <div className="mt-auto pt-10 relative">
-              <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-white border border-muted rounded-xl px-3 py-1 text-sm font-sans italic whitespace-nowrap">
-                ancora qui sei?
-                <div className="absolute bottom-0 left-1/2 translate-y-1 -translate-x-1/2 w-2 h-2 bg-white border-r border-b border-muted transform rotate-45" />
-              </div>
-              <img
-                src={pipoAlien}
-                alt="Pipo"
-                className="h-16 w-16 object-contain mx-auto"
-                draggable={false}
-              />
             </div>
           </>
         )}
