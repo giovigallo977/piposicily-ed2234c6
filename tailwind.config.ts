@@ -17,11 +17,12 @@ export default {
         display: ['"Playfair Display"', 'Georgia', 'serif'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
         brand: ['Inter', 'system-ui', 'sans-serif'],
-        heading: ['"Proxima Nova"', 'Inter', 'system-ui', 'sans-serif'],
+        heading: ['"Rubik Bubbles"', 'system-ui', 'sans-serif'],
         body: ['Nunito', '"Proxima Nova"', 'Inter', 'system-ui', 'sans-serif'],
         friendly: ['Nunito', 'system-ui', 'sans-serif'],
         claim: ['"Bebas Neue"', 'sans-serif'],
         mono: ['"Roboto Mono"', 'monospace'],
+        bubbles: ['"Rubik Bubbles"', 'cursive'],
       },
       colors: {
         border: "hsl(var(--border))",
