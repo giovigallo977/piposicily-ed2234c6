@@ -38,6 +38,23 @@ export const translations = {
     claimQuando: "QUANDO:",
     claimRisolve: "RISOLVE:",
     claimCome: "COME:",
+    // Wizard
+    wizardTitle: "Portami via in 30 secondi",
+    wizardZona: "Zona",
+    wizardMood: "Mood",
+    wizardExplore: "Esplora in Libertà",
+    wizardYourTurn: "adesso tocca a te",
+    // Explore page
+    foundResults: "Trovati",
+    results: "risultati",
+    // Hero section
+    heroHeadline: "Esplorazioni aliene in Sicilia",
+    heroSubheadline: "Trova pace fuori dai radar e decidi in 30 secondi dove andare",
+    heroSubheadline2: "Posti scelti da un alieno (vero): niente caos, niente folla, nessun imprevisto",
+    heroCtaButton: "Portami via in 30 secondi",
+    heroSublabel: "Zona → Mood → Esplora in libertà",
+    heroMicroProof: "Ti mostro posti iper selezionati, lontani dal turismo di massa",
+    heroMicroProof2: "Tu scegli, io ti porto fuori dai radar",
   },
   en: {
     back: "Back",
@@ -67,6 +84,23 @@ export const translations = {
     claimQuando: "WHEN:",
     claimRisolve: "IT SOLVES:",
     claimCome: "HOW:",
+    // Wizard
+    wizardTitle: "Take me away in 30 seconds",
+    wizardZona: "Zone",
+    wizardMood: "Mood",
+    wizardExplore: "Free Exploration",
+    wizardYourTurn: "now it's your turn",
+    // Explore page
+    foundResults: "Found",
+    results: "results",
+    // Hero section
+    heroHeadline: "Alien Explorations in Sicily",
+    heroSubheadline: "Find peace off the radar and decide in 30 seconds where to go",
+    heroSubheadline2: "Places chosen by a (real) alien: no chaos, no crowds, no surprises",
+    heroCtaButton: "Take me away in 30 seconds",
+    heroSublabel: "Zone → Mood → Free Exploration",
+    heroMicroProof: "I show you ultra-selected places, far from mass tourism",
+    heroMicroProof2: "You choose, I take you off the radar",
   },
 } as const;
 
