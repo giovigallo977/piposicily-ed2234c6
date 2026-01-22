@@ -26,6 +26,7 @@ const WizardPage = () => {
   }, [searchParams]);
   const { data: hotspots } = useHotspots();
   const { trackWizardZonaSelected, trackWizardMoodSelected, trackWizardCompleted } = useAnalytics();
+  const { t } = useLanguage();
 
   // Extract unique zones from hotspots
   const zones = useMemo(() => {
@@ -110,7 +111,7 @@ const WizardPage = () => {
           <>
             {/* Title */}
             <h1 className="font-bubbles text-[28px] text-foreground text-center mb-8">
-              Portami via in 30 secondi
+              {t("wizardTitle")}
             </h1>
 
             {/* Signpost-style menu */}
@@ -127,7 +128,7 @@ const WizardPage = () => {
                     className="flex items-center justify-between w-full py-2 group"
                   >
                     <span className="font-sans text-xl font-bold italic text-foreground">
-                      Zona
+                      {t("wizardZona")}
                     </span>
                     <div className="flex items-center text-olive">
                       <ArrowRight className="w-6 h-6" strokeWidth={3} />
@@ -140,7 +141,7 @@ const WizardPage = () => {
                     className="flex items-center justify-between w-full py-2 group"
                   >
                     <span className="font-sans text-xl font-bold italic text-foreground">
-                      Mood
+                      {t("wizardMood")}
                     </span>
                     <div className="flex items-center text-olive">
                       <ArrowRight className="w-6 h-6" strokeWidth={3} />
@@ -153,7 +154,7 @@ const WizardPage = () => {
                     className="flex items-center justify-between w-full py-2 group"
                   >
                     <span className="font-sans text-xl font-bold italic text-foreground">
-                      Esplora in Libertà
+                      {t("wizardExplore")}
                     </span>
                     <div className="flex items-center text-olive">
                       <ArrowRight className="w-6 h-6" strokeWidth={3} />
@@ -171,7 +172,7 @@ const WizardPage = () => {
 
             {/* Bottom text - same font family as Zona/Mood but not bold/italic, gray */}
             <p className="text-muted-foreground font-sans text-xl mt-6">
-              adesso tocca a te
+              {t("wizardYourTurn")}
             </p>
           </>
         )}
@@ -181,7 +182,7 @@ const WizardPage = () => {
           <>
             {/* Title */}
             <h1 className="font-bubbles text-[28px] text-foreground text-center mb-8">
-              Zona
+              {t("wizardZona")}
             </h1>
 
             {/* Zone list - centered */}
@@ -207,7 +208,7 @@ const WizardPage = () => {
           <>
             {/* Title */}
             <h1 className="font-bubbles text-[28px] text-foreground text-center mb-8">
-              Mood
+              {t("wizardMood")}
             </h1>
 
             {/* Mood list - UNIQUE tags only */}
