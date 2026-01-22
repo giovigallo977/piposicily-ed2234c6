@@ -1,5 +1,3 @@
-import pipoAlien from "@/assets/pipo-alien-new.png";
-
 interface HeroSectionProps {
   onCtaClick: () => void;
 }
@@ -27,14 +25,6 @@ const HeroSection = ({ onCtaClick }: HeroSectionProps) => {
         >
           Portami via in 30 secondi
         </button>
-        
-        {/* Pipo che indica il bottone */}
-        <img 
-          src={pipoAlien} 
-          alt="Pipo"
-          className="absolute -right-2 -bottom-8 w-12 h-12 object-contain transform rotate-12"
-          draggable={false}
-        />
         
         {/* Sublabel */}
         <p className="text-[22px] text-muted-foreground mt-6 font-sans">
