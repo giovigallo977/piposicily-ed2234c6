@@ -85,6 +85,25 @@ Ogni decisione strutturale documentata qui è DEFINITIVA. Le modifiche future de
 - Immagini: CacheFirst (7 giorni cache)
 - Assets statici: precached automaticamente
 
+## Sistema Multilingua - OBBLIGATORIO
+
+### Principio Fondamentale
+OGNI testo visibile all'utente DEVE usare il sistema di traduzione:
+- **Testi statici UI**: Usare `t("chiave")` da `useLanguage()`
+- **Contenuti dinamici (DB)**: Usare `useTranslatedContent()` o `useTranslatedHotspot()`
+- **aria-label**: Usare `t("backLabel")` invece di stringhe hardcoded
+
+### Regole per Nuove Feature
+1. Prima di scrivere testo, aggiungere la chiave in `LanguageContext.tsx`
+2. Aggiungere SEMPRE entrambe le traduzioni (it + en)
+3. Usare chiavi semantiche: `wizardTitle`, `heroSubheadline`, non `text1`
+4. Contenuti admin possono restare in italiano (interfaccia interna)
+
+### Contenuti che NON richiedono traduzione
+- Nomi propri (Pipo, Sicilia, nomi località)
+- Admin panel (interfaccia interna)
+- Console logs e messaggi sviluppatore
+
 ## Regole per AI Future
 1. Prima di modificare layout, verificare questo file
 2. Le strutture qui documentate sono LOCKED
@@ -92,3 +111,5 @@ Ogni decisione strutturale documentata qui è DEFINITIVA. Le modifiche future de
 4. In caso di dubbio, chiedere conferma all'utente
 5. MAI rimuovere o modificare la configurazione auto-update PWA
 6. MAI disabilitare skipWaiting o clientsClaim
+7. OGNI nuovo testo utente DEVE usare il sistema `t()` o `useTranslatedContent()`
+8. MAI hardcodare testo italiano/inglese nei componenti

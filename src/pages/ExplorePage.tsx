@@ -70,7 +70,7 @@ const ExplorePage = () => {
         <button
           onClick={handleBack}
           className="p-2 transition-all duration-200 hover:scale-110"
-          aria-label="Torna indietro"
+          aria-label={t("backLabel")}
         >
           <ChevronsLeft className="w-8 h-8 text-black" strokeWidth={2.5} />
         </button>
