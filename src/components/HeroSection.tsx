@@ -10,20 +10,8 @@ const HeroSection = ({ onCtaClick, pipoImage }: HeroSectionProps) => {
 
   return (
     <section className="bg-background px-6 py-12 flex flex-col items-center text-center min-h-[75vh] justify-center">
-      {/* Pipo Surf Image */}
-      {pipoImage && (
-        <img
-          src={pipoImage}
-          alt="Pipo"
-          className="h-32 w-auto object-contain mb-6"
-          draggable={false}
-        />
-      )}
-
       {/* H1 - Headline in Rubik Bubbles */}
-      <h1 className="font-bubbles text-[30px] text-foreground leading-tight">
-        {t("heroHeadline")}
-      </h1>
+      <h1 className="font-bubbles text-[30px] text-foreground leading-tight">{t("heroHeadline")}</h1>
 
       {/* H2 - Subheadline in Inter 18 semibold */}
       <h2 className="font-sans text-[18px] font-semibold text-foreground mt-6 max-w-sm leading-relaxed">
@@ -40,11 +28,9 @@ const HeroSection = ({ onCtaClick, pipoImage }: HeroSectionProps) => {
         >
           {t("heroCtaButton")}
         </button>
-        
+
         {/* Sublabel - same size as micro-proof (15px) */}
-        <p className="text-[15px] text-muted-foreground mt-6 font-sans">
-          {t("heroSublabel")}
-        </p>
+        <p className="text-[15px] text-muted-foreground mt-6 font-sans">{t("heroSublabel")}</p>
       </div>
 
       {/* Micro-proof */}
