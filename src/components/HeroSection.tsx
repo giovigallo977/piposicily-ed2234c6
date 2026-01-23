@@ -2,13 +2,24 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 interface HeroSectionProps {
   onCtaClick: () => void;
+  pipoImage?: string;
 }
 
-const HeroSection = ({ onCtaClick }: HeroSectionProps) => {
+const HeroSection = ({ onCtaClick, pipoImage }: HeroSectionProps) => {
   const { t } = useLanguage();
 
   return (
     <section className="bg-background px-6 py-12 flex flex-col items-center text-center min-h-[75vh] justify-center">
+      {/* Pipo Surf Image */}
+      {pipoImage && (
+        <img
+          src={pipoImage}
+          alt="Pipo"
+          className="h-32 w-auto object-contain mb-6"
+          draggable={false}
+        />
+      )}
+
       {/* H1 - Headline in Rubik Bubbles */}
       <h1 className="font-bubbles text-[30px] text-foreground leading-tight">
         {t("heroHeadline")}
