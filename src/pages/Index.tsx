@@ -13,7 +13,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <MinimalHeader />
-      <HeroSection onCtaClick={handleOpenWizard} pipoImage={pipoSurf} />
+      <HeroSection onCtaClick={handleOpenWizard} />
     </div>
   );
 };
