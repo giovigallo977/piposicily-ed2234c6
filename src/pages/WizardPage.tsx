@@ -197,7 +197,7 @@ const WizardPage = () => {
                   <img 
                     src={pinIcon} 
                     alt="" 
-                    className="w-8 h-10 object-contain"
+                    className="h-6 w-auto object-contain"
                     draggable={false}
                   />
                   <span className="font-sans text-xl font-bold italic text-foreground">
