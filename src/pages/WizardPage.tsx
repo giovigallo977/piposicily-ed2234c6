@@ -1,7 +1,8 @@
 import { useState, useMemo, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ChevronsLeft, ArrowRight, MapPin } from "lucide-react";
+import { ChevronsLeft, ArrowRight } from "lucide-react";
 import pipoAlien from "@/assets/pipo-alien-new.png";
+import pinIcon from "@/assets/pin-icon.png";
 import { useHotspots } from "@/hooks/useHotspots";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -185,15 +186,20 @@ const WizardPage = () => {
               {t("wizardZona")}
             </h1>
 
-            {/* Zone list - centered */}
-            <div className="w-full max-w-xs space-y-4">
+            {/* Zone list - centered mobile-first */}
+            <div className="w-full max-w-xs flex flex-col items-center gap-5">
               {zones.map((zone) => (
                 <button
                   key={zone}
                   onClick={() => handleZoneSelect(zone)}
-                  className="flex items-center justify-center gap-4 w-full py-2 group"
+                  className="flex items-center justify-center gap-3 w-full py-3 group"
                 >
-                  <MapPin className="w-6 h-6 text-red-600 fill-red-600" />
+                  <img 
+                    src={pinIcon} 
+                    alt="" 
+                    className="w-6 h-8 object-contain" 
+                    draggable={false}
+                  />
                   <span className="font-sans text-xl font-bold italic text-foreground">
                     {zone}
                   </span>
