@@ -4,9 +4,7 @@ import { ChevronsLeft, ArrowRight } from "lucide-react";
 import pipoAlien from "@/assets/pipo-alien-new.png";
 import pinIcon from "@/assets/pin-icon.png";
 import { useHotspots } from "@/hooks/useHotspots";
-import { useAnalytics } from "@/hooks/useAnalytics";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useTranslatedContent } from "@/hooks/useTranslation";
 
 type WizardStep = "main" | "zona" | "mood";
 
@@ -26,7 +24,6 @@ const WizardPage = () => {
     }
   }, [searchParams]);
   const { data: hotspots } = useHotspots();
-  const { trackWizardZonaSelected, trackWizardMoodSelected, trackWizardCompleted } = useAnalytics();
   const { t } = useLanguage();
 
   // Extract unique zones from hotspots
@@ -66,19 +63,14 @@ const WizardPage = () => {
   };
 
   const handleZoneSelect = (zone: string) => {
-    trackWizardZonaSelected(zone);
-    trackWizardCompleted(zone, null);
     navigate(`/esplora?zona=${encodeURIComponent(zone)}`);
   };
 
   const handleMoodSelect = (mood: string) => {
-    trackWizardMoodSelected(null, mood);
-    trackWizardCompleted(null, mood);
     navigate(`/esplora?mood=${encodeURIComponent(mood)}`);
   };
 
   const handleExploreAll = () => {
-    trackWizardCompleted(null, null);
     navigate("/esplora");
   };
 
