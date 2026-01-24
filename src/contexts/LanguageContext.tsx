@@ -62,7 +62,7 @@ export const translations = {
     wizardZona: "Zona",
     wizardMood: "Mood",
     wizardExplore: "Esplora in Libertà",
-    wizardYourTurn: "adesso tocca a te",
+    wizardYourTurn: "Ancora qui?",
     
     // Explore page
     foundResults: "Trovati",
@@ -129,7 +129,7 @@ export const translations = {
     wizardZona: "Zone",
     wizardMood: "Mood",
     wizardExplore: "Free Exploration",
-    wizardYourTurn: "now it's your turn",
+    wizardYourTurn: "Still here?",
     
     // Explore page
     foundResults: "Found",
