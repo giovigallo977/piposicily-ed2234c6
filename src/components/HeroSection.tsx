@@ -10,10 +10,10 @@ const HeroSection = ({
   } = useLanguage();
   return <section className="bg-background px-6 py-12 flex flex-col items-center text-center min-h-[75vh] justify-center">
       {/* H1 - Headline in Rubik Bubbles */}
-      <h1 className="font-bubbles leading-tight text-[#a931c4] text-2xl">{t("heroHeadline")}</h1>
+      <h1 className="font-bubbles leading-tight text-[#a931c4] text-3xl">{t("heroHeadline")}</h1>
 
       {/* H2 - Subheadline in Inter 18 semibold */}
-      <h2 className="font-sans text-foreground mt-6 max-w-sm leading-relaxed text-lg font-medium">
+      <h2 className="font-sans text-foreground mt-6 max-w-sm leading-relaxed text-lg font-medium text-center">
         {t("heroSubheadline")}
         <br />
         {t("heroSubheadline2")}
