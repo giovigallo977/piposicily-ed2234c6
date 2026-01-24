@@ -108,7 +108,7 @@ const WizardPage = () => {
                       {t("wizardZona")}
                     </span>
                     <div className="flex items-center text-olive">
-                      <ArrowRight className="w-6 h-6" strokeWidth={3} />
+                      
                       <ArrowRight className="w-6 h-6 -ml-3" strokeWidth={3} />
                     </div>
                   </button>
@@ -118,7 +118,7 @@ const WizardPage = () => {
                       {t("wizardMood")}
                     </span>
                     <div className="flex items-center text-olive">
-                      <ArrowRight className="w-6 h-6" strokeWidth={3} />
+                      
                       <ArrowRight className="w-6 h-6 -ml-3" strokeWidth={3} />
                     </div>
                   </button>
@@ -128,7 +128,7 @@ const WizardPage = () => {
                       {t("wizardExplore")}
                     </span>
                     <div className="flex items-center text-olive">
-                      <ArrowRight className="w-6 h-6" strokeWidth={3} />
+                      
                       <ArrowRight className="w-6 h-6 -ml-3" strokeWidth={3} />
                     </div>
                   </button>
