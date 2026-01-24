@@ -55,7 +55,7 @@ const MinimalHeader = () => {
             <h1 className="font-sans text-xl font-bold italic tracking-tight text-foreground">
               Pipo
             </h1>
-            <img alt="Logo Pipo" className="h-10 w-10 object-contain ml-2" draggable={false} src="/lovable-uploads/b8c6c3ad-35a7-430b-8ba7-f37cf252b67a.png" />
+            <img alt="Logo Pipo" className="h-10 w-10 object-contain ml-2" draggable={false} src="/lovable-uploads/b7314684-1685-40ef-a475-e9249bc1e1c2.png" />
           </div>
 
           {/* Empty space for balance */}
