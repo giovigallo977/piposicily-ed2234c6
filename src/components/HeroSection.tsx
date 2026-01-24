@@ -30,7 +30,7 @@ const HeroSection = ({
       </div>
 
       {/* Micro-proof */}
-      <p className="text-[15px] text-muted-foreground mt-10 max-w-xs font-sans leading-relaxed">
+      <p className="text-[15px] text-muted-foreground mt-10 max-w-xs font-sans leading-relaxed text-center">
         {t("heroMicroProof")}
         <br />
         {t("heroMicroProof2")}
