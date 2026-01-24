@@ -21,7 +21,7 @@ const HeroSection = ({
 
       {/* CTA Button - Bottone con bordo nero, sfondo bianco */}
       <div className="w-full max-w-sm mt-10 relative">
-        <button onClick={onCtaClick} className="w-full px-6 py-4 font-sans font-bold italic transition-all duration-200 hover:translate-x-[2px] hover:translate-y-[2px] active:translate-x-[4px] active:translate-y-[4px] text-lg border-4 bg-[#a931c4] text-[#60eb2d] border-[#60eb2d] mx-0 rounded-sm shadow-sm">
+        <button onClick={onCtaClick} className="w-full px-6 py-4 font-sans font-bold italic transition-all duration-200 hover:translate-x-[2px] hover:translate-y-[2px] active:translate-x-[4px] active:translate-y-[4px] bg-[#a931c4] text-[#60eb2d] border-[#60eb2d] mx-0 rounded-sm border-solid text-lg border shadow-md">
           {t("heroCtaButton")}
         </button>
 
