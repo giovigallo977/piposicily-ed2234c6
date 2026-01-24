@@ -52,7 +52,7 @@ const MinimalHeader = () => {
 
           {/* Logo centered - "Pipo" in corsivo con alieno */}
           <div className="flex items-center">
-            <h1 className="font-sans text-xl font-bold italic tracking-tight text-foreground">
+            <h1 className="font-sans font-bold italic tracking-tight text-foreground text-2xl">
               Pipo
             </h1>
             <img alt="Logo Pipo" className="h-10 w-10 object-contain ml-2" draggable={false} src="/lovable-uploads/b7314684-1685-40ef-a475-e9249bc1e1c2.png" />
