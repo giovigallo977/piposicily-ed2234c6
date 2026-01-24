@@ -4,8 +4,6 @@ import { cn } from "@/lib/utils";
 import type { Hotspot } from "@/hooks/useHotspots";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedHotspot } from "@/hooks/useTranslation";
-import { useCardStyle } from "@/hooks/useCardStyle";
-import { fontSizeToClass, fontSizeToPx } from "@/types/styles";
 import useEmblaCarousel from "embla-carousel-react";
 
 interface HotspotCardProps {
@@ -23,29 +21,6 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
     descrizione_breve: hotspot.descrizione_breve,
     descrizione_completa: hotspot.descrizione_completa,
     categoria: hotspot.categoria,
-  });
-
-  // Get merged styles (global + hotspot overrides)
-  const cardStyle = useCardStyle({
-    style_card_bg_color: hotspot.style_card_bg_color,
-    style_badge_bg_color: hotspot.style_badge_bg_color,
-    style_badge_text_color: hotspot.style_badge_text_color,
-    style_expand_btn_color: hotspot.style_expand_btn_color,
-    style_cta_btn_color: hotspot.style_cta_btn_color,
-    style_cta_btn_text_color: hotspot.style_cta_btn_text_color,
-    style_font_color: hotspot.style_font_color,
-    style_title_font: hotspot.style_title_font,
-    style_title_font_weight: hotspot.style_title_font_weight,
-    style_title_font_size: hotspot.style_title_font_size,
-    style_body_font: hotspot.style_body_font,
-    style_body_font_weight: hotspot.style_body_font_weight,
-    style_body_font_size: hotspot.style_body_font_size,
-    style_button_font: hotspot.style_button_font,
-    style_button_font_weight: hotspot.style_button_font_weight,
-    style_button_font_size: hotspot.style_button_font_size,
-    style_tag_font: hotspot.style_tag_font,
-    style_tag_font_weight: hotspot.style_tag_font_weight,
-    style_tag_font_size: hotspot.style_tag_font_size,
   });
 
   const [emblaRef, emblaApi] = useEmblaCarousel({ startIndex: currentPhotoIndex });
@@ -75,10 +50,9 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
     <>
       <article 
         className={cn(
-          "rounded-3xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1",
+          "rounded-3xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1 bg-white",
           isTranslating && "opacity-75"
         )}
-        style={{ backgroundColor: cardStyle.cardBgColor }}
       >
         {/* Immagine principale */}
         <div className="aspect-[4/3] bg-muted overflow-hidden">
@@ -100,63 +74,45 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
         <div className="p-5">
           {/* Header con titolo e bottone espansione */}
           <div className="flex items-start justify-between gap-4">
-            <h2 
-              className="leading-tight flex-1 min-w-0 font-sans text-xl font-bold"
-              style={{ 
-                color: cardStyle.fontColor,
-              }}
-            >
+            <h2 className="leading-tight flex-1 min-w-0 font-sans text-xl font-bold text-foreground">
               {translated.titolo}
             </h2>
             
-            {/* Bottone espansione - grigio chiaro con icona nera sottile */}
+            {/* Bottone espansione */}
             <button
               onClick={() => setIsExpanded(!isExpanded)}
-              className="w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95 flex-shrink-0"
-              style={{ backgroundColor: '#E5E5E5' }}
+              className="w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95 flex-shrink-0 bg-muted"
               aria-expanded={isExpanded}
               aria-label={isExpanded ? t("hideDetails") : t("showDetails")}
             >
               {isExpanded ? (
-                <Minus className="w-5 h-5 text-black" strokeWidth={1.5} />
+                <Minus className="w-5 h-5 text-foreground" strokeWidth={1.5} />
               ) : (
-                <Plus className="w-5 h-5 text-black" strokeWidth={1.5} />
+                <Plus className="w-5 h-5 text-foreground" strokeWidth={1.5} />
               )}
             </button>
           </div>
 
-          {/* Categoria sotto il titolo - nero con testo bianco, centrato tra titolo e tag */}
+          {/* Categoria sotto il titolo */}
           {translated.categoria && (
             <div className="mt-4 mb-4">
-              <span className="px-3 py-1.5 text-xs font-bold rounded-full bg-black text-white">
+              <span className="px-3 py-1.5 text-xs font-bold rounded-full bg-foreground text-background">
                 {translated.categoria}
               </span>
             </div>
           )}
 
-          {/* Riga Tag - Roboto Mono */}
+          {/* Riga Tag */}
           {hotspot.tags && hotspot.tags.length > 0 && (
-            <p 
-              className="mt-2 font-mono text-sm"
-              style={{ 
-                color: cardStyle.fontColor,
-              }}
-            >
+            <p className="mt-2 font-mono text-sm text-foreground">
               {hotspot.tags.map((tag, i) => (
                 <span key={i}>• {tag} </span>
               ))}
             </p>
           )}
 
-          {/* Descrizione breve - Inter Regular 400 */}
-          <p 
-            className="mt-2 leading-relaxed font-sans"
-            style={{ 
-              fontWeight: 400,
-              color: cardStyle.fontColor,
-              fontSize: fontSizeToPx(cardStyle.bodyFontSize),
-            }}
-          >
+          {/* Descrizione breve */}
+          <p className="mt-2 leading-relaxed font-sans text-sm text-foreground">
             {translated.descrizione_breve}
           </p>
 
@@ -168,27 +124,21 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
             )}
           >
             <div className="overflow-hidden">
-              {/* Descrizione completa - Inter Regular 400 */}
-              <p 
-                className="leading-relaxed whitespace-pre-line font-sans"
-                style={{ 
-                  fontWeight: 400,
-                  color: cardStyle.fontColor,
-                  fontSize: fontSizeToPx(cardStyle.bodyFontSize),
-                }}
-              >
+              {/* Descrizione completa */}
+              <p className="leading-relaxed whitespace-pre-line font-sans text-sm text-foreground">
                 {translated.descrizione_completa}
               </p>
 
-              {/* Zona badge - above the CTA button - nero con testo bianco */}
+              {/* Zona badge */}
               {hotspot.zona && (
                 <div className="mt-4">
-                  <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium shadow-sm bg-black text-white">
+                  <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium shadow-sm bg-foreground text-background">
                     📍 zona {hotspot.zona}
                   </span>
                 </div>
               )}
-              {/* Link Naviga - verde Pipo #52C471 con testo bianco */}
+              
+              {/* Link Naviga */}
               {hotspot.link_google_maps && (
                 <a
                   href={hotspot.link_google_maps}

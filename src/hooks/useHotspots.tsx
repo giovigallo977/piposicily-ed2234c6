@@ -1,20 +1,19 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { HotspotStyleOverrides } from "@/types/styles";
 
-export interface Hotspot extends HotspotStyleOverrides {
+export interface Hotspot {
   id: string;
   titolo: string;
   descrizione_breve: string;
   descrizione_completa: string;
-  foto_principale: string;
-  foto_gallery: string[];
-  link_google_maps: string;
-  categoria: string;
-  zona: string;
-  tags: string[];
-  ordine: number;
+  foto_principale: string | null;
+  foto_gallery: string[] | null;
+  link_google_maps: string | null;
+  categoria: string | null;
+  zona: string | null;
+  tags: string[] | null;
+  ordine: number | null;
   created_at: string;
   updated_at: string;
 }
@@ -28,7 +27,7 @@ export const useHotspots = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("hotspots")
-        .select("*")
+        .select("id, titolo, descrizione_breve, descrizione_completa, foto_principale, foto_gallery, link_google_maps, categoria, zona, tags, ordine, created_at, updated_at")
         .order("ordine", { ascending: true });
 
       if (error) throw error;
@@ -69,7 +68,6 @@ export const useUpdateHotspot = () => {
       const { data, error } = await supabase
         .from("hotspots")
         .update(updates)
-        .eq("id", id)
         .select()
         .single();
 
