@@ -26,7 +26,7 @@ const HeroSection = ({
         </button>
 
         {/* Sublabel - same size as micro-proof (15px) */}
-        <p className="text-[15px] text-muted-foreground mt-6 font-sans">{t("heroSublabel")}</p>
+        <p className="text-muted-foreground font-sans text-base font-thin mt-[10px]">{t("heroSublabel")}</p>
       </div>
 
       {/* Micro-proof */}
