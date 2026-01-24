@@ -1,15 +1,23 @@
 import { useLanguage } from "@/contexts/LanguageContext";
+import pipoSurf from "@/assets/pipo-surf.png";
 
 interface HeroSectionProps {
   onCtaClick: () => void;
-  pipoImage?: string;
 }
 
-const HeroSection = ({ onCtaClick, pipoImage }: HeroSectionProps) => {
+const HeroSection = ({ onCtaClick }: HeroSectionProps) => {
   const { t } = useLanguage();
 
   return (
     <section className="bg-background px-6 py-12 flex flex-col items-center text-center min-h-[75vh] justify-center">
+      {/* Pipo Surf Image */}
+      <img 
+        src={pipoSurf} 
+        alt="Pipo surf" 
+        className="h-40 w-auto object-contain mb-6"
+        draggable={false}
+      />
+
       {/* H1 - Headline in Rubik Bubbles */}
       <h1 className="font-bubbles text-[30px] text-foreground leading-tight">{t("heroHeadline")}</h1>
 
