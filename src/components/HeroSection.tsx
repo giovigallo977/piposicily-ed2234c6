@@ -13,7 +13,7 @@ const HeroSection = ({
       <h1 className="font-bubbles leading-tight text-[#a931c4] text-2xl">{t("heroHeadline")}</h1>
 
       {/* H2 - Subheadline in Inter 18 semibold */}
-      <h2 className="font-sans text-[18px] font-semibold text-foreground mt-6 max-w-sm leading-relaxed">
+      <h2 className="font-sans font-semibold text-foreground mt-6 max-w-sm leading-relaxed text-base">
         {t("heroSubheadline")}
         <br />
         {t("heroSubheadline2")}
