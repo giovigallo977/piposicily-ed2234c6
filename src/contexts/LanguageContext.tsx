@@ -70,12 +70,9 @@ export const translations = {
     
     // Hero section
     heroHeadline: "Esplorazioni aliene in Sicilia",
-    heroSubheadline: "Trova pace fuori dai radar e decidi in 30 secondi dove andare",
-    heroSubheadline2: "Posti scelti da un alieno (vero): niente caos, niente folla, nessun imprevisto",
-    heroCtaButton: "Portami via in 30 secondi",
+    heroSubheadline: "Ti mostro posti iper selezionati, lontani dal turismo di massa. Tu scegli, io ti porto fuori dai radar in 30 secondi.",
+    heroCtaButton: "Portami via da qui",
     heroSublabel: "Zona → Mood → Esplora in libertà",
-    heroMicroProof: "Ti mostro posti iper selezionati, lontani dal turismo di massa",
-    heroMicroProof2: "Tu scegli, io ti porto fuori dai radar",
   },
   en: {
     // Navigation
@@ -137,12 +134,9 @@ export const translations = {
     
     // Hero section
     heroHeadline: "Alien Explorations in Sicily",
-    heroSubheadline: "Find peace off the radar and decide in 30 seconds where to go",
-    heroSubheadline2: "Places chosen by a (real) alien: no chaos, no crowds, no surprises",
-    heroCtaButton: "Take me away in 30 seconds",
+    heroSubheadline: "I show you ultra-selected places, far from mass tourism. You choose, I take you off the radar in 30 seconds.",
+    heroCtaButton: "Take me away",
     heroSublabel: "Zone → Mood → Free Exploration",
-    heroMicroProof: "I show you ultra-selected places, far from mass tourism",
-    heroMicroProof2: "You choose, I take you off the radar",
   },
 } as const;
 
