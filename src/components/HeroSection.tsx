@@ -1,40 +1,92 @@
+import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useHotspots } from "@/hooks/useHotspots";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+} from "@/components/ui/carousel";
+
 interface HeroSectionProps {
   onCtaClick: () => void;
 }
-const HeroSection = ({
-  onCtaClick
-}: HeroSectionProps) => {
-  const {
-    t
-  } = useLanguage();
-  return <section className="bg-background px-6 py-12 flex flex-col items-center text-center min-h-[75vh] justify-center">
-      {/* H1 - Headline in Rubik Bubbles */}
-      <h1 className="font-bubbles leading-tight text-[#a931c4] text-3xl">{t("heroHeadline")}</h1>
 
-      {/* H2 - Subheadline in Inter 18 semibold */}
-      <h2 className="font-sans text-foreground mt-6 max-w-sm leading-relaxed text-lg font-medium text-center">
+const HeroSection = ({ onCtaClick }: HeroSectionProps) => {
+  const { t } = useLanguage();
+  const navigate = useNavigate();
+  const { data: hotspots } = useHotspots();
+
+  // Get first 5 hotspot main photos
+  const carouselPhotos = hotspots
+    ?.slice(0, 5)
+    .map((h) => h.foto_principale)
+    .filter((photo): photo is string => !!photo) ?? [];
+
+  const handlePhotoClick = () => {
+    navigate("/esplora");
+  };
+
+  return (
+    <section className="bg-background px-6 py-12 flex flex-col min-h-[75vh] justify-center">
+      {/* Headline - Inter 48px bold */}
+      <h1 className="font-sans text-[48px] font-bold leading-tight text-foreground text-left">
+        {t("heroHeadline")}
+      </h1>
+
+      {/* Subtitle - Inter 16px medium */}
+      <p className="font-sans text-base font-medium text-foreground text-left mt-6 max-w-md">
         {t("heroSubheadline")}
-        <br />
-        {t("heroSubheadline2")}
-      </h2>
+      </p>
 
-      {/* CTA Button - Bottone con bordo nero, sfondo bianco */}
-      <div className="w-full max-w-sm mt-10 relative">
-        <button onClick={onCtaClick} className="w-full px-6 py-4 font-sans font-bold italic transition-all duration-200 hover:translate-x-[2px] hover:translate-y-[2px] active:translate-x-[4px] active:translate-y-[4px] bg-[#a931c4] text-[#60eb2d] border-[#60eb2d] mx-0 border-solid text-lg shadow-lg opacity-100 rounded-md border-2">
+      {/* CTA Button - Black with white text, rounded */}
+      <div className="w-full max-w-sm mt-8">
+        <button
+          onClick={onCtaClick}
+          className="w-full px-8 py-4 font-sans text-base font-medium bg-black text-white rounded-full transition-all duration-200 hover:opacity-90 active:scale-[0.98]"
+        >
           {t("heroCtaButton")}
         </button>
 
-        {/* Sublabel - same size as micro-proof (15px) */}
-        <p className="text-muted-foreground font-sans text-base font-thin mt-[10px]">{t("heroSublabel")}</p>
+        {/* Flow label - 13px gray */}
+        <p className="font-sans text-[13px] font-medium text-muted-foreground mt-3 text-center">
+          {t("heroSublabel")}
+        </p>
       </div>
 
-      {/* Micro-proof */}
-      <p className="text-[15px] text-muted-foreground mt-10 max-w-xs font-sans leading-relaxed text-center">
-        {t("heroMicroProof")}
-        <br />
-        {t("heroMicroProof2")}
-      </p>
-    </section>;
+      {/* Photo Carousel */}
+      {carouselPhotos.length > 0 && (
+        <div className="w-full mt-10">
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-2">
+              {carouselPhotos.map((photo, index) => (
+                <CarouselItem
+                  key={index}
+                  className="pl-2 basis-4/5 md:basis-3/5"
+                >
+                  <div
+                    onClick={handlePhotoClick}
+                    className="cursor-pointer overflow-hidden rounded-2xl aspect-[4/3]"
+                  >
+                    <img
+                      src={photo}
+                      alt={`Hotspot ${index + 1}`}
+                      className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                    />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
+        </div>
+      )}
+    </section>
+  );
 };
+
 export default HeroSection;
