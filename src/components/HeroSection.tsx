@@ -2,25 +2,31 @@ import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useHotspots } from "@/hooks/useHotspots";
 import { useSiteContent } from "@/hooks/useSiteContent";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-} from "@/components/ui/carousel";
-
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 interface HeroSectionProps {
   onCtaClick: () => void;
 }
-
-const HeroSection = ({ onCtaClick }: HeroSectionProps) => {
-  const { t } = useLanguage();
+const HeroSection = ({
+  onCtaClick
+}: HeroSectionProps) => {
+  const {
+    t
+  } = useLanguage();
   const navigate = useNavigate();
-  const { data: hotspots } = useHotspots();
-  
+  const {
+    data: hotspots
+  } = useHotspots();
+
   // Fetch editable content from database
-  const { data: heroHeadlineContent } = useSiteContent("hero_headline");
-  const { data: heroSubtitleContent } = useSiteContent("hero_subtitle");
-  const { data: heroCtaContent } = useSiteContent("hero_cta");
+  const {
+    data: heroHeadlineContent
+  } = useSiteContent("hero_headline");
+  const {
+    data: heroSubtitleContent
+  } = useSiteContent("hero_subtitle");
+  const {
+    data: heroCtaContent
+  } = useSiteContent("hero_cta");
 
   // Use database content or fallback to translations
   const headline = heroHeadlineContent?.content || t("heroHeadline");
@@ -28,17 +34,11 @@ const HeroSection = ({ onCtaClick }: HeroSectionProps) => {
   const ctaText = heroCtaContent?.content || t("heroCtaButton");
 
   // Get first 5 hotspot main photos
-  const carouselPhotos = hotspots
-    ?.slice(0, 5)
-    .map((h) => h.foto_principale)
-    .filter((photo): photo is string => !!photo) ?? [];
-
+  const carouselPhotos = hotspots?.slice(0, 5).map(h => h.foto_principale).filter((photo): photo is string => !!photo) ?? [];
   const handlePhotoClick = () => {
     navigate("/esplora");
   };
-
-  return (
-    <section className="bg-background px-6 py-12 flex flex-col min-h-[75vh] justify-center">
+  return <section className="px-6 py-12 flex flex-col min-h-[75vh] justify-center bg-primary">
       {/* Headline - Inter 48px bold */}
       <h1 className="font-sans text-[48px] font-bold leading-tight text-foreground text-left">
         {headline}
@@ -51,10 +51,7 @@ const HeroSection = ({ onCtaClick }: HeroSectionProps) => {
 
       {/* CTA Button - Black with white text, rounded */}
       <div className="w-full max-w-sm mt-8">
-        <button
-          onClick={onCtaClick}
-          className="w-full px-8 py-4 font-sans text-base font-medium bg-black text-white rounded-full transition-all duration-200 hover:opacity-90 active:scale-[0.98]"
-        >
+        <button onClick={onCtaClick} className="w-full px-8 py-4 font-sans text-base font-medium bg-black text-white rounded-full transition-all duration-200 hover:opacity-90 active:scale-[0.98]">
           {ctaText}
         </button>
 
@@ -65,39 +62,20 @@ const HeroSection = ({ onCtaClick }: HeroSectionProps) => {
       </div>
 
       {/* Photo Carousel */}
-      {carouselPhotos.length > 0 && (
-        <div className="w-full mt-10">
-          <Carousel
-            opts={{
-              align: "start",
-              loop: true,
-            }}
-            className="w-full"
-          >
+      {carouselPhotos.length > 0 && <div className="w-full mt-10">
+          <Carousel opts={{
+        align: "start",
+        loop: true
+      }} className="w-full">
             <CarouselContent className="-ml-2">
-              {carouselPhotos.map((photo, index) => (
-                <CarouselItem
-                  key={index}
-                  className="pl-2 basis-4/5 md:basis-3/5"
-                >
-                  <div
-                    onClick={handlePhotoClick}
-                    className="cursor-pointer overflow-hidden rounded-2xl aspect-[4/3]"
-                  >
-                    <img
-                      src={photo}
-                      alt={`Hotspot ${index + 1}`}
-                      className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                    />
+              {carouselPhotos.map((photo, index) => <CarouselItem key={index} className="pl-2 basis-4/5 md:basis-3/5">
+                  <div onClick={handlePhotoClick} className="cursor-pointer overflow-hidden rounded-2xl aspect-[4/3]">
+                    <img src={photo} alt={`Hotspot ${index + 1}`} className="w-full h-full object-cover transition-transform duration-300 hover:scale-105" />
                   </div>
-                </CarouselItem>
-              ))}
+                </CarouselItem>)}
             </CarouselContent>
           </Carousel>
-        </div>
-      )}
-    </section>
-  );
+        </div>}
+    </section>;
 };
-
 export default HeroSection;

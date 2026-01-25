@@ -11,7 +11,7 @@ const MinimalHeader = () => {
     setLanguage,
     t
   } = useLanguage();
-  return <header className="bg-background py-4">
+  return <header className="py-4 bg-primary">
       <div className="container mx-auto px-6">
         <div className="flex items-center justify-between">
           {/* Hamburger Menu - Left */}
