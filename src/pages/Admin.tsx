@@ -41,6 +41,9 @@ const Admin = () => {
   const { data: missionContent, isLoading: missionLoading } = useSiteContent("mission");
   const { data: headerTitleContent, isLoading: headerTitleLoading } = useSiteContent("header_title");
   const { data: headerSubtitleContent, isLoading: headerSubtitleLoading } = useSiteContent("header_subtitle");
+  const { data: heroHeadlineContent } = useSiteContent("hero_headline");
+  const { data: heroSubtitleContent } = useSiteContent("hero_subtitle");
+  const { data: heroCtaContent } = useSiteContent("hero_cta");
   const updateSiteContent = useUpdateSiteContent();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -49,6 +52,9 @@ const Admin = () => {
   const [missionText, setMissionText] = useState("");
   const [headerTitle, setHeaderTitle] = useState("");
   const [headerSubtitle, setHeaderSubtitle] = useState("");
+  const [heroHeadline, setHeroHeadline] = useState("");
+  const [heroSubtitle, setHeroSubtitle] = useState("");
+  const [heroCta, setHeroCta] = useState("");
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -73,6 +79,24 @@ const Admin = () => {
       setHeaderSubtitle(headerSubtitleContent.content);
     }
   }, [headerSubtitleContent]);
+
+  useEffect(() => {
+    if (heroHeadlineContent?.content) {
+      setHeroHeadline(heroHeadlineContent.content);
+    }
+  }, [heroHeadlineContent]);
+
+  useEffect(() => {
+    if (heroSubtitleContent?.content) {
+      setHeroSubtitle(heroSubtitleContent.content);
+    }
+  }, [heroSubtitleContent]);
+
+  useEffect(() => {
+    if (heroCtaContent?.content) {
+      setHeroCta(heroCtaContent.content);
+    }
+  }, [heroCtaContent]);
 
   const handleOpenCreate = () => {
     setEditingHotspot(null);
@@ -125,6 +149,12 @@ const Admin = () => {
   const handleSaveHeader = async () => {
     await updateSiteContent.mutateAsync({ key: "header_title", content: headerTitle });
     await updateSiteContent.mutateAsync({ key: "header_subtitle", content: headerSubtitle });
+  };
+
+  const handleSaveHero = async () => {
+    await updateSiteContent.mutateAsync({ key: "hero_headline", content: heroHeadline });
+    await updateSiteContent.mutateAsync({ key: "hero_subtitle", content: heroSubtitle });
+    await updateSiteContent.mutateAsync({ key: "hero_cta", content: heroCta });
   };
 
   if (authLoading || isLoading) {
@@ -449,6 +479,76 @@ const Admin = () => {
             <TabsContent value="contenuti" className="space-y-6">
               <h2 className="font-heading text-2xl font-bold">Gestione Contenuti</h2>
               
+              {/* Hero Content */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="h-5 w-5" />
+                    Homepage Hero
+                  </CardTitle>
+                  <CardDescription>
+                    Headline, sottotitolo e testo del pulsante CTA nella homepage.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="hero_headline">Headline</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        id="hero_headline"
+                        value={heroHeadline}
+                        onChange={(e) => setHeroHeadline(e.target.value)}
+                        placeholder="Es: Esplorazioni aliene in Sicilia"
+                        className="flex-1"
+                      />
+                      <EmojiPicker onSelect={(emoji) => setHeroHeadline(heroHeadline + emoji)} />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="hero_subtitle">Sottotitolo</Label>
+                    <div className="flex gap-2">
+                      <Textarea
+                        id="hero_subtitle"
+                        value={heroSubtitle}
+                        onChange={(e) => setHeroSubtitle(e.target.value)}
+                        placeholder="Es: Ti mostro posti iper selezionati..."
+                        rows={3}
+                        className="flex-1"
+                      />
+                      <EmojiPicker onSelect={(emoji) => setHeroSubtitle(heroSubtitle + emoji)} />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="hero_cta">Testo Pulsante CTA</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        id="hero_cta"
+                        value={heroCta}
+                        onChange={(e) => setHeroCta(e.target.value)}
+                        placeholder="Es: Portami via da qui"
+                        className="flex-1"
+                      />
+                      <EmojiPicker onSelect={(emoji) => setHeroCta(heroCta + emoji)} />
+                    </div>
+                  </div>
+                  <div className="flex justify-end">
+                    <Button 
+                      onClick={handleSaveHero}
+                      disabled={updateSiteContent.isPending || (
+                        heroHeadline === heroHeadlineContent?.content && 
+                        heroSubtitle === heroSubtitleContent?.content && 
+                        heroCta === heroCtaContent?.content
+                      )}
+                    >
+                      {updateSiteContent.isPending && (
+                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      )}
+                      Salva Hero
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
               {/* Header Content */}
               <Card>
                 <CardHeader>
