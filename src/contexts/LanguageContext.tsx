@@ -58,7 +58,7 @@ export const translations = {
     claimCome: "COME:",
     
     // Wizard
-    wizardTitle: "Portami via in 30 secondi",
+    wizardTitle: "Portami via da qui",
     wizardZona: "Zona",
     wizardMood: "Mood",
     wizardExplore: "Esplora in Libertà",
@@ -122,7 +122,7 @@ export const translations = {
     claimCome: "HOW:",
     
     // Wizard
-    wizardTitle: "Take me away in 30 seconds",
+    wizardTitle: "Take me away",
     wizardZona: "Zone",
     wizardMood: "Mood",
     wizardExplore: "Free Exploration",
