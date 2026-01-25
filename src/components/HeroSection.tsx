@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useHotspots } from "@/hooks/useHotspots";
+import { useSiteContent } from "@/hooks/useSiteContent";
 import {
   Carousel,
   CarouselContent,
@@ -15,6 +16,16 @@ const HeroSection = ({ onCtaClick }: HeroSectionProps) => {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const { data: hotspots } = useHotspots();
+  
+  // Fetch editable content from database
+  const { data: heroHeadlineContent } = useSiteContent("hero_headline");
+  const { data: heroSubtitleContent } = useSiteContent("hero_subtitle");
+  const { data: heroCtaContent } = useSiteContent("hero_cta");
+
+  // Use database content or fallback to translations
+  const headline = heroHeadlineContent?.content || t("heroHeadline");
+  const subtitle = heroSubtitleContent?.content || t("heroSubheadline");
+  const ctaText = heroCtaContent?.content || t("heroCtaButton");
 
   // Get first 5 hotspot main photos
   const carouselPhotos = hotspots
@@ -30,12 +41,12 @@ const HeroSection = ({ onCtaClick }: HeroSectionProps) => {
     <section className="bg-background px-6 py-12 flex flex-col min-h-[75vh] justify-center">
       {/* Headline - Inter 48px bold */}
       <h1 className="font-sans text-[48px] font-bold leading-tight text-foreground text-left">
-        {t("heroHeadline")}
+        {headline}
       </h1>
 
       {/* Subtitle - Inter 16px medium */}
       <p className="font-sans text-base font-medium text-foreground text-left mt-6 max-w-md">
-        {t("heroSubheadline")}
+        {subtitle}
       </p>
 
       {/* CTA Button - Black with white text, rounded */}
@@ -44,7 +55,7 @@ const HeroSection = ({ onCtaClick }: HeroSectionProps) => {
           onClick={onCtaClick}
           className="w-full px-8 py-4 font-sans text-base font-medium bg-black text-white rounded-full transition-all duration-200 hover:opacity-90 active:scale-[0.98]"
         >
-          {t("heroCtaButton")}
+          {ctaText}
         </button>
 
         {/* Flow label - 13px gray */}
