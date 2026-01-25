@@ -79,7 +79,7 @@ const WizardPage = () => {
           <ChevronsLeft className="w-8 h-8 text-black" strokeWidth={2.5} />
         </button>
         
-        <img alt="Pipo" className="h-12 w-12 object-contain" draggable={false} src="/lovable-uploads/fd579ab0-4eab-4e20-b4e3-04c673c5ac31.png" />
+        <img alt="Pipo" className="h-12 w-12 object-contain" draggable={false} src="/lovable-uploads/35ab6758-bcb8-4ecc-b6fa-6d4335fff8cd.png" />
         
         <div className="w-12" /> {/* Spacer for balance */}
       </header>
