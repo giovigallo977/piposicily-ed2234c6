@@ -30,7 +30,7 @@ const MinimalHeader = () => {
               
               {/* Navigation links */}
               <nav className="mt-6 flex-1">
-                <Link to="/missione" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted transition-colors text-foreground font-sans font-bold italic text-lg">
+                <Link to="/missione" onClick={() => setMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-muted transition-colors text-foreground font-sans italic text-base font-semibold">
                   {t("missionTitle")}
                 </Link>
               </nav>
