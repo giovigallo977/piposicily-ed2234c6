@@ -42,7 +42,7 @@ const HeroSection = ({
   };
   return <section className="px-6 py-12 flex flex-col min-h-[75vh] justify-center" style={{ backgroundColor: bgColor || undefined }}>
       {/* Headline - Inter 48px bold */}
-      <h1 className="font-sans text-[48px] font-bold leading-tight text-foreground text-left">
+      <h1 className="font-sans text-[48px] font-bold leading-[1.1] text-foreground text-left">
         {headline}
       </h1>
 
