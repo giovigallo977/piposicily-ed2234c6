@@ -44,6 +44,7 @@ const Admin = () => {
   const { data: heroHeadlineContent } = useSiteContent("hero_headline");
   const { data: heroSubtitleContent } = useSiteContent("hero_subtitle");
   const { data: heroCtaContent } = useSiteContent("hero_cta");
+  const { data: homepageBgColorContent } = useSiteContent("homepage_bg_color");
   const updateSiteContent = useUpdateSiteContent();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -55,6 +56,7 @@ const Admin = () => {
   const [heroHeadline, setHeroHeadline] = useState("");
   const [heroSubtitle, setHeroSubtitle] = useState("");
   const [heroCta, setHeroCta] = useState("");
+  const [homepageBgColor, setHomepageBgColor] = useState("");
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -97,6 +99,12 @@ const Admin = () => {
       setHeroCta(heroCtaContent.content);
     }
   }, [heroCtaContent]);
+
+  useEffect(() => {
+    if (homepageBgColorContent?.content) {
+      setHomepageBgColor(homepageBgColorContent.content);
+    }
+  }, [homepageBgColorContent]);
 
   const handleOpenCreate = () => {
     setEditingHotspot(null);
@@ -155,6 +163,9 @@ const Admin = () => {
     await updateSiteContent.mutateAsync({ key: "hero_headline", content: heroHeadline });
     await updateSiteContent.mutateAsync({ key: "hero_subtitle", content: heroSubtitle });
     await updateSiteContent.mutateAsync({ key: "hero_cta", content: heroCta });
+    if (homepageBgColor) {
+      await updateSiteContent.mutateAsync({ key: "homepage_bg_color", content: homepageBgColor });
+    }
   };
 
   if (authLoading || isLoading) {
@@ -531,13 +542,29 @@ const Admin = () => {
                       <EmojiPicker onSelect={(emoji) => setHeroCta(heroCta + emoji)} />
                     </div>
                   </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="homepage_bg_color">Colore Sfondo Homepage (esadecimale)</Label>
+                    <Input
+                      id="homepage_bg_color"
+                      value={homepageBgColor}
+                      onChange={(e) => setHomepageBgColor(e.target.value)}
+                      placeholder="Es: #D2F779"
+                    />
+                    {homepageBgColor && (
+                      <div 
+                        className="w-full h-8 rounded border"
+                        style={{ backgroundColor: homepageBgColor }}
+                      />
+                    )}
+                  </div>
                   <div className="flex justify-end">
                     <Button 
                       onClick={handleSaveHero}
                       disabled={updateSiteContent.isPending || (
                         heroHeadline === heroHeadlineContent?.content && 
                         heroSubtitle === heroSubtitleContent?.content && 
-                        heroCta === heroCtaContent?.content
+                        heroCta === heroCtaContent?.content &&
+                        homepageBgColor === (homepageBgColorContent?.content || "")
                       )}
                     >
                       {updateSiteContent.isPending && (

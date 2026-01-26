@@ -50,7 +50,7 @@ const Mission = () => {
 
           {missionContent && <div className={`transition-opacity ${isTranslating ? 'opacity-50' : ''}`}>
               {/* Text in Inter 22 bold italic like mockup */}
-              <p className="font-bold italic text-foreground leading-relaxed whitespace-pre-wrap font-sans text-center text-base">
+              <p className="font-medium text-foreground leading-relaxed whitespace-pre-wrap font-sans text-center text-base">
                 {translatedMission || missionContent.content}
               </p>
             </div>}

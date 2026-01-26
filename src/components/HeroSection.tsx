@@ -5,9 +5,11 @@ import { useSiteContent } from "@/hooks/useSiteContent";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 interface HeroSectionProps {
   onCtaClick: () => void;
+  bgColor?: string;
 }
 const HeroSection = ({
-  onCtaClick
+  onCtaClick,
+  bgColor
 }: HeroSectionProps) => {
   const {
     t
@@ -38,7 +40,7 @@ const HeroSection = ({
   const handlePhotoClick = () => {
     navigate("/esplora");
   };
-  return <section className="px-6 py-12 flex flex-col min-h-[75vh] justify-center bg-primary">
+  return <section className="px-6 py-12 flex flex-col min-h-[75vh] justify-center" style={{ backgroundColor: bgColor || undefined }}>
       {/* Headline - Inter 48px bold */}
       <h1 className="font-sans text-[48px] font-bold leading-tight text-foreground text-left">
         {headline}

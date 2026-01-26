@@ -104,7 +104,7 @@ const WizardPage = () => {
                 {/* Menu options */}
                 <div className="space-y-4">
                   <button onClick={() => handleStepChange("zona")} className="flex items-center justify-between w-full py-2 group">
-                    <span className="font-sans text-xl font-bold italic text-foreground">
+                    <span className="font-sans text-xl font-bold text-foreground">
                       {t("wizardZona")}
                     </span>
                     <div className="flex items-center text-olive">
@@ -114,7 +114,7 @@ const WizardPage = () => {
                   </button>
 
                   <button onClick={() => handleStepChange("mood")} className="flex items-center justify-between w-full py-2 group">
-                    <span className="font-sans text-xl font-bold italic text-foreground">
+                    <span className="font-sans text-xl font-bold text-foreground">
                       {t("wizardMood")}
                     </span>
                     <div className="flex items-center text-olive">
@@ -124,7 +124,7 @@ const WizardPage = () => {
                   </button>
 
                   <button onClick={handleExploreAll} className="flex items-center justify-between w-full py-2 group">
-                    <span className="font-sans text-xl font-bold italic text-foreground">
+                    <span className="font-sans text-xl font-bold text-foreground">
                       {t("wizardExplore")}
                     </span>
                     <div className="flex items-center text-olive">
@@ -158,7 +158,7 @@ const WizardPage = () => {
             <div className="w-full max-w-xs flex flex-col items-center gap-5">
               {zones.map(zone => <button key={zone} onClick={() => handleZoneSelect(zone)} className="flex items-center justify-center gap-3 w-full py-3 group">
                   <img src={pinIcon} alt="" className="h-6 w-auto object-contain" draggable={false} />
-                  <span className="font-sans text-xl font-bold italic text-foreground">
+                  <span className="font-sans text-xl font-bold text-foreground">
                     {zone}
                   </span>
                 </button>)}
@@ -175,7 +175,7 @@ const WizardPage = () => {
             {/* Mood list - UNIQUE tags only */}
             <div className="w-full max-w-xs space-y-4">
               {moods.map(mood => <button key={mood} onClick={() => handleMoodSelect(mood)} className="w-full py-2">
-                  <span className="font-sans text-xl font-bold italic text-foreground">
+                  <span className="font-sans text-xl font-bold text-foreground">
                     {mood}
                   </span>
                 </button>)}
