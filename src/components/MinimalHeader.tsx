@@ -4,14 +4,18 @@ import { Menu } from "lucide-react";
 import pipoAlien from "@/assets/pipo-alien-new.png";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-const MinimalHeader = () => {
+interface MinimalHeaderProps {
+  bgColor?: string;
+}
+
+const MinimalHeader = ({ bgColor }: MinimalHeaderProps) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const {
     language,
     setLanguage,
     t
   } = useLanguage();
-  return <header className="py-4 bg-primary">
+  return <header className="py-4" style={{ backgroundColor: bgColor || undefined }}>
       <div className="container mx-auto px-6">
         <div className="flex items-center justify-between">
           {/* Hamburger Menu - Left */}
