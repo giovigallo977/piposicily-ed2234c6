@@ -68,6 +68,7 @@ export const useUpdateHotspot = () => {
       const { data, error } = await supabase
         .from("hotspots")
         .update(updates)
+        .eq("id", id)
         .select()
         .single();
 
