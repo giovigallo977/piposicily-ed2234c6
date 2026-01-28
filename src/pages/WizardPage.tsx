@@ -25,7 +25,9 @@ const WizardPage = () => {
   const { data: hotspots } = useHotspots();
   const { t } = useLanguage();
   const { data: instagramLinkContent } = useSiteContent("wizard_instagram_link");
+  const { data: instagramDescContent } = useSiteContent("wizard_instagram_desc");
   const instagramLink = instagramLinkContent?.content || "#";
+  const instagramDesc = instagramDescContent?.content || t("wizardInstagramDesc");
 
   // Extract unique zones from hotspots
   const zones = useMemo(() => {
@@ -128,14 +130,14 @@ const WizardPage = () => {
               href={instagramLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-8 inline-flex items-center justify-center px-6 py-3 bg-olive text-white font-sans font-bold text-base rounded-full transition-transform duration-200 hover:scale-105"
+              className="mt-8 inline-flex items-center justify-center px-6 py-3 bg-black text-white font-sans font-bold text-base rounded-full transition-transform duration-200 hover:scale-105"
             >
               {t("wizardInstagramBtn")}
             </a>
 
             {/* Instagram CTA Description */}
             <p className="text-muted-foreground font-sans text-sm text-center mt-4 max-w-xs px-4">
-              {t("wizardInstagramDesc")}
+              {instagramDesc}
             </p>
           </>}
 

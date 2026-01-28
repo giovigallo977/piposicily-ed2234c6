@@ -44,6 +44,7 @@ const Admin = () => {
   const { data: heroCtaContent } = useSiteContent("hero_cta");
   const { data: homepageBgColorContent } = useSiteContent("homepage_bg_color");
   const { data: wizardInstagramLinkContent } = useSiteContent("wizard_instagram_link");
+  const { data: wizardInstagramDescContent } = useSiteContent("wizard_instagram_desc");
   const updateSiteContent = useUpdateSiteContent();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -55,6 +56,7 @@ const Admin = () => {
   const [heroCta, setHeroCta] = useState("");
   const [homepageBgColor, setHomepageBgColor] = useState("");
   const [wizardInstagramLink, setWizardInstagramLink] = useState("");
+  const [wizardInstagramDesc, setWizardInstagramDesc] = useState("");
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -98,6 +100,12 @@ const Admin = () => {
       setWizardInstagramLink(wizardInstagramLinkContent.content);
     }
   }, [wizardInstagramLinkContent]);
+
+  useEffect(() => {
+    if (wizardInstagramDescContent?.content) {
+      setWizardInstagramDesc(wizardInstagramDescContent.content);
+    }
+  }, [wizardInstagramDescContent]);
 
   const handleOpenCreate = () => {
     setEditingHotspot(null);
@@ -159,6 +167,7 @@ const Admin = () => {
 
   const handleSaveWizardInstagram = async () => {
     await updateSiteContent.mutateAsync({ key: "wizard_instagram_link", content: wizardInstagramLink });
+    await updateSiteContent.mutateAsync({ key: "wizard_instagram_desc", content: wizardInstagramDesc });
   };
 
   if (authLoading || isLoading) {
@@ -590,15 +599,32 @@ const Admin = () => {
                       placeholder="Es: https://instagram.com/tuoprofilo"
                     />
                   </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="wizard_instagram_desc">Testo descrittivo CTA</Label>
+                    <div className="flex gap-2 items-start">
+                      <Textarea
+                        id="wizard_instagram_desc"
+                        value={wizardInstagramDesc}
+                        onChange={(e) => setWizardInstagramDesc(e.target.value)}
+                        placeholder="Es: Hai bisogno di itinerari super specifici..."
+                        rows={3}
+                        className="flex-1"
+                      />
+                      <EmojiPicker onSelect={(emoji) => setWizardInstagramDesc(wizardInstagramDesc + emoji)} />
+                    </div>
+                  </div>
                   <div className="flex justify-end">
                     <Button 
                       onClick={handleSaveWizardInstagram}
-                      disabled={updateSiteContent.isPending || wizardInstagramLink === (wizardInstagramLinkContent?.content || "")}
+                      disabled={updateSiteContent.isPending || (
+                        wizardInstagramLink === (wizardInstagramLinkContent?.content || "") &&
+                        wizardInstagramDesc === (wizardInstagramDescContent?.content || "")
+                      )}
                     >
                       {updateSiteContent.isPending && (
                         <Loader2 className="h-4 w-4 animate-spin mr-2" />
                       )}
-                      Salva Link Instagram
+                      Salva Wizard Instagram
                     </Button>
                   </div>
                 </CardContent>
