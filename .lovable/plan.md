@@ -1,113 +1,154 @@
 
-## Piano: Cache-busting PWA + Cleanup + Ottimizzazioni
+## Piano: Pulsante Instagram nel Wizard + Gestione Backend
 
-### 1. Cache-busting per icone PWA
+### Panoramica
 
-**Problema**: Le icone PWA vengono cachate dal sistema operativo quando l'app viene aggiunta alla home screen. Anche se aggiorniamo le icone, gli utenti esistenti vedono ancora quella vecchia.
+Modificare la sezione "Portami via da qui" nel wizard per:
+1. Rimuovere la cornice "cartello" (sfondo bianco, bordo nero, palo)
+2. Rimuovere la frase "Ancora qui?"
+3. Aggiungere un pulsante "Scrivimi su Instagram" sotto "Esplora in libertà"
+4. Aggiungere il testo descrittivo sotto il pulsante
+5. Rendere il link del pulsante configurabile dal backend
 
-**Soluzione**: Aggiungere un parametro di versione alle icone nel manifest.
+---
 
-**File: `vite.config.ts`**
-Modificare i percorsi delle icone aggiungendo `?v=2`:
+### Modifiche da implementare
+
+#### 1. Database: Nuova chiave per il link Instagram
+
+Aggiungere una nuova riga nella tabella `site_content`:
+- **key**: `wizard_instagram_link`
+- **content**: (vuoto inizialmente, da compilare nel backend)
+
+```sql
+INSERT INTO site_content (key, content) VALUES ('wizard_instagram_link', '');
+```
+
+---
+
+#### 2. Admin Panel: Campo per gestire il link
+
+**File: `src/pages/Admin.tsx`**
+
+Aggiungere nella sezione "Contenuti" una nuova Card per gestire il link Instagram del wizard:
+
+```text
+Wizard Instagram
+- Campo input per il link Instagram
+- Pulsante "Salva"
+```
+
+Modifiche tecniche:
+- Aggiungere hook `useSiteContent("wizard_instagram_link")`
+- Aggiungere stato `wizardInstagramLink`
+- Aggiungere funzione `handleSaveWizardInstagram()`
+- Aggiungere UI nella TabsContent "contenuti"
+
+---
+
+#### 3. Traduzioni: Nuove chiavi
+
+**File: `src/contexts/LanguageContext.tsx`**
+
+Aggiungere le seguenti traduzioni:
+
+| Chiave | Italiano | English |
+|--------|----------|---------|
+| `wizardInstagramBtn` | Scrivimi su Instagram | Write me on Instagram |
+| `wizardInstagramDesc` | Hai bisogno di itinerari super specifici per la tua esplorazione in Sicilia? Scrivimi in DM su Instagram con la parola ALIENO e ti aiuto a costruire il tuo itinerario fuori dai radar. | Need super specific itineraries for your exploration in Sicily? Write me a DM on Instagram with the word ALIENO and I'll help you build your off-the-radar itinerary. |
+
+---
+
+#### 4. WizardPage: Nuovo layout senza cornice
+
+**File: `src/pages/WizardPage.tsx`**
+
+Struttura attuale (da rimuovere):
+```
+┌─────────────────────┐
+│  [peg nero in alto] │
+│ ┌─────────────────┐ │
+│ │   Zona    →     │ │
+│ │   Mood    →     │ │
+│ │ Esplora   →     │ │
+│ └─────────────────┘ │
+│     [palo nero]     │
+└─────────────────────┘
+      "Ancora qui?"
+```
+
+Nuova struttura:
+```
+   Zona          →
+   Mood          →
+   Esplora       →
+
+[Scrivimi su Instagram]
+
+(testo descrittivo CTA)
+```
+
+Modifiche tecniche nel componente step "main":
+- Rimuovere il container `bg-white border-[3px] border-black rounded-lg`
+- Rimuovere il "peg" superiore (`absolute -top-3`)
+- Rimuovere il "palo" inferiore (`w-4 h-32 bg-black`)
+- Rimuovere il paragrafo con `t("wizardYourTurn")`
+- Mantenere i 3 bottoni (Zona, Mood, Esplora) con il loro stile
+- Aggiungere il pulsante Instagram con link dal backend
+- Aggiungere il testo descrittivo sotto
+
+---
+
+### Dettagli tecnici
+
+#### Hook per il link Instagram
+
+Nel WizardPage, importare e usare:
 ```typescript
-icons: [
-  {
-    src: "/icon-192.png?v=2",
-    sizes: "192x192",
-    type: "image/png",
-    purpose: "any maskable",
-  },
-  {
-    src: "/icon-512.png?v=2", 
-    sizes: "512x512",
-    type: "image/png",
-    purpose: "any maskable",
-  },
-  {
-    src: "/apple-touch-icon.png?v=2",
-    sizes: "180x180",
-    type: "image/png",
-  },
-],
+import { useSiteContent } from "@/hooks/useSiteContent";
+
+// Nel componente
+const { data: instagramLinkContent } = useSiteContent("wizard_instagram_link");
+const instagramLink = instagramLinkContent?.content || "#";
 ```
 
-**File: `public/manifest.json`**
-Stesso aggiornamento:
-```json
-"icons": [
-  {
-    "src": "/icon-192.png?v=2",
-    "sizes": "192x192",
-    "type": "image/png",
-    "purpose": "any maskable"
-  },
-  {
-    "src": "/icon-512.png?v=2",
-    "sizes": "512x512", 
-    "type": "image/png",
-    "purpose": "any maskable"
-  },
-  {
-    "src": "/apple-touch-icon.png?v=2",
-    "sizes": "180x180",
-    "type": "image/png"
-  }
-]
-```
+#### Stile del pulsante Instagram
 
-**File: `index.html`**
-Aggiornare il link apple-touch-icon:
-```html
-<link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2" />
-```
+Coerente con il design esistente:
+- Background: `bg-olive` (verde Pipo)
+- Testo: bianco, bold
+- Bordo arrotondato: `rounded-full` (stile pill)
+- Hover: scala leggera
+- Apertura in nuova tab con `target="_blank"`
+
+#### Stile del testo descrittivo
+
+- Font: `font-sans`
+- Dimensione: `text-sm` o `text-base`
+- Colore: `text-muted-foreground`
+- Allineamento: centrato
+- Padding: adeguato sopra/sotto
 
 ---
 
-### 2. Pagina "La missione di Pipo" - Verifica corsivo
+### Riepilogo file da modificare
 
-**Stato attuale**: Il testo nella pagina Mission.tsx è **già senza corsivo**. La linea 53 ha:
-```tsx
-<p className="font-medium text-foreground leading-relaxed whitespace-pre-wrap font-sans text-center text-base">
-```
-
-Nessuna modifica necessaria - il corsivo è già stato rimosso.
-
----
-
-### 3. Rimozione codice e asset inutilizzati
-
-**File da eliminare:**
-- `src/assets/pipo-surf.png` - non usato in nessun file del progetto
+| File | Azione |
+|------|--------|
+| `src/pages/WizardPage.tsx` | Rimuovere cornice, aggiungere pulsante e testo |
+| `src/pages/Admin.tsx` | Aggiungere campo per link Instagram |
+| `src/contexts/LanguageContext.tsx` | Aggiungere traduzioni |
+| Database (migration) | Inserire chiave `wizard_instagram_link` |
 
 ---
 
-### 4. Ottimizzazioni performance
+### Flusso utente finale
 
-**Già implementate nel progetto:**
-- PWA con auto-update (`skipWaiting: true`, `clientsClaim: true`)
-- Caching intelligente (NetworkFirst per API, CacheFirst per immagini)
-- Compressione immagini ottimizzata per mobile (max 1.5MB, 1600px)
-- Check aggiornamenti ogni 60 secondi + su visibility change
+1. Admin inserisce il link Instagram nel backend (sezione Contenuti > Wizard Instagram)
+2. L'utente visita il wizard e vede:
+   - Titolo "Portami via da qui"
+   - Opzioni Zona, Mood, Esplora (senza cornice)
+   - Pulsante "Scrivimi su Instagram"
+   - Testo descrittivo della CTA
+3. Cliccando il pulsante, si apre Instagram in una nuova tab
 
-**Nessun codice morto trovato** - il codebase è già stato pulito nelle iterazioni precedenti.
-
----
-
-### Riepilogo modifiche
-
-| File | Modifica |
-|------|----------|
-| `vite.config.ts` | Aggiungere `?v=2` alle icone PWA |
-| `public/manifest.json` | Aggiungere `?v=2` alle icone PWA |
-| `index.html` | Aggiungere `?v=2` al link apple-touch-icon |
-| `src/assets/pipo-surf.png` | Eliminare (non usato) |
-
----
-
-### Nota importante per l'icona su telefono
-
-Anche con cache-busting, gli utenti che hanno **già** installato l'app dovranno:
-1. Rimuovere l'app dalla home screen
-2. Reinstallarla dal browser
-
-Questo perché l'icona viene copiata localmente dal sistema operativo al momento dell'installazione. Il cache-busting garantisce che i **nuovi** utenti o chi reinstalla vedranno l'icona corretta.
