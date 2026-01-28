@@ -73,6 +73,10 @@ export const translations = {
     heroSubheadline: "Ti mostro posti iper selezionati, lontani dal turismo di massa. Tu scegli, io ti porto fuori dai radar in 30 secondi.",
     heroCtaButton: "Portami via da qui",
     heroSublabel: "Zona → Mood → Esplora in libertà",
+    
+    // Wizard Instagram CTA
+    wizardInstagramBtn: "Scrivimi su Instagram",
+    wizardInstagramDesc: "Hai bisogno di itinerari super specifici per la tua esplorazione in Sicilia? Scrivimi in DM su Instagram con la parola ALIENO e ti aiuto a costruire il tuo itinerario fuori dai radar.",
   },
   en: {
     // Navigation
@@ -137,6 +141,10 @@ export const translations = {
     heroSubheadline: "I show you ultra-selected places, far from mass tourism. You choose, I take you off the radar in 30 seconds.",
     heroCtaButton: "Take me away",
     heroSublabel: "Zone → Mood → Free Exploration",
+    
+    // Wizard Instagram CTA
+    wizardInstagramBtn: "Write me on Instagram",
+    wizardInstagramDesc: "Need super specific itineraries for your exploration in Sicily? Write me a DM on Instagram with the word ALIENO and I'll help you build your off-the-radar itinerary.",
   },
 } as const;
 

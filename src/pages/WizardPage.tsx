@@ -1,10 +1,11 @@
 import { useState, useMemo, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ChevronsLeft, ArrowRight } from "lucide-react";
-import pipoAlien from "@/assets/pipo-alien-new.png";
 import pinIcon from "@/assets/pin-icon.png";
 import { useHotspots } from "@/hooks/useHotspots";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSiteContent } from "@/hooks/useSiteContent";
+
 type WizardStep = "main" | "zona" | "mood";
 const WizardPage = () => {
   const navigate = useNavigate();
@@ -21,12 +22,10 @@ const WizardPage = () => {
       setStep(urlStep);
     }
   }, [searchParams]);
-  const {
-    data: hotspots
-  } = useHotspots();
-  const {
-    t
-  } = useLanguage();
+  const { data: hotspots } = useHotspots();
+  const { t } = useLanguage();
+  const { data: instagramLinkContent } = useSiteContent("wizard_instagram_link");
+  const instagramLink = instagramLinkContent?.content || "#";
 
   // Extract unique zones from hotspots
   const zones = useMemo(() => {
@@ -94,56 +93,49 @@ const WizardPage = () => {
               {t("wizardTitle")}
             </h1>
 
-            {/* Signpost-style menu */}
-            <div className="w-full max-w-xs">
-              {/* Sign container */}
-              <div className="bg-white border-[3px] border-black rounded-lg p-4 relative">
-                {/* Top peg */}
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 w-4 h-6 bg-black rounded-t-sm" />
-                
-                {/* Menu options */}
-                <div className="space-y-4">
-                  <button onClick={() => handleStepChange("zona")} className="flex items-center justify-between w-full py-2 group">
-                    <span className="font-sans text-xl font-bold text-foreground">
-                      {t("wizardZona")}
-                    </span>
-                    <div className="flex items-center text-olive">
-                      
-                      <ArrowRight className="w-6 h-6 -ml-3" strokeWidth={3} />
-                    </div>
-                  </button>
-
-                  <button onClick={() => handleStepChange("mood")} className="flex items-center justify-between w-full py-2 group">
-                    <span className="font-sans text-xl font-bold text-foreground">
-                      {t("wizardMood")}
-                    </span>
-                    <div className="flex items-center text-olive">
-                      
-                      <ArrowRight className="w-6 h-6 -ml-3" strokeWidth={3} />
-                    </div>
-                  </button>
-
-                  <button onClick={handleExploreAll} className="flex items-center justify-between w-full py-2 group">
-                    <span className="font-sans text-xl font-bold text-foreground">
-                      {t("wizardExplore")}
-                    </span>
-                    <div className="flex items-center text-olive">
-                      
-                      <ArrowRight className="w-6 h-6 -ml-3" strokeWidth={3} />
-                    </div>
-                  </button>
+            {/* Menu options - no frame */}
+            <div className="w-full max-w-xs space-y-4">
+              <button onClick={() => handleStepChange("zona")} className="flex items-center justify-between w-full py-2 group">
+                <span className="font-sans text-xl font-bold text-foreground">
+                  {t("wizardZona")}
+                </span>
+                <div className="flex items-center text-olive">
+                  <ArrowRight className="w-6 h-6" strokeWidth={3} />
                 </div>
-              </div>
+              </button>
 
-              {/* Sign pole */}
-              <div className="flex justify-center">
-                <div className="w-4 h-32 bg-black" />
-              </div>
+              <button onClick={() => handleStepChange("mood")} className="flex items-center justify-between w-full py-2 group">
+                <span className="font-sans text-xl font-bold text-foreground">
+                  {t("wizardMood")}
+                </span>
+                <div className="flex items-center text-olive">
+                  <ArrowRight className="w-6 h-6" strokeWidth={3} />
+                </div>
+              </button>
+
+              <button onClick={handleExploreAll} className="flex items-center justify-between w-full py-2 group">
+                <span className="font-sans text-xl font-bold text-foreground">
+                  {t("wizardExplore")}
+                </span>
+                <div className="flex items-center text-olive">
+                  <ArrowRight className="w-6 h-6" strokeWidth={3} />
+                </div>
+              </button>
             </div>
 
-            {/* Bottom text - same font family as Zona/Mood but not bold/italic, gray */}
-            <p className="text-muted-foreground font-sans text-xl mt-6">
-              {t("wizardYourTurn")}
+            {/* Instagram CTA Button */}
+            <a
+              href={instagramLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-8 inline-flex items-center justify-center px-6 py-3 bg-olive text-white font-sans font-bold text-base rounded-full transition-transform duration-200 hover:scale-105"
+            >
+              {t("wizardInstagramBtn")}
+            </a>
+
+            {/* Instagram CTA Description */}
+            <p className="text-muted-foreground font-sans text-sm text-center mt-4 max-w-xs px-4">
+              {t("wizardInstagramDesc")}
             </p>
           </>}
 
