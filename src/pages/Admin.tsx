@@ -43,6 +43,7 @@ const Admin = () => {
   const { data: heroSubtitleContent } = useSiteContent("hero_subtitle");
   const { data: heroCtaContent } = useSiteContent("hero_cta");
   const { data: homepageBgColorContent } = useSiteContent("homepage_bg_color");
+  const { data: wizardInstagramLinkContent } = useSiteContent("wizard_instagram_link");
   const updateSiteContent = useUpdateSiteContent();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -53,6 +54,7 @@ const Admin = () => {
   const [heroSubtitle, setHeroSubtitle] = useState("");
   const [heroCta, setHeroCta] = useState("");
   const [homepageBgColor, setHomepageBgColor] = useState("");
+  const [wizardInstagramLink, setWizardInstagramLink] = useState("");
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -90,6 +92,12 @@ const Admin = () => {
       setHomepageBgColor(homepageBgColorContent.content);
     }
   }, [homepageBgColorContent]);
+
+  useEffect(() => {
+    if (wizardInstagramLinkContent?.content) {
+      setWizardInstagramLink(wizardInstagramLinkContent.content);
+    }
+  }, [wizardInstagramLinkContent]);
 
   const handleOpenCreate = () => {
     setEditingHotspot(null);
@@ -147,6 +155,10 @@ const Admin = () => {
     if (homepageBgColor) {
       await updateSiteContent.mutateAsync({ key: "homepage_bg_color", content: homepageBgColor });
     }
+  };
+
+  const handleSaveWizardInstagram = async () => {
+    await updateSiteContent.mutateAsync({ key: "wizard_instagram_link", content: wizardInstagramLink });
   };
 
   if (authLoading || isLoading) {
@@ -552,6 +564,41 @@ const Admin = () => {
                         <Loader2 className="h-4 w-4 animate-spin mr-2" />
                       )}
                       Salva Hero
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Wizard Instagram Link */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="h-5 w-5" />
+                    Wizard Instagram
+                  </CardTitle>
+                  <CardDescription>
+                    Link al profilo Instagram per il pulsante "Scrivimi su Instagram" nel wizard.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="wizard_instagram_link">Link Instagram</Label>
+                    <Input
+                      id="wizard_instagram_link"
+                      value={wizardInstagramLink}
+                      onChange={(e) => setWizardInstagramLink(e.target.value)}
+                      placeholder="Es: https://instagram.com/tuoprofilo"
+                    />
+                  </div>
+                  <div className="flex justify-end">
+                    <Button 
+                      onClick={handleSaveWizardInstagram}
+                      disabled={updateSiteContent.isPending || wizardInstagramLink === (wizardInstagramLinkContent?.content || "")}
+                    >
+                      {updateSiteContent.isPending && (
+                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      )}
+                      Salva Link Instagram
                     </Button>
                   </div>
                 </CardContent>
