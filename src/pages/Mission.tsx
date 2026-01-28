@@ -34,7 +34,7 @@ const Mission = () => {
           <div className="flex flex-col items-center mb-10">
             <img src={pipoAlien} alt="Pipo" className="h-16 w-16 object-contain mb-6" draggable={false} />
             {/* Title in Rubik Bubbles like homepage */}
-            <h1 className="font-bubbles text-[28px] text-foreground text-center">
+            <h1 className="font-bubbles text-[28px] text-foreground text-center font-semibold">
               {t("missionTitle")}
             </h1>
           </div>
