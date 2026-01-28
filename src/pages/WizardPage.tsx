@@ -5,7 +5,6 @@ import pinIcon from "@/assets/pin-icon.png";
 import { useHotspots } from "@/hooks/useHotspots";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSiteContent } from "@/hooks/useSiteContent";
-
 type WizardStep = "main" | "zona" | "mood";
 const WizardPage = () => {
   const navigate = useNavigate();
@@ -22,10 +21,18 @@ const WizardPage = () => {
       setStep(urlStep);
     }
   }, [searchParams]);
-  const { data: hotspots } = useHotspots();
-  const { t } = useLanguage();
-  const { data: instagramLinkContent } = useSiteContent("wizard_instagram_link");
-  const { data: instagramDescContent } = useSiteContent("wizard_instagram_desc");
+  const {
+    data: hotspots
+  } = useHotspots();
+  const {
+    t
+  } = useLanguage();
+  const {
+    data: instagramLinkContent
+  } = useSiteContent("wizard_instagram_link");
+  const {
+    data: instagramDescContent
+  } = useSiteContent("wizard_instagram_desc");
   const instagramLink = instagramLinkContent?.content || "#";
   const instagramDesc = instagramDescContent?.content || t("wizardInstagramDesc");
 
@@ -91,7 +98,7 @@ const WizardPage = () => {
         {/* MAIN MENU STEP */}
         {step === "main" && <>
             {/* Title */}
-            <h1 className="font-bubbles text-foreground text-center mb-8 text-xl">
+            <h1 className="font-bubbles text-foreground text-center mb-8 text-xl font-semibold">
               {t("wizardTitle")}
             </h1>
 
@@ -126,12 +133,7 @@ const WizardPage = () => {
             </div>
 
             {/* Instagram CTA Button */}
-            <a
-              href={instagramLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-8 inline-flex items-center justify-center px-6 py-3 bg-black text-white font-sans font-bold text-base rounded-full transition-transform duration-200 hover:scale-105"
-            >
+            <a href={instagramLink} target="_blank" rel="noopener noreferrer" className="mt-8 inline-flex items-center justify-center px-6 py-3 bg-black text-white font-sans font-bold text-base rounded-full transition-transform duration-200 hover:scale-105">
               {t("wizardInstagramBtn")}
             </a>
 
