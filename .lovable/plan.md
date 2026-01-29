@@ -1,154 +1,110 @@
 
-## Piano: Pulsante Instagram nel Wizard + Gestione Backend
+## Piano: Pulsante Instagram nella pagina Esplora
 
 ### Panoramica
 
-Modificare la sezione "Portami via da qui" nel wizard per:
-1. Rimuovere la cornice "cartello" (sfondo bianco, bordo nero, palo)
-2. Rimuovere la frase "Ancora qui?"
-3. Aggiungere un pulsante "Scrivimi su Instagram" sotto "Esplora in libertà"
-4. Aggiungere il testo descrittivo sotto il pulsante
-5. Rendere il link del pulsante configurabile dal backend
+Aggiungere un pulsante "Scrivimi su Instagram" fisso in basso nella pagina ExplorePage, all'interno di una barra bianca. Il pulsante utilizzerà lo stesso link configurato nel backend (`wizard_instagram_link`).
 
 ---
 
 ### Modifiche da implementare
 
-#### 1. Database: Nuova chiave per il link Instagram
+#### File: `src/pages/ExplorePage.tsx`
 
-Aggiungere una nuova riga nella tabella `site_content`:
-- **key**: `wizard_instagram_link`
-- **content**: (vuoto inizialmente, da compilare nel backend)
-
-```sql
-INSERT INTO site_content (key, content) VALUES ('wizard_instagram_link', '');
-```
-
----
-
-#### 2. Admin Panel: Campo per gestire il link
-
-**File: `src/pages/Admin.tsx`**
-
-Aggiungere nella sezione "Contenuti" una nuova Card per gestire il link Instagram del wizard:
-
-```text
-Wizard Instagram
-- Campo input per il link Instagram
-- Pulsante "Salva"
-```
-
-Modifiche tecniche:
-- Aggiungere hook `useSiteContent("wizard_instagram_link")`
-- Aggiungere stato `wizardInstagramLink`
-- Aggiungere funzione `handleSaveWizardInstagram()`
-- Aggiungere UI nella TabsContent "contenuti"
-
----
-
-#### 3. Traduzioni: Nuove chiavi
-
-**File: `src/contexts/LanguageContext.tsx`**
-
-Aggiungere le seguenti traduzioni:
-
-| Chiave | Italiano | English |
-|--------|----------|---------|
-| `wizardInstagramBtn` | Scrivimi su Instagram | Write me on Instagram |
-| `wizardInstagramDesc` | Hai bisogno di itinerari super specifici per la tua esplorazione in Sicilia? Scrivimi in DM su Instagram con la parola ALIENO e ti aiuto a costruire il tuo itinerario fuori dai radar. | Need super specific itineraries for your exploration in Sicily? Write me a DM on Instagram with the word ALIENO and I'll help you build your off-the-radar itinerary. |
-
----
-
-#### 4. WizardPage: Nuovo layout senza cornice
-
-**File: `src/pages/WizardPage.tsx`**
-
-Struttura attuale (da rimuovere):
-```
-┌─────────────────────┐
-│  [peg nero in alto] │
-│ ┌─────────────────┐ │
-│ │   Zona    →     │ │
-│ │   Mood    →     │ │
-│ │ Esplora   →     │ │
-│ └─────────────────┘ │
-│     [palo nero]     │
-└─────────────────────┘
-      "Ancora qui?"
-```
-
-Nuova struttura:
-```
-   Zona          →
-   Mood          →
-   Esplora       →
-
-[Scrivimi su Instagram]
-
-(testo descrittivo CTA)
-```
-
-Modifiche tecniche nel componente step "main":
-- Rimuovere il container `bg-white border-[3px] border-black rounded-lg`
-- Rimuovere il "peg" superiore (`absolute -top-3`)
-- Rimuovere il "palo" inferiore (`w-4 h-32 bg-black`)
-- Rimuovere il paragrafo con `t("wizardYourTurn")`
-- Mantenere i 3 bottoni (Zona, Mood, Esplora) con il loro stile
-- Aggiungere il pulsante Instagram con link dal backend
-- Aggiungere il testo descrittivo sotto
-
----
-
-### Dettagli tecnici
-
-#### Hook per il link Instagram
-
-Nel WizardPage, importare e usare:
+**1. Importare l'hook per il contenuto dal backend**
 ```typescript
 import { useSiteContent } from "@/hooks/useSiteContent";
+```
 
-// Nel componente
+**2. Aggiungere il fetch del link Instagram nel componente**
+```typescript
 const { data: instagramLinkContent } = useSiteContent("wizard_instagram_link");
 const instagramLink = instagramLinkContent?.content || "#";
 ```
 
-#### Stile del pulsante Instagram
+**3. Aggiungere padding-bottom al main**
 
-Coerente con il design esistente:
-- Background: `bg-olive` (verde Pipo)
+Per evitare che le ultime card vengano nascoste dalla barra fissa, aggiungere `pb-24` al contenitore main.
+
+**4. Aggiungere la barra fissa in basso**
+
+Struttura:
+```
+┌─────────────────────────────────────┐
+│  [Scrivimi su Instagram] (nero)     │
+└─────────────────────────────────────┘
+```
+
+Dettagli tecnici:
+- Posizione: `fixed bottom-0 left-0 right-0`
+- Background: `bg-white` con ombra verso l'alto (`shadow-[0_-2px_10px_rgba(0,0,0,0.1)]`)
+- Padding: `py-4 px-6`
+- Z-index: `z-50` per stare sopra i contenuti
+- Il pulsante centrato con `flex justify-center`
+
+**5. Stile del pulsante**
+
+Identico a quello del wizard:
+- Background: `bg-black`
 - Testo: bianco, bold
-- Bordo arrotondato: `rounded-full` (stile pill)
-- Hover: scala leggera
-- Apertura in nuova tab con `target="_blank"`
-
-#### Stile del testo descrittivo
-
-- Font: `font-sans`
-- Dimensione: `text-sm` o `text-base`
-- Colore: `text-muted-foreground`
-- Allineamento: centrato
-- Padding: adeguato sopra/sotto
+- Forma: pill (`rounded-full`)
+- Hover: scala leggera (`hover:scale-105`)
+- Apertura in nuova tab: `target="_blank" rel="noopener noreferrer"`
 
 ---
 
-### Riepilogo file da modificare
+### Codice della barra fissa
+
+```tsx
+{/* Fixed Instagram CTA bar */}
+<div className="fixed bottom-0 left-0 right-0 z-50 bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.1)] py-4 px-6">
+  <div className="flex justify-center">
+    <a
+      href={instagramLink}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="px-6 py-3 bg-black text-white font-bold rounded-full transition-transform duration-200 hover:scale-105 font-sans"
+    >
+      {t("wizardInstagramBtn")}
+    </a>
+  </div>
+</div>
+```
+
+---
+
+### Struttura finale della pagina
+
+```
+┌────────────────────────────────────┐
+│ Header (sticky top)                │
+├────────────────────────────────────┤
+│ Filtri attivi (opzionale)          │
+├────────────────────────────────────┤
+│                                    │
+│      Hotspot Cards                 │
+│      (scrollabili)                 │
+│                                    │
+│      ...                           │
+│                                    │
+│      [padding-bottom per barra]    │
+├────────────────────────────────────┤
+│ [Scrivimi su Instagram] (fixed)    │
+└────────────────────────────────────┘
+```
+
+---
+
+### Riepilogo modifiche
 
 | File | Azione |
 |------|--------|
-| `src/pages/WizardPage.tsx` | Rimuovere cornice, aggiungere pulsante e testo |
-| `src/pages/Admin.tsx` | Aggiungere campo per link Instagram |
-| `src/contexts/LanguageContext.tsx` | Aggiungere traduzioni |
-| Database (migration) | Inserire chiave `wizard_instagram_link` |
+| `src/pages/ExplorePage.tsx` | Importare hook, aggiungere fetch link, barra fissa con pulsante |
 
 ---
 
-### Flusso utente finale
+### Note
 
-1. Admin inserisce il link Instagram nel backend (sezione Contenuti > Wizard Instagram)
-2. L'utente visita il wizard e vede:
-   - Titolo "Portami via da qui"
-   - Opzioni Zona, Mood, Esplora (senza cornice)
-   - Pulsante "Scrivimi su Instagram"
-   - Testo descrittivo della CTA
-3. Cliccando il pulsante, si apre Instagram in una nuova tab
-
+- Non servono nuove chiavi database: si riutilizza `wizard_instagram_link` già esistente
+- Non servono nuove traduzioni: si riutilizza `wizardInstagramBtn` già esistente
+- Il pulsante sarà sempre visibile mentre l'utente scorre le schede hotspot
