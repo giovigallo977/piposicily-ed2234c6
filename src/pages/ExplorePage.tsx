@@ -4,7 +4,7 @@ import { ChevronsLeft, Filter } from "lucide-react";
 import pipoAlien from "@/assets/pipo-alien-new.png";
 import HotspotCard from "@/components/HotspotCard";
 import { useHotspots } from "@/hooks/useHotspots";
-import { useHotspotCategories } from "@/hooks/useSiteContent";
+import { useHotspotCategories, useSiteContent } from "@/hooks/useSiteContent";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedCategories } from "@/hooks/useTranslatedCategories";
 import { Loader2 } from "lucide-react";
@@ -26,6 +26,8 @@ const ExplorePage = () => {
   const {
     translatedCategories
   } = useTranslatedCategories(categories);
+  const { data: instagramLinkContent } = useSiteContent("wizard_instagram_link");
+  const instagramLink = instagramLinkContent?.content || "#";
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   // Get filter from URL params
@@ -101,7 +103,7 @@ const ExplorePage = () => {
         </div>}
 
       {/* Content */}
-      <main className="container mx-auto px-4 py-6">
+      <main className="container mx-auto px-4 py-6 pb-24">
         <div className="max-w-lg mx-auto space-y-6">
           {isLoading && <div className="flex justify-center py-12">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -122,6 +124,20 @@ const ExplorePage = () => {
             </div>}
         </div>
       </main>
+
+      {/* Fixed Instagram CTA bar */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.1)] py-4 px-6">
+        <div className="flex justify-center">
+          <a
+            href={instagramLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-6 py-3 bg-black text-white font-bold rounded-full transition-transform duration-200 hover:scale-105 font-sans"
+          >
+            {t("wizardInstagramBtn")}
+          </a>
+        </div>
+      </div>
     </div>;
 };
 export default ExplorePage;
