@@ -1,110 +1,167 @@
 
-## Piano: Pulsante Instagram nella pagina Esplora
+
+## Piano: Condivisione + Preferiti per Hotspot
 
 ### Panoramica
 
-Aggiungere un pulsante "Scrivimi su Instagram" fisso in basso nella pagina ExplorePage, all'interno di una barra bianca. Il pulsante utilizzerà lo stesso link configurato nel backend (`wizard_instagram_link`).
+Aggiungere due nuove funzionalità alle card hotspot:
+1. **Pulsante Condividi** - copia il link o condivide su WhatsApp
+2. **Pulsante Preferiti** - salva hotspot con cuoricino (localStorage)
 
 ---
 
-### Modifiche da implementare
+### 1. Hook Preferiti (nuovo file)
 
-#### File: `src/pages/ExplorePage.tsx`
+**File: `src/hooks/useFavorites.ts`**
 
-**1. Importare l'hook per il contenuto dal backend**
 ```typescript
-import { useSiteContent } from "@/hooks/useSiteContent";
+// Gestisce i preferiti in localStorage
+const STORAGE_KEY = "pipo-favorites";
+
+export const useFavorites = () => {
+  const [favorites, setFavorites] = useState<string[]>([]);
+  
+  // Carica da localStorage al mount
+  // Toggle: aggiunge/rimuove ID
+  // isFavorite: controlla se ID è presente
+  
+  return { favorites, toggleFavorite, isFavorite };
+};
 ```
-
-**2. Aggiungere il fetch del link Instagram nel componente**
-```typescript
-const { data: instagramLinkContent } = useSiteContent("wizard_instagram_link");
-const instagramLink = instagramLinkContent?.content || "#";
-```
-
-**3. Aggiungere padding-bottom al main**
-
-Per evitare che le ultime card vengano nascoste dalla barra fissa, aggiungere `pb-24` al contenitore main.
-
-**4. Aggiungere la barra fissa in basso**
-
-Struttura:
-```
-┌─────────────────────────────────────┐
-│  [Scrivimi su Instagram] (nero)     │
-└─────────────────────────────────────┘
-```
-
-Dettagli tecnici:
-- Posizione: `fixed bottom-0 left-0 right-0`
-- Background: `bg-white` con ombra verso l'alto (`shadow-[0_-2px_10px_rgba(0,0,0,0.1)]`)
-- Padding: `py-4 px-6`
-- Z-index: `z-50` per stare sopra i contenuti
-- Il pulsante centrato con `flex justify-center`
-
-**5. Stile del pulsante**
-
-Identico a quello del wizard:
-- Background: `bg-black`
-- Testo: bianco, bold
-- Forma: pill (`rounded-full`)
-- Hover: scala leggera (`hover:scale-105`)
-- Apertura in nuova tab: `target="_blank" rel="noopener noreferrer"`
 
 ---
 
-### Codice della barra fissa
+### 2. Modifiche HotspotCard
+
+**File: `src/components/HotspotCard.tsx`**
+
+**Nuove importazioni:**
+```typescript
+import { Heart, Share2 } from "lucide-react";
+import { useFavorites } from "@/hooks/useFavorites";
+import { toast } from "sonner";
+```
+
+**Nuova logica:**
+```typescript
+const { toggleFavorite, isFavorite } = useFavorites();
+const isLiked = isFavorite(hotspot.id);
+
+const handleShare = async () => {
+  const url = `${window.location.origin}/esplora?hotspot=${hotspot.id}`;
+  
+  if (navigator.share) {
+    // Mobile: usa API nativa
+    await navigator.share({ title, url });
+  } else {
+    // Desktop: copia link
+    await navigator.clipboard.writeText(url);
+    toast.success("Link copiato!");
+  }
+};
+```
+
+**Nuovi pulsanti nell'header della card:**
+
+```
+┌────────────────────────────────────────────┐
+│ [Titolo]                    ❤️  📤  [+/-]  │
+└────────────────────────────────────────────┘
+```
+
+**Posizione:** A destra del titolo, prima del bottone espansione:
+- **Cuore (❤️):** toggle preferiti, rosso se attivo
+- **Share (📤):** apre menu condivisione o copia link
+
+---
+
+### 3. Traduzioni
+
+**File: `src/contexts/LanguageContext.tsx`**
+
+Nuove chiavi:
+```typescript
+// Italiano
+share: "Condividi",
+addToFavorites: "Aggiungi ai preferiti",
+removeFromFavorites: "Rimuovi dai preferiti",
+linkCopied: "Link copiato!",
+shareViaWhatsApp: "Condividi su WhatsApp",
+
+// English
+share: "Share",
+addToFavorites: "Add to favorites",
+removeFromFavorites: "Remove from favorites",
+linkCopied: "Link copied!",
+shareViaWhatsApp: "Share via WhatsApp",
+```
+
+---
+
+### 4. Stile dei pulsanti
+
+**Cuore Preferiti:**
+```css
+/* Non attivo */
+w-9 h-9 rounded-full bg-muted text-foreground
+
+/* Attivo */
+w-9 h-9 rounded-full bg-red-100 text-red-500
+```
+
+**Icona Share:**
+```css
+w-9 h-9 rounded-full bg-muted text-foreground hover:bg-muted/80
+```
+
+---
+
+### 5. Struttura header card aggiornata
 
 ```tsx
-{/* Fixed Instagram CTA bar */}
-<div className="fixed bottom-0 left-0 right-0 z-50 bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.1)] py-4 px-6">
-  <div className="flex justify-center">
-    <a
-      href={instagramLink}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="px-6 py-3 bg-black text-white font-bold rounded-full transition-transform duration-200 hover:scale-105 font-sans"
-    >
-      {t("wizardInstagramBtn")}
-    </a>
+<div className="flex items-start justify-between gap-2">
+  {/* Titolo */}
+  <h2 className="flex-1 min-w-0 ...">
+    {translated.titolo}
+  </h2>
+  
+  {/* Azioni */}
+  <div className="flex items-center gap-1.5 flex-shrink-0">
+    {/* Cuore preferiti */}
+    <button onClick={() => toggleFavorite(hotspot.id)}>
+      <Heart className={isLiked ? "fill-red-500 text-red-500" : ""} />
+    </button>
+    
+    {/* Share */}
+    <button onClick={handleShare}>
+      <Share2 />
+    </button>
+    
+    {/* Espansione +/- */}
+    <button onClick={() => setIsExpanded(!isExpanded)}>
+      {isExpanded ? <Minus /> : <Plus />}
+    </button>
   </div>
 </div>
 ```
 
 ---
 
-### Struttura finale della pagina
-
-```
-┌────────────────────────────────────┐
-│ Header (sticky top)                │
-├────────────────────────────────────┤
-│ Filtri attivi (opzionale)          │
-├────────────────────────────────────┤
-│                                    │
-│      Hotspot Cards                 │
-│      (scrollabili)                 │
-│                                    │
-│      ...                           │
-│                                    │
-│      [padding-bottom per barra]    │
-├────────────────────────────────────┤
-│ [Scrivimi su Instagram] (fixed)    │
-└────────────────────────────────────┘
-```
-
----
-
-### Riepilogo modifiche
+### Riepilogo file da modificare/creare
 
 | File | Azione |
 |------|--------|
-| `src/pages/ExplorePage.tsx` | Importare hook, aggiungere fetch link, barra fissa con pulsante |
+| `src/hooks/useFavorites.ts` | **NUOVO** - Hook per gestione preferiti |
+| `src/components/HotspotCard.tsx` | Aggiungere pulsanti cuore e share |
+| `src/contexts/LanguageContext.tsx` | Aggiungere traduzioni |
 
 ---
 
-### Note
+### Note tecniche
 
-- Non servono nuove chiavi database: si riutilizza `wizard_instagram_link` già esistente
-- Non servono nuove traduzioni: si riutilizza `wizardInstagramBtn` già esistente
-- Il pulsante sarà sempre visibile mentre l'utente scorre le schede hotspot
+- **localStorage** per i preferiti (nessun login richiesto)
+- **navigator.share** per condivisione nativa su mobile
+- **Clipboard API** come fallback per desktop
+- I preferiti persistono tra sessioni
+- Feedback visivo immediato con animazione cuore
+
