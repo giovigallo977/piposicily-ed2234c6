@@ -104,7 +104,7 @@ const ExplorePage = () => {
 
       {/* Content */}
       <main className="container mx-auto px-4 py-6 pb-24">
-        <div className="max-w-lg mx-auto space-y-6">
+        <div className="max-w-6xl mx-auto">
           {isLoading && <div className="flex justify-center py-12">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>}
@@ -113,7 +113,9 @@ const ExplorePage = () => {
               <p>{t("loadingHotspotsError")}</p>
             </div>}
           
-          {filteredHotspots.map((hotspot, index) => <HotspotCard key={hotspot.id} hotspot={hotspot} index={index} />)}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredHotspots.map((hotspot, index) => <HotspotCard key={hotspot.id} hotspot={hotspot} index={index} />)}
+          </div>
           
           {!isLoading && filteredHotspots.length === 0 && hotspots && hotspots.length > 0 && <div className="text-center py-12 text-muted-foreground font-sans italic">
               <p>{t("noHotspotsCategory")}</p>

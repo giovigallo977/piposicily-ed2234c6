@@ -16,7 +16,7 @@ const MinimalHeader = ({ bgColor }: MinimalHeaderProps) => {
     t
   } = useLanguage();
   return <header className="py-4" style={{ backgroundColor: bgColor || undefined }}>
-      <div className="container mx-auto px-6">
+      <div className="max-w-4xl mx-auto px-6">
         <div className="flex items-center justify-between">
           {/* Hamburger Menu - Left */}
           <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
