@@ -98,7 +98,7 @@ const WizardPage = () => {
         {/* MAIN MENU STEP */}
         {step === "main" && <>
             {/* Title */}
-            <h1 className="font-bubbles text-foreground text-center mb-8 font-semibold text-3xl">
+            <h1 className="font-bubbles text-foreground text-center mb-8 text-3xl font-bold">
               {t("wizardTitle")}
             </h1>
 
