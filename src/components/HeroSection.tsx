@@ -41,19 +41,19 @@ const HeroSection = ({
     navigate("/esplora");
   };
   return <section className="px-6 py-12 flex flex-col min-h-[75vh] justify-center" style={{ backgroundColor: bgColor || undefined }}>
-      <div className="max-w-4xl mx-auto w-full">
-        {/* Headline - Responsive: 32px mobile, 48px desktop */}
-        <h1 className="font-sans text-[32px] md:text-[48px] font-bold leading-[1.1] text-foreground text-left">
+      <div className="max-w-4xl mx-auto w-full md:flex md:flex-col md:items-center">
+        {/* Headline - Responsive: 32px mobile, 48px desktop, centered on desktop */}
+        <h1 className="font-sans text-[32px] md:text-[48px] font-bold leading-[1.1] text-foreground text-left md:text-center">
           {headline}
         </h1>
 
-        {/* Subtitle - Inter 16px medium */}
-        <p className="font-sans text-base font-medium text-foreground text-left mt-6 max-w-md">
+        {/* Subtitle - Inter 16px medium, centered on desktop */}
+        <p className="font-sans text-base font-medium text-foreground text-left md:text-center mt-6 max-w-md md:mx-auto">
           {subtitle}
         </p>
 
-        {/* CTA Button - Black with white text, rounded */}
-        <div className="w-full max-w-sm mt-8">
+        {/* CTA Button - Black with white text, rounded, centered on desktop */}
+        <div className="w-full max-w-sm mt-8 md:mx-auto">
           <button onClick={onCtaClick} className="w-full px-8 py-4 font-sans text-base font-medium bg-black text-white rounded-full transition-all duration-200 hover:opacity-90 active:scale-[0.98]">
             {ctaText}
           </button>
