@@ -102,33 +102,27 @@ const WizardPage = () => {
               {t("wizardTitle")}
             </h1>
 
-            {/* Menu options - no frame */}
-            <div className="w-full max-w-xs space-y-4">
-              <button onClick={() => handleStepChange("zona")} className="flex items-center justify-between w-full py-2 group">
+            {/* Menu options - CENTERED */}
+            <div className="w-full max-w-sm md:max-w-md space-y-4">
+              <button onClick={() => handleStepChange("zona")} className="flex items-center justify-center gap-3 w-full py-2 group">
                 <span className="font-sans text-xl font-bold text-foreground">
                   {t("wizardZona")}
                 </span>
-                <div className="flex items-center text-olive">
-                  <ArrowRight className="w-6 h-6" strokeWidth={3} />
-                </div>
+                <ArrowRight className="w-5 h-5 text-olive" strokeWidth={3} />
               </button>
 
-              <button onClick={() => handleStepChange("mood")} className="flex items-center justify-between w-full py-2 group">
+              <button onClick={() => handleStepChange("mood")} className="flex items-center justify-center gap-3 w-full py-2 group">
                 <span className="font-sans text-xl font-bold text-foreground">
                   {t("wizardMood")}
                 </span>
-                <div className="flex items-center text-olive">
-                  <ArrowRight className="w-6 h-6" strokeWidth={3} />
-                </div>
+                <ArrowRight className="w-5 h-5 text-olive" strokeWidth={3} />
               </button>
 
-              <button onClick={handleExploreAll} className="flex items-center justify-between w-full py-2 group">
+              <button onClick={handleExploreAll} className="flex items-center justify-center gap-3 w-full py-2 group">
                 <span className="font-sans text-xl font-bold text-foreground">
                   {t("wizardExplore")}
                 </span>
-                <div className="flex items-center text-olive">
-                  <ArrowRight className="w-6 h-6" strokeWidth={3} />
-                </div>
+                <ArrowRight className="w-5 h-5 text-olive" strokeWidth={3} />
               </button>
             </div>
 
