@@ -1,138 +1,99 @@
 
 
-## Piano: Ottimizzazione Desktop + Centratura Wizard
+## Piano: Centratura Homepage su Desktop
 
-### Panoramica
+### Problema attuale
 
-Ottimizzare l'applicazione per schermi desktop con contenuti ben centrati e layout responsive. Centrare le opzioni del menu wizard (Zona, Mood, Esplora in libertà).
+Il container (`max-w-4xl mx-auto`) è centrato, ma gli elementi al suo interno hanno `text-left`, quindi su schermi larghi il testo appare spostato a sinistra.
 
----
-
-### 1. Pagina Wizard (`src/pages/WizardPage.tsx`)
-
-**Problema attuale:** I pulsanti del menu sono allineati a sinistra con `justify-between`.
-
-**Soluzione:** Centrare le opzioni del menu principale.
-
-**Modifiche:**
-- Cambiare i pulsanti da `justify-between` a `justify-center` con testo centrato
-- Rimuovere le frecce Arrow a destra (ora ridondanti con layout centrato)
-- Aggiungere `max-w-md mx-auto` per contenere il layout su desktop
-- Aggiungere `md:max-w-lg` per una larghezza leggermente maggiore su desktop
-
-**Layout attuale:**
+**Layout attuale su desktop:**
 ```
-[Zona                    →]
-[Mood                    →]
-[Esplora in libertà      →]
+|                                              |
+|    Esplorazioni aliene...                    |
+|    Ti mostro posti...                        |
+|    [Portami via da qui]                      |
+|                                              |
 ```
 
-**Nuovo layout (centrato):**
+**Layout desiderato su desktop:**
 ```
-        Zona →
-        Mood →
-  Esplora in libertà →
+|                                              |
+|         Esplorazioni aliene...               |
+|         Ti mostro posti...                   |
+|         [Portami via da qui]                 |
+|                                              |
 ```
 
 ---
 
-### 2. Homepage Hero (`src/components/HeroSection.tsx`)
+### Soluzione
 
-**Problema attuale:** Il contenuto è allineato a sinistra senza limiti su desktop.
-
-**Modifiche:**
-- Aggiungere container con `max-w-4xl mx-auto` per centrare su desktop
-- Mantenere `text-left` per il testo ma contenuto nel container
-- Ridurre la dimensione del titolo su mobile con responsive: `text-[32px] md:text-[48px]`
+Centrare gli elementi su desktop mantenendo l'allineamento a sinistra su mobile.
 
 ---
 
-### 3. Header (`src/components/MinimalHeader.tsx`)
+### Modifiche al file `src/components/HeroSection.tsx`
 
-**Problema attuale:** Già centrato con container, ma può essere migliorato.
+**1. Container principale**
+- Aggiungere `md:text-center md:items-center` per centrare su desktop
 
-**Modifiche:**
-- Aggiungere `max-w-4xl mx-auto` per allineare con il contenuto hero
+**2. Headline (h1)**
+- Cambiare da `text-left` a `text-left md:text-center`
 
----
+**3. Subtitle (p)**
+- Cambiare da `text-left` a `text-left md:text-center`
+- Cambiare `max-w-md` a `max-w-md md:mx-auto` per centrare il blocco
 
-### 4. Explore Page (`src/pages/ExplorePage.tsx`)
-
-**Problema attuale:** Cards limitate a `max-w-lg` - troppo stretto su desktop.
-
-**Modifiche:**
-- Cambiare a griglia responsive: `grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6`
-- Rimuovere `max-w-lg` e usare `max-w-6xl` per il container
-- Aggiungere `max-w-md mx-auto` per header su desktop
+**4. CTA container**
+- Aggiungere `md:mx-auto` per centrare il pulsante su desktop
 
 ---
 
-### 5. Mission Page (`src/pages/Mission.tsx`)
-
-**Modifiche:**
-- Verificare che usi container centrato (già `max-w-md mx-auto`)
-- OK, già ottimizzato
-
----
-
-### Riepilogo tecnico modifiche
-
-| File | Modifiche |
-|------|-----------|
-| `src/pages/WizardPage.tsx` | Centrare menu options, aggiungere container max-width |
-| `src/components/HeroSection.tsx` | Aggiungere max-w container, responsive font sizes |
-| `src/components/MinimalHeader.tsx` | Allineare max-width con hero |
-| `src/pages/ExplorePage.tsx` | Griglia responsive per cards, container più largo |
-
----
-
-### Dettagli implementativi
-
-#### WizardPage - Menu centrato
+### Codice modificato
 
 ```tsx
-{/* Menu options - CENTERED */}
-<div className="w-full max-w-sm space-y-4">
-  <button 
-    onClick={() => handleStepChange("zona")} 
-    className="flex items-center justify-center gap-3 w-full py-2 group"
-  >
-    <span className="font-sans text-xl font-bold text-foreground">
-      {t("wizardZona")}
-    </span>
-    <ArrowRight className="w-5 h-5 text-olive" strokeWidth={3} />
-  </button>
-  {/* ... altri pulsanti uguali */}
-</div>
-```
+<section className="px-6 py-12 flex flex-col min-h-[75vh] justify-center" ...>
+  <div className="max-w-4xl mx-auto w-full md:flex md:flex-col md:items-center">
+    
+    {/* Headline - Left on mobile, centered on desktop */}
+    <h1 className="... text-left md:text-center">
+      {headline}
+    </h1>
 
-#### HeroSection - Container centrato
+    {/* Subtitle - Left on mobile, centered on desktop */}
+    <p className="... text-left md:text-center max-w-md md:mx-auto">
+      {subtitle}
+    </p>
 
-```tsx
-<section className="px-6 py-12 flex flex-col min-h-[75vh] justify-center">
-  <div className="max-w-4xl mx-auto w-full">
-    {/* Contenuto esistente */}
+    {/* CTA Button - Centered on desktop */}
+    <div className="w-full max-w-sm mt-8 md:mx-auto">
+      ...
+    </div>
+    
   </div>
 </section>
 ```
 
-#### ExplorePage - Griglia responsive
+---
 
-```tsx
-<main className="container mx-auto px-4 py-6 pb-24">
-  <div className="max-w-6xl mx-auto">
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {filteredHotspots.map(...)}
-    </div>
-  </div>
-</main>
+### Risultato finale
+
+**Mobile (< 768px):** Layout invariato, allineato a sinistra
+
+**Desktop (≥ 768px):** Tutto centrato
+```
+          Esplorazioni aliene in Sicilia
+     Ti mostro posti iper selezionati...
+          [    Portami via da qui    ]
+           Zona → Mood → Esplora...
+              [carousel photos]
 ```
 
 ---
 
-### Note
+### Riepilogo
 
-- Tutte le modifiche sono retrocompatibili con mobile
-- Si usano breakpoint Tailwind standard (`md:` = 768px, `lg:` = 1024px)
-- Il design mobile-first viene mantenuto
+| File | Modifiche |
+|------|-----------|
+| `src/components/HeroSection.tsx` | Aggiungere classi responsive `md:text-center`, `md:items-center`, `md:mx-auto` |
 
