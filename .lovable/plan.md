@@ -1,167 +1,138 @@
 
 
-## Piano: Condivisione + Preferiti per Hotspot
+## Piano: Ottimizzazione Desktop + Centratura Wizard
 
 ### Panoramica
 
-Aggiungere due nuove funzionalità alle card hotspot:
-1. **Pulsante Condividi** - copia il link o condivide su WhatsApp
-2. **Pulsante Preferiti** - salva hotspot con cuoricino (localStorage)
+Ottimizzare l'applicazione per schermi desktop con contenuti ben centrati e layout responsive. Centrare le opzioni del menu wizard (Zona, Mood, Esplora in libertà).
 
 ---
 
-### 1. Hook Preferiti (nuovo file)
+### 1. Pagina Wizard (`src/pages/WizardPage.tsx`)
 
-**File: `src/hooks/useFavorites.ts`**
+**Problema attuale:** I pulsanti del menu sono allineati a sinistra con `justify-between`.
 
-```typescript
-// Gestisce i preferiti in localStorage
-const STORAGE_KEY = "pipo-favorites";
+**Soluzione:** Centrare le opzioni del menu principale.
 
-export const useFavorites = () => {
-  const [favorites, setFavorites] = useState<string[]>([]);
-  
-  // Carica da localStorage al mount
-  // Toggle: aggiunge/rimuove ID
-  // isFavorite: controlla se ID è presente
-  
-  return { favorites, toggleFavorite, isFavorite };
-};
+**Modifiche:**
+- Cambiare i pulsanti da `justify-between` a `justify-center` con testo centrato
+- Rimuovere le frecce Arrow a destra (ora ridondanti con layout centrato)
+- Aggiungere `max-w-md mx-auto` per contenere il layout su desktop
+- Aggiungere `md:max-w-lg` per una larghezza leggermente maggiore su desktop
+
+**Layout attuale:**
+```
+[Zona                    →]
+[Mood                    →]
+[Esplora in libertà      →]
 ```
 
----
-
-### 2. Modifiche HotspotCard
-
-**File: `src/components/HotspotCard.tsx`**
-
-**Nuove importazioni:**
-```typescript
-import { Heart, Share2 } from "lucide-react";
-import { useFavorites } from "@/hooks/useFavorites";
-import { toast } from "sonner";
+**Nuovo layout (centrato):**
 ```
-
-**Nuova logica:**
-```typescript
-const { toggleFavorite, isFavorite } = useFavorites();
-const isLiked = isFavorite(hotspot.id);
-
-const handleShare = async () => {
-  const url = `${window.location.origin}/esplora?hotspot=${hotspot.id}`;
-  
-  if (navigator.share) {
-    // Mobile: usa API nativa
-    await navigator.share({ title, url });
-  } else {
-    // Desktop: copia link
-    await navigator.clipboard.writeText(url);
-    toast.success("Link copiato!");
-  }
-};
-```
-
-**Nuovi pulsanti nell'header della card:**
-
-```
-┌────────────────────────────────────────────┐
-│ [Titolo]                    ❤️  📤  [+/-]  │
-└────────────────────────────────────────────┘
-```
-
-**Posizione:** A destra del titolo, prima del bottone espansione:
-- **Cuore (❤️):** toggle preferiti, rosso se attivo
-- **Share (📤):** apre menu condivisione o copia link
-
----
-
-### 3. Traduzioni
-
-**File: `src/contexts/LanguageContext.tsx`**
-
-Nuove chiavi:
-```typescript
-// Italiano
-share: "Condividi",
-addToFavorites: "Aggiungi ai preferiti",
-removeFromFavorites: "Rimuovi dai preferiti",
-linkCopied: "Link copiato!",
-shareViaWhatsApp: "Condividi su WhatsApp",
-
-// English
-share: "Share",
-addToFavorites: "Add to favorites",
-removeFromFavorites: "Remove from favorites",
-linkCopied: "Link copied!",
-shareViaWhatsApp: "Share via WhatsApp",
+        Zona →
+        Mood →
+  Esplora in libertà →
 ```
 
 ---
 
-### 4. Stile dei pulsanti
+### 2. Homepage Hero (`src/components/HeroSection.tsx`)
 
-**Cuore Preferiti:**
-```css
-/* Non attivo */
-w-9 h-9 rounded-full bg-muted text-foreground
+**Problema attuale:** Il contenuto è allineato a sinistra senza limiti su desktop.
 
-/* Attivo */
-w-9 h-9 rounded-full bg-red-100 text-red-500
-```
-
-**Icona Share:**
-```css
-w-9 h-9 rounded-full bg-muted text-foreground hover:bg-muted/80
-```
+**Modifiche:**
+- Aggiungere container con `max-w-4xl mx-auto` per centrare su desktop
+- Mantenere `text-left` per il testo ma contenuto nel container
+- Ridurre la dimensione del titolo su mobile con responsive: `text-[32px] md:text-[48px]`
 
 ---
 
-### 5. Struttura header card aggiornata
+### 3. Header (`src/components/MinimalHeader.tsx`)
+
+**Problema attuale:** Già centrato con container, ma può essere migliorato.
+
+**Modifiche:**
+- Aggiungere `max-w-4xl mx-auto` per allineare con il contenuto hero
+
+---
+
+### 4. Explore Page (`src/pages/ExplorePage.tsx`)
+
+**Problema attuale:** Cards limitate a `max-w-lg` - troppo stretto su desktop.
+
+**Modifiche:**
+- Cambiare a griglia responsive: `grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6`
+- Rimuovere `max-w-lg` e usare `max-w-6xl` per il container
+- Aggiungere `max-w-md mx-auto` per header su desktop
+
+---
+
+### 5. Mission Page (`src/pages/Mission.tsx`)
+
+**Modifiche:**
+- Verificare che usi container centrato (già `max-w-md mx-auto`)
+- OK, già ottimizzato
+
+---
+
+### Riepilogo tecnico modifiche
+
+| File | Modifiche |
+|------|-----------|
+| `src/pages/WizardPage.tsx` | Centrare menu options, aggiungere container max-width |
+| `src/components/HeroSection.tsx` | Aggiungere max-w container, responsive font sizes |
+| `src/components/MinimalHeader.tsx` | Allineare max-width con hero |
+| `src/pages/ExplorePage.tsx` | Griglia responsive per cards, container più largo |
+
+---
+
+### Dettagli implementativi
+
+#### WizardPage - Menu centrato
 
 ```tsx
-<div className="flex items-start justify-between gap-2">
-  {/* Titolo */}
-  <h2 className="flex-1 min-w-0 ...">
-    {translated.titolo}
-  </h2>
-  
-  {/* Azioni */}
-  <div className="flex items-center gap-1.5 flex-shrink-0">
-    {/* Cuore preferiti */}
-    <button onClick={() => toggleFavorite(hotspot.id)}>
-      <Heart className={isLiked ? "fill-red-500 text-red-500" : ""} />
-    </button>
-    
-    {/* Share */}
-    <button onClick={handleShare}>
-      <Share2 />
-    </button>
-    
-    {/* Espansione +/- */}
-    <button onClick={() => setIsExpanded(!isExpanded)}>
-      {isExpanded ? <Minus /> : <Plus />}
-    </button>
-  </div>
+{/* Menu options - CENTERED */}
+<div className="w-full max-w-sm space-y-4">
+  <button 
+    onClick={() => handleStepChange("zona")} 
+    className="flex items-center justify-center gap-3 w-full py-2 group"
+  >
+    <span className="font-sans text-xl font-bold text-foreground">
+      {t("wizardZona")}
+    </span>
+    <ArrowRight className="w-5 h-5 text-olive" strokeWidth={3} />
+  </button>
+  {/* ... altri pulsanti uguali */}
 </div>
 ```
 
+#### HeroSection - Container centrato
+
+```tsx
+<section className="px-6 py-12 flex flex-col min-h-[75vh] justify-center">
+  <div className="max-w-4xl mx-auto w-full">
+    {/* Contenuto esistente */}
+  </div>
+</section>
+```
+
+#### ExplorePage - Griglia responsive
+
+```tsx
+<main className="container mx-auto px-4 py-6 pb-24">
+  <div className="max-w-6xl mx-auto">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {filteredHotspots.map(...)}
+    </div>
+  </div>
+</main>
+```
+
 ---
 
-### Riepilogo file da modificare/creare
+### Note
 
-| File | Azione |
-|------|--------|
-| `src/hooks/useFavorites.ts` | **NUOVO** - Hook per gestione preferiti |
-| `src/components/HotspotCard.tsx` | Aggiungere pulsanti cuore e share |
-| `src/contexts/LanguageContext.tsx` | Aggiungere traduzioni |
-
----
-
-### Note tecniche
-
-- **localStorage** per i preferiti (nessun login richiesto)
-- **navigator.share** per condivisione nativa su mobile
-- **Clipboard API** come fallback per desktop
-- I preferiti persistono tra sessioni
-- Feedback visivo immediato con animazione cuore
+- Tutte le modifiche sono retrocompatibili con mobile
+- Si usano breakpoint Tailwind standard (`md:` = 768px, `lg:` = 1024px)
+- Il design mobile-first viene mantenuto
 
