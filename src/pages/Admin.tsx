@@ -637,10 +637,10 @@ const Admin = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <FileText className="h-5 w-5" />
-                    La missione di Pipo
+                    Testo Missione di Pipo
                   </CardTitle>
                   <CardDescription>
-                    Questo testo viene mostrato nella pagina "La missione di Pipo" accessibile dal menu.
+                    Questo testo viene mostrato nella homepage sotto il carosello delle foto.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
