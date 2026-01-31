@@ -22,10 +22,9 @@ const HeroSection = ({ onCtaClick, bgColor }: HeroSectionProps) => {
   const { data: heroCtaContent } = useSiteContent("hero_cta");
   const { data: missionContent, isLoading: missionLoading } = useSiteContent("mission");
 
-  // Translate mission content
-  const { translatedText: translatedMission, isTranslating } = useTranslatedContent(
-    missionContent?.content
-  );
+  // Translate mission content - only call hook with actual content
+  const missionText = missionContent?.content || null;
+  const { translatedText: translatedMission, isTranslating } = useTranslatedContent(missionText);
 
   // Use database content or fallback to translations
   const headline = heroHeadlineContent?.content || t("heroHeadline");
