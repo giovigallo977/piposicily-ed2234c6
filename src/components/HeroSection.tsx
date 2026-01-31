@@ -114,13 +114,59 @@ const HeroSection = ({ onCtaClick, bgColor }: HeroSectionProps) => {
                 <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
               </div>
             ) : (
-              <p
-                className={`font-sans text-base font-medium text-foreground leading-relaxed text-center whitespace-pre-wrap ${
-                  isTranslating ? "opacity-50" : ""
-                }`}
-              >
-                {translatedMission || missionContent.content}
-              </p>
+              (() => {
+                const content = translatedMission || missionContent.content;
+                // Split content at "Cosa si intende per" to insert CTA
+                const splitMarker = content.includes("Cosa si intende per") 
+                  ? "Cosa si intende per" 
+                  : content.includes("What does") 
+                    ? "What does" 
+                    : null;
+                
+                if (splitMarker) {
+                  const parts = content.split(splitMarker);
+                  return (
+                    <>
+                      <p
+                        className={`font-sans text-base font-medium text-foreground leading-relaxed text-center whitespace-pre-wrap ${
+                          isTranslating ? "opacity-50" : ""
+                        }`}
+                      >
+                        {parts[0].trim()}
+                      </p>
+                      
+                      {/* CTA Button in the middle of mission content */}
+                      <div className="w-full max-w-sm mt-10 mb-10 mx-auto">
+                        <button
+                          onClick={onCtaClick}
+                          className="w-full px-8 py-4 font-sans text-base font-medium bg-black text-white rounded-full transition-all duration-200 hover:opacity-90 active:scale-[0.98]"
+                        >
+                          {ctaText}
+                        </button>
+                      </div>
+                      
+                      <p
+                        className={`font-sans text-base font-medium text-foreground leading-relaxed text-center whitespace-pre-wrap ${
+                          isTranslating ? "opacity-50" : ""
+                        }`}
+                      >
+                        {splitMarker}{parts[1]}
+                      </p>
+                    </>
+                  );
+                }
+                
+                // Fallback: show content as-is if marker not found
+                return (
+                  <p
+                    className={`font-sans text-base font-medium text-foreground leading-relaxed text-center whitespace-pre-wrap ${
+                      isTranslating ? "opacity-50" : ""
+                    }`}
+                  >
+                    {content}
+                  </p>
+                );
+              })()
             )}
           </div>
         )}
