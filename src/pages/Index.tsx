@@ -15,7 +15,7 @@ const Index = () => {
 
   return (
     <div 
-      className="min-h-screen"
+      className="pb-16"
       style={{ backgroundColor: bgColor || undefined }}
     >
       <MinimalHeader bgColor={bgColor} />

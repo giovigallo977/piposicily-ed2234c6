@@ -72,7 +72,7 @@ export const translations = {
     heroHeadline: "Esplorazioni aliene in Sicilia",
     heroSubheadline: "Ti mostro posti iper selezionati, lontani dal turismo di massa. Tu scegli, io ti porto fuori dai radar in 30 secondi.",
     heroCtaButton: "Portami via da qui",
-    heroSublabel: "Zona → Mood → Esplora in libertà",
+    heroSublabel: "Scopri gli hotspot alieni in base al tuo mood e alla zona che vuoi esplorare",
     
     // Wizard Instagram CTA
     wizardInstagramBtn: "Scrivimi su Instagram",
@@ -140,7 +140,7 @@ export const translations = {
     heroHeadline: "Alien Explorations in Sicily",
     heroSubheadline: "I show you ultra-selected places, far from mass tourism. You choose, I take you off the radar in 30 seconds.",
     heroCtaButton: "Take me away",
-    heroSublabel: "Zone → Mood → Free Exploration",
+    heroSublabel: "Discover alien hotspots based on your mood and the area you want to explore",
     
     // Wizard Instagram CTA
     wizardInstagramBtn: "Write me on Instagram",
