@@ -132,7 +132,7 @@ const WizardPage = () => {
             </a>
 
             {/* Instagram CTA Description */}
-            <p className="font-sans text-sm text-center mt-4 max-w-xs px-4 text-secondary-foreground">
+            <p className="font-sans text-center mt-4 max-w-xs px-4 text-secondary-foreground text-base">
               {instagramDesc}
             </p>
           </>}
