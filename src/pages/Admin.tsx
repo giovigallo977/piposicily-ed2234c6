@@ -39,6 +39,7 @@ const Admin = () => {
   
   // Site content
   const { data: missionContent, isLoading: missionLoading } = useSiteContent("mission");
+  const { data: missionPart2Content, isLoading: missionPart2Loading } = useSiteContent("mission_part2");
   const { data: heroHeadlineContent } = useSiteContent("hero_headline");
   const { data: heroSubtitleContent } = useSiteContent("hero_subtitle");
   const { data: heroCtaContent } = useSiteContent("hero_cta");
@@ -51,6 +52,7 @@ const Admin = () => {
   const [editingHotspot, setEditingHotspot] = useState<Hotspot | null>(null);
   const [formData, setFormData] = useState<HotspotInsert>(emptyHotspot);
   const [missionText, setMissionText] = useState("");
+  const [missionPart2Text, setMissionPart2Text] = useState("");
   const [heroHeadline, setHeroHeadline] = useState("");
   const [heroSubtitle, setHeroSubtitle] = useState("");
   const [heroCta, setHeroCta] = useState("");
@@ -69,6 +71,12 @@ const Admin = () => {
       setMissionText(missionContent.content);
     }
   }, [missionContent]);
+
+  useEffect(() => {
+    if (missionPart2Content?.content) {
+      setMissionPart2Text(missionPart2Content.content);
+    }
+  }, [missionPart2Content]);
 
 
   useEffect(() => {
@@ -153,6 +161,7 @@ const Admin = () => {
 
   const handleSaveMission = async () => {
     await updateSiteContent.mutateAsync({ key: "mission", content: missionText });
+    await updateSiteContent.mutateAsync({ key: "mission_part2", content: missionPart2Text });
   };
 
 
@@ -640,30 +649,62 @@ const Admin = () => {
                     Testo Missione di Pipo
                   </CardTitle>
                   <CardDescription>
-                    Questo testo viene mostrato nella homepage sotto il carosello delle foto.
+                    Questo testo viene mostrato nella homepage sotto il carosello delle foto. Il CTA apparirà automaticamente tra le due parti.
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  {missionLoading ? (
+                <CardContent className="space-y-6">
+                  {(missionLoading || missionPart2Loading) ? (
                     <div className="flex justify-center py-8">
                       <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                     </div>
                   ) : (
                     <>
-                      <div className="flex gap-2 items-start">
-                        <Textarea
-                          value={missionText}
-                          onChange={(e) => setMissionText(e.target.value)}
-                          placeholder="Scrivi qui il testo della missione di Pipo..."
-                          rows={8}
-                          className="resize-y flex-1"
-                        />
-                        <EmojiPicker onSelect={(emoji) => setMissionText(missionText + emoji)} />
+                      {/* Part 1 */}
+                      <div className="space-y-2">
+                        <Label className="text-sm font-semibold">Parte 1 - Prima del CTA</Label>
+                        <p className="text-xs text-muted-foreground">Chi è Pipo, Cosa fa Pipo, Per chi è Pipo</p>
+                        <div className="flex gap-2 items-start">
+                          <Textarea
+                            value={missionText}
+                            onChange={(e) => setMissionText(e.target.value)}
+                            placeholder="Scrivi qui la prima parte del testo..."
+                            rows={8}
+                            className="resize-y flex-1"
+                          />
+                          <EmojiPicker onSelect={(emoji) => setMissionText(missionText + emoji)} />
+                        </div>
                       </div>
+                      
+                      {/* Divider showing CTA position */}
+                      <div className="flex items-center gap-4 py-2">
+                        <div className="flex-1 h-px bg-border" />
+                        <span className="text-xs text-muted-foreground bg-muted px-3 py-1 rounded-full">⬇️ CTA "Portami via da qui" apparirà qui ⬇️</span>
+                        <div className="flex-1 h-px bg-border" />
+                      </div>
+
+                      {/* Part 2 */}
+                      <div className="space-y-2">
+                        <Label className="text-sm font-semibold">Parte 2 - Dopo il CTA</Label>
+                        <p className="text-xs text-muted-foreground">Cosa si intende per alieno, Rispetto e generazione di valore</p>
+                        <div className="flex gap-2 items-start">
+                          <Textarea
+                            value={missionPart2Text}
+                            onChange={(e) => setMissionPart2Text(e.target.value)}
+                            placeholder="Scrivi qui la seconda parte del testo..."
+                            rows={8}
+                            className="resize-y flex-1"
+                          />
+                          <EmojiPicker onSelect={(emoji) => setMissionPart2Text(missionPart2Text + emoji)} />
+                        </div>
+                      </div>
+
                       <div className="flex justify-end">
                         <Button 
                           onClick={handleSaveMission}
-                          disabled={updateSiteContent.isPending || missionText === missionContent?.content}
+                          disabled={updateSiteContent.isPending || (
+                            missionText === missionContent?.content && 
+                            missionPart2Text === missionPart2Content?.content
+                          )}
                         >
                           {updateSiteContent.isPending && (
                             <Loader2 className="h-4 w-4 animate-spin mr-2" />

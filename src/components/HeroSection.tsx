@@ -21,10 +21,13 @@ const HeroSection = ({ onCtaClick, bgColor }: HeroSectionProps) => {
   const { data: heroSubtitleContent } = useSiteContent("hero_subtitle");
   const { data: heroCtaContent } = useSiteContent("hero_cta");
   const { data: missionContent, isLoading: missionLoading } = useSiteContent("mission");
+  const { data: missionPart2Content, isLoading: missionPart2Loading } = useSiteContent("mission_part2");
 
   // Translate mission content - only call hook with actual content
   const missionText = missionContent?.content || null;
-  const { translatedText: translatedMission, isTranslating } = useTranslatedContent(missionText);
+  const missionPart2Text = missionPart2Content?.content || null;
+  const { translatedText: translatedMission, isTranslating: isTranslating1 } = useTranslatedContent(missionText);
+  const { translatedText: translatedMissionPart2, isTranslating: isTranslating2 } = useTranslatedContent(missionPart2Text);
 
   // Use database content or fallback to translations
   const headline = heroHeadlineContent?.content || t("heroHeadline");
@@ -107,66 +110,46 @@ const HeroSection = ({ onCtaClick, bgColor }: HeroSectionProps) => {
         )}
 
         {/* Mission Content - Below carousel, no title */}
-        {missionContent && (
+        {(missionContent || missionPart2Content) && (
           <div className="w-full mt-16 max-w-md md:mx-auto">
-            {missionLoading ? (
+            {(missionLoading || missionPart2Loading) ? (
               <div className="flex justify-center py-8">
                 <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
               </div>
             ) : (
-              (() => {
-                const content = translatedMission || missionContent.content;
-                // Split content at "Cosa si intende per" to insert CTA
-                const splitMarker = content.includes("Cosa si intende per") 
-                  ? "Cosa si intende per" 
-                  : content.includes("What does") 
-                    ? "What does" 
-                    : null;
-                
-                if (splitMarker) {
-                  const parts = content.split(splitMarker);
-                  return (
-                    <>
-                      <p
-                        className={`font-sans text-base font-medium text-foreground leading-relaxed text-center whitespace-pre-wrap ${
-                          isTranslating ? "opacity-50" : ""
-                        }`}
-                      >
-                        {parts[0].trim()}
-                      </p>
-                      
-                      {/* CTA Button in the middle of mission content */}
-                      <div className="w-full max-w-sm mt-10 mb-10 mx-auto">
-                        <button
-                          onClick={onCtaClick}
-                          className="w-full px-8 py-4 font-sans text-base font-medium bg-black text-white rounded-full transition-all duration-200 hover:opacity-90 active:scale-[0.98]"
-                        >
-                          {ctaText}
-                        </button>
-                      </div>
-                      
-                      <p
-                        className={`font-sans text-base font-medium text-foreground leading-relaxed text-center whitespace-pre-wrap ${
-                          isTranslating ? "opacity-50" : ""
-                        }`}
-                      >
-                        {splitMarker}{parts[1]}
-                      </p>
-                    </>
-                  );
-                }
-                
-                // Fallback: show content as-is if marker not found
-                return (
+              <>
+                {/* Part 1 - Before CTA */}
+                {missionContent && (
                   <p
                     className={`font-sans text-base font-medium text-foreground leading-relaxed text-center whitespace-pre-wrap ${
-                      isTranslating ? "opacity-50" : ""
+                      isTranslating1 ? "opacity-50" : ""
                     }`}
                   >
-                    {content}
+                    {translatedMission || missionContent.content}
                   </p>
-                );
-              })()
+                )}
+                
+                {/* CTA Button in the middle */}
+                <div className="w-full max-w-sm mt-10 mb-10 mx-auto">
+                  <button
+                    onClick={onCtaClick}
+                    className="w-full px-8 py-4 font-sans text-base font-medium bg-black text-white rounded-full transition-all duration-200 hover:opacity-90 active:scale-[0.98]"
+                  >
+                    {ctaText}
+                  </button>
+                </div>
+                
+                {/* Part 2 - After CTA */}
+                {missionPart2Content && (
+                  <p
+                    className={`font-sans text-base font-medium text-foreground leading-relaxed text-center whitespace-pre-wrap ${
+                      isTranslating2 ? "opacity-50" : ""
+                    }`}
+                  >
+                    {translatedMissionPart2 || missionPart2Content.content}
+                  </p>
+                )}
+              </>
             )}
           </div>
         )}
