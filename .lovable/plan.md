@@ -1,34 +1,42 @@
 
 # Piano: Separare il Testo Missione in Due Sezioni
 
-## Problema Attuale
-Il CTA "Portami via da qui" viene inserito nel mezzo del testo missione cercando la frase "Cosa si intende per". Se modifichi il testo e quella frase non c'è più o è scritta diversamente, il pulsante non appare nel posto giusto (o il testo viene tagliato).
+## Situazione Attuale
 
-## Soluzione
-Dividere il contenuto della missione in **due campi separati** nel backend:
-- **Parte 1**: "Chi è Pipo", "Cosa fa Pipo", "Per chi è Pipo" (tutto ciò che viene PRIMA del CTA)
-- **Parte 2**: "Cosa si intende per alieno", "Rispetto e generazione di valore" (tutto ciò che viene DOPO il CTA)
+Ho verificato l'app e:
+- La homepage funziona correttamente: header con IT|EN e logo Pipo OK
+- Il database ha GIA' `mission_part2` creato, ma:
+  - `mission` contiene ancora TUTTO il testo (anche la parte dopo il CTA)
+  - `HeroSection.tsx` usa una logica fragile che cerca la stringa "Cosa si intende per"
+  - L'Admin panel ha un solo campo textarea
 
-Il CTA verrà inserito automaticamente tra le due parti, senza dipendere dal contenuto testuale.
+## Cosa Faremo
 
----
-
-## Modifiche Tecniche
-
-### 1. Database
-Creare un nuovo record in `site_content` con key `mission_part2` e spostare la seconda parte del testo attuale.
+### 1. Aggiornare il Database
+Pulire il campo `mission` per contenere SOLO la prima parte (fino a "Per chi è Pipo"), e assicurarsi che `mission_part2` contenga la seconda parte.
 
 ### 2. Admin Panel (src/pages/Admin.tsx)
-- Aggiungere un secondo campo textarea per "Parte 2 - Dopo il CTA"
-- Rinominare il campo esistente in "Parte 1 - Prima del CTA"
-- Aggiungere logica per salvare entrambi i campi
+- Aggiungere il fetch di `mission_part2`
+- Aggiungere uno state `missionPart2Text`
+- Dividere la card "Testo Missione" in due sezioni:
+  - **Parte 1 - Prima del CTA**: il testo attuale "Chi è Pipo", "Cosa fa Pipo", "Per chi è Pipo"
+  - **Parte 2 - Dopo il CTA**: "Cosa si intende per alieno", "Rispetto e generazione di valore"
+- Due pulsanti "Salva" separati o un unico pulsante che salva entrambi
 
-### 3. Homepage (src/components/HeroSection.tsx)
-- Caricare entrambi i contenuti (`mission` e `mission_part2`)
-- Rimuovere la logica di split basata sulla stringa
-- Mostrare: Parte 1 → CTA → Parte 2
-
----
+### 3. Homepage HeroSection (src/components/HeroSection.tsx)
+- Aggiungere il fetch di `mission_part2` con `useSiteContent("mission_part2")`
+- Aggiungere traduzione per entrambe le parti
+- **RIMUOVERE** completamente la logica di string-split
+- Mostrare: `mission` content → CTA Button → `mission_part2` content
 
 ## Risultato Finale
-Potrai modificare liberamente entrambe le parti del testo senza che il CTA interferisca. Il pulsante apparirà sempre tra le due sezioni, indipendentemente dal contenuto.
+
+Potrai modificare liberamente entrambe le parti del testo dall'admin panel, senza che il CTA interferisca. Il pulsante apparirà sempre tra le due sezioni, indipendentemente dal contenuto testuale.
+
+## File da Modificare
+
+| File | Modifica |
+|------|----------|
+| `src/pages/Admin.tsx` | Aggiungere secondo textarea per "Parte 2" |
+| `src/components/HeroSection.tsx` | Rimuovere string-split, usare due query separate |
+| Database `site_content` | Pulire `mission` per contenere solo Parte 1 |
