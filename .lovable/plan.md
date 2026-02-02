@@ -1,76 +1,42 @@
 
-# Piano: Aggiornamento CTA Landing Pipo
+
+# Piano: Rinominare tutti i pulsanti "Scrivimi su Instagram"
 
 ## Situazione Attuale
 
-Ho analizzato il codice e trovato:
+Ho trovato il pulsante "Scrivimi su Instagram" in **3 pagine**:
 
-| CTA | Posizione | Comportamento | Testo Attuale |
-|-----|-----------|---------------|---------------|
-| Wizard hotspot | `HeroSection.tsx` (homepage) | Naviga a `/wizard` | "Portami via da qui" |
-| Instagram DM | `WizardPage.tsx` (wizard) | Apre link Instagram | "Scrivimi su Instagram" |
-
-**NOTA:** Il pulsante Instagram attualmente si trova nel wizard, non nella hero section. Per rispettare la nuova gerarchia, dovrò spostarlo nella homepage.
-
----
+| Pagina | Posizione | Usa traduzione |
+|--------|-----------|----------------|
+| WizardPage.tsx | Menu principale wizard | `wizardInstagramBtn` |
+| ExplorePage.tsx | Fondo pagina esplora | `wizardInstagramBtn` |
+| HeroSection.tsx | Homepage (già aggiornato) | `heroPrimaryCtaBtn` |
 
 ## Cosa Faremo
 
-### 1. Modifiche CTA "Esplora gli hotspot" (wizard)
+### Aggiornare le traduzioni in `LanguageContext.tsx`
 
-**File:** `src/components/HeroSection.tsx` e `src/contexts/LanguageContext.tsx`
+Modificheremo le chiavi `wizardInstagramBtn` e `wizardInstagramDesc` per usare i nuovi testi:
 
-- Cambiare testo pulsante: `"Portami via da qui"` → `"Esplora gli hotspot di Pipo"`
-- Micro-copy: `"Scopri gli hotspot alieni in base al tuo mood e alla zona che vuoi esplorare."`
-- Stile: **secondario** (outline/ghost, meno prominente)
-- Il comportamento resta identico (naviga a `/wizard`)
+**Italiano:**
+- `wizardInstagramBtn`: "Scrivimi su Instagram" → **"Sblocca 1 mappa aliena"**
+- `wizardInstagramDesc`: vecchio micro-copy → **"Scrivimi ALIENO in DM su Instagram e ti mando 1 dei 3 itinerari segreti per esplorare la Sicilia fuori dai radar."**
 
-### 2. Aggiungere CTA "Sblocca 1 mappa aliena" (Instagram)
-
-**File:** `src/components/HeroSection.tsx`
-
-- Nuovo pulsante nella hero section con testo: `"Sblocca 1 mappa aliena"`
-- Micro-copy: `"Scrivimi ALIENO in DM su Instagram e ti mando 1 dei 3 itinerari segreti per esplorare la Sicilia fuori dai radar."`
-- Stile: **primario** (sfondo pieno, più prominente)
-- Il comportamento: apre il link Instagram configurato nel database (`wizard_instagram_link`)
-
-### 3. Gerarchia Visiva
-
-| CTA | Ruolo | Stile |
-|-----|-------|-------|
-| "Sblocca 1 mappa aliena" | PRINCIPALE | Sfondo pieno nero, padding maggiore, posizione superiore |
-| "Esplora gli hotspot di Pipo" | SECONDARIA | Bordo/outline, padding standard, posizione sotto |
-
-### 4. Aggiornare Traduzioni
-
-**File:** `src/contexts/LanguageContext.tsx`
-
-Aggiungere nuove chiavi per IT e EN:
-- `heroPrimaryCtaBtn`: "Sblocca 1 mappa aliena" / "Unlock 1 alien map"
-- `heroPrimaryCtaSublabel`: micro-copy Instagram
-- `heroSecondaryCtaBtn`: "Esplora gli hotspot di Pipo" / "Explore Pipo's hotspots"
-- `heroSecondaryCtaSublabel`: micro-copy wizard
-
-### 5. Database (opzionale)
-
-Il contenuto `hero_cta` e `wizard_instagram_desc` nel database verranno aggiornati con i nuovi testi.
-
----
+**English:**
+- `wizardInstagramBtn`: "Write me on Instagram" → **"Unlock 1 alien map"**
+- `wizardInstagramDesc`: vecchio micro-copy → **"DM me ALIENO on Instagram and I'll send you 1 of 3 secret itineraries to explore Sicily off the radar."**
 
 ## File da Modificare
 
 | File | Modifica |
 |------|----------|
-| `src/components/HeroSection.tsx` | Aggiungere CTA Instagram principale, riordinare gerarchia |
-| `src/contexts/LanguageContext.tsx` | Nuove chiavi traduzioni IT/EN |
-| Database `site_content` | Aggiornare `hero_cta` e `wizard_instagram_desc` |
-
----
+| `src/contexts/LanguageContext.tsx` | Aggiornare `wizardInstagramBtn` e `wizardInstagramDesc` per IT e EN |
 
 ## Risultato Finale
 
-La hero section mostrerà:
-1. **CTA PRINCIPALE** (nero pieno): "Sblocca 1 mappa aliena" + micro-copy Instagram
-2. **CTA SECONDARIA** (outline): "Esplora gli hotspot di Pipo" + micro-copy wizard
+Tutti i pulsanti Instagram nell'app (WizardPage, ExplorePage) mostreranno:
+- **Testo**: "Sblocca 1 mappa aliena"
+- **Micro-copy**: "Scrivimi ALIENO in DM su Instagram..."
 
-Entrambi i pulsanti mantengono i loro comportamenti originali, cambia solo l'aspetto e la gerarchia visiva.
+Il comportamento rimane identico (apre il link Instagram dal database).
+
