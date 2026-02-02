@@ -1,42 +1,76 @@
 
-# Piano: Separare il Testo Missione in Due Sezioni
+# Piano: Aggiornamento CTA Landing Pipo
 
 ## Situazione Attuale
 
-Ho verificato l'app e:
-- La homepage funziona correttamente: header con IT|EN e logo Pipo OK
-- Il database ha GIA' `mission_part2` creato, ma:
-  - `mission` contiene ancora TUTTO il testo (anche la parte dopo il CTA)
-  - `HeroSection.tsx` usa una logica fragile che cerca la stringa "Cosa si intende per"
-  - L'Admin panel ha un solo campo textarea
+Ho analizzato il codice e trovato:
+
+| CTA | Posizione | Comportamento | Testo Attuale |
+|-----|-----------|---------------|---------------|
+| Wizard hotspot | `HeroSection.tsx` (homepage) | Naviga a `/wizard` | "Portami via da qui" |
+| Instagram DM | `WizardPage.tsx` (wizard) | Apre link Instagram | "Scrivimi su Instagram" |
+
+**NOTA:** Il pulsante Instagram attualmente si trova nel wizard, non nella hero section. Per rispettare la nuova gerarchia, dovrò spostarlo nella homepage.
+
+---
 
 ## Cosa Faremo
 
-### 1. Aggiornare il Database
-Pulire il campo `mission` per contenere SOLO la prima parte (fino a "Per chi è Pipo"), e assicurarsi che `mission_part2` contenga la seconda parte.
+### 1. Modifiche CTA "Esplora gli hotspot" (wizard)
 
-### 2. Admin Panel (src/pages/Admin.tsx)
-- Aggiungere il fetch di `mission_part2`
-- Aggiungere uno state `missionPart2Text`
-- Dividere la card "Testo Missione" in due sezioni:
-  - **Parte 1 - Prima del CTA**: il testo attuale "Chi è Pipo", "Cosa fa Pipo", "Per chi è Pipo"
-  - **Parte 2 - Dopo il CTA**: "Cosa si intende per alieno", "Rispetto e generazione di valore"
-- Due pulsanti "Salva" separati o un unico pulsante che salva entrambi
+**File:** `src/components/HeroSection.tsx` e `src/contexts/LanguageContext.tsx`
 
-### 3. Homepage HeroSection (src/components/HeroSection.tsx)
-- Aggiungere il fetch di `mission_part2` con `useSiteContent("mission_part2")`
-- Aggiungere traduzione per entrambe le parti
-- **RIMUOVERE** completamente la logica di string-split
-- Mostrare: `mission` content → CTA Button → `mission_part2` content
+- Cambiare testo pulsante: `"Portami via da qui"` → `"Esplora gli hotspot di Pipo"`
+- Micro-copy: `"Scopri gli hotspot alieni in base al tuo mood e alla zona che vuoi esplorare."`
+- Stile: **secondario** (outline/ghost, meno prominente)
+- Il comportamento resta identico (naviga a `/wizard`)
 
-## Risultato Finale
+### 2. Aggiungere CTA "Sblocca 1 mappa aliena" (Instagram)
 
-Potrai modificare liberamente entrambe le parti del testo dall'admin panel, senza che il CTA interferisca. Il pulsante apparirà sempre tra le due sezioni, indipendentemente dal contenuto testuale.
+**File:** `src/components/HeroSection.tsx`
+
+- Nuovo pulsante nella hero section con testo: `"Sblocca 1 mappa aliena"`
+- Micro-copy: `"Scrivimi ALIENO in DM su Instagram e ti mando 1 dei 3 itinerari segreti per esplorare la Sicilia fuori dai radar."`
+- Stile: **primario** (sfondo pieno, più prominente)
+- Il comportamento: apre il link Instagram configurato nel database (`wizard_instagram_link`)
+
+### 3. Gerarchia Visiva
+
+| CTA | Ruolo | Stile |
+|-----|-------|-------|
+| "Sblocca 1 mappa aliena" | PRINCIPALE | Sfondo pieno nero, padding maggiore, posizione superiore |
+| "Esplora gli hotspot di Pipo" | SECONDARIA | Bordo/outline, padding standard, posizione sotto |
+
+### 4. Aggiornare Traduzioni
+
+**File:** `src/contexts/LanguageContext.tsx`
+
+Aggiungere nuove chiavi per IT e EN:
+- `heroPrimaryCtaBtn`: "Sblocca 1 mappa aliena" / "Unlock 1 alien map"
+- `heroPrimaryCtaSublabel`: micro-copy Instagram
+- `heroSecondaryCtaBtn`: "Esplora gli hotspot di Pipo" / "Explore Pipo's hotspots"
+- `heroSecondaryCtaSublabel`: micro-copy wizard
+
+### 5. Database (opzionale)
+
+Il contenuto `hero_cta` e `wizard_instagram_desc` nel database verranno aggiornati con i nuovi testi.
+
+---
 
 ## File da Modificare
 
 | File | Modifica |
 |------|----------|
-| `src/pages/Admin.tsx` | Aggiungere secondo textarea per "Parte 2" |
-| `src/components/HeroSection.tsx` | Rimuovere string-split, usare due query separate |
-| Database `site_content` | Pulire `mission` per contenere solo Parte 1 |
+| `src/components/HeroSection.tsx` | Aggiungere CTA Instagram principale, riordinare gerarchia |
+| `src/contexts/LanguageContext.tsx` | Nuove chiavi traduzioni IT/EN |
+| Database `site_content` | Aggiornare `hero_cta` e `wizard_instagram_desc` |
+
+---
+
+## Risultato Finale
+
+La hero section mostrerà:
+1. **CTA PRINCIPALE** (nero pieno): "Sblocca 1 mappa aliena" + micro-copy Instagram
+2. **CTA SECONDARIA** (outline): "Esplora gli hotspot di Pipo" + micro-copy wizard
+
+Entrambi i pulsanti mantengono i loro comportamenti originali, cambia solo l'aspetto e la gerarchia visiva.
