@@ -77,8 +77,8 @@ export const translations = {
     heroSecondaryCtaSublabel: "Scopri gli hotspot alieni in base al tuo mood e alla zona che vuoi esplorare.",
     
     // Wizard Instagram CTA
-    wizardInstagramBtn: "Scrivimi su Instagram",
-    wizardInstagramDesc: "Hai bisogno di itinerari super specifici per la tua esplorazione in Sicilia? Scrivimi in DM su Instagram con la parola ALIENO e ti aiuto a costruire il tuo itinerario fuori dai radar.",
+    wizardInstagramBtn: "Sblocca 1 mappa aliena",
+    wizardInstagramDesc: "Scrivimi ALIENO in DM su Instagram e ti mando 1 dei 3 itinerari segreti per esplorare la Sicilia fuori dai radar.",
   },
   en: {
     // Navigation
@@ -147,8 +147,8 @@ export const translations = {
     heroSecondaryCtaSublabel: "Discover alien hotspots based on your mood and the area you want to explore.",
     
     // Wizard Instagram CTA
-    wizardInstagramBtn: "Write me on Instagram",
-    wizardInstagramDesc: "Need super specific itineraries for your exploration in Sicily? Write me a DM on Instagram with the word ALIENO and I'll help you build your off-the-radar itinerary.",
+    wizardInstagramBtn: "Unlock 1 alien map",
+    wizardInstagramDesc: "DM me ALIENO on Instagram and I'll send you 1 of 3 secret itineraries to explore Sicily off the radar.",
   },
 } as const;
 
