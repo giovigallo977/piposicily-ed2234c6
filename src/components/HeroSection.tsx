@@ -19,7 +19,7 @@ const HeroSection = ({ onCtaClick, bgColor }: HeroSectionProps) => {
   // Fetch editable content from database
   const { data: heroHeadlineContent } = useSiteContent("hero_headline");
   const { data: heroSubtitleContent } = useSiteContent("hero_subtitle");
-  const { data: heroCtaContent } = useSiteContent("hero_cta");
+  const { data: instagramLinkContent } = useSiteContent("wizard_instagram_link");
   const { data: missionContent, isLoading: missionLoading } = useSiteContent("mission");
   const { data: missionPart2Content, isLoading: missionPart2Loading } = useSiteContent("mission_part2");
 
@@ -32,7 +32,7 @@ const HeroSection = ({ onCtaClick, bgColor }: HeroSectionProps) => {
   // Use database content or fallback to translations
   const headline = heroHeadlineContent?.content || t("heroHeadline");
   const subtitle = heroSubtitleContent?.content || t("heroSubheadline");
-  const ctaText = heroCtaContent?.content || t("heroCtaButton");
+  const instagramLink = instagramLinkContent?.content || "https://www.instagram.com/pipo.sicily/";
 
   // Get first 5 hotspot main photos
   const carouselPhotos =
@@ -43,6 +43,10 @@ const HeroSection = ({ onCtaClick, bgColor }: HeroSectionProps) => {
 
   const handlePhotoClick = () => {
     navigate("/esplora");
+  };
+
+  const handleInstagramClick = () => {
+    window.open(instagramLink, "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -61,19 +65,33 @@ const HeroSection = ({ onCtaClick, bgColor }: HeroSectionProps) => {
           {subtitle}
         </p>
 
-        {/* CTA Button - Black with white text, rounded, centered on desktop */}
-        <div className="w-full max-w-sm mt-8 md:mx-auto">
-          <button
-            onClick={onCtaClick}
-            className="w-full px-8 py-4 font-sans text-base font-medium bg-black text-white rounded-full transition-all duration-200 hover:opacity-90 active:scale-[0.98]"
-          >
-            {ctaText}
-          </button>
+        {/* CTA Buttons Container */}
+        <div className="w-full max-w-sm mt-8 md:mx-auto space-y-4">
+          {/* PRIMARY CTA - Instagram (più prominente) */}
+          <div>
+            <button
+              onClick={handleInstagramClick}
+              className="w-full px-8 py-4 font-sans text-base font-medium bg-foreground text-background rounded-full transition-all duration-200 hover:opacity-90 active:scale-[0.98]"
+            >
+              {t("heroPrimaryCtaBtn")}
+            </button>
+            <p className="font-sans text-[13px] font-medium text-muted-foreground mt-3 text-center">
+              {t("heroPrimaryCtaSublabel")}
+            </p>
+          </div>
 
-          {/* Flow label - 13px gray */}
-          <p className="font-sans text-[13px] font-medium text-muted-foreground mt-3 text-center">
-            {t("heroSublabel")}
-          </p>
+          {/* SECONDARY CTA - Wizard (meno prominente, outline) */}
+          <div className="pt-2">
+            <button
+              onClick={onCtaClick}
+              className="w-full px-8 py-3 font-sans text-base font-medium bg-transparent text-foreground border-2 border-foreground rounded-full transition-all duration-200 hover:bg-foreground/5 active:scale-[0.98]"
+            >
+              {t("heroSecondaryCtaBtn")}
+            </button>
+            <p className="font-sans text-[13px] font-medium text-muted-foreground mt-3 text-center">
+              {t("heroSecondaryCtaSublabel")}
+            </p>
+          </div>
         </div>
 
         {/* Photo Carousel */}
@@ -129,13 +147,13 @@ const HeroSection = ({ onCtaClick, bgColor }: HeroSectionProps) => {
                   </p>
                 )}
                 
-                {/* CTA Button in the middle */}
+                {/* CTA Button in the middle - uses secondary style here too */}
                 <div className="w-full max-w-sm mt-10 mb-10 mx-auto">
                   <button
                     onClick={onCtaClick}
-                    className="w-full px-8 py-4 font-sans text-base font-medium bg-black text-white rounded-full transition-all duration-200 hover:opacity-90 active:scale-[0.98]"
+                    className="w-full px-8 py-3 font-sans text-base font-medium bg-transparent text-foreground border-2 border-foreground rounded-full transition-all duration-200 hover:bg-foreground/5 active:scale-[0.98]"
                   >
-                    {ctaText}
+                    {t("heroSecondaryCtaBtn")}
                   </button>
                 </div>
                 

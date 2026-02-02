@@ -71,8 +71,10 @@ export const translations = {
     // Hero section
     heroHeadline: "Esplorazioni aliene in Sicilia",
     heroSubheadline: "Ti mostro posti iper selezionati, lontani dal turismo di massa. Tu scegli, io ti porto fuori dai radar in 30 secondi.",
-    heroCtaButton: "Portami via da qui",
-    heroSublabel: "Scopri gli hotspot alieni in base al tuo mood e alla zona che vuoi esplorare",
+    heroPrimaryCtaBtn: "Sblocca 1 mappa aliena",
+    heroPrimaryCtaSublabel: "Scrivimi ALIENO in DM su Instagram e ti mando 1 dei 3 itinerari segreti per esplorare la Sicilia fuori dai radar.",
+    heroSecondaryCtaBtn: "Esplora gli hotspot di Pipo",
+    heroSecondaryCtaSublabel: "Scopri gli hotspot alieni in base al tuo mood e alla zona che vuoi esplorare.",
     
     // Wizard Instagram CTA
     wizardInstagramBtn: "Scrivimi su Instagram",
@@ -139,8 +141,10 @@ export const translations = {
     // Hero section
     heroHeadline: "Alien Explorations in Sicily",
     heroSubheadline: "I show you ultra-selected places, far from mass tourism. You choose, I take you off the radar in 30 seconds.",
-    heroCtaButton: "Take me away",
-    heroSublabel: "Discover alien hotspots based on your mood and the area you want to explore",
+    heroPrimaryCtaBtn: "Unlock 1 alien map",
+    heroPrimaryCtaSublabel: "DM me ALIENO on Instagram and I'll send you 1 of 3 secret itineraries to explore Sicily off the radar.",
+    heroSecondaryCtaBtn: "Explore Pipo's hotspots",
+    heroSecondaryCtaSublabel: "Discover alien hotspots based on your mood and the area you want to explore.",
     
     // Wizard Instagram CTA
     wizardInstagramBtn: "Write me on Instagram",
