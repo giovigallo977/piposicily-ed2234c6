@@ -144,7 +144,7 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
                   href={hotspot.link_google_maps}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-sans font-semibold text-sm text-white transition-all duration-300 hover:scale-105 hover:shadow-lg shadow-md active:scale-95 bg-olive"
+                  className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-sans font-semibold text-sm text-white transition-all duration-300 hover:scale-105 hover:shadow-lg shadow-md active:scale-95 bg-orange-500"
                 >
                   <Map className="w-5 h-5" />
                   {t("meetPipo")}
