@@ -127,7 +127,7 @@ const WizardPage = () => {
             </div>
 
             {/* Instagram CTA Button */}
-            <a href={instagramLink} target="_blank" rel="noopener noreferrer" className="mt-8 inline-flex items-center justify-center px-6 py-3 bg-black text-white font-sans font-bold text-base rounded-full transition-transform duration-200 hover:scale-105">
+            <a href={instagramLink} target="_blank" rel="noopener noreferrer" className="mt-8 inline-flex items-center justify-center px-6 py-3 font-sans font-bold text-base rounded-full transition-transform duration-200 hover:scale-105 bg-fuchsia-700 text-primary-foreground">
               {t("wizardInstagramBtn")}
             </a>
 
