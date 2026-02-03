@@ -1,62 +1,55 @@
 
 
-# Piano: Aggiornamento Backend per le nuove CTA
+# Piano: Sostituire icone nel pulsante "INCONTRA PIPO"
 
-## Situazione Attuale nel Database
+## Situazione Attuale
 
-Ho trovato questi contenuti che devono essere aggiornati:
+Nel componente `HotspotCard.tsx` (riga 147-152), il pulsante "INCONTRA PIPO" usa queste icone:
 
-| Chiave | Contenuto Attuale | Azione |
-|--------|-------------------|--------|
-| `hero_cta` | "Portami via da qui" | Obsoleto, non più utilizzato |
-| `wizard_instagram_desc` | "Scrivimi ALIENO in DM su Instagram e ti mando percorsi super alieni..." | Allineare al nuovo micro-copy |
-
-## Modifiche da Fare
-
-### 1. Aggiornare `wizard_instagram_desc`
-
-**Da:**
-```
-Scrivimi ALIENO in DM su Instagram e ti mando percorsi super alieni per esplorare la Sicilia fuori dai radar
+```jsx
+<span className="text-lg">👽</span>           // Emoji alieno
+<Navigation className="w-4 h-4" />             // Icona freccia/bussola
+{t("meetPipo")}                               // Testo tradotto
 ```
 
-**A:**
+## Modifica Proposta
+
+Sostituirò entrambe le icone con **un'unica icona mappa** per un look più pulito e coerente con il tema "mappe aliene":
+
+| Prima | Dopo |
+|-------|------|
+| 👽 + Navigation | Map (icona mappa piegata) |
+
+### Opzioni icona disponibili da Lucide:
+- `Map` - Mappa piegata classica ✅ **Consigliata**
+- `MapPin` - Solo il pin
+- `MapPinned` - Mappa con pin
+
+## File da Modificare
+
+| File | Modifica |
+|------|----------|
+| `src/components/HotspotCard.tsx` | Importare `Map` al posto di `Navigation`, rimuovere emoji alieno |
+
+## Codice Finale
+
+```jsx
+import { Map } from "lucide-react";
+
+// Nel pulsante:
+<a className="...">
+  <Map className="w-5 h-5" />
+  {t("meetPipo")}
+</a>
 ```
-Scrivimi ALIENO in DM su Instagram e ti mando 1 dei 3 itinerari segreti per esplorare la Sicilia fuori dai radar.
-```
 
-### 2. Aggiornare `hero_cta` (opzionale - per consistenza)
+## Risultato Visivo
 
-Anche se non viene più utilizzato direttamente, lo aggiorno per mantenere coerenza:
+Il pulsante passerà da:
+- **👽 ➜ INCONTRA PIPO** 
 
-**Da:** `Portami via da qui`
-**A:** `Sblocca 1 mappa aliena`
+A:
+- **🗺️ INCONTRA PIPO** (con icona mappa Lucide)
 
-## Query SQL da Eseguire
-
-```sql
-UPDATE site_content 
-SET content = 'Scrivimi ALIENO in DM su Instagram e ti mando 1 dei 3 itinerari segreti per esplorare la Sicilia fuori dai radar.'
-WHERE key = 'wizard_instagram_desc';
-
-UPDATE site_content 
-SET content = 'Sblocca 1 mappa aliena'
-WHERE key = 'hero_cta';
-```
-
-## Verifica Pre-Lancio
-
-Dopo le modifiche al database, verificherò:
-
-1. Homepage: CTA principale "Sblocca 1 mappa aliena" con micro-copy corretto
-2. Homepage: CTA secondaria "Esplora gli hotspot di Pipo" con micro-copy corretto
-3. Wizard: Pulsante "Sblocca 1 mappa aliena" con micro-copy aggiornato
-4. Explore Page: Pulsante "Sblocca 1 mappa aliena" con micro-copy aggiornato
-5. Toggle lingua IT/EN funzionante su tutte le CTA
-
-## File già Aggiornati (nessuna modifica necessaria)
-
-- `src/contexts/LanguageContext.tsx` - Traduzioni già aggiornate
-- `src/components/HeroSection.tsx` - Già configurato con nuova gerarchia CTA
-- `WizardPage.tsx` e `ExplorePage.tsx` - Usano le chiavi di traduzione già aggiornate
+Look più professionale e coerente con il messaggio "sblocca mappa aliena".
 
