@@ -1,42 +1,62 @@
 
 
-# Piano: Rinominare tutti i pulsanti "Scrivimi su Instagram"
+# Piano: Aggiornamento Backend per le nuove CTA
 
-## Situazione Attuale
+## Situazione Attuale nel Database
 
-Ho trovato il pulsante "Scrivimi su Instagram" in **3 pagine**:
+Ho trovato questi contenuti che devono essere aggiornati:
 
-| Pagina | Posizione | Usa traduzione |
-|--------|-----------|----------------|
-| WizardPage.tsx | Menu principale wizard | `wizardInstagramBtn` |
-| ExplorePage.tsx | Fondo pagina esplora | `wizardInstagramBtn` |
-| HeroSection.tsx | Homepage (già aggiornato) | `heroPrimaryCtaBtn` |
+| Chiave | Contenuto Attuale | Azione |
+|--------|-------------------|--------|
+| `hero_cta` | "Portami via da qui" | Obsoleto, non più utilizzato |
+| `wizard_instagram_desc` | "Scrivimi ALIENO in DM su Instagram e ti mando percorsi super alieni..." | Allineare al nuovo micro-copy |
 
-## Cosa Faremo
+## Modifiche da Fare
 
-### Aggiornare le traduzioni in `LanguageContext.tsx`
+### 1. Aggiornare `wizard_instagram_desc`
 
-Modificheremo le chiavi `wizardInstagramBtn` e `wizardInstagramDesc` per usare i nuovi testi:
+**Da:**
+```
+Scrivimi ALIENO in DM su Instagram e ti mando percorsi super alieni per esplorare la Sicilia fuori dai radar
+```
 
-**Italiano:**
-- `wizardInstagramBtn`: "Scrivimi su Instagram" → **"Sblocca 1 mappa aliena"**
-- `wizardInstagramDesc`: vecchio micro-copy → **"Scrivimi ALIENO in DM su Instagram e ti mando 1 dei 3 itinerari segreti per esplorare la Sicilia fuori dai radar."**
+**A:**
+```
+Scrivimi ALIENO in DM su Instagram e ti mando 1 dei 3 itinerari segreti per esplorare la Sicilia fuori dai radar.
+```
 
-**English:**
-- `wizardInstagramBtn`: "Write me on Instagram" → **"Unlock 1 alien map"**
-- `wizardInstagramDesc`: vecchio micro-copy → **"DM me ALIENO on Instagram and I'll send you 1 of 3 secret itineraries to explore Sicily off the radar."**
+### 2. Aggiornare `hero_cta` (opzionale - per consistenza)
 
-## File da Modificare
+Anche se non viene più utilizzato direttamente, lo aggiorno per mantenere coerenza:
 
-| File | Modifica |
-|------|----------|
-| `src/contexts/LanguageContext.tsx` | Aggiornare `wizardInstagramBtn` e `wizardInstagramDesc` per IT e EN |
+**Da:** `Portami via da qui`
+**A:** `Sblocca 1 mappa aliena`
 
-## Risultato Finale
+## Query SQL da Eseguire
 
-Tutti i pulsanti Instagram nell'app (WizardPage, ExplorePage) mostreranno:
-- **Testo**: "Sblocca 1 mappa aliena"
-- **Micro-copy**: "Scrivimi ALIENO in DM su Instagram..."
+```sql
+UPDATE site_content 
+SET content = 'Scrivimi ALIENO in DM su Instagram e ti mando 1 dei 3 itinerari segreti per esplorare la Sicilia fuori dai radar.'
+WHERE key = 'wizard_instagram_desc';
 
-Il comportamento rimane identico (apre il link Instagram dal database).
+UPDATE site_content 
+SET content = 'Sblocca 1 mappa aliena'
+WHERE key = 'hero_cta';
+```
+
+## Verifica Pre-Lancio
+
+Dopo le modifiche al database, verificherò:
+
+1. Homepage: CTA principale "Sblocca 1 mappa aliena" con micro-copy corretto
+2. Homepage: CTA secondaria "Esplora gli hotspot di Pipo" con micro-copy corretto
+3. Wizard: Pulsante "Sblocca 1 mappa aliena" con micro-copy aggiornato
+4. Explore Page: Pulsante "Sblocca 1 mappa aliena" con micro-copy aggiornato
+5. Toggle lingua IT/EN funzionante su tutte le CTA
+
+## File già Aggiornati (nessuna modifica necessaria)
+
+- `src/contexts/LanguageContext.tsx` - Traduzioni già aggiornate
+- `src/components/HeroSection.tsx` - Già configurato con nuova gerarchia CTA
+- `WizardPage.tsx` e `ExplorePage.tsx` - Usano le chiavi di traduzione già aggiornate
 
