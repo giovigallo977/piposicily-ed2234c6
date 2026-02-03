@@ -26,7 +26,9 @@ const ExplorePage = () => {
   const {
     translatedCategories
   } = useTranslatedCategories(categories);
-  const { data: instagramLinkContent } = useSiteContent("wizard_instagram_link");
+  const {
+    data: instagramLinkContent
+  } = useSiteContent("wizard_instagram_link");
   const instagramLink = instagramLinkContent?.content || "#";
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
@@ -130,12 +132,7 @@ const ExplorePage = () => {
       {/* Fixed Instagram CTA bar */}
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.1)] py-4 px-6">
         <div className="flex justify-center">
-          <a
-            href={instagramLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-6 py-3 bg-black text-white font-bold rounded-full transition-transform duration-200 hover:scale-105 font-sans"
-          >
+          <a href={instagramLink} target="_blank" rel="noopener noreferrer" className="px-6 py-3 text-white font-bold rounded-full transition-transform duration-200 hover:scale-105 font-sans bg-fuchsia-700">
             {t("wizardInstagramBtn")}
           </a>
         </div>
