@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { Plus, Minus, Navigation, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, Minus, Map, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Hotspot } from "@/hooks/useHotspots";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -146,8 +146,7 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
                   rel="noopener noreferrer"
                   className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-sans font-semibold text-sm text-white transition-all duration-300 hover:scale-105 hover:shadow-lg shadow-md active:scale-95 bg-olive"
                 >
-                  <span className="text-lg">👽</span>
-                  <Navigation className="w-4 h-4" />
+                  <Map className="w-5 h-5" />
                   {t("meetPipo")}
                 </a>
               )}
