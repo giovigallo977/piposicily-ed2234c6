@@ -1,55 +1,105 @@
 
+# Piano: Correzione problema di isolamento dati negli Hotspot
 
-# Piano: Sostituire icone nel pulsante "INCONTRA PIPO"
+## Problema identificato
 
-## Situazione Attuale
+Ho trovato un bug critico nel pannello Admin che causa "contaminazione" dei dati tra hotspot diversi.
 
-Nel componente `HotspotCard.tsx` (riga 147-152), il pulsante "INCONTRA PIPO" usa queste icone:
+### Evidenza nel database
 
-```jsx
-<span className="text-lg">👽</span>           // Emoji alieno
-<Navigation className="w-4 h-4" />             // Icona freccia/bussola
-{t("meetPipo")}                               // Testo tradotto
+L'hotspot "Poggioreale Vecchia" ha una `descrizione_breve` che contiene CHIARAMENTE due descrizioni diverse concatenate:
+
+```
+"Pipo dice che se ci vai al tramonto, capisci meglio perché preferisce le stelle alla cittàNon è un rudere, è un fermo immagine del 1968..."
 ```
 
-## Modifica Proposta
+Nota come non c'è nemmeno uno spazio tra "città" e "Non" - due testi diversi sono stati fusi insieme.
 
-Sostituirò entrambe le icone con **un'unica icona mappa** per un look più pulito e coerente con il tema "mappe aliene":
+### Causa tecnica
 
-| Prima | Dopo |
-|-------|------|
-| 👽 + Navigation | Map (icona mappa piegata) |
+Nel componente `Admin.tsx`, il dialog di modifica ha questo problema:
 
-### Opzioni icona disponibili da Lucide:
-- `Map` - Mappa piegata classica ✅ **Consigliata**
-- `MapPin` - Solo il pin
-- `MapPinned` - Mappa con pin
+```jsx
+<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+```
 
-## File da Modificare
+Quando il dialog viene chiuso cliccando fuori o premendo ESC (`onOpenChange` viene chiamato con `false`), il form **NON viene resettato**. Il `formData` mantiene i valori precedenti.
+
+**Scenario di contaminazione:**
+1. Utente apre hotspot A e modifica la descrizione
+2. Utente chiude il dialog cliccando fuori (senza salvare)
+3. Utente apre hotspot B per modificarlo
+4. In alcuni casi, i dati del form potrebbero mescolarsi
+
+## Soluzione proposta
+
+### 1. Aggiungere un handler per il reset del form alla chiusura del dialog
+
+```text
++---------------------+       +---------------------+
+| Dialog onOpenChange |------>| handleDialogChange  |
++---------------------+       +---------------------+
+                                      |
+                              +-------v-------+
+                              | if (!open) {  |
+                              |   reset form  |
+                              |   clear state |
+                              | }             |
+                              +---------------+
+```
+
+### 2. Modifiche al codice
 
 | File | Modifica |
 |------|----------|
-| `src/components/HotspotCard.tsx` | Importare `Map` al posto di `Navigation`, rimuovere emoji alieno |
+| `src/pages/Admin.tsx` | Aggiungere `handleDialogChange` che resetta il form quando il dialog viene chiuso |
 
-## Codice Finale
+**Nuovo codice:**
 
 ```jsx
-import { Map } from "lucide-react";
+// Nuova funzione per gestire apertura/chiusura dialog
+const handleDialogChange = (open: boolean) => {
+  setIsDialogOpen(open);
+  if (!open) {
+    // Reset del form quando il dialog viene chiuso
+    setEditingHotspot(null);
+    setFormData({ ...emptyHotspot });
+  }
+};
 
-// Nel pulsante:
-<a className="...">
-  <Map className="w-5 h-5" />
-  {t("meetPipo")}
-</a>
+// Nel JSX, sostituire:
+<Dialog open={isDialogOpen} onOpenChange={handleDialogChange}>
 ```
 
-## Risultato Visivo
+### 3. Correggere anche handleSubmit per sicurezza
 
-Il pulsante passerà da:
-- **👽 ➜ INCONTRA PIPO** 
+Dopo il salvataggio, resettare esplicitamente il form:
 
-A:
-- **🗺️ INCONTRA PIPO** (con icona mappa Lucide)
+```jsx
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  
+  if (editingHotspot) {
+    await updateMutation.mutateAsync({ id: editingHotspot.id, updates: formData });
+  } else {
+    await createMutation.mutateAsync(formData);
+  }
+  
+  // Reset esplicito dopo il salvataggio
+  setEditingHotspot(null);
+  setFormData({ ...emptyHotspot });
+  setIsDialogOpen(false);
+};
+```
 
-Look più professionale e coerente con il messaggio "sblocca mappa aliena".
+## Dati corrotti esistenti
 
+L'hotspot "Poggioreale Vecchia" ha dati corrotti che andranno corretti manualmente dal pannello Admin dopo aver applicato questa fix.
+
+## Riepilogo
+
+| Azione | Descrizione |
+|--------|-------------|
+| Fix primaria | Aggiungere `handleDialogChange` per resettare il form alla chiusura |
+| Fix secondaria | Resettare esplicitamente il form dopo `handleSubmit` |
+| Azione manuale | Correggere i dati di "Poggioreale Vecchia" dal pannello Admin |
