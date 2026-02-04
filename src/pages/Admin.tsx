@@ -138,6 +138,16 @@ const Admin = () => {
     setIsDialogOpen(true);
   };
 
+  // Handler per gestire apertura/chiusura dialog con reset del form
+  const handleDialogChange = (open: boolean) => {
+    setIsDialogOpen(open);
+    if (!open) {
+      // Reset del form quando il dialog viene chiuso
+      setEditingHotspot(null);
+      setFormData({ ...emptyHotspot });
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -147,6 +157,9 @@ const Admin = () => {
       await createMutation.mutateAsync(formData);
     }
     
+    // Reset esplicito dopo il salvataggio
+    setEditingHotspot(null);
+    setFormData({ ...emptyHotspot });
     setIsDialogOpen(false);
   };
 
@@ -232,7 +245,7 @@ const Admin = () => {
               {/* Toolbar */}
               <div className="flex items-center justify-between">
                 <h2 className="font-heading text-2xl font-bold">Gestione Hotspot</h2>
-                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <Dialog open={isDialogOpen} onOpenChange={handleDialogChange}>
                   <DialogTrigger asChild>
                     <Button onClick={handleOpenCreate}>
                       <Plus className="h-4 w-4 mr-2" />
