@@ -1,105 +1,186 @@
 
-# Piano: Correzione problema di isolamento dati negli Hotspot
+# Piano: Ottimizzazione Funnel Landing Page Pipo
 
-## Problema identificato
+## Obiettivo
+La CTA principale diventa l'esplorazione degli hotspot. La CTA Instagram viene spostata alla fine del percorso, visibile solo dopo che l'utente ha esplorato.
 
-Ho trovato un bug critico nel pannello Admin che causa "contaminazione" dei dati tra hotspot diversi.
+---
 
-### Evidenza nel database
+## 1. Hero Section - Semplificazione CTA
 
-L'hotspot "Poggioreale Vecchia" ha una `descrizione_breve` che contiene CHIARAMENTE due descrizioni diverse concatenate:
+### Stato attuale (righe 82-102 di HeroSection.tsx)
+| Posizione | Testo | Stile | Azione |
+|-----------|-------|-------|--------|
+| 1a (primaria) | "Sblocca 1 mappa aliena" | Fuchsia pieno | Instagram |
+| 2a (secondaria) | "Esplora gli hotspot di Pipo" | Outline nero | Wizard |
 
-```
-"Pipo dice che se ci vai al tramonto, capisci meglio perché preferisce le stelle alla cittàNon è un rudere, è un fermo immagine del 1968..."
-```
+### Nuovo stato
+| Posizione | Testo | Stile | Azione |
+|-----------|-------|-------|--------|
+| Unica CTA | "esplora gli hotspot di pipo" | Fuchsia pieno | Wizard |
 
-Nota come non c'è nemmeno uno spazio tra "città" e "Non" - due testi diversi sono stati fusi insieme.
+Con microtesto sotto: "Scopri gli hotspot alieni in base al tuo mood e alla zona che vuoi esplorare."
 
-### Causa tecnica
+### Modifiche tecniche
 
-Nel componente `Admin.tsx`, il dialog di modifica ha questo problema:
+**File: `src/components/HeroSection.tsx`**
 
+- **Rimuovere** il blocco PRIMARY CTA Instagram (righe 84-92):
 ```jsx
-<Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+{/* PRIMARY CTA - Instagram (più prominente) */}
+<div>
+  <button onClick={handleInstagramClick} ...>
+    {t("heroPrimaryCtaBtn")}
+  </button>
+  <p>...</p>
+</div>
 ```
 
-Quando il dialog viene chiuso cliccando fuori o premendo ESC (`onOpenChange` viene chiamato con `false`), il form **NON viene resettato**. Il `formData` mantiene i valori precedenti.
+- **Trasformare** la CTA secondaria in primaria (righe 94-102):
+  - Cambiare stile da outline a fuchsia pieno (`bg-fuchsia-700`)
+  - Mantenere `onClick={onCtaClick}` (che porta al wizard)
+  - Usare `heroSecondaryCtaBtn` (testo esistente ma da aggiornare a minuscolo)
+  - Usare `heroSecondaryCtaSublabel` per il microtesto
 
-**Scenario di contaminazione:**
-1. Utente apre hotspot A e modifica la descrizione
-2. Utente chiude il dialog cliccando fuori (senza salvare)
-3. Utente apre hotspot B per modificarlo
-4. In alcuni casi, i dati del form potrebbero mescolarsi
+- **Rimuovere** anche `handleInstagramClick` e l'import del link Instagram (non piu necessari nella hero)
 
-## Soluzione proposta
+---
 
-### 1. Aggiungere un handler per il reset del form alla chiusura del dialog
+## 2. Wizard Page - Sostituzione CTA Instagram
+
+### Stato attuale (righe 129-137 di WizardPage.tsx)
+- Bottone fuchsia: "Sblocca 1 mappa aliena"
+- Microtesto: "Scrivimi ALIENO in DM..."
+
+### Nuovo stato
+- Titolo: "Vuoi una mappa ancora piu aliena?"
+- Testo: "Se dopo aver esplorato gli hotspot di Pipo vuoi un itinerario pensato solo per te, puoi sbloccare 1 mappa aliena segreta, scrivimi ALIENO in DM su Instagram"
+- Bottone: "Scrivimi su Instagram" (link al profilo esistente)
+
+### Modifiche tecniche
+
+**File: `src/pages/WizardPage.tsx`**
+
+Sostituire il blocco CTA Instagram (righe 129-137) con:
+```jsx
+{/* New Instagram CTA Section */}
+<div className="mt-8 text-center max-w-xs">
+  <h2 className="font-sans text-lg font-bold text-foreground mb-3">
+    {t("alienMapCtaTitle")}
+  </h2>
+  <p className="font-sans text-sm text-secondary-foreground mb-4">
+    {t("alienMapCtaDesc")}
+  </p>
+  <a href={instagramLink} target="_blank" rel="noopener noreferrer" 
+     className="inline-flex items-center justify-center px-6 py-3 font-sans font-bold text-base rounded-full transition-transform duration-200 hover:scale-105 bg-fuchsia-700 text-primary-foreground">
+    {t("instagramCtaBtn")}
+  </a>
+</div>
+```
+
+---
+
+## 3. Explore Page - Nuova sezione finale + aggiornamento footer
+
+### Stato attuale (righe 132-139 di ExplorePage.tsx)
+- Footer fisso con bottone "Sblocca 1 mappa aliena"
+
+### Nuovo stato
+- Sezione finale dopo la griglia hotspot con titolo, testo e CTA
+- Footer con testo bottone aggiornato: "Scrivimi su Instagram"
+
+### Modifiche tecniche
+
+**File: `src/pages/ExplorePage.tsx`**
+
+1. **Aggiungere sezione finale** dopo la griglia hotspot (prima del footer, riga ~129):
+```jsx
+{/* Final Instagram CTA Section */}
+{!isLoading && filteredHotspots.length > 0 && (
+  <div className="mt-16 mb-8 text-center max-w-md mx-auto px-4">
+    <h2 className="font-sans text-xl font-bold text-foreground mb-4">
+      {t("alienMapCtaTitle")}
+    </h2>
+    <p className="font-sans text-base text-secondary-foreground mb-6">
+      {t("alienMapCtaDesc")}
+    </p>
+  </div>
+)}
+```
+
+2. **Aggiornare testo bottone footer** (riga 136):
+```jsx
+{t("instagramCtaBtn")}  // invece di {t("wizardInstagramBtn")}
+```
+
+---
+
+## 4. Traduzioni - Nuove chiavi
+
+**File: `src/contexts/LanguageContext.tsx`**
+
+### Aggiungere nuove chiavi:
+
+| Chiave | IT | EN |
+|--------|----|----|
+| `alienMapCtaTitle` | Vuoi una mappa ancora piu aliena? | Want an even more alien map? |
+| `alienMapCtaDesc` | Se dopo aver esplorato gli hotspot di Pipo vuoi un itinerario pensato solo per te, puoi sbloccare 1 mappa aliena segreta, scrivimi ALIENO in DM su Instagram | If after exploring Pipo's hotspots you want an itinerary designed just for you, you can unlock 1 secret alien map, DM me ALIENO on Instagram |
+| `instagramCtaBtn` | Scrivimi su Instagram | DM me on Instagram |
+
+### Aggiornare chiave esistente:
+
+| Chiave | Vecchio valore | Nuovo valore IT | Nuovo valore EN |
+|--------|----------------|-----------------|-----------------|
+| `heroSecondaryCtaBtn` | Esplora gli hotspot di Pipo | esplora gli hotspot di pipo | explore pipo's hotspots |
+
+---
+
+## 5. Riepilogo file da modificare
+
+| File | Modifiche |
+|------|-----------|
+| `src/contexts/LanguageContext.tsx` | Aggiungere 3 nuove chiavi, aggiornare `heroSecondaryCtaBtn` |
+| `src/components/HeroSection.tsx` | Rimuovere CTA Instagram, promuovere CTA esplorazione a primaria |
+| `src/pages/WizardPage.tsx` | Sostituire CTA "Sblocca 1 mappa aliena" con nuova sezione |
+| `src/pages/ExplorePage.tsx` | Aggiungere sezione finale CTA, aggiornare testo bottone footer |
+
+---
+
+## 6. Flusso utente finale
 
 ```text
-+---------------------+       +---------------------+
-| Dialog onOpenChange |------>| handleDialogChange  |
-+---------------------+       +---------------------+
-                                      |
-                              +-------v-------+
-                              | if (!open) {  |
-                              |   reset form  |
-                              |   clear state |
-                              | }             |
-                              +---------------+
+LANDING (/)
+    |
+    +-- CTA unica: "esplora gli hotspot di pipo" (fuchsia)
+              |
+              v
+         WIZARD (/wizard)
+              |
+              +-- Zona --> /esplora?zona=X
+              +-- Mood --> /esplora?mood=X
+              +-- Esplora in Liberta --> /esplora
+              |
+              +-- (in fondo) Sezione "Vuoi una mappa ancora piu aliena?"
+                  + bottone "Scrivimi su Instagram"
+              
+         ESPLORA (/esplora)
+              |
+              +-- Griglia hotspot
+              |
+              +-- Sezione finale: "Vuoi una mappa ancora piu aliena?"
+              |
+              +-- Footer fisso: "Scrivimi su Instagram"
 ```
 
-### 2. Modifiche al codice
+---
 
-| File | Modifica |
-|------|----------|
-| `src/pages/Admin.tsx` | Aggiungere `handleDialogChange` che resetta il form quando il dialog viene chiuso |
+## 7. Cosa rimane invariato
 
-**Nuovo codice:**
-
-```jsx
-// Nuova funzione per gestire apertura/chiusura dialog
-const handleDialogChange = (open: boolean) => {
-  setIsDialogOpen(open);
-  if (!open) {
-    // Reset del form quando il dialog viene chiuso
-    setEditingHotspot(null);
-    setFormData({ ...emptyHotspot });
-  }
-};
-
-// Nel JSX, sostituire:
-<Dialog open={isDialogOpen} onOpenChange={handleDialogChange}>
-```
-
-### 3. Correggere anche handleSubmit per sicurezza
-
-Dopo il salvataggio, resettare esplicitamente il form:
-
-```jsx
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  
-  if (editingHotspot) {
-    await updateMutation.mutateAsync({ id: editingHotspot.id, updates: formData });
-  } else {
-    await createMutation.mutateAsync(formData);
-  }
-  
-  // Reset esplicito dopo il salvataggio
-  setEditingHotspot(null);
-  setFormData({ ...emptyHotspot });
-  setIsDialogOpen(false);
-};
-```
-
-## Dati corrotti esistenti
-
-L'hotspot "Poggioreale Vecchia" ha dati corrotti che andranno corretti manualmente dal pannello Admin dopo aver applicato questa fix.
-
-## Riepilogo
-
-| Azione | Descrizione |
-|--------|-------------|
-| Fix primaria | Aggiungere `handleDialogChange` per resettare il form alla chiusura |
-| Fix secondaria | Resettare esplicitamente il form dopo `handleSubmit` |
-| Azione manuale | Correggere i dati di "Poggioreale Vecchia" dal pannello Admin |
+- Headline e sottotitolo della Hero (contenuti da database o fallback)
+- Stile grafico (colori, font, layout)
+- Tono di voce alieno
+- Carousel di foto
+- Sezione Mission sotto il carousel
+- CTA secondaria sotto la mission (outline, stesso testo)
+- Contenuto degli hotspot e delle card
+- Funzionalita del wizard (Zona, Mood, Esplora)
