@@ -29,9 +29,6 @@ const HeroSection = ({
     data: heroSubtitleContent
   } = useSiteContent("hero_subtitle");
   const {
-    data: instagramLinkContent
-  } = useSiteContent("wizard_instagram_link");
-  const {
     data: missionContent,
     isLoading: missionLoading
   } = useSiteContent("mission");
@@ -55,15 +52,11 @@ const HeroSection = ({
   // Use database content or fallback to translations
   const headline = heroHeadlineContent?.content || t("heroHeadline");
   const subtitle = heroSubtitleContent?.content || t("heroSubheadline");
-  const instagramLink = instagramLinkContent?.content || "https://www.instagram.com/pipo.sicily/";
 
   // Get first 5 hotspot main photos
   const carouselPhotos = hotspots?.slice(0, 5).map(h => h.foto_principale).filter((photo): photo is string => !!photo) ?? [];
   const handlePhotoClick = () => {
     navigate("/esplora");
-  };
-  const handleInstagramClick = () => {
-    window.open(instagramLink, "_blank", "noopener,noreferrer");
   };
   return <section className="px-6 py-12 flex flex-col min-h-[75vh] justify-center" style={{
     backgroundColor: bgColor || undefined
@@ -80,26 +73,14 @@ const HeroSection = ({
         </p>
 
         {/* CTA Buttons Container */}
-        <div className="w-full max-w-sm mt-8 md:mx-auto space-y-4">
-          {/* PRIMARY CTA - Instagram (più prominente) */}
-          <div>
-            <button onClick={handleInstagramClick} className="w-full px-8 py-4 font-sans text-base font-medium text-background rounded-full transition-all duration-200 hover:opacity-90 active:scale-[0.98] bg-fuchsia-700 hover:bg-fuchsia-600">
-              {t("heroPrimaryCtaBtn")}
-            </button>
-            <p className="font-sans text-[13px] font-medium text-muted-foreground mt-3 text-center">
-              {t("heroPrimaryCtaSublabel")}
-            </p>
-          </div>
-
-          {/* SECONDARY CTA - Wizard (meno prominente, outline) */}
-          <div className="pt-2">
-            <button onClick={onCtaClick} className="w-full px-8 py-3 font-sans text-base font-medium bg-transparent text-foreground border-2 border-foreground rounded-full transition-all duration-200 hover:bg-foreground/5 active:scale-[0.98]">
-              {t("heroSecondaryCtaBtn")}
-            </button>
-            <p className="font-sans text-[13px] font-medium text-muted-foreground mt-3 text-center">
-              {t("heroSecondaryCtaSublabel")}
-            </p>
-          </div>
+        <div className="w-full max-w-sm mt-8 md:mx-auto">
+          {/* PRIMARY CTA - Explore Hotspots */}
+          <button onClick={onCtaClick} className="w-full px-8 py-4 font-sans text-base font-medium text-background rounded-full transition-all duration-200 hover:opacity-90 active:scale-[0.98] bg-fuchsia-700 hover:bg-fuchsia-600">
+            {t("heroSecondaryCtaBtn")}
+          </button>
+          <p className="font-sans text-[13px] font-medium text-muted-foreground mt-3 text-center">
+            {t("heroSecondaryCtaSublabel")}
+          </p>
         </div>
 
         {/* Photo Carousel */}

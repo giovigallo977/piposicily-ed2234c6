@@ -126,15 +126,18 @@ const WizardPage = () => {
               </button>
             </div>
 
-            {/* Instagram CTA Button */}
-            <a href={instagramLink} target="_blank" rel="noopener noreferrer" className="mt-8 inline-flex items-center justify-center px-6 py-3 font-sans font-bold text-base rounded-full transition-transform duration-200 hover:scale-105 bg-fuchsia-700 text-primary-foreground">
-              {t("wizardInstagramBtn")}
-            </a>
-
-            {/* Instagram CTA Description */}
-            <p className="font-sans text-center mt-4 max-w-xs px-4 text-secondary-foreground text-base">
-              {instagramDesc}
-            </p>
+            {/* Instagram CTA Section - End of funnel */}
+            <div className="mt-10 text-center max-w-xs">
+              <h2 className="font-sans text-lg font-bold text-foreground mb-3">
+                {t("alienMapCtaTitle")}
+              </h2>
+              <p className="font-sans text-sm text-secondary-foreground mb-4">
+                {t("alienMapCtaDesc")}
+              </p>
+              <a href={instagramLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center px-6 py-3 font-sans font-bold text-base rounded-full transition-transform duration-200 hover:scale-105 bg-fuchsia-700 text-primary-foreground">
+                {t("instagramCtaBtn")}
+              </a>
+            </div>
           </>}
 
         {/* ZONA STEP */}
