@@ -1,186 +1,138 @@
 
-# Piano: Ottimizzazione Funnel Landing Page Pipo
 
-## Obiettivo
-La CTA principale diventa l'esplorazione degli hotspot. La CTA Instagram viene spostata alla fine del percorso, visibile solo dopo che l'utente ha esplorato.
+# Piano: Sincronizzazione Frontend-Backend per Nuove CTA
+
+## Problema identificato
+
+I testi delle nuove CTA Instagram (introdotte nell'ultima ottimizzazione) sono **hardcoded** nel `LanguageContext.tsx` invece di essere gestibili dal backend:
+
+| Testo | Stato attuale | Dove appare |
+|-------|---------------|-------------|
+| "Vuoi una mappa ancora più aliena?" | Hardcoded | WizardPage, ExplorePage |
+| "Se dopo aver esplorato gli hotspot..." | Hardcoded | WizardPage, ExplorePage |
+| "Scrivimi su Instagram" | Hardcoded | WizardPage, ExplorePage |
+
+Questo viola il principio del progetto: **ogni contenuto deve essere modificabile da admin senza toccare il codice**.
 
 ---
 
-## 1. Hero Section - Semplificazione CTA
+## Modifiche da implementare
 
-### Stato attuale (righe 82-102 di HeroSection.tsx)
-| Posizione | Testo | Stile | Azione |
-|-----------|-------|-------|--------|
-| 1a (primaria) | "Sblocca 1 mappa aliena" | Fuchsia pieno | Instagram |
-| 2a (secondaria) | "Esplora gli hotspot di Pipo" | Outline nero | Wizard |
+### 1. Database: Nuove chiavi site_content
 
-### Nuovo stato
-| Posizione | Testo | Stile | Azione |
-|-----------|-------|-------|--------|
-| Unica CTA | "esplora gli hotspot di pipo" | Fuchsia pieno | Wizard |
+Aggiungere 3 nuove chiavi nella tabella `site_content`:
 
-Con microtesto sotto: "Scopri gli hotspot alieni in base al tuo mood e alla zona che vuoi esplorare."
+| key | content (IT default) |
+|-----|----------------------|
+| `alien_map_cta_title` | Vuoi una mappa ancora più aliena? |
+| `alien_map_cta_desc` | Se dopo aver esplorato gli hotspot di Pipo vuoi un itinerario pensato solo per te, puoi sbloccare 1 mappa aliena segreta, scrivimi ALIENO in DM su Instagram |
+| `instagram_cta_btn` | Scrivimi su Instagram |
 
-### Modifiche tecniche
+### 2. Admin Panel: Espandere sezione Wizard Instagram
 
-**File: `src/components/HeroSection.tsx`**
+**File: `src/pages/Admin.tsx`**
 
-- **Rimuovere** il blocco PRIMARY CTA Instagram (righe 84-92):
-```jsx
-{/* PRIMARY CTA - Instagram (più prominente) */}
-<div>
-  <button onClick={handleInstagramClick} ...>
-    {t("heroPrimaryCtaBtn")}
-  </button>
-  <p>...</p>
-</div>
+Nella card "Wizard Instagram" (righe 603-653), aggiungere 3 nuovi campi:
+
+```text
+Wizard Instagram (CTA fine funnel)
+├── Link Instagram          [esistente]
+├── Titolo sezione CTA      [NUOVO - "Vuoi una mappa ancora più aliena?"]
+├── Descrizione CTA         [NUOVO - "Se dopo aver esplorato..."]
+└── Testo bottone           [NUOVO - "Scrivimi su Instagram"]
 ```
 
-- **Trasformare** la CTA secondaria in primaria (righe 94-102):
-  - Cambiare stile da outline a fuchsia pieno (`bg-fuchsia-700`)
-  - Mantenere `onClick={onCtaClick}` (che porta al wizard)
-  - Usare `heroSecondaryCtaBtn` (testo esistente ma da aggiornare a minuscolo)
-  - Usare `heroSecondaryCtaSublabel` per il microtesto
+Modifiche tecniche:
+- Aggiungere `useSiteContent` per le 3 nuove chiavi
+- Aggiungere 3 nuovi state (`alienMapTitle`, `alienMapDesc`, `instagramBtnText`)
+- Aggiungere 3 nuovi `useEffect` per sincronizzare i valori
+- Aggiungere 3 nuovi campi Input/Textarea nella Card
+- Aggiornare `handleSaveWizardInstagram` per salvare tutti i campi
 
-- **Rimuovere** anche `handleInstagramClick` e l'import del link Instagram (non piu necessari nella hero)
-
----
-
-## 2. Wizard Page - Sostituzione CTA Instagram
-
-### Stato attuale (righe 129-137 di WizardPage.tsx)
-- Bottone fuchsia: "Sblocca 1 mappa aliena"
-- Microtesto: "Scrivimi ALIENO in DM..."
-
-### Nuovo stato
-- Titolo: "Vuoi una mappa ancora piu aliena?"
-- Testo: "Se dopo aver esplorato gli hotspot di Pipo vuoi un itinerario pensato solo per te, puoi sbloccare 1 mappa aliena segreta, scrivimi ALIENO in DM su Instagram"
-- Bottone: "Scrivimi su Instagram" (link al profilo esistente)
-
-### Modifiche tecniche
+### 3. Frontend: Leggere contenuti da database
 
 **File: `src/pages/WizardPage.tsx`**
 
-Sostituire il blocco CTA Instagram (righe 129-137) con:
-```jsx
-{/* New Instagram CTA Section */}
-<div className="mt-8 text-center max-w-xs">
-  <h2 className="font-sans text-lg font-bold text-foreground mb-3">
-    {t("alienMapCtaTitle")}
-  </h2>
-  <p className="font-sans text-sm text-secondary-foreground mb-4">
-    {t("alienMapCtaDesc")}
-  </p>
-  <a href={instagramLink} target="_blank" rel="noopener noreferrer" 
-     className="inline-flex items-center justify-center px-6 py-3 font-sans font-bold text-base rounded-full transition-transform duration-200 hover:scale-105 bg-fuchsia-700 text-primary-foreground">
-    {t("instagramCtaBtn")}
-  </a>
-</div>
+Aggiungere hook per leggere i contenuti:
+```typescript
+const { data: alienMapTitleContent } = useSiteContent("alien_map_cta_title");
+const { data: alienMapDescContent } = useSiteContent("alien_map_cta_desc");
+const { data: instagramBtnContent } = useSiteContent("instagram_cta_btn");
 ```
 
----
-
-## 3. Explore Page - Nuova sezione finale + aggiornamento footer
-
-### Stato attuale (righe 132-139 di ExplorePage.tsx)
-- Footer fisso con bottone "Sblocca 1 mappa aliena"
-
-### Nuovo stato
-- Sezione finale dopo la griglia hotspot con titolo, testo e CTA
-- Footer con testo bottone aggiornato: "Scrivimi su Instagram"
-
-### Modifiche tecniche
+Sostituire i `t("...")` con i valori dal database (con fallback):
+```typescript
+const alienMapTitle = alienMapTitleContent?.content || t("alienMapCtaTitle");
+const alienMapDesc = alienMapDescContent?.content || t("alienMapCtaDesc");
+const instagramBtn = instagramBtnContent?.content || t("instagramCtaBtn");
+```
 
 **File: `src/pages/ExplorePage.tsx`**
 
-1. **Aggiungere sezione finale** dopo la griglia hotspot (prima del footer, riga ~129):
-```jsx
-{/* Final Instagram CTA Section */}
-{!isLoading && filteredHotspots.length > 0 && (
-  <div className="mt-16 mb-8 text-center max-w-md mx-auto px-4">
-    <h2 className="font-sans text-xl font-bold text-foreground mb-4">
-      {t("alienMapCtaTitle")}
-    </h2>
-    <p className="font-sans text-base text-secondary-foreground mb-6">
-      {t("alienMapCtaDesc")}
-    </p>
-  </div>
-)}
+Stesse modifiche del WizardPage.
+
+### 4. DNA del progetto: Documentare il principio
+
+**Nuovo file: `.knowledge/structure/backend-sync-principle.md`**
+
+Creare documentazione che sancisce la regola immutabile:
+
+```markdown
+# Principio di Sincronizzazione Frontend-Backend
+
+## Regola Fondamentale
+OGNI testo, CTA, o contenuto visibile all'utente nel frontend DEVE:
+1. Avere una chiave corrispondente nel database (site_content)
+2. Essere modificabile dal pannello admin
+3. Usare fallback dal LanguageContext solo come default
+
+## Flusso Obbligatorio per Nuove Feature
+1. Creare chiave(i) in site_content
+2. Aggiungere campo(i) nell'admin panel
+3. Nel componente, leggere dal DB con fallback a t()
+4. MAI lasciare testi hardcoded senza gestione backend
+
+## Verifica Pre-Deploy
+Prima di considerare una feature completa, verificare:
+- [ ] Tutti i testi sono in site_content
+- [ ] L'admin può modificarli
+- [ ] I componenti leggono dal DB
 ```
 
-2. **Aggiornare testo bottone footer** (riga 136):
-```jsx
-{t("instagramCtaBtn")}  // invece di {t("wizardInstagramBtn")}
-```
+---
+
+## File da modificare
+
+| File | Azione |
+|------|--------|
+| `src/pages/Admin.tsx` | Aggiungere 3 nuovi campi nella sezione Wizard Instagram |
+| `src/pages/WizardPage.tsx` | Usare `useSiteContent` invece di `t()` per i 3 testi CTA |
+| `src/pages/ExplorePage.tsx` | Usare `useSiteContent` invece di `t()` per i 3 testi CTA |
+| `.knowledge/structure/backend-sync-principle.md` | CREARE - documentazione principio |
+| `.knowledge/structure/design-principles.md` | Aggiungere riferimento al nuovo principio |
 
 ---
 
-## 4. Traduzioni - Nuove chiavi
-
-**File: `src/contexts/LanguageContext.tsx`**
-
-### Aggiungere nuove chiavi:
-
-| Chiave | IT | EN |
-|--------|----|----|
-| `alienMapCtaTitle` | Vuoi una mappa ancora piu aliena? | Want an even more alien map? |
-| `alienMapCtaDesc` | Se dopo aver esplorato gli hotspot di Pipo vuoi un itinerario pensato solo per te, puoi sbloccare 1 mappa aliena segreta, scrivimi ALIENO in DM su Instagram | If after exploring Pipo's hotspots you want an itinerary designed just for you, you can unlock 1 secret alien map, DM me ALIENO on Instagram |
-| `instagramCtaBtn` | Scrivimi su Instagram | DM me on Instagram |
-
-### Aggiornare chiave esistente:
-
-| Chiave | Vecchio valore | Nuovo valore IT | Nuovo valore EN |
-|--------|----------------|-----------------|-----------------|
-| `heroSecondaryCtaBtn` | Esplora gli hotspot di Pipo | esplora gli hotspot di pipo | explore pipo's hotspots |
-
----
-
-## 5. Riepilogo file da modificare
-
-| File | Modifiche |
-|------|-----------|
-| `src/contexts/LanguageContext.tsx` | Aggiungere 3 nuove chiavi, aggiornare `heroSecondaryCtaBtn` |
-| `src/components/HeroSection.tsx` | Rimuovere CTA Instagram, promuovere CTA esplorazione a primaria |
-| `src/pages/WizardPage.tsx` | Sostituire CTA "Sblocca 1 mappa aliena" con nuova sezione |
-| `src/pages/ExplorePage.tsx` | Aggiungere sezione finale CTA, aggiornare testo bottone footer |
-
----
-
-## 6. Flusso utente finale
+## Flusso dati finale
 
 ```text
-LANDING (/)
-    |
-    +-- CTA unica: "esplora gli hotspot di pipo" (fuchsia)
-              |
-              v
-         WIZARD (/wizard)
-              |
-              +-- Zona --> /esplora?zona=X
-              +-- Mood --> /esplora?mood=X
-              +-- Esplora in Liberta --> /esplora
-              |
-              +-- (in fondo) Sezione "Vuoi una mappa ancora piu aliena?"
-                  + bottone "Scrivimi su Instagram"
-              
-         ESPLORA (/esplora)
-              |
-              +-- Griglia hotspot
-              |
-              +-- Sezione finale: "Vuoi una mappa ancora piu aliena?"
-              |
-              +-- Footer fisso: "Scrivimi su Instagram"
+ADMIN PANEL                          DATABASE                         FRONTEND
+     │                                   │                                │
+     ├── Titolo CTA ───────────────────► alien_map_cta_title ──────────► WizardPage
+     ├── Descrizione CTA ──────────────► alien_map_cta_desc ───────────► ExplorePage
+     └── Testo bottone ────────────────► instagram_cta_btn ────────────► (entrambi)
 ```
 
 ---
 
-## 7. Cosa rimane invariato
+## Note tecniche
 
-- Headline e sottotitolo della Hero (contenuti da database o fallback)
-- Stile grafico (colori, font, layout)
-- Tono di voce alieno
-- Carousel di foto
-- Sezione Mission sotto il carousel
-- CTA secondaria sotto la mission (outline, stesso testo)
-- Contenuto degli hotspot e delle card
-- Funzionalita del wizard (Zona, Mood, Esplora)
+### Traduzioni multilingua
+I contenuti da database sono in italiano (lingua primaria). Per la versione inglese:
+- Manteniamo i fallback nel `LanguageContext` che verranno usati se non c'è contenuto DB
+- In futuro si potrebbe estendere site_content con chiavi `_en` (es: `alien_map_cta_title_en`)
+
+### Backward compatibility
+- I fallback `t("alienMapCtaTitle")` garantiscono che il sito funzioni anche senza dati nel DB
+- Al primo save dall'admin, i valori verranno scritti nel database
+
