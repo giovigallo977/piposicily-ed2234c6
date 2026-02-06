@@ -29,7 +29,20 @@ const ExplorePage = () => {
   const {
     data: instagramLinkContent
   } = useSiteContent("wizard_instagram_link");
+  const {
+    data: alienMapTitleContent
+  } = useSiteContent("alien_map_cta_title");
+  const {
+    data: alienMapDescContent
+  } = useSiteContent("alien_map_cta_desc");
+  const {
+    data: instagramBtnContent
+  } = useSiteContent("instagram_cta_btn");
+  
   const instagramLink = instagramLinkContent?.content || "#";
+  const alienMapTitle = alienMapTitleContent?.content || t("alienMapCtaTitle");
+  const alienMapDesc = alienMapDescContent?.content || t("alienMapCtaDesc");
+  const instagramBtn = instagramBtnContent?.content || t("instagramCtaBtn");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   // Get filter from URL params
@@ -131,10 +144,10 @@ const ExplorePage = () => {
           {!isLoading && filteredHotspots.length > 0 && (
             <div className="mt-16 mb-8 text-center max-w-md mx-auto px-4">
               <h2 className="font-sans text-xl font-bold text-foreground mb-4">
-                {t("alienMapCtaTitle")}
+                {alienMapTitle}
               </h2>
               <p className="font-sans text-base text-secondary-foreground mb-6">
-                {t("alienMapCtaDesc")}
+                {alienMapDesc}
               </p>
             </div>
           )}
@@ -145,7 +158,7 @@ const ExplorePage = () => {
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.1)] py-4 px-6">
         <div className="flex justify-center">
           <a href={instagramLink} target="_blank" rel="noopener noreferrer" className="px-6 py-3 text-white font-bold rounded-full transition-transform duration-200 hover:scale-105 font-sans bg-fuchsia-700">
-            {t("instagramCtaBtn")}
+            {instagramBtn}
           </a>
         </div>
       </div>

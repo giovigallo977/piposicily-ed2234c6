@@ -113,3 +113,4 @@ OGNI testo visibile all'utente DEVE usare il sistema di traduzione:
 6. MAI disabilitare skipWaiting o clientsClaim
 7. OGNI nuovo testo utente DEVE usare il sistema `t()` o `useTranslatedContent()`
 8. MAI hardcodare testo italiano/inglese nei componenti
+9. OGNI contenuto frontend DEVE essere sincronizzato con il backend (vedi `.knowledge/structure/backend-sync-principle.md`)

@@ -31,10 +31,19 @@ const WizardPage = () => {
     data: instagramLinkContent
   } = useSiteContent("wizard_instagram_link");
   const {
-    data: instagramDescContent
-  } = useSiteContent("wizard_instagram_desc");
+    data: alienMapTitleContent
+  } = useSiteContent("alien_map_cta_title");
+  const {
+    data: alienMapDescContent
+  } = useSiteContent("alien_map_cta_desc");
+  const {
+    data: instagramBtnContent
+  } = useSiteContent("instagram_cta_btn");
+  
   const instagramLink = instagramLinkContent?.content || "#";
-  const instagramDesc = instagramDescContent?.content || t("wizardInstagramDesc");
+  const alienMapTitle = alienMapTitleContent?.content || t("alienMapCtaTitle");
+  const alienMapDesc = alienMapDescContent?.content || t("alienMapCtaDesc");
+  const instagramBtn = instagramBtnContent?.content || t("instagramCtaBtn");
 
   // Extract unique zones from hotspots
   const zones = useMemo(() => {
@@ -129,13 +138,13 @@ const WizardPage = () => {
             {/* Instagram CTA Section - End of funnel */}
             <div className="mt-10 text-center max-w-xs">
               <h2 className="font-sans text-lg font-bold text-foreground mb-3">
-                {t("alienMapCtaTitle")}
+                {alienMapTitle}
               </h2>
               <p className="font-sans text-sm text-secondary-foreground mb-4">
-                {t("alienMapCtaDesc")}
+                {alienMapDesc}
               </p>
               <a href={instagramLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center px-6 py-3 font-sans font-bold text-base rounded-full transition-transform duration-200 hover:scale-105 bg-fuchsia-700 text-primary-foreground">
-                {t("instagramCtaBtn")}
+                {instagramBtn}
               </a>
             </div>
           </>}
