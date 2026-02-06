@@ -46,6 +46,9 @@ const Admin = () => {
   const { data: homepageBgColorContent } = useSiteContent("homepage_bg_color");
   const { data: wizardInstagramLinkContent } = useSiteContent("wizard_instagram_link");
   const { data: wizardInstagramDescContent } = useSiteContent("wizard_instagram_desc");
+  const { data: alienMapTitleContent } = useSiteContent("alien_map_cta_title");
+  const { data: alienMapDescContent } = useSiteContent("alien_map_cta_desc");
+  const { data: instagramBtnContent } = useSiteContent("instagram_cta_btn");
   const updateSiteContent = useUpdateSiteContent();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -59,6 +62,9 @@ const Admin = () => {
   const [homepageBgColor, setHomepageBgColor] = useState("");
   const [wizardInstagramLink, setWizardInstagramLink] = useState("");
   const [wizardInstagramDesc, setWizardInstagramDesc] = useState("");
+  const [alienMapTitle, setAlienMapTitle] = useState("");
+  const [alienMapDesc, setAlienMapDesc] = useState("");
+  const [instagramBtnText, setInstagramBtnText] = useState("");
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -114,6 +120,24 @@ const Admin = () => {
       setWizardInstagramDesc(wizardInstagramDescContent.content);
     }
   }, [wizardInstagramDescContent]);
+
+  useEffect(() => {
+    if (alienMapTitleContent?.content) {
+      setAlienMapTitle(alienMapTitleContent.content);
+    }
+  }, [alienMapTitleContent]);
+
+  useEffect(() => {
+    if (alienMapDescContent?.content) {
+      setAlienMapDesc(alienMapDescContent.content);
+    }
+  }, [alienMapDescContent]);
+
+  useEffect(() => {
+    if (instagramBtnContent?.content) {
+      setInstagramBtnText(instagramBtnContent.content);
+    }
+  }, [instagramBtnContent]);
 
   const handleOpenCreate = () => {
     setEditingHotspot(null);
@@ -190,6 +214,9 @@ const Admin = () => {
   const handleSaveWizardInstagram = async () => {
     await updateSiteContent.mutateAsync({ key: "wizard_instagram_link", content: wizardInstagramLink });
     await updateSiteContent.mutateAsync({ key: "wizard_instagram_desc", content: wizardInstagramDesc });
+    await updateSiteContent.mutateAsync({ key: "alien_map_cta_title", content: alienMapTitle });
+    await updateSiteContent.mutateAsync({ key: "alien_map_cta_desc", content: alienMapDesc });
+    await updateSiteContent.mutateAsync({ key: "instagram_cta_btn", content: instagramBtnText });
   };
 
   if (authLoading || isLoading) {
@@ -622,25 +649,64 @@ const Admin = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="wizard_instagram_desc">Testo descrittivo CTA</Label>
+                    <Label htmlFor="wizard_instagram_desc">Testo descrittivo (legacy)</Label>
                     <div className="flex gap-2 items-start">
                       <Textarea
                         id="wizard_instagram_desc"
                         value={wizardInstagramDesc}
                         onChange={(e) => setWizardInstagramDesc(e.target.value)}
                         placeholder="Es: Hai bisogno di itinerari super specifici..."
-                        rows={3}
+                        rows={2}
                         className="flex-1"
                       />
                       <EmojiPicker onSelect={(emoji) => setWizardInstagramDesc(wizardInstagramDesc + emoji)} />
                     </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="alien_map_title">Titolo sezione CTA</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        id="alien_map_title"
+                        value={alienMapTitle}
+                        onChange={(e) => setAlienMapTitle(e.target.value)}
+                        placeholder="Vuoi una mappa ancora più aliena?"
+                        className="flex-1"
+                      />
+                      <EmojiPicker onSelect={(emoji) => setAlienMapTitle(alienMapTitle + emoji)} />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="alien_map_desc">Descrizione CTA</Label>
+                    <div className="flex gap-2 items-start">
+                      <Textarea
+                        id="alien_map_desc"
+                        value={alienMapDesc}
+                        onChange={(e) => setAlienMapDesc(e.target.value)}
+                        placeholder="Se dopo aver esplorato gli hotspot..."
+                        rows={3}
+                        className="flex-1"
+                      />
+                      <EmojiPicker onSelect={(emoji) => setAlienMapDesc(alienMapDesc + emoji)} />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="instagram_btn_text">Testo bottone</Label>
+                    <Input
+                      id="instagram_btn_text"
+                      value={instagramBtnText}
+                      onChange={(e) => setInstagramBtnText(e.target.value)}
+                      placeholder="Scrivimi su Instagram"
+                    />
                   </div>
                   <div className="flex justify-end">
                     <Button 
                       onClick={handleSaveWizardInstagram}
                       disabled={updateSiteContent.isPending || (
                         wizardInstagramLink === (wizardInstagramLinkContent?.content || "") &&
-                        wizardInstagramDesc === (wizardInstagramDescContent?.content || "")
+                        wizardInstagramDesc === (wizardInstagramDescContent?.content || "") &&
+                        alienMapTitle === (alienMapTitleContent?.content || "") &&
+                        alienMapDesc === (alienMapDescContent?.content || "") &&
+                        instagramBtnText === (instagramBtnContent?.content || "")
                       )}
                     >
                       {updateSiteContent.isPending && (
