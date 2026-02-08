@@ -21,10 +21,37 @@ OGNI testo, CTA, o contenuto visibile all'utente nel frontend DEVE:
 ```typescript
 // Nel componente frontend
 const { data: contentFromDB } = useSiteContent("chiave_contenuto");
+const { translatedText } = useTranslatedContent(contentFromDB?.content);
 const { t } = useLanguage();
 
-// Usa DB come fonte primaria, fallback a traduzione
-const displayText = contentFromDB?.content || t("chiaveFallback");
+// Usa contenuto tradotto dal DB, fallback a t() se DB vuoto
+const displayText = translatedText || t("chiaveFallback");
+```
+
+## ⚠️ Traduzione Obbligatoria dei Contenuti DB
+
+OGNI contenuto caricato da `site_content` **DEVE** essere tradotto tramite `useTranslatedContent()`:
+
+### Pattern CORRETTO ✅
+```typescript
+const { data: titleContent } = useSiteContent("titolo_cta");
+const { translatedText } = useTranslatedContent(titleContent?.content);
+const title = translatedText || t("fallbackKey");
+```
+
+### Pattern SBAGLIATO ❌
+```typescript
+// ERRORE: Il contenuto resta in italiano anche se l'utente seleziona EN
+const title = titleContent?.content || t("fallbackKey");
+```
+
+### Flusso Dati
+
+```text
+DB (italiano) → useTranslatedContent() → AI Translation → UI (lingua corrente)
+                     ↓
+               Se lingua = IT, ritorna originale
+               Se lingua = EN, traduce via Edge Function
 ```
 
 ## Verifica Pre-Deploy

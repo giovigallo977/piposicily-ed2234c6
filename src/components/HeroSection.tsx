@@ -37,9 +37,12 @@ const HeroSection = ({
     isLoading: missionPart2Loading
   } = useSiteContent("mission_part2");
 
-  // Translate mission content - only call hook with actual content
+  // Translate ALL database content
   const missionText = missionContent?.content || null;
   const missionPart2Text = missionPart2Content?.content || null;
+  const headlineText = heroHeadlineContent?.content || null;
+  const subtitleText = heroSubtitleContent?.content || null;
+
   const {
     translatedText: translatedMission,
     isTranslating: isTranslating1
@@ -48,10 +51,18 @@ const HeroSection = ({
     translatedText: translatedMissionPart2,
     isTranslating: isTranslating2
   } = useTranslatedContent(missionPart2Text);
+  const {
+    translatedText: translatedHeadline,
+    isTranslating: isTranslatingHeadline
+  } = useTranslatedContent(headlineText);
+  const {
+    translatedText: translatedSubtitle,
+    isTranslating: isTranslatingSubtitle
+  } = useTranslatedContent(subtitleText);
 
-  // Use database content or fallback to translations
-  const headline = heroHeadlineContent?.content || t("heroHeadline");
-  const subtitle = heroSubtitleContent?.content || t("heroSubheadline");
+  // Use translated DB content, fallback to t() if no DB content
+  const headline = translatedHeadline || t("heroHeadline");
+  const subtitle = translatedSubtitle || t("heroSubheadline");
 
   // Get first 5 hotspot main photos
   const carouselPhotos = hotspots?.slice(0, 5).map(h => h.foto_principale).filter((photo): photo is string => !!photo) ?? [];

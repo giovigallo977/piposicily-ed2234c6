@@ -7,6 +7,7 @@ import { useHotspots } from "@/hooks/useHotspots";
 import { useHotspotCategories, useSiteContent } from "@/hooks/useSiteContent";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedCategories } from "@/hooks/useTranslatedCategories";
+import { useTranslatedContent } from "@/hooks/useTranslation";
 import { Loader2 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 const ExplorePage = () => {
@@ -39,10 +40,15 @@ const ExplorePage = () => {
     data: instagramBtnContent
   } = useSiteContent("instagram_cta_btn");
   
+  // Translate DB content
+  const { translatedText: translatedTitle } = useTranslatedContent(alienMapTitleContent?.content);
+  const { translatedText: translatedDesc } = useTranslatedContent(alienMapDescContent?.content);
+  const { translatedText: translatedBtn } = useTranslatedContent(instagramBtnContent?.content);
+
   const instagramLink = instagramLinkContent?.content || "#";
-  const alienMapTitle = alienMapTitleContent?.content || t("alienMapCtaTitle");
-  const alienMapDesc = alienMapDescContent?.content || t("alienMapCtaDesc");
-  const instagramBtn = instagramBtnContent?.content || t("instagramCtaBtn");
+  const alienMapTitle = translatedTitle || t("alienMapCtaTitle");
+  const alienMapDesc = translatedDesc || t("alienMapCtaDesc");
+  const instagramBtn = translatedBtn || t("instagramCtaBtn");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   // Get filter from URL params
