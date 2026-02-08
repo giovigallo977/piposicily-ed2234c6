@@ -1,138 +1,145 @@
 
+# Piano: Traduzione Automatica Contenuti Database + DNA Update
 
-# Piano: Sincronizzazione Frontend-Backend per Nuove CTA
+## Problema Identificato
 
-## Problema identificato
+I contenuti caricati dal database (tabella `site_content`) sono in italiano e **non vengono tradotti** quando l'utente seleziona inglese. Attualmente:
 
-I testi delle nuove CTA Instagram (introdotte nell'ultima ottimizzazione) sono **hardcoded** nel `LanguageContext.tsx` invece di essere gestibili dal backend:
+| Componente | Contenuto | Usa `useTranslatedContent`? |
+|------------|-----------|---------------------------|
+| HeroSection | `mission`, `mission_part2` | ✅ Sì |
+| HeroSection | `headline`, `subtitle` | ❌ No |
+| WizardPage | `alien_map_cta_title`, `alien_map_cta_desc`, `instagram_cta_btn` | ❌ No |
+| ExplorePage | `alien_map_cta_title`, `alien_map_cta_desc`, `instagram_cta_btn` | ❌ No |
 
-| Testo | Stato attuale | Dove appare |
-|-------|---------------|-------------|
-| "Vuoi una mappa ancora più aliena?" | Hardcoded | WizardPage, ExplorePage |
-| "Se dopo aver esplorato gli hotspot..." | Hardcoded | WizardPage, ExplorePage |
-| "Scrivimi su Instagram" | Hardcoded | WizardPage, ExplorePage |
-
-Questo viola il principio del progetto: **ogni contenuto deve essere modificabile da admin senza toccare il codice**.
+**Conseguenza**: Quando l'utente cambia lingua in EN, questi testi restano in italiano.
 
 ---
 
-## Modifiche da implementare
+## Modifiche da Implementare
 
-### 1. Database: Nuove chiavi site_content
+### 1. HeroSection - Aggiungere traduzione per headline e subtitle
 
-Aggiungere 3 nuove chiavi nella tabella `site_content`:
+**File: `src/components/HeroSection.tsx`**
 
-| key | content (IT default) |
-|-----|----------------------|
-| `alien_map_cta_title` | Vuoi una mappa ancora più aliena? |
-| `alien_map_cta_desc` | Se dopo aver esplorato gli hotspot di Pipo vuoi un itinerario pensato solo per te, puoi sbloccare 1 mappa aliena segreta, scrivimi ALIENO in DM su Instagram |
-| `instagram_cta_btn` | Scrivimi su Instagram |
+Aggiungere hook di traduzione per `headline` e `subtitle`:
 
-### 2. Admin Panel: Espandere sezione Wizard Instagram
+```typescript
+// Aggiungi traduzione per headline e subtitle
+const { translatedText: translatedHeadline, isTranslating: isTranslatingHeadline } = 
+  useTranslatedContent(heroHeadlineContent?.content);
+const { translatedText: translatedSubtitle, isTranslating: isTranslatingSubtitle } = 
+  useTranslatedContent(heroSubtitleContent?.content);
 
-**File: `src/pages/Admin.tsx`**
-
-Nella card "Wizard Instagram" (righe 603-653), aggiungere 3 nuovi campi:
-
-```text
-Wizard Instagram (CTA fine funnel)
-├── Link Instagram          [esistente]
-├── Titolo sezione CTA      [NUOVO - "Vuoi una mappa ancora più aliena?"]
-├── Descrizione CTA         [NUOVO - "Se dopo aver esplorato..."]
-└── Testo bottone           [NUOVO - "Scrivimi su Instagram"]
+// Usa traduzione dal DB, oppure fallback a t()
+const headline = translatedHeadline || t("heroHeadline");
+const subtitle = translatedSubtitle || t("heroSubheadline");
 ```
 
-Modifiche tecniche:
-- Aggiungere `useSiteContent` per le 3 nuove chiavi
-- Aggiungere 3 nuovi state (`alienMapTitle`, `alienMapDesc`, `instagramBtnText`)
-- Aggiungere 3 nuovi `useEffect` per sincronizzare i valori
-- Aggiungere 3 nuovi campi Input/Textarea nella Card
-- Aggiornare `handleSaveWizardInstagram` per salvare tutti i campi
-
-### 3. Frontend: Leggere contenuti da database
+### 2. WizardPage - Aggiungere traduzione per CTA Instagram
 
 **File: `src/pages/WizardPage.tsx`**
 
-Aggiungere hook per leggere i contenuti:
 ```typescript
-const { data: alienMapTitleContent } = useSiteContent("alien_map_cta_title");
-const { data: alienMapDescContent } = useSiteContent("alien_map_cta_desc");
-const { data: instagramBtnContent } = useSiteContent("instagram_cta_btn");
+import { useTranslatedContent } from "@/hooks/useTranslation";
+
+// Aggiungi hook di traduzione
+const { translatedText: translatedTitle } = useTranslatedContent(alienMapTitleContent?.content);
+const { translatedText: translatedDesc } = useTranslatedContent(alienMapDescContent?.content);
+const { translatedText: translatedBtn } = useTranslatedContent(instagramBtnContent?.content);
+
+// Usa traduzione, fallback a t()
+const alienMapTitle = translatedTitle || t("alienMapCtaTitle");
+const alienMapDesc = translatedDesc || t("alienMapCtaDesc");
+const instagramBtn = translatedBtn || t("instagramCtaBtn");
 ```
 
-Sostituire i `t("...")` con i valori dal database (con fallback):
-```typescript
-const alienMapTitle = alienMapTitleContent?.content || t("alienMapCtaTitle");
-const alienMapDesc = alienMapDescContent?.content || t("alienMapCtaDesc");
-const instagramBtn = instagramBtnContent?.content || t("instagramCtaBtn");
-```
+### 3. ExplorePage - Stesse modifiche di WizardPage
 
 **File: `src/pages/ExplorePage.tsx`**
 
-Stesse modifiche del WizardPage.
+Applicare lo stesso pattern del WizardPage.
 
-### 4. DNA del progetto: Documentare il principio
+---
 
-**Nuovo file: `.knowledge/structure/backend-sync-principle.md`**
+## 4. DNA del Progetto - Aggiornare documentazione
 
-Creare documentazione che sancisce la regola immutabile:
+**File: `.knowledge/structure/backend-sync-principle.md`**
+
+Aggiungere sezione sulla traduzione obbligatoria:
 
 ```markdown
-# Principio di Sincronizzazione Frontend-Backend
+## Traduzione Obbligatoria dei Contenuti DB
 
-## Regola Fondamentale
-OGNI testo, CTA, o contenuto visibile all'utente nel frontend DEVE:
-1. Avere una chiave corrispondente nel database (site_content)
-2. Essere modificabile dal pannello admin
-3. Usare fallback dal LanguageContext solo come default
+OGNI contenuto caricato da `site_content` DEVE essere tradotto:
 
-## Flusso Obbligatorio per Nuove Feature
-1. Creare chiave(i) in site_content
-2. Aggiungere campo(i) nell'admin panel
-3. Nel componente, leggere dal DB con fallback a t()
-4. MAI lasciare testi hardcoded senza gestione backend
+### Pattern di Implementazione
 
-## Verifica Pre-Deploy
-Prima di considerare una feature completa, verificare:
-- [ ] Tutti i testi sono in site_content
-- [ ] L'admin può modificarli
-- [ ] I componenti leggono dal DB
+// Sbagliato - il contenuto resta in italiano
+const title = titleContent?.content || t("fallbackKey");
+
+// Corretto - il contenuto viene tradotto via AI
+const { translatedText } = useTranslatedContent(titleContent?.content);
+const title = translatedText || t("fallbackKey");
+
+
+### Flusso Dati
+
+DB (italiano) → useTranslatedContent() → AI Translation → UI (lingua corrente)
+                     ↓
+               Se lingua = IT, ritorna originale
+               Se lingua = EN, traduce via Edge Function
+```
+
+**File: `.knowledge/structure/design-principles.md`**
+
+Aggiornare sezione "Sistema Multilingua" con regola esplicita:
+
+```markdown
+### Contenuti da Database
+- OGNI contenuto da `site_content` DEVE usare `useTranslatedContent()`
+- Il fallback `t("chiave")` viene usato SOLO se il DB non ha contenuto
+- Il fallback è GIA tradotto (viene da LanguageContext)
 ```
 
 ---
 
-## File da modificare
+## 5. File da Modificare
 
 | File | Azione |
 |------|--------|
-| `src/pages/Admin.tsx` | Aggiungere 3 nuovi campi nella sezione Wizard Instagram |
-| `src/pages/WizardPage.tsx` | Usare `useSiteContent` invece di `t()` per i 3 testi CTA |
-| `src/pages/ExplorePage.tsx` | Usare `useSiteContent` invece di `t()` per i 3 testi CTA |
-| `.knowledge/structure/backend-sync-principle.md` | CREARE - documentazione principio |
-| `.knowledge/structure/design-principles.md` | Aggiungere riferimento al nuovo principio |
+| `src/components/HeroSection.tsx` | Aggiungere `useTranslatedContent` per headline e subtitle |
+| `src/pages/WizardPage.tsx` | Aggiungere `useTranslatedContent` per le 3 CTA |
+| `src/pages/ExplorePage.tsx` | Aggiungere `useTranslatedContent` per le 3 CTA |
+| `.knowledge/structure/backend-sync-principle.md` | Aggiungere sezione traduzione obbligatoria |
+| `.knowledge/structure/design-principles.md` | Aggiornare regole multilingua |
 
 ---
 
-## Flusso dati finale
+## 6. Logica di Fallback Corretta
 
 ```text
-ADMIN PANEL                          DATABASE                         FRONTEND
-     │                                   │                                │
-     ├── Titolo CTA ───────────────────► alien_map_cta_title ──────────► WizardPage
-     ├── Descrizione CTA ──────────────► alien_map_cta_desc ───────────► ExplorePage
-     └── Testo bottone ────────────────► instagram_cta_btn ────────────► (entrambi)
+Passo 1: Carica contenuto da DB (site_content)
+         ↓
+Passo 2: Se esiste contenuto DB:
+           → Passa a useTranslatedContent()
+           → Se lingua IT: ritorna originale
+           → Se lingua EN: traduce via Edge Function
+         ↓
+Passo 3: Se NON esiste contenuto DB:
+           → Usa t("chiaveLanguageContext")
+           → Già tradotto automaticamente
 ```
 
 ---
 
-## Note tecniche
+## 7. Verifica Post-Implementazione
 
-### Traduzioni multilingua
-I contenuti da database sono in italiano (lingua primaria). Per la versione inglese:
-- Manteniamo i fallback nel `LanguageContext` che verranno usati se non c'è contenuto DB
-- In futuro si potrebbe estendere site_content con chiavi `_en` (es: `alien_map_cta_title_en`)
+Per confermare che tutto funziona:
 
-### Backward compatibility
-- I fallback `t("alienMapCtaTitle")` garantiscono che il sito funzioni anche senza dati nel DB
-- Al primo save dall'admin, i valori verranno scritti nel database
-
+1. Vai su `/` (homepage)
+2. Verifica che headline, subtitle e mission siano in italiano
+3. Cambia lingua in EN (toggle in header)
+4. Verifica che headline, subtitle e mission diventino in inglese
+5. Vai su `/wizard` e verifica che la sezione CTA Instagram sia tradotta
+6. Vai su `/esplora` e verifica che sezione finale e footer siano tradotti
