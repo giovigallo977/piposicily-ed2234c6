@@ -93,11 +93,24 @@ OGNI testo visibile all'utente DEVE usare il sistema di traduzione:
 - **Contenuti dinamici (DB)**: Usare `useTranslatedContent()` o `useTranslatedHotspot()`
 - **aria-label**: Usare `t("backLabel")` invece di stringhe hardcoded
 
+### ⚠️ Contenuti da Database (site_content) - CRITICO
+- OGNI contenuto da `site_content` **DEVE** usare `useTranslatedContent()`
+- Il fallback `t("chiave")` viene usato SOLO se il DB non ha contenuto
+- Il fallback è GIÀ tradotto (viene da LanguageContext)
+
+**Pattern obbligatorio:**
+```typescript
+const { data: content } = useSiteContent("chiave_db");
+const { translatedText } = useTranslatedContent(content?.content);
+const displayValue = translatedText || t("fallbackKey");
+```
+
 ### Regole per Nuove Feature
 1. Prima di scrivere testo, aggiungere la chiave in `LanguageContext.tsx`
 2. Aggiungere SEMPRE entrambe le traduzioni (it + en)
 3. Usare chiavi semantiche: `wizardTitle`, `heroSubheadline`, non `text1`
 4. Contenuti admin possono restare in italiano (interfaccia interna)
+5. **Contenuti da DB**: SEMPRE passare attraverso `useTranslatedContent()`
 
 ### Contenuti che NON richiedono traduzione
 - Nomi propri (Pipo, Sicilia, nomi località)
