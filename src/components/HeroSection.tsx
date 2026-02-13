@@ -27,7 +27,6 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
   const { data: heroSubtitleContent } = useSiteContent("hero_subtitle");
   const { data: exploreCtaContent } = useSiteContent("explore_cta_text");
   const { data: missionContent } = useSiteContent("mission");
-  const { data: missionPart2Content } = useSiteContent("mission_part2");
 
   // Category images from DB
   const { data: catImgLuoghi } = useSiteContent("cat_image_luoghi_fantasma");
@@ -159,7 +158,6 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
         {/* Mission Content from DB */}
         <MissionSection
           missionContent={missionContent?.content}
-          missionPart2Content={missionPart2Content?.content}
         />
       </div>
     </section>
