@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { ChevronDown } from "lucide-react";
+
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useHotspots } from "@/hooks/useHotspots";
 import { useSiteContent } from "@/hooks/useSiteContent";
@@ -137,7 +137,7 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
         {/* Collezioni Card - full width */}
         <div className="mt-3 w-full max-w-lg md:mx-auto">
           <button
-            onClick={() => navigate("/esplora")}
+            onClick={() => handleCategoryClick("Collezioni")}
             className="relative w-full aspect-[16/9] rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
           >
             {collezioniImage ? (
@@ -154,11 +154,6 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
               Collezioni
             </span>
           </button>
-        </div>
-
-        {/* Scroll indicator */}
-        <div className="flex justify-center mt-10">
-          <ChevronDown className="w-6 h-6 text-foreground/40 animate-bounce" />
         </div>
 
         {/* Mission Content from DB */}

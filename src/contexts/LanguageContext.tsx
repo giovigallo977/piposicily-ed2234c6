@@ -51,21 +51,9 @@ export const translations = {
     languageIt: "Italiano",
     languageEn: "English",
     
-    // Claim labels
-    claimTiAiuta: "TI AIUTA A:",
-    claimQuando: "QUANDO:",
-    claimRisolve: "RISOLVE:",
-    claimCome: "COME:",
-    
-    // Explore page
-    foundResults: "Trovati",
-    results: "risultati",
-    
     // Hero section
     heroHeadline: "Esplorazioni aliene in Sicilia",
     heroSubheadline: "Ti mostro posti iper selezionati, lontani dal turismo di massa. Tu scegli, io ti porto fuori dai radar in 30 secondi.",
-    heroSecondaryCtaBtn: "esplora gli hotspot di pipo",
-    heroSecondaryCtaSublabel: "Scopri gli hotspot alieni in base al tuo mood e alla zona che vuoi esplorare.",
     
     // Category grid
     exploreCta: "Esplora gli itinerari di Pipo",
@@ -115,21 +103,9 @@ export const translations = {
     languageIt: "Italiano",
     languageEn: "English",
     
-    // Claim labels
-    claimTiAiuta: "IT HELPS YOU:",
-    claimQuando: "WHEN:",
-    claimRisolve: "IT SOLVES:",
-    claimCome: "HOW:",
-    
-    // Explore page
-    foundResults: "Found",
-    results: "results",
-    
     // Hero section
     heroHeadline: "Alien Explorations in Sicily",
     heroSubheadline: "I show you ultra-selected places, far from mass tourism. You choose, I take you off the radar in 30 seconds.",
-    heroSecondaryCtaBtn: "explore pipo's hotspots",
-    heroSecondaryCtaSublabel: "Discover alien hotspots based on your mood and the area you want to explore.",
     
     // Category grid
     exploreCta: "Explore Pipo's itineraries",
