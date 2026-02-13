@@ -1,83 +1,29 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ChevronsLeft, Filter } from "lucide-react";
-import pipoAlien from "@/assets/pipo-alien-new.png";
 import HotspotCard from "@/components/HotspotCard";
 import { useHotspots } from "@/hooks/useHotspots";
-import { useHotspotCategories, useSiteContent } from "@/hooks/useSiteContent";
+import { useHotspotCategories } from "@/hooks/useSiteContent";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedCategories } from "@/hooks/useTranslatedCategories";
-import { useTranslatedContent } from "@/hooks/useTranslation";
 import { Loader2 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+
 const ExplorePage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const {
-    data: hotspots,
-    isLoading,
-    error
-  } = useHotspots();
-  const {
-    data: categories = []
-  } = useHotspotCategories();
-  const {
-    t
-  } = useLanguage();
-  const {
-    translatedCategories
-  } = useTranslatedCategories(categories);
-  const {
-    data: instagramLinkContent
-  } = useSiteContent("wizard_instagram_link");
-  const {
-    data: alienMapTitleContent
-  } = useSiteContent("alien_map_cta_title");
-  const {
-    data: alienMapDescContent
-  } = useSiteContent("alien_map_cta_desc");
-  const {
-    data: instagramBtnContent
-  } = useSiteContent("instagram_cta_btn");
-  
-  // Translate DB content
-  const { translatedText: translatedTitle } = useTranslatedContent(alienMapTitleContent?.content);
-  const { translatedText: translatedDesc } = useTranslatedContent(alienMapDescContent?.content);
-  const { translatedText: translatedBtn } = useTranslatedContent(instagramBtnContent?.content);
+  const { data: hotspots, isLoading, error } = useHotspots();
+  const { data: categories = [] } = useHotspotCategories();
+  const { t } = useLanguage();
+  const { translatedCategories } = useTranslatedCategories(categories);
 
-  const instagramLink = instagramLinkContent?.content || "#";
-  const alienMapTitle = translatedTitle || t("alienMapCtaTitle");
-  const alienMapDesc = translatedDesc || t("alienMapCtaDesc");
-  const instagramBtn = translatedBtn || t("instagramCtaBtn");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  // Get filter from URL params
-  const zonaParam = searchParams.get("zona");
-  const moodParam = searchParams.get("mood");
   const categoriaParam = searchParams.get("categoria");
 
-  // Determine the source step for back navigation
-  const getBackDestination = () => {
-    if (categoriaParam) {
-      return "/";
-    }
-    if (moodParam) {
-      return "/wizard?step=mood";
-    } else if (zonaParam) {
-      return "/wizard?step=zona";
-    }
-    return "/wizard";
-  };
   const filteredHotspots = useMemo(() => {
     if (!hotspots) return [];
     let result = hotspots;
-    if (zonaParam) {
-      result = result.filter(h => h.zona === zonaParam);
-    }
-    if (moodParam) {
-      // Check if any tag (trimmed) matches the mood param
-      result = result.filter(h => h.tags?.some(tag => tag.trim() === moodParam));
-    }
     if (categoriaParam) {
       result = result.filter(h => h.categoria === categoriaParam);
     }
@@ -85,11 +31,14 @@ const ExplorePage = () => {
       result = result.filter(h => h.categoria === selectedCategory);
     }
     return result;
-  }, [hotspots, zonaParam, moodParam, categoriaParam, selectedCategory]);
+  }, [hotspots, categoriaParam, selectedCategory]);
+
   const handleBack = () => {
-    navigate(getBackDestination());
+    navigate("/");
   };
-  return <div className="min-h-screen bg-background">
+
+  return (
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-background py-4 px-6 flex items-center justify-between">
         <button onClick={handleBack} className="p-2 transition-all duration-200 hover:scale-110" aria-label={t("backLabel")}>
@@ -109,61 +58,61 @@ const ExplorePage = () => {
             <DropdownMenuItem onClick={() => setSelectedCategory(null)} className={`cursor-pointer font-sans ${!selectedCategory ? "bg-muted" : ""}`}>
               {t("allCategories")}
             </DropdownMenuItem>
-            {categories.map((category, index) => <DropdownMenuItem key={category} onClick={() => setSelectedCategory(category)} className={`cursor-pointer font-sans ${selectedCategory === category ? "bg-muted" : ""}`}>
+            {categories.map((category, index) => (
+              <DropdownMenuItem key={category} onClick={() => setSelectedCategory(category)} className={`cursor-pointer font-sans ${selectedCategory === category ? "bg-muted" : ""}`}>
                 {translatedCategories[index] || category}
-              </DropdownMenuItem>)}
+              </DropdownMenuItem>
+            ))}
           </DropdownMenuContent>
         </DropdownMenu>
       </header>
 
       {/* Active filters display */}
-      {(zonaParam || moodParam || selectedCategory) && <div className="px-6 py-2 flex flex-wrap gap-2 justify-center">
-          {zonaParam && <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-olive text-white font-sans">
-              📍 {zonaParam}
-            </span>}
-          {moodParam && <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-olive text-white font-sans">
-              🎭 {moodParam}
-            </span>}
-          {selectedCategory && <button onClick={() => setSelectedCategory(null)} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-black text-white font-sans">
-              {selectedCategory}
-              <span className="ml-1">×</span>
-            </button>}
-        </div>}
+      {selectedCategory && (
+        <div className="px-6 py-2 flex flex-wrap gap-2 justify-center">
+          <button onClick={() => setSelectedCategory(null)} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-black text-white font-sans">
+            {selectedCategory}
+            <span className="ml-1">×</span>
+          </button>
+        </div>
+      )}
 
       {/* Content */}
       <main className="container mx-auto px-4 py-6 pb-24">
         <div className="max-w-6xl mx-auto">
-          {isLoading && <div className="flex justify-center py-12">
+          {isLoading && (
+            <div className="flex justify-center py-12">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>}
+            </div>
+          )}
           
-          {error && <div className="text-center py-12 text-muted-foreground">
+          {error && (
+            <div className="text-center py-12 text-muted-foreground">
               <p>{t("loadingHotspotsError")}</p>
-            </div>}
+            </div>
+          )}
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredHotspots.map((hotspot, index) => <HotspotCard key={hotspot.id} hotspot={hotspot} index={index} locked={index >= 3} />)}
+            {filteredHotspots.map((hotspot, index) => (
+              <HotspotCard key={hotspot.id} hotspot={hotspot} index={index} locked={index >= 3} />
+            ))}
           </div>
           
-          {!isLoading && filteredHotspots.length === 0 && hotspots && hotspots.length > 0 && <div className="text-center py-12 text-muted-foreground font-sans italic">
+          {!isLoading && filteredHotspots.length === 0 && hotspots && hotspots.length > 0 && (
+            <div className="text-center py-12 text-muted-foreground font-sans italic">
               <p>{t("noHotspotsCategory")}</p>
-            </div>}
+            </div>
+          )}
           
-          {!isLoading && hotspots?.length === 0 && <div className="text-center py-12 text-muted-foreground font-sans italic">
+          {!isLoading && hotspots?.length === 0 && (
+            <div className="text-center py-12 text-muted-foreground font-sans italic">
               <p>{t("noHotspots")}</p>
-            </div>}
-
+            </div>
+          )}
         </div>
       </main>
-
-      {/* Fixed CTA bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.1)] py-4 px-6">
-        <div className="flex justify-center">
-          <a href={instagramLink} target="_blank" rel="noopener noreferrer" className="px-6 py-3 text-white font-bold rounded-full transition-transform duration-200 hover:scale-105 font-sans bg-fuchsia-700">
-            {instagramBtn}
-          </a>
-        </div>
-      </div>
-    </div>;
+    </div>
+  );
 };
+
 export default ExplorePage;

@@ -9,7 +9,6 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
 import Mission from "./pages/Mission";
-import WizardPage from "./pages/WizardPage";
 import ExplorePage from "./pages/ExplorePage";
 import NotFound from "./pages/NotFound";
 
@@ -25,7 +24,6 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
-              <Route path="/wizard" element={<WizardPage />} />
               <Route path="/esplora" element={<ExplorePage />} />
               <Route path="/missione" element={<Mission />} />
               <Route path="/auth" element={<Auth />} />
