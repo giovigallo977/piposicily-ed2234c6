@@ -1,47 +1,70 @@
 
 
-# Piano: Hotspot bloccati dal 4o in poi con effetto glass/blur
+# Piano: Pulizia codice e ottimizzazione mobile-first
 
-## Cosa cambia
+## Cosa viene rimosso
 
-Nella pagina Esplora, i primi 3 hotspot di ogni lista filtrata saranno visibili normalmente. Dal 4o hotspot in poi, le card saranno "oscurate" con un effetto vetro opaco (glassmorphism + blur) che lascia intuire la presenza del contenuto ma impedisce di leggerlo. Sopra l'effetto blur apparira un overlay con un'icona lucchetto e un invito all'acquisto.
+### 1. File `src/App.css` - ELIMINARE
+Boilerplate Vite (`.logo`, `.read-the-docs`, `#root` con `max-width` e `padding`). Non e importato da nessuna parte. File completamente inutile.
 
-## Dettagli tecnici
+### 2. Font inutilizzati in `src/index.css`
+Molti font caricati da Google Fonts non sono mai usati nel codice:
+- **Playfair Display** - mai usato
+- **Bebas Neue** - mai usato
+- **Suez One** - mai usato
+- **Young Serif** - mai usato
+- **Cardo** - mai usato
+- **Cinzel** - mai usato
+- **Eczar** - mai usato
+- **Rubik Lines** - mai usato (solo Rubik Bubbles serve)
 
-### `src/components/HotspotCard.tsx`
+Mantenere solo: **Inter**, **Nunito**, **Roboto Mono**, **Rubik Bubbles**.
+Questo riduce il tempo di caricamento della pagina in modo significativo.
 
-Aggiungere una nuova prop `locked?: boolean`.
+### 3. Colori CSS inutilizzati in `src/index.css`
+Nessun componente usa questi colori: `forest-green`, `magenta`, `lavender-vivid`, `sunny-yellow`, `mint`, `lavender`, `warm-yellow`. Rimuoverli dalle variabili CSS e dal tailwind config.
 
-Quando `locked` e `true`:
-- L'intera card viene avvolta in un contenitore `relative`
-- Sopra la card viene sovrapposto un div con:
-  - `backdrop-blur-md` per sfuocare il contenuto sottostante
-  - `bg-white/60` per l'effetto vetro opaco
-  - `rounded-3xl` per seguire i bordi della card
-  - `absolute inset-0 z-10` per coprire tutto
-- Al centro dell'overlay: icona Lock (da lucide-react), testo "Sblocca questa categoria" e un bottone CTA
-- L'espansione (+/-), il click sulla galleria e tutti i link sono disabilitati quando `locked`
-- Il bottone CTA puo linkare a una pagina acquisto futura o mostrare un messaggio placeholder
+### 4. Font families inutilizzati in `tailwind.config.ts`
+Rimuovere: `display` (Playfair), `claim` (Bebas Neue), `friendly` (duplica Nunito/body), `serif`. Mantenere: `sans`, `brand`, `heading`, `body`, `mono`, `bubbles`.
 
-### `src/pages/ExplorePage.tsx`
+### 5. Tema dark in `src/index.css`
+L'app non usa dark mode (nessun toggle, nessuna classe `.dark` nel codice app). Rimuovere il blocco `.dark { ... }` per snellire il CSS. I componenti UI shadcn che lo referenziano non ne sono impattati.
 
-Nella griglia dove si mappano i `filteredHotspots`, passare la prop `locked={index >= 3}` a ogni `HotspotCard`:
+### 6. Font extra in `index.html`
+Rimuovere i link a font non usati:
+- `fonts.cdnfonts.com/css/more-sugar` - non usato
+- `fonts.cdnfonts.com/css/dreaming-outloud-sans` - non usato
+- `fonts.googleapis.com/css2?family=Oswald` - non usato
+- `use.typekit.net/fyc2qfe.css` - non usato
 
-```
-filteredHotspots.map((hotspot, index) => (
-  <HotspotCard key={hotspot.id} hotspot={hotspot} index={index} locked={index >= 3} />
-))
-```
+---
+
+## Cosa viene ottimizzato per mobile-first
+
+### 7. `src/pages/Index.tsx` - Rimuovere padding desktop
+Il `pb-16` e sufficiente. Aggiungere `overflow-x-hidden` per evitare scroll orizzontale su mobile.
+
+### 8. `src/pages/ExplorePage.tsx` - Padding mobile
+Verificare che la griglia sia single-column su mobile (gia `grid-cols-1`). Aggiungere `pb-24` per spazio sotto la CTA bar fissa (gia presente).
+
+### 9. `src/components/HotspotCard.tsx` - Touch target
+I bottoni di espansione (+/-) hanno gia `w-11 h-11` (44px), conforme alle linee guida touch. OK.
+
+---
 
 ## File coinvolti
 
-| File | Modifica |
-|------|----------|
-| `src/components/HotspotCard.tsx` | Aggiungere prop `locked`, overlay glass blur con CTA, disabilitare interazioni |
-| `src/pages/ExplorePage.tsx` | Passare `locked={index >= 3}` alle card |
+| File | Azione |
+|------|--------|
+| `src/App.css` | Eliminare completamente |
+| `src/index.css` | Rimuovere font inutilizzati, colori inutilizzati, tema dark |
+| `index.html` | Rimuovere link a font esterni non usati |
+| `tailwind.config.ts` | Rimuovere font families e colori inutilizzati |
 
-## Comportamento visivo
+## Cosa NON cambia
 
-- Card 1, 2, 3: normali, completamente visibili e interattive
-- Card 4, 5, 6...: visibili ma sfuocate/opache, con overlay "Sblocca" sopra, non cliccabili
+- Tutte le pagine e i componenti funzionali (Admin, HeroSection, HotspotCard, Wizard, Explore, Mission)
+- Il layout e la struttura delle card
+- Il sistema di traduzione e i hook
+- Il backend e la tabella site_content
 
