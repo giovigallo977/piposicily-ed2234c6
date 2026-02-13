@@ -54,9 +54,13 @@ const ExplorePage = () => {
   // Get filter from URL params
   const zonaParam = searchParams.get("zona");
   const moodParam = searchParams.get("mood");
+  const categoriaParam = searchParams.get("categoria");
 
   // Determine the source step for back navigation
   const getBackDestination = () => {
+    if (categoriaParam) {
+      return "/";
+    }
     if (moodParam) {
       return "/wizard?step=mood";
     } else if (zonaParam) {
@@ -74,11 +78,14 @@ const ExplorePage = () => {
       // Check if any tag (trimmed) matches the mood param
       result = result.filter(h => h.tags?.some(tag => tag.trim() === moodParam));
     }
+    if (categoriaParam) {
+      result = result.filter(h => h.categoria === categoriaParam);
+    }
     if (selectedCategory) {
       result = result.filter(h => h.categoria === selectedCategory);
     }
     return result;
-  }, [hotspots, zonaParam, moodParam, selectedCategory]);
+  }, [hotspots, zonaParam, moodParam, categoriaParam, selectedCategory]);
   const handleBack = () => {
     navigate(getBackDestination());
   };

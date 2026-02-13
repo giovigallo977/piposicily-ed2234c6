@@ -82,6 +82,13 @@ export const translations = {
     alienMapCtaTitle: "Vuoi una mappa ancora più aliena?",
     alienMapCtaDesc: "Se dopo aver esplorato gli hotspot di Pipo vuoi un itinerario pensato solo per te, puoi sbloccare 1 mappa aliena segreta, scrivimi ALIENO in DM su Instagram",
     instagramCtaBtn: "Scrivimi su Instagram",
+    
+    // Category grid
+    exploreCta: "Esplora gli itinerari di Pipo",
+    catLuoghiFantasma: "Luoghi Fantasma",
+    catNatura: "Natura",
+    catBorghi: "Borghi",
+    catArteECultura: "Arte e Cultura",
   },
   en: {
     // Navigation
@@ -155,6 +162,13 @@ export const translations = {
     alienMapCtaTitle: "Want an even more alien map?",
     alienMapCtaDesc: "If after exploring Pipo's hotspots you want an itinerary designed just for you, you can unlock 1 secret alien map, DM me ALIENO on Instagram",
     instagramCtaBtn: "DM me on Instagram",
+    
+    // Category grid
+    exploreCta: "Explore Pipo's itineraries",
+    catLuoghiFantasma: "Ghost Places",
+    catNatura: "Nature",
+    catBorghi: "Villages",
+    catArteECultura: "Art & Culture",
   },
 } as const;
 
