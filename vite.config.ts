@@ -51,12 +51,10 @@ export default defineConfig(({ mode }) => ({
         ],
       },
       workbox: {
-        // Auto-update: skip waiting and claim clients immediately
         skipWaiting: true,
         clientsClaim: true,
-        // Clean old caches on update
         cleanupOutdatedCaches: true,
-        // Runtime caching for API calls
+        navigateFallbackDenylist: [/^\/~oauth/],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/.*\.supabase\.co\/.*/i,
@@ -65,7 +63,7 @@ export default defineConfig(({ mode }) => ({
               cacheName: "supabase-api-cache",
               expiration: {
                 maxEntries: 50,
-                maxAgeSeconds: 60 * 5, // 5 minutes
+                maxAgeSeconds: 60 * 5,
               },
             },
           },
@@ -76,7 +74,7 @@ export default defineConfig(({ mode }) => ({
               cacheName: "image-cache",
               expiration: {
                 maxEntries: 100,
-                maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days
+                maxAgeSeconds: 60 * 60 * 24 * 7,
               },
             },
           },
