@@ -1,75 +1,42 @@
 
 
-# Piano: Nuovo Layout Homepage
+# Piano: Aggiungere scheda "Collezioni" e testo mission statico + freccia scroll
 
 ## Cosa cambia
 
-La homepage attuale ha: Logo+Header > Headline > Subtitle > CTA button (fuchsia) > Carousel foto > Mission text > CTA secondaria > Mission part 2.
+Sotto la griglia 2x2 delle categorie, aggiungere:
 
-Il nuovo layout da mockup: Logo "Pipo" centrato > Headline (hero) > Subtitle (sotto-hero) > CTA testo "Esplora gli itinerari di Pipo" > Griglia 2x2 con 4 categorie (foto quadrate, bordi arrotondati, titolo bianco sovrapposto) > Mission content ("chi e pipo" etc.)
+1. **Una quinta scheda "Collezioni"** - stile identico alle 4 categorie (foto quadrata, bordi arrotondati, titolo bianco sovrapposto), a larghezza piena sotto la griglia 2x2
+2. **Testo mission lungo e statico** - tutto il contenuto "Chi e Pipo", "Cosa fa Pipo", "Per chi e Pipo", etc. scritto direttamente nel componente, in formato verticale mobile-first
+3. **Freccia scroll-down** - una piccola freccia in basso alla pagina che indica di scorrere per leggere il contenuto
 
-Le 4 categorie sono:
-- **Luoghi Fantasma**
-- **Natura**
-- **Borghi**
-- **Arte e Cultura**
+## Rimuovere
 
-Ogni foto porta alla pagina `/esplora` filtrata per quella categoria.
-
----
+- La sezione Mission attuale che carica da database (`useSiteContent("mission")` e `useSiteContent("mission_part2")`) e tutti gli hook correlati (`translatedMission`, `translatedMissionPart2`, `isTranslating1`, `isTranslating2`)
+- Il bottone CTA secondario ("esplora gli hotspot di pipo")
 
 ## Modifiche tecniche
 
-### 1. `src/components/HeroSection.tsx`
+### `src/components/HeroSection.tsx`
 
-Ristrutturare il componente mantenendo tutti gli hook e la logica di traduzione esistente:
+- **Aggiungere** dopo la griglia 2x2: una scheda "Collezioni" a larghezza piena (stessa estetica delle altre 4 card - rounded-2xl, aspect ratio piu basso tipo 16:9, titolo bianco sovrapposto). Click naviga a `/esplora` senza filtro categoria.
+- **Sostituire** la sezione Mission dinamica con il testo statico fornito, strutturato con titoli in bold e paragrafi. Ogni sezione ("Chi e Pipo", "Cosa fa Pipo", etc.) sara un blocco con titolo `h2` e testo sotto.
+- **Aggiungere** una piccola freccia animata (ChevronDown da lucide-react) in fondo alla pagina, centrata, che pulsa leggermente per indicare che c'e contenuto sotto.
+- **Rimuovere** gli hook `useSiteContent("mission")`, `useSiteContent("mission_part2")` e le relative traduzioni, dato che il testo e ora hardcoded.
+- **Rimuovere** il bottone CTA secondario e la prop `onCtaClick` (non piu necessaria).
 
-- **Rimuovere**: il carousel orizzontale delle foto hotspot
-- **Rimuovere**: il bottone CTA fuchsia arrotondato
-- **Aggiungere**: testo CTA "Esplora gli itinerari di Pipo" (in bold/italic, centrato, come nel mockup)
-- **Aggiungere**: griglia 2x2 con 4 card categoria
-  - Ogni card: immagine quadrata (aspect-ratio 1:1), bordi arrotondati (~16-20px), titolo bianco in basso a sinistra sovrapposto all'immagine
-  - Le 4 categorie hardcoded: "Luoghi Fantasma", "Natura", "Borghi", "Arte e Cultura"
-  - Click su ogni card naviga a `/esplora?categoria=NomeCategoria`
-  - Le immagini verranno prese dai primi hotspot di ciascuna categoria (dal DB) oppure placeholder
-- **Mantenere**: la sezione Mission (chi e pipo, etc.) sotto la griglia
-- **Mantenere**: tutta la logica di traduzione esistente
+### `src/pages/Index.tsx`
 
-### 2. `src/pages/ExplorePage.tsx`
+- Rimuovere la prop `onCtaClick` e la funzione `handleOpenWizard` dato che il bottone CTA secondario viene rimosso dal HeroSection.
 
-Aggiungere supporto per il parametro URL `categoria`:
+### Struttura del testo mission
 
-- Leggere `searchParams.get("categoria")`
-- Filtrare gli hotspot per `h.categoria === categoriaParam`
-- Aggiornare la logica `getBackDestination()` per gestire il ritorno dalla categoria
-
-### 3. `src/contexts/LanguageContext.tsx`
-
-Aggiungere le traduzioni per le 4 categorie e il nuovo testo CTA:
-
-```
-exploreCta: "Esplora gli itinerari di Pipo" / "Explore Pipo's itineraries"
-catLuoghiFantasma: "Luoghi Fantasma" / "Ghost Places"
-catNatura: "Natura" / "Nature"
-catBorghi: "Borghi" / "Villages"
-catArteECultura: "Arte e Cultura" / "Art & Culture"
-```
-
----
+Il testo verra organizzato in sezioni con titoli bold, testo normale, e liste puntate dove indicato. Layout verticale, mobile-first, testo allineato a sinistra.
 
 ## File coinvolti
 
 | File | Modifica |
 |------|----------|
-| `src/components/HeroSection.tsx` | Rimuovere carousel, aggiungere griglia 2x2 categorie |
-| `src/pages/ExplorePage.tsx` | Supporto filtro per parametro `categoria` nell'URL |
-| `src/contexts/LanguageContext.tsx` | Nuove chiavi di traduzione per categorie e CTA |
-
-## Cosa NON cambia
-
-- MinimalHeader (logo "Pipo" + selettore lingua) resta invariato
-- Tutta la logica di traduzione e gli hook `useTranslatedContent`
-- La sezione Mission sotto la griglia
-- Il routing generale dell'app
-- Il design system (colori, font, variabili CSS)
+| `src/components/HeroSection.tsx` | Aggiungere scheda Collezioni, testo mission statico, freccia scroll, rimuovere mission dinamica |
+| `src/pages/Index.tsx` | Rimuovere handleOpenWizard e prop onCtaClick |
 
