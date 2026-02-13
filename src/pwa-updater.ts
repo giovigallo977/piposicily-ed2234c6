@@ -1,31 +1,63 @@
 // PWA Auto-Update Handler
-// This module ensures the PWA updates automatically without user intervention
+// Ensures the PWA updates automatically and silently for all users
+
+const UPDATE_INTERVAL_MS = 30 * 1000; // Check every 30 seconds
 
 export const registerPWAUpdater = () => {
-  if ("serviceWorker" in navigator) {
-    // Listen for service worker updates
-    navigator.serviceWorker.addEventListener("controllerchange", () => {
-      // New service worker has taken control - reload to get new content
-      window.location.reload();
-    });
+  if (!("serviceWorker" in navigator)) return;
 
-    // Check for updates periodically (every 60 seconds)
-    setInterval(async () => {
-      const registration = await navigator.serviceWorker.getRegistration();
-      if (registration) {
-        await registration.update();
-      }
-    }, 60 * 1000);
-  }
+  // When a new SW takes control, reload immediately to serve fresh content
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    window.location.reload();
+  });
+
+  // Periodic update check
+  setInterval(async () => {
+    try {
+      const reg = await navigator.serviceWorker.getRegistration();
+      await reg?.update();
+    } catch {
+      // Silently ignore network errors
+    }
+  }, UPDATE_INTERVAL_MS);
+
+  // If a waiting SW exists on load, activate it right away
+  navigator.serviceWorker.getRegistration().then((reg) => {
+    if (reg?.waiting) {
+      reg.waiting.postMessage({ type: "SKIP_WAITING" });
+    }
+    reg?.addEventListener("updatefound", () => {
+      const newWorker = reg.installing;
+      newWorker?.addEventListener("statechange", () => {
+        if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+          newWorker.postMessage({ type: "SKIP_WAITING" });
+        }
+      });
+    });
+  });
 };
 
-// Force update check on visibility change (when user returns to app)
+// Check for updates when user returns to the app (tab focus or app resume)
 export const registerVisibilityUpdater = () => {
   document.addEventListener("visibilitychange", async () => {
     if (document.visibilityState === "visible" && "serviceWorker" in navigator) {
-      const registration = await navigator.serviceWorker.getRegistration();
-      if (registration) {
-        await registration.update();
+      try {
+        const reg = await navigator.serviceWorker.getRegistration();
+        await reg?.update();
+      } catch {
+        // Silently ignore
+      }
+    }
+  });
+
+  // Also check on window focus (covers desktop tab switching)
+  window.addEventListener("focus", async () => {
+    if ("serviceWorker" in navigator) {
+      try {
+        const reg = await navigator.serviceWorker.getRegistration();
+        await reg?.update();
+      } catch {
+        // Silently ignore
       }
     }
   });
