@@ -1,145 +1,75 @@
 
-# Piano: Traduzione Automatica Contenuti Database + DNA Update
 
-## Problema Identificato
+# Piano: Nuovo Layout Homepage
 
-I contenuti caricati dal database (tabella `site_content`) sono in italiano e **non vengono tradotti** quando l'utente seleziona inglese. Attualmente:
+## Cosa cambia
 
-| Componente | Contenuto | Usa `useTranslatedContent`? |
-|------------|-----------|---------------------------|
-| HeroSection | `mission`, `mission_part2` | ✅ Sì |
-| HeroSection | `headline`, `subtitle` | ❌ No |
-| WizardPage | `alien_map_cta_title`, `alien_map_cta_desc`, `instagram_cta_btn` | ❌ No |
-| ExplorePage | `alien_map_cta_title`, `alien_map_cta_desc`, `instagram_cta_btn` | ❌ No |
+La homepage attuale ha: Logo+Header > Headline > Subtitle > CTA button (fuchsia) > Carousel foto > Mission text > CTA secondaria > Mission part 2.
 
-**Conseguenza**: Quando l'utente cambia lingua in EN, questi testi restano in italiano.
+Il nuovo layout da mockup: Logo "Pipo" centrato > Headline (hero) > Subtitle (sotto-hero) > CTA testo "Esplora gli itinerari di Pipo" > Griglia 2x2 con 4 categorie (foto quadrate, bordi arrotondati, titolo bianco sovrapposto) > Mission content ("chi e pipo" etc.)
 
----
+Le 4 categorie sono:
+- **Luoghi Fantasma**
+- **Natura**
+- **Borghi**
+- **Arte e Cultura**
 
-## Modifiche da Implementare
-
-### 1. HeroSection - Aggiungere traduzione per headline e subtitle
-
-**File: `src/components/HeroSection.tsx`**
-
-Aggiungere hook di traduzione per `headline` e `subtitle`:
-
-```typescript
-// Aggiungi traduzione per headline e subtitle
-const { translatedText: translatedHeadline, isTranslating: isTranslatingHeadline } = 
-  useTranslatedContent(heroHeadlineContent?.content);
-const { translatedText: translatedSubtitle, isTranslating: isTranslatingSubtitle } = 
-  useTranslatedContent(heroSubtitleContent?.content);
-
-// Usa traduzione dal DB, oppure fallback a t()
-const headline = translatedHeadline || t("heroHeadline");
-const subtitle = translatedSubtitle || t("heroSubheadline");
-```
-
-### 2. WizardPage - Aggiungere traduzione per CTA Instagram
-
-**File: `src/pages/WizardPage.tsx`**
-
-```typescript
-import { useTranslatedContent } from "@/hooks/useTranslation";
-
-// Aggiungi hook di traduzione
-const { translatedText: translatedTitle } = useTranslatedContent(alienMapTitleContent?.content);
-const { translatedText: translatedDesc } = useTranslatedContent(alienMapDescContent?.content);
-const { translatedText: translatedBtn } = useTranslatedContent(instagramBtnContent?.content);
-
-// Usa traduzione, fallback a t()
-const alienMapTitle = translatedTitle || t("alienMapCtaTitle");
-const alienMapDesc = translatedDesc || t("alienMapCtaDesc");
-const instagramBtn = translatedBtn || t("instagramCtaBtn");
-```
-
-### 3. ExplorePage - Stesse modifiche di WizardPage
-
-**File: `src/pages/ExplorePage.tsx`**
-
-Applicare lo stesso pattern del WizardPage.
+Ogni foto porta alla pagina `/esplora` filtrata per quella categoria.
 
 ---
 
-## 4. DNA del Progetto - Aggiornare documentazione
+## Modifiche tecniche
 
-**File: `.knowledge/structure/backend-sync-principle.md`**
+### 1. `src/components/HeroSection.tsx`
 
-Aggiungere sezione sulla traduzione obbligatoria:
+Ristrutturare il componente mantenendo tutti gli hook e la logica di traduzione esistente:
 
-```markdown
-## Traduzione Obbligatoria dei Contenuti DB
+- **Rimuovere**: il carousel orizzontale delle foto hotspot
+- **Rimuovere**: il bottone CTA fuchsia arrotondato
+- **Aggiungere**: testo CTA "Esplora gli itinerari di Pipo" (in bold/italic, centrato, come nel mockup)
+- **Aggiungere**: griglia 2x2 con 4 card categoria
+  - Ogni card: immagine quadrata (aspect-ratio 1:1), bordi arrotondati (~16-20px), titolo bianco in basso a sinistra sovrapposto all'immagine
+  - Le 4 categorie hardcoded: "Luoghi Fantasma", "Natura", "Borghi", "Arte e Cultura"
+  - Click su ogni card naviga a `/esplora?categoria=NomeCategoria`
+  - Le immagini verranno prese dai primi hotspot di ciascuna categoria (dal DB) oppure placeholder
+- **Mantenere**: la sezione Mission (chi e pipo, etc.) sotto la griglia
+- **Mantenere**: tutta la logica di traduzione esistente
 
-OGNI contenuto caricato da `site_content` DEVE essere tradotto:
+### 2. `src/pages/ExplorePage.tsx`
 
-### Pattern di Implementazione
+Aggiungere supporto per il parametro URL `categoria`:
 
-// Sbagliato - il contenuto resta in italiano
-const title = titleContent?.content || t("fallbackKey");
+- Leggere `searchParams.get("categoria")`
+- Filtrare gli hotspot per `h.categoria === categoriaParam`
+- Aggiornare la logica `getBackDestination()` per gestire il ritorno dalla categoria
 
-// Corretto - il contenuto viene tradotto via AI
-const { translatedText } = useTranslatedContent(titleContent?.content);
-const title = translatedText || t("fallbackKey");
+### 3. `src/contexts/LanguageContext.tsx`
 
+Aggiungere le traduzioni per le 4 categorie e il nuovo testo CTA:
 
-### Flusso Dati
-
-DB (italiano) → useTranslatedContent() → AI Translation → UI (lingua corrente)
-                     ↓
-               Se lingua = IT, ritorna originale
-               Se lingua = EN, traduce via Edge Function
 ```
-
-**File: `.knowledge/structure/design-principles.md`**
-
-Aggiornare sezione "Sistema Multilingua" con regola esplicita:
-
-```markdown
-### Contenuti da Database
-- OGNI contenuto da `site_content` DEVE usare `useTranslatedContent()`
-- Il fallback `t("chiave")` viene usato SOLO se il DB non ha contenuto
-- Il fallback è GIA tradotto (viene da LanguageContext)
+exploreCta: "Esplora gli itinerari di Pipo" / "Explore Pipo's itineraries"
+catLuoghiFantasma: "Luoghi Fantasma" / "Ghost Places"
+catNatura: "Natura" / "Nature"
+catBorghi: "Borghi" / "Villages"
+catArteECultura: "Arte e Cultura" / "Art & Culture"
 ```
 
 ---
 
-## 5. File da Modificare
+## File coinvolti
 
-| File | Azione |
-|------|--------|
-| `src/components/HeroSection.tsx` | Aggiungere `useTranslatedContent` per headline e subtitle |
-| `src/pages/WizardPage.tsx` | Aggiungere `useTranslatedContent` per le 3 CTA |
-| `src/pages/ExplorePage.tsx` | Aggiungere `useTranslatedContent` per le 3 CTA |
-| `.knowledge/structure/backend-sync-principle.md` | Aggiungere sezione traduzione obbligatoria |
-| `.knowledge/structure/design-principles.md` | Aggiornare regole multilingua |
+| File | Modifica |
+|------|----------|
+| `src/components/HeroSection.tsx` | Rimuovere carousel, aggiungere griglia 2x2 categorie |
+| `src/pages/ExplorePage.tsx` | Supporto filtro per parametro `categoria` nell'URL |
+| `src/contexts/LanguageContext.tsx` | Nuove chiavi di traduzione per categorie e CTA |
 
----
+## Cosa NON cambia
 
-## 6. Logica di Fallback Corretta
+- MinimalHeader (logo "Pipo" + selettore lingua) resta invariato
+- Tutta la logica di traduzione e gli hook `useTranslatedContent`
+- La sezione Mission sotto la griglia
+- Il routing generale dell'app
+- Il design system (colori, font, variabili CSS)
 
-```text
-Passo 1: Carica contenuto da DB (site_content)
-         ↓
-Passo 2: Se esiste contenuto DB:
-           → Passa a useTranslatedContent()
-           → Se lingua IT: ritorna originale
-           → Se lingua EN: traduce via Edge Function
-         ↓
-Passo 3: Se NON esiste contenuto DB:
-           → Usa t("chiaveLanguageContext")
-           → Già tradotto automaticamente
-```
-
----
-
-## 7. Verifica Post-Implementazione
-
-Per confermare che tutto funziona:
-
-1. Vai su `/` (homepage)
-2. Verifica che headline, subtitle e mission siano in italiano
-3. Cambia lingua in EN (toggle in header)
-4. Verifica che headline, subtitle e mission diventino in inglese
-5. Vai su `/wizard` e verifica che la sezione CTA Instagram sia tradotta
-6. Vai su `/esplora` e verifica che sezione finale e footer siano tradotti
