@@ -8,6 +8,7 @@ import { EmojiPicker } from "@/components/EmojiPicker";
 import { FALLBACK_MISSION_TEXT } from "@/components/MissionSection";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -290,12 +291,20 @@ const Admin = () => {
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="categoria">Categoria</Label>
-                          <Input
-                            id="categoria"
-                            value={formData.categoria}
-                            onChange={(e) => setFormData({ ...formData, categoria: e.target.value })}
-                            placeholder="Es: Borgo, Spiaggia, Montagna..."
-                          />
+                          <Select
+                            value={formData.categoria || ""}
+                            onValueChange={(value) => setFormData({ ...formData, categoria: value })}
+                          >
+                            <SelectTrigger id="categoria">
+                              <SelectValue placeholder="Seleziona categoria..." />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Luoghi Fantasma">Luoghi Fantasma</SelectItem>
+                              <SelectItem value="Natura">Natura</SelectItem>
+                              <SelectItem value="Borghi">Borghi</SelectItem>
+                              <SelectItem value="Arte e Cultura">Arte e Cultura</SelectItem>
+                            </SelectContent>
+                          </Select>
                         </div>
                       </div>
 
