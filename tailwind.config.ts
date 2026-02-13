@@ -14,20 +14,11 @@ export default {
   	},
   	extend: {
   		fontFamily: {
-  			display: [
-  				'Playfair Display"',
-  				'Georgia',
-  				'serif'
-  			],
   			sans: [
   				'Inter',
   				'ui-sans-serif',
   				'system-ui',
-  				'sans-serif',
-  				'Apple Color Emoji',
-  				'Segoe UI Emoji',
-  				'Segoe UI Symbol',
-  				'Noto Color Emoji'
+  				'sans-serif'
   			],
   			brand: [
   				'Inter',
@@ -41,42 +32,18 @@ export default {
   			],
   			body: [
   				'Nunito',
-  				'Proxima Nova"',
   				'Inter',
   				'system-ui',
-  				'sans-serif'
-  			],
-  			friendly: [
-  				'Nunito',
-  				'system-ui',
-  				'sans-serif'
-  			],
-  			claim: [
-  				'Bebas Neue"',
   				'sans-serif'
   			],
   			mono: [
   				'Roboto Mono',
   				'ui-monospace',
-  				'SFMono-Regular',
-  				'Menlo',
-  				'Monaco',
-  				'Consolas',
-  				'Liberation Mono',
-  				'Courier New',
   				'monospace'
   			],
   			bubbles: [
   				'Rubik Bubbles"',
   				'cursive'
-  			],
-  			serif: [
-  				'ui-serif',
-  				'Georgia',
-  				'Cambria',
-  				'Times New Roman',
-  				'Times',
-  				'serif'
   			]
   		},
   		colors: {
@@ -117,13 +84,6 @@ export default {
   				DEFAULT: 'hsl(var(--olive))',
   				foreground: 'hsl(var(--olive-foreground))'
   			},
-  			mint: 'hsl(var(--mint))',
-  			lavender: 'hsl(var(--lavender))',
-  			'warm-yellow': 'hsl(var(--warm-yellow))',
-  			'forest-green': 'hsl(var(--forest-green))',
-  			magenta: 'hsl(var(--magenta))',
-  			'lavender-vivid': 'hsl(var(--lavender-vivid))',
-  			'sunny-yellow': 'hsl(var(--sunny-yellow))',
   			sidebar: {
   				DEFAULT: 'hsl(var(--sidebar-background))',
   				foreground: 'hsl(var(--sidebar-foreground))',
