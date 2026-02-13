@@ -1,52 +1,53 @@
 
-# Piano: Rimuovere Wizard, Instagram CTA e tutto il flusso mood/zona/esplora
+# Piano: Pulizia flusso - Solo Landing + Categorie + Hotspot
 
-## Cosa viene rimosso
+## Obiettivo
 
-### 1. Pagina Wizard (`src/pages/WizardPage.tsx`) - ELIMINARE
-L'intero file. Contiene il flusso "Portami via da qui" con le opzioni Zona, Mood, Esplora in Liberta e la sezione "Scrivimi su Instagram".
+Mantenere solo il percorso principale: **Homepage (landing + categorie + missione) -> Card categoria -> Pagina hotspot filtrata**. Tutto cio che esce da questo iter viene rimosso.
 
-### 2. Route `/wizard` in `src/App.tsx`
-Rimuovere l'import di `WizardPage` e la route `/wizard`.
+## Cosa cambia
 
-### 3. Barra fissa Instagram in `src/pages/ExplorePage.tsx`
-- Rimuovere la barra fissa in basso con "Scrivimi su Instagram"
-- Rimuovere tutti gli hook `useSiteContent` relativi a Instagram (`wizard_instagram_link`, `alien_map_cta_title`, `alien_map_cta_desc`, `instagram_cta_btn`)
-- Rimuovere le traduzioni correlate (`useTranslatedContent` per titolo, desc, btn)
-- Rimuovere i filtri `zona` e `mood` dai parametri URL (restano solo `categoria` e il filtro dropdown)
-- Aggiornare la navigazione "indietro" per tornare sempre a `/` invece di `/wizard`
-- Rimuovere le pill dei filtri zona/mood nella UI
+### 1. Card "Collezioni" diventa una categoria vera
+La card larga nella homepage attualmente porta a `/esplora` senza filtro. Va cambiata per navigare a `/esplora?categoria=Collezioni`, esattamente come le altre 4 categorie.
 
-### 4. Sezione Admin "Wizard Instagram" in `src/pages/Admin.tsx`
-- Rimuovere la Card "Wizard Instagram" con tutti i campi (link, desc, titolo mappa aliena, desc mappa aliena, testo bottone)
-- Rimuovere gli hook, state e useEffect correlati (`wizardInstagramLink`, `wizardInstagramDesc`, `alienMapTitle`, `alienMapDesc`, `instagramBtnText`)
-- Rimuovere la funzione `handleSaveWizardInstagram`
+**File: `src/components/HeroSection.tsx`**
+- Cambiare `onClick={() => navigate("/esplora")}` in `onClick={() => handleCategoryClick("Collezioni")}`
+- Questo fa si che anche Collezioni filtri gli hotspot per categoria
 
-### 5. Traduzioni in `src/contexts/LanguageContext.tsx`
-Rimuovere le chiavi di traduzione:
-- `wizardTitle`, `wizardZona`, `wizardMood`, `wizardExplore`, `wizardYourTurn`
-- `alienMapCtaTitle`, `alienMapCtaDesc`, `instagramCtaBtn`
+### 2. Rimuovere la pagina `/missione`
+La pagina separata `/missione` non serve perche la missione resta gia visibile nella homepage.
 
-### 6. Asset `src/assets/pin-icon.png` - ELIMINARE
-Usato solo dal wizard per le zone.
+**File da eliminare:** `src/pages/Mission.tsx`
 
----
+**File: `src/App.tsx`**
+- Rimuovere import di `Mission`
+- Rimuovere la route `/missione`
+
+### 3. Pulizia traduzioni inutilizzate
+Rimuovere da `src/contexts/LanguageContext.tsx` le chiavi mai usate nel codice:
+- `claimTiAiuta`, `claimQuando`, `claimRisolve`, `claimCome` (label Claim mai referenziate)
+- `heroSecondaryCtaBtn`, `heroSecondaryCtaSublabel` (vecchi CTA mai usati)
+- `foundResults`, `results` (mai usati nell'explore page)
+
+### 4. Rimuovere la freccia scroll (ChevronDown)
+L'indicatore "scroll giu" animato nella homepage non serve a nulla nel flusso.
+
+**File: `src/components/HeroSection.tsx`**
+- Rimuovere il blocco ChevronDown e l'import
 
 ## File coinvolti
 
 | File | Azione |
 |------|--------|
-| `src/pages/WizardPage.tsx` | Eliminare |
-| `src/assets/pin-icon.png` | Eliminare |
-| `src/App.tsx` | Rimuovere import WizardPage e route /wizard |
-| `src/pages/ExplorePage.tsx` | Rimuovere Instagram CTA, filtri zona/mood, riferimenti wizard |
-| `src/pages/Admin.tsx` | Rimuovere Card "Wizard Instagram" e relativi state/hook |
-| `src/contexts/LanguageContext.tsx` | Rimuovere chiavi wizard e Instagram |
+| `src/pages/Mission.tsx` | Eliminare |
+| `src/App.tsx` | Rimuovere route `/missione` e import Mission |
+| `src/components/HeroSection.tsx` | Collezioni naviga a `/esplora?categoria=Collezioni`, rimuovere ChevronDown |
+| `src/contexts/LanguageContext.tsx` | Rimuovere traduzioni inutilizzate |
 
-## Cosa NON cambia
+## Cosa resta invariato
 
-- Homepage con le card categorie e la griglia 2x2
-- Pagina Missione (`/missione`)
-- Il filtro per categoria (dropdown) nella pagina Esplora
-- L'effetto blur/lock sugli hotspot dal 4o in poi
-- La pagina Admin per contenuti hero, foto categorie e missione
+- Homepage: header, headline, subtitle, griglia 4 categorie, card Collezioni, sezione missione
+- Pagina `/esplora` con filtro categorie e card hotspot con effetto lock
+- Pagina `/admin` con gestione contenuti, categorie e hotspot
+- Pagina `/auth` per login admin
+- Sistema traduzioni IT/EN (solo le chiavi effettivamente usate)
