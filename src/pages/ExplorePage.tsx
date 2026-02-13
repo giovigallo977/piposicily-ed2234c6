@@ -142,7 +142,7 @@ const ExplorePage = () => {
             </div>}
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredHotspots.map((hotspot, index) => <HotspotCard key={hotspot.id} hotspot={hotspot} index={index} />)}
+            {filteredHotspots.map((hotspot, index) => <HotspotCard key={hotspot.id} hotspot={hotspot} index={index} locked={index >= 3} />)}
           </div>
           
           {!isLoading && filteredHotspots.length === 0 && hotspots && hotspots.length > 0 && <div className="text-center py-12 text-muted-foreground font-sans italic">
