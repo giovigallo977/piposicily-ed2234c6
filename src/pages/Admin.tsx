@@ -49,6 +49,14 @@ const Admin = () => {
   const { data: alienMapTitleContent } = useSiteContent("alien_map_cta_title");
   const { data: alienMapDescContent } = useSiteContent("alien_map_cta_desc");
   const { data: instagramBtnContent } = useSiteContent("instagram_cta_btn");
+  // Category images
+  const { data: catImgLuoghiContent } = useSiteContent("cat_image_luoghi_fantasma");
+  const { data: catImgNaturaContent } = useSiteContent("cat_image_natura");
+  const { data: catImgBorghiContent } = useSiteContent("cat_image_borghi");
+  const { data: catImgArteContent } = useSiteContent("cat_image_arte_cultura");
+  const { data: catImgCollezioniContent } = useSiteContent("cat_image_collezioni");
+  // Explore CTA
+  const { data: exploreCtaContent } = useSiteContent("explore_cta_text");
   const updateSiteContent = useUpdateSiteContent();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -65,6 +73,12 @@ const Admin = () => {
   const [alienMapTitle, setAlienMapTitle] = useState("");
   const [alienMapDesc, setAlienMapDesc] = useState("");
   const [instagramBtnText, setInstagramBtnText] = useState("");
+  const [catImgLuoghi, setCatImgLuoghi] = useState("");
+  const [catImgNatura, setCatImgNatura] = useState("");
+  const [catImgBorghi, setCatImgBorghi] = useState("");
+  const [catImgArte, setCatImgArte] = useState("");
+  const [catImgCollezioni, setCatImgCollezioni] = useState("");
+  const [exploreCtaText, setExploreCtaText] = useState("");
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -138,6 +152,25 @@ const Admin = () => {
       setInstagramBtnText(instagramBtnContent.content);
     }
   }, [instagramBtnContent]);
+
+  useEffect(() => {
+    if (catImgLuoghiContent?.content) setCatImgLuoghi(catImgLuoghiContent.content);
+  }, [catImgLuoghiContent]);
+  useEffect(() => {
+    if (catImgNaturaContent?.content) setCatImgNatura(catImgNaturaContent.content);
+  }, [catImgNaturaContent]);
+  useEffect(() => {
+    if (catImgBorghiContent?.content) setCatImgBorghi(catImgBorghiContent.content);
+  }, [catImgBorghiContent]);
+  useEffect(() => {
+    if (catImgArteContent?.content) setCatImgArte(catImgArteContent.content);
+  }, [catImgArteContent]);
+  useEffect(() => {
+    if (catImgCollezioniContent?.content) setCatImgCollezioni(catImgCollezioniContent.content);
+  }, [catImgCollezioniContent]);
+  useEffect(() => {
+    if (exploreCtaContent?.content) setExploreCtaText(exploreCtaContent.content);
+  }, [exploreCtaContent]);
 
   const handleOpenCreate = () => {
     setEditingHotspot(null);
@@ -217,6 +250,15 @@ const Admin = () => {
     await updateSiteContent.mutateAsync({ key: "alien_map_cta_title", content: alienMapTitle });
     await updateSiteContent.mutateAsync({ key: "alien_map_cta_desc", content: alienMapDesc });
     await updateSiteContent.mutateAsync({ key: "instagram_cta_btn", content: instagramBtnText });
+  };
+
+  const handleSaveCategoryImages = async () => {
+    if (catImgLuoghi) await updateSiteContent.mutateAsync({ key: "cat_image_luoghi_fantasma", content: catImgLuoghi });
+    if (catImgNatura) await updateSiteContent.mutateAsync({ key: "cat_image_natura", content: catImgNatura });
+    if (catImgBorghi) await updateSiteContent.mutateAsync({ key: "cat_image_borghi", content: catImgBorghi });
+    if (catImgArte) await updateSiteContent.mutateAsync({ key: "cat_image_arte_cultura", content: catImgArte });
+    if (catImgCollezioni) await updateSiteContent.mutateAsync({ key: "cat_image_collezioni", content: catImgCollezioni });
+    if (exploreCtaText) await updateSiteContent.mutateAsync({ key: "explore_cta_text", content: exploreCtaText });
   };
 
   if (authLoading || isLoading) {
@@ -622,6 +664,88 @@ const Admin = () => {
                         <Loader2 className="h-4 w-4 animate-spin mr-2" />
                       )}
                       Salva Hero
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Foto Categorie Homepage */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="h-5 w-5" />
+                    Foto Categorie Homepage
+                  </CardTitle>
+                  <CardDescription>
+                    Le immagini delle 5 schede nella homepage (Luoghi Fantasma, Natura, Borghi, Arte e Cultura, Collezioni) e il testo CTA "Esplora".
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Luoghi Fantasma</Label>
+                      <ImageUpload
+                        value={catImgLuoghi}
+                        onChange={(url) => setCatImgLuoghi(url)}
+                        onRemove={() => setCatImgLuoghi("")}
+                        folder="categories"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Natura</Label>
+                      <ImageUpload
+                        value={catImgNatura}
+                        onChange={(url) => setCatImgNatura(url)}
+                        onRemove={() => setCatImgNatura("")}
+                        folder="categories"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Borghi</Label>
+                      <ImageUpload
+                        value={catImgBorghi}
+                        onChange={(url) => setCatImgBorghi(url)}
+                        onRemove={() => setCatImgBorghi("")}
+                        folder="categories"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Arte e Cultura</Label>
+                      <ImageUpload
+                        value={catImgArte}
+                        onChange={(url) => setCatImgArte(url)}
+                        onRemove={() => setCatImgArte("")}
+                        folder="categories"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Collezioni (card larga)</Label>
+                    <ImageUpload
+                      value={catImgCollezioni}
+                      onChange={(url) => setCatImgCollezioni(url)}
+                      onRemove={() => setCatImgCollezioni("")}
+                      folder="categories"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="explore_cta_text">Testo CTA Esplora</Label>
+                    <Input
+                      id="explore_cta_text"
+                      value={exploreCtaText}
+                      onChange={(e) => setExploreCtaText(e.target.value)}
+                      placeholder="Es: Esplora gli itinerari di Pipo 👽"
+                    />
+                  </div>
+                  <div className="flex justify-end">
+                    <Button
+                      onClick={handleSaveCategoryImages}
+                      disabled={updateSiteContent.isPending}
+                    >
+                      {updateSiteContent.isPending && (
+                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      )}
+                      Salva Foto e CTA
                     </Button>
                   </div>
                 </CardContent>
