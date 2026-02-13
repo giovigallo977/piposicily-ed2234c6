@@ -1,54 +1,34 @@
 
-
-# Piano: Pulizia codice e ottimizzazione mobile-first
+# Piano: Rimuovere Wizard, Instagram CTA e tutto il flusso mood/zona/esplora
 
 ## Cosa viene rimosso
 
-### 1. File `src/App.css` - ELIMINARE
-Boilerplate Vite (`.logo`, `.read-the-docs`, `#root` con `max-width` e `padding`). Non e importato da nessuna parte. File completamente inutile.
+### 1. Pagina Wizard (`src/pages/WizardPage.tsx`) - ELIMINARE
+L'intero file. Contiene il flusso "Portami via da qui" con le opzioni Zona, Mood, Esplora in Liberta e la sezione "Scrivimi su Instagram".
 
-### 2. Font inutilizzati in `src/index.css`
-Molti font caricati da Google Fonts non sono mai usati nel codice:
-- **Playfair Display** - mai usato
-- **Bebas Neue** - mai usato
-- **Suez One** - mai usato
-- **Young Serif** - mai usato
-- **Cardo** - mai usato
-- **Cinzel** - mai usato
-- **Eczar** - mai usato
-- **Rubik Lines** - mai usato (solo Rubik Bubbles serve)
+### 2. Route `/wizard` in `src/App.tsx`
+Rimuovere l'import di `WizardPage` e la route `/wizard`.
 
-Mantenere solo: **Inter**, **Nunito**, **Roboto Mono**, **Rubik Bubbles**.
-Questo riduce il tempo di caricamento della pagina in modo significativo.
+### 3. Barra fissa Instagram in `src/pages/ExplorePage.tsx`
+- Rimuovere la barra fissa in basso con "Scrivimi su Instagram"
+- Rimuovere tutti gli hook `useSiteContent` relativi a Instagram (`wizard_instagram_link`, `alien_map_cta_title`, `alien_map_cta_desc`, `instagram_cta_btn`)
+- Rimuovere le traduzioni correlate (`useTranslatedContent` per titolo, desc, btn)
+- Rimuovere i filtri `zona` e `mood` dai parametri URL (restano solo `categoria` e il filtro dropdown)
+- Aggiornare la navigazione "indietro" per tornare sempre a `/` invece di `/wizard`
+- Rimuovere le pill dei filtri zona/mood nella UI
 
-### 3. Colori CSS inutilizzati in `src/index.css`
-Nessun componente usa questi colori: `forest-green`, `magenta`, `lavender-vivid`, `sunny-yellow`, `mint`, `lavender`, `warm-yellow`. Rimuoverli dalle variabili CSS e dal tailwind config.
+### 4. Sezione Admin "Wizard Instagram" in `src/pages/Admin.tsx`
+- Rimuovere la Card "Wizard Instagram" con tutti i campi (link, desc, titolo mappa aliena, desc mappa aliena, testo bottone)
+- Rimuovere gli hook, state e useEffect correlati (`wizardInstagramLink`, `wizardInstagramDesc`, `alienMapTitle`, `alienMapDesc`, `instagramBtnText`)
+- Rimuovere la funzione `handleSaveWizardInstagram`
 
-### 4. Font families inutilizzati in `tailwind.config.ts`
-Rimuovere: `display` (Playfair), `claim` (Bebas Neue), `friendly` (duplica Nunito/body), `serif`. Mantenere: `sans`, `brand`, `heading`, `body`, `mono`, `bubbles`.
+### 5. Traduzioni in `src/contexts/LanguageContext.tsx`
+Rimuovere le chiavi di traduzione:
+- `wizardTitle`, `wizardZona`, `wizardMood`, `wizardExplore`, `wizardYourTurn`
+- `alienMapCtaTitle`, `alienMapCtaDesc`, `instagramCtaBtn`
 
-### 5. Tema dark in `src/index.css`
-L'app non usa dark mode (nessun toggle, nessuna classe `.dark` nel codice app). Rimuovere il blocco `.dark { ... }` per snellire il CSS. I componenti UI shadcn che lo referenziano non ne sono impattati.
-
-### 6. Font extra in `index.html`
-Rimuovere i link a font non usati:
-- `fonts.cdnfonts.com/css/more-sugar` - non usato
-- `fonts.cdnfonts.com/css/dreaming-outloud-sans` - non usato
-- `fonts.googleapis.com/css2?family=Oswald` - non usato
-- `use.typekit.net/fyc2qfe.css` - non usato
-
----
-
-## Cosa viene ottimizzato per mobile-first
-
-### 7. `src/pages/Index.tsx` - Rimuovere padding desktop
-Il `pb-16` e sufficiente. Aggiungere `overflow-x-hidden` per evitare scroll orizzontale su mobile.
-
-### 8. `src/pages/ExplorePage.tsx` - Padding mobile
-Verificare che la griglia sia single-column su mobile (gia `grid-cols-1`). Aggiungere `pb-24` per spazio sotto la CTA bar fissa (gia presente).
-
-### 9. `src/components/HotspotCard.tsx` - Touch target
-I bottoni di espansione (+/-) hanno gia `w-11 h-11` (44px), conforme alle linee guida touch. OK.
+### 6. Asset `src/assets/pin-icon.png` - ELIMINARE
+Usato solo dal wizard per le zone.
 
 ---
 
@@ -56,15 +36,17 @@ I bottoni di espansione (+/-) hanno gia `w-11 h-11` (44px), conforme alle linee 
 
 | File | Azione |
 |------|--------|
-| `src/App.css` | Eliminare completamente |
-| `src/index.css` | Rimuovere font inutilizzati, colori inutilizzati, tema dark |
-| `index.html` | Rimuovere link a font esterni non usati |
-| `tailwind.config.ts` | Rimuovere font families e colori inutilizzati |
+| `src/pages/WizardPage.tsx` | Eliminare |
+| `src/assets/pin-icon.png` | Eliminare |
+| `src/App.tsx` | Rimuovere import WizardPage e route /wizard |
+| `src/pages/ExplorePage.tsx` | Rimuovere Instagram CTA, filtri zona/mood, riferimenti wizard |
+| `src/pages/Admin.tsx` | Rimuovere Card "Wizard Instagram" e relativi state/hook |
+| `src/contexts/LanguageContext.tsx` | Rimuovere chiavi wizard e Instagram |
 
 ## Cosa NON cambia
 
-- Tutte le pagine e i componenti funzionali (Admin, HeroSection, HotspotCard, Wizard, Explore, Mission)
-- Il layout e la struttura delle card
-- Il sistema di traduzione e i hook
-- Il backend e la tabella site_content
-
+- Homepage con le card categorie e la griglia 2x2
+- Pagina Missione (`/missione`)
+- Il filtro per categoria (dropdown) nella pagina Esplora
+- L'effetto blur/lock sugli hotspot dal 4o in poi
+- La pagina Admin per contenuti hero, foto categorie e missione
