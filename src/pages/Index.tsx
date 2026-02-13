@@ -9,7 +9,7 @@ const Index = () => {
 
   return (
     <div 
-      className="pb-16"
+      className="pb-16 overflow-x-hidden"
       style={{ backgroundColor: bgColor || undefined }}
     >
       <MinimalHeader bgColor={bgColor} />
