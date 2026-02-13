@@ -1,53 +1,34 @@
 
-# Piano: Pulizia flusso - Solo Landing + Categorie + Hotspot
-
-## Obiettivo
-
-Mantenere solo il percorso principale: **Homepage (landing + categorie + missione) -> Card categoria -> Pagina hotspot filtrata**. Tutto cio che esce da questo iter viene rimosso.
+# Piano: Unificare il testo Missione in un unico campo
 
 ## Cosa cambia
 
-### 1. Card "Collezioni" diventa una categoria vera
-La card larga nella homepage attualmente porta a `/esplora` senza filtro. Va cambiata per navigare a `/esplora?categoria=Collezioni`, esattamente come le altre 4 categorie.
+### 1. Admin - Un solo campo testo missione
+Il pannello admin attualmente mostra due textarea separate ("Parte 1" e "Parte 2") con un indicatore CTA in mezzo. Tutto questo viene sostituito da una singola textarea grande, pre-popolata con il testo completo della missione (da "Chi e Pipo" fino a "rifugi segreti").
 
-**File: `src/components/HeroSection.tsx`**
-- Cambiare `onClick={() => navigate("/esplora")}` in `onClick={() => handleCategoryClick("Collezioni")}`
-- Questo fa si che anche Collezioni filtri gli hotspot per categoria
+Cambiamenti in `src/pages/Admin.tsx`:
+- Rimuovere lo state `missionPart2Text` e il relativo `useSiteContent("mission_part2")`
+- Unire le due textarea in una sola, piu grande (circa 20 righe)
+- Rimuovere il divider CTA tra le due parti
+- Il testo di default (quando il campo e vuoto) sara il contenuto completo del fallback gia presente nel codice
+- `handleSaveMission` salvera tutto in una sola chiave DB (`mission`)
 
-### 2. Rimuovere la pagina `/missione`
-La pagina separata `/missione` non serve perche la missione resta gia visibile nella homepage.
+### 2. MissionSection - Leggere un solo campo
+`src/components/MissionSection.tsx` usera solo `missionContent` (non piu `missionPart2Content`). Il testo viene mostrato come blocco unico con `whitespace-pre-line`.
 
-**File da eliminare:** `src/pages/Mission.tsx`
+### 3. HeroSection - Rimuovere il fetch di mission_part2
+`src/components/HeroSection.tsx` non fara piu il fetch di `mission_part2`.
 
-**File: `src/App.tsx`**
-- Rimuovere import di `Mission`
-- Rimuovere la route `/missione`
+### 4. Pre-popolamento del testo
+Quando il campo e vuoto nell'admin, mostrare come placeholder il testo completo della missione gia hardcoded nel fallback, cosi puoi vederlo e modificarlo. Il testo completo verra composto unendo tutte le sezioni del fallback (Chi e Pipo, Cosa fa Pipo, Per chi e Pipo, Cosa si intende per alieno, Rispetto e generazione di valore) in un formato leggibile con titoli e bullet point.
 
-### 3. Pulizia traduzioni inutilizzate
-Rimuovere da `src/contexts/LanguageContext.tsx` le chiavi mai usate nel codice:
-- `claimTiAiuta`, `claimQuando`, `claimRisolve`, `claimCome` (label Claim mai referenziate)
-- `heroSecondaryCtaBtn`, `heroSecondaryCtaSublabel` (vecchi CTA mai usati)
-- `foundResults`, `results` (mai usati nell'explore page)
-
-### 4. Rimuovere la freccia scroll (ChevronDown)
-L'indicatore "scroll giu" animato nella homepage non serve a nulla nel flusso.
-
-**File: `src/components/HeroSection.tsx`**
-- Rimuovere il blocco ChevronDown e l'import
-
-## File coinvolti
+## Dettagli tecnici
 
 | File | Azione |
 |------|--------|
-| `src/pages/Mission.tsx` | Eliminare |
-| `src/App.tsx` | Rimuovere route `/missione` e import Mission |
-| `src/components/HeroSection.tsx` | Collezioni naviga a `/esplora?categoria=Collezioni`, rimuovere ChevronDown |
-| `src/contexts/LanguageContext.tsx` | Rimuovere traduzioni inutilizzate |
+| `src/pages/Admin.tsx` | Rimuovere Part2, unire in un unico textarea, pre-popolare con fallback completo |
+| `src/components/MissionSection.tsx` | Semplificare: un solo prop `missionContent`, render unico |
+| `src/components/HeroSection.tsx` | Rimuovere fetch `mission_part2` |
 
-## Cosa resta invariato
-
-- Homepage: header, headline, subtitle, griglia 4 categorie, card Collezioni, sezione missione
-- Pagina `/esplora` con filtro categorie e card hotspot con effetto lock
-- Pagina `/admin` con gestione contenuti, categorie e hotspot
-- Pagina `/auth` per login admin
-- Sistema traduzioni IT/EN (solo le chiavi effettivamente usate)
+## Risultato
+Nell'admin vedrai un'unica textarea con tutto il testo della missione, gia visibile e modificabile liberamente come testo normale, senza separazioni o CTA in mezzo.
