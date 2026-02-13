@@ -57,13 +57,6 @@ export const translations = {
     claimRisolve: "RISOLVE:",
     claimCome: "COME:",
     
-    // Wizard
-    wizardTitle: "Portami via da qui",
-    wizardZona: "Zona",
-    wizardMood: "Mood",
-    wizardExplore: "Esplora in Libertà",
-    wizardYourTurn: "Ancora qui?",
-    
     // Explore page
     foundResults: "Trovati",
     results: "risultati",
@@ -73,15 +66,6 @@ export const translations = {
     heroSubheadline: "Ti mostro posti iper selezionati, lontani dal turismo di massa. Tu scegli, io ti porto fuori dai radar in 30 secondi.",
     heroSecondaryCtaBtn: "esplora gli hotspot di pipo",
     heroSecondaryCtaSublabel: "Scopri gli hotspot alieni in base al tuo mood e alla zona che vuoi esplorare.",
-    
-    // Wizard Instagram CTA
-    wizardInstagramBtn: "Sblocca 1 mappa aliena",
-    wizardInstagramDesc: "Scrivimi ALIENO in DM su Instagram e ti mando 1 dei 3 itinerari segreti per esplorare la Sicilia fuori dai radar.",
-    
-    // Alien Map CTA (end of funnel)
-    alienMapCtaTitle: "Vuoi una mappa ancora più aliena?",
-    alienMapCtaDesc: "Se dopo aver esplorato gli hotspot di Pipo vuoi un itinerario pensato solo per te, puoi sbloccare 1 mappa aliena segreta, scrivimi ALIENO in DM su Instagram",
-    instagramCtaBtn: "Scrivimi su Instagram",
     
     // Category grid
     exploreCta: "Esplora gli itinerari di Pipo",
@@ -137,13 +121,6 @@ export const translations = {
     claimRisolve: "IT SOLVES:",
     claimCome: "HOW:",
     
-    // Wizard
-    wizardTitle: "Take me away",
-    wizardZona: "Zone",
-    wizardMood: "Mood",
-    wizardExplore: "Free Exploration",
-    wizardYourTurn: "Still here?",
-    
     // Explore page
     foundResults: "Found",
     results: "results",
@@ -153,15 +130,6 @@ export const translations = {
     heroSubheadline: "I show you ultra-selected places, far from mass tourism. You choose, I take you off the radar in 30 seconds.",
     heroSecondaryCtaBtn: "explore pipo's hotspots",
     heroSecondaryCtaSublabel: "Discover alien hotspots based on your mood and the area you want to explore.",
-    
-    // Wizard Instagram CTA
-    wizardInstagramBtn: "Unlock 1 alien map",
-    wizardInstagramDesc: "DM me ALIENO on Instagram and I'll send you 1 of 3 secret itineraries to explore Sicily off the radar.",
-    
-    // Alien Map CTA (end of funnel)
-    alienMapCtaTitle: "Want an even more alien map?",
-    alienMapCtaDesc: "If after exploring Pipo's hotspots you want an itinerary designed just for you, you can unlock 1 secret alien map, DM me ALIENO on Instagram",
-    instagramCtaBtn: "DM me on Instagram",
     
     // Category grid
     exploreCta: "Explore Pipo's itineraries",
