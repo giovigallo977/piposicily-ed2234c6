@@ -1,80 +1,47 @@
 
 
-# Piano: Admin completo per foto categorie, testi hero e missione
+# Piano: Hotspot bloccati dal 4o in poi con effetto glass/blur
 
-## Panoramica
+## Cosa cambia
 
-Aggiornare il pannello Admin per permettere di gestire:
-1. Le foto delle 5 schede homepage (Luoghi Fantasma, Natura, Borghi, Arte e Cultura, Collezioni)
-2. I testi Hero (headline, sottotitolo, CTA)
-3. Il testo completo della missione di Pipo
+Nella pagina Esplora, i primi 3 hotspot di ogni lista filtrata saranno visibili normalmente. Dal 4o hotspot in poi, le card saranno "oscurate" con un effetto vetro opaco (glassmorphism + blur) che lascia intuire la presenza del contenuto ma impedisce di leggerlo. Sopra l'effetto blur apparira un overlay con un'icona lucchetto e un invito all'acquisto.
 
-Attualmente le foto delle categorie vengono prese dal primo hotspot di quella categoria e il testo missione e hardcoded. Rendiamo tutto modificabile dall'admin.
+## Dettagli tecnici
 
----
+### `src/components/HotspotCard.tsx`
 
-## Modifiche tecniche
+Aggiungere una nuova prop `locked?: boolean`.
 
-### 1. `src/pages/Admin.tsx` - Nuova sezione "Foto Categorie"
+Quando `locked` e `true`:
+- L'intera card viene avvolta in un contenitore `relative`
+- Sopra la card viene sovrapposto un div con:
+  - `backdrop-blur-md` per sfuocare il contenuto sottostante
+  - `bg-white/60` per l'effetto vetro opaco
+  - `rounded-3xl` per seguire i bordi della card
+  - `absolute inset-0 z-10` per coprire tutto
+- Al centro dell'overlay: icona Lock (da lucide-react), testo "Sblocca questa categoria" e un bottone CTA
+- L'espansione (+/-), il click sulla galleria e tutti i link sono disabilitati quando `locked`
+- Il bottone CTA puo linkare a una pagina acquisto futura o mostrare un messaggio placeholder
 
-Aggiungere un terzo tab o una nuova Card nella sezione "Contenuti" con:
+### `src/pages/ExplorePage.tsx`
 
-- **5 campi ImageUpload** per caricare le foto delle schede:
-  - Luoghi Fantasma
-  - Natura
-  - Borghi
-  - Arte e Cultura
-  - Collezioni
-- Ogni foto viene salvata come `site_content` con chiavi:
-  - `cat_image_luoghi_fantasma`
-  - `cat_image_natura`
-  - `cat_image_borghi`
-  - `cat_image_arte_cultura`
-  - `cat_image_collezioni`
-- Bottone "Salva Foto Categorie"
+Nella griglia dove si mappano i `filteredHotspots`, passare la prop `locked={index >= 3}` a ogni `HotspotCard`:
 
-**Aggiornare la sezione "Testo Missione"**:
-- Rendere i campi missione funzionali per il nuovo testo statico (gia presenti ma il frontend ora ignora il DB). I campi `mission` e `mission_part2` esistono gia nell'admin.
-
-**Aggiungere campo CTA "Esplora gli itinerari"**:
-- Nuovo campo per modificare il testo CTA sotto l'hero (attualmente hardcoded da `t("exploreCta")`)
-- Chiave: `explore_cta_text`
-
-### 2. `src/components/HeroSection.tsx` - Leggere foto e testi dal DB
-
-**Foto categorie**: Leggere da `site_content` le chiavi `cat_image_*`. Se presenti, usare quelle; altrimenti fallback alle foto degli hotspot (comportamento attuale).
-
-**Testo CTA**: Leggere `explore_cta_text` da `site_content`, fallback a `t("exploreCta")`.
-
-**Testo Missione**: Leggere `mission` e `mission_part2` da `site_content`. Se presenti, renderizzare il contenuto dal DB (con supporto per andare a capo). Se vuoti, mantenere il testo hardcoded attuale come fallback.
-
-### 3. Nuovi hook `useSiteContent` necessari
-
-Nel HeroSection aggiungere:
 ```
-useSiteContent("cat_image_luoghi_fantasma")
-useSiteContent("cat_image_natura")
-useSiteContent("cat_image_borghi")
-useSiteContent("cat_image_arte_cultura")
-useSiteContent("cat_image_collezioni")
-useSiteContent("explore_cta_text")
-useSiteContent("mission")
-useSiteContent("mission_part2")
+filteredHotspots.map((hotspot, index) => (
+  <HotspotCard key={hotspot.id} hotspot={hotspot} index={index} locked={index >= 3} />
+))
 ```
-
----
 
 ## File coinvolti
 
 | File | Modifica |
 |------|----------|
-| `src/pages/Admin.tsx` | Aggiungere sezione foto categorie con 5 ImageUpload + campo CTA explore |
-| `src/components/HeroSection.tsx` | Leggere foto categorie, CTA e missione dal DB con fallback |
+| `src/components/HotspotCard.tsx` | Aggiungere prop `locked`, overlay glass blur con CTA, disabilitare interazioni |
+| `src/pages/ExplorePage.tsx` | Passare `locked={index >= 3}` alle card |
 
-## Cosa NON cambia
+## Comportamento visivo
 
-- La struttura della griglia 2x2 + Collezioni
-- Il layout mobile-first
-- I componenti ImageUpload e MultiImageUpload (gia esistenti)
-- La tabella `site_content` nel database (usiamo le stesse colonne text per salvare URL immagini)
+- Card 1, 2, 3: normali, completamente visibili e interattive
+- Card 4, 5, 6...: visibili ma sfuocate/opache, con overlay "Sblocca" sopra, non cliccabili
 
