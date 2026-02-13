@@ -6,14 +6,6 @@ import { useSiteContent } from "@/hooks/useSiteContent";
 import { useTranslatedContent } from "@/hooks/useTranslation";
 import { useMemo } from "react";
 import MissionSection from "@/components/MissionSection";
-import {
-  BackpackerIllustration,
-  TentIllustration,
-  JeepIllustration,
-  CompassIllustration,
-  CoupleIllustration,
-  MapReaderIllustration,
-} from "@/components/HomepageIllustrations";
 
 interface HeroSectionProps {
   bgColor?: string;
@@ -94,70 +86,58 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
 
   return (
     <section
-      className="px-6 py-16 md:py-24 flex flex-col min-h-[75vh] justify-center"
+      className="px-6 py-12 flex flex-col min-h-[75vh] justify-center"
       style={{ backgroundColor: bgColor || undefined }}
     >
       <div className="max-w-4xl mx-auto w-full md:flex md:flex-col md:items-center">
+        {/* Headline */}
+        <h1 className="font-sans text-[32px] md:text-[48px] font-bold leading-[1.1] text-foreground text-left md:text-center">
+          {headline}
+        </h1>
 
-        {/* Hero: headline + backpacker illustration */}
-        <div className="md:flex md:items-center md:gap-12 w-full">
-          <div className="flex-1">
-            <h1 className="font-sans text-[32px] md:text-[48px] font-bold leading-[1.1] text-foreground text-left md:text-center">
-              {headline}
-            </h1>
-            <p className="font-sans text-base font-medium text-foreground/70 text-left md:text-center mt-6 max-w-md md:mx-auto">
-              {subtitle}
-            </p>
-          </div>
-          <BackpackerIllustration className="hidden md:block w-36 h-auto flex-shrink-0 opacity-80" />
-        </div>
+        {/* Subtitle */}
+        <p className="font-sans text-base font-medium text-foreground text-left md:text-center mt-6 max-w-md md:mx-auto">
+          {subtitle}
+        </p>
 
         {/* CTA Text */}
-        <p className="font-sans text-lg font-bold italic text-foreground text-center mt-14">
+        <p className="font-sans text-lg font-bold italic text-foreground text-center mt-10">
           {exploreCta}
         </p>
 
-        {/* 2x2 Category Grid with decorative illustrations */}
-        <div className="relative mt-8 w-full max-w-lg md:mx-auto">
-          {/* Decorative icons around the grid */}
-          <TentIllustration className="absolute -left-14 top-4 w-12 h-auto opacity-40 hidden lg:block" />
-          <CompassIllustration className="absolute -right-14 top-2 w-10 h-auto opacity-40 hidden lg:block" />
-          <JeepIllustration className="absolute -left-16 bottom-4 w-14 h-auto opacity-35 hidden lg:block" />
-          <CoupleIllustration className="absolute -right-16 bottom-0 w-12 h-auto opacity-35 hidden lg:block" />
-
-          <div className="grid grid-cols-2 gap-3">
-            {CATEGORIES.map((cat) => {
-              const img = getCategoryImage(cat.dbValue);
-              return (
-                <button
-                  key={cat.dbValue}
-                  onClick={() => handleCategoryClick(cat.dbValue)}
-                  className="relative aspect-square rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-olive border border-border/40 shadow-sm hover:shadow-md transition-shadow duration-200"
-                >
-                  {img ? (
-                    <img
-                      src={img}
-                      alt={t(cat.key)}
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-muted" />
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/15 to-transparent" />
-                  <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-sm md:text-base font-bold text-left leading-tight drop-shadow-lg">
-                    {t(cat.key)}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
+        {/* 2x2 Category Grid */}
+        <div className="grid grid-cols-2 gap-3 mt-6 w-full max-w-lg md:mx-auto">
+          {CATEGORIES.map((cat) => {
+            const img = getCategoryImage(cat.dbValue);
+            return (
+              <button
+                key={cat.dbValue}
+                onClick={() => handleCategoryClick(cat.dbValue)}
+                className="relative aspect-square rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                {img ? (
+                  <img
+                    src={img}
+                    alt={t(cat.key)}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-muted" />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-sm md:text-base font-bold text-left leading-tight drop-shadow-lg">
+                  {t(cat.key)}
+                </span>
+              </button>
+            );
+          })}
         </div>
 
         {/* Collezioni Card - full width */}
         <div className="mt-3 w-full max-w-lg md:mx-auto">
           <button
             onClick={() => handleCategoryClick("Collezioni")}
-            className="relative w-full aspect-[16/9] rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-olive border border-border/40 shadow-sm hover:shadow-md transition-shadow duration-200"
+            className="relative w-full aspect-[16/9] rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
           >
             {collezioniImage ? (
               <img
@@ -168,20 +148,17 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
             ) : (
               <div className="w-full h-full bg-muted" />
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/15 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
             <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-lg md:text-xl font-bold text-left leading-tight drop-shadow-lg">
               Collezioni
             </span>
           </button>
         </div>
 
-        {/* Mission Content with map reader illustration */}
-        <div className="md:flex md:items-start md:gap-8 w-full">
-          <div className="flex-1">
-            <MissionSection missionContent={missionContent?.content} />
-          </div>
-          <MapReaderIllustration className="hidden md:block w-28 h-auto flex-shrink-0 opacity-60 mt-16" />
-        </div>
+        {/* Mission Content from DB */}
+        <MissionSection
+          missionContent={missionContent?.content}
+        />
       </div>
     </section>
   );

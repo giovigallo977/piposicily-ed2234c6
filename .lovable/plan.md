@@ -1,48 +1,34 @@
 
-# Piano: Refresh UI Homepage stile Notion + Illustrazioni
-
-## Obiettivo
-Rendere la homepage di Pipo pulita e minimale (stile Notion/Tally), con illustrazioni leggere a tema viaggio/esplorazione. Le modifiche riguardano SOLO la homepage. Le pagine interne (Esplora, Hotspot) restano invariate. Il logo "Pipo + alieno" non viene toccato.
+# Piano: Unificare il testo Missione in un unico campo
 
 ## Cosa cambia
 
-### 1. Palette e CSS (`src/index.css`)
-- Background homepage: bianco puro con tanto spazio
-- Testo: grigio scuro (gia in linea)
-- Accent soft: mantenere il verde Pipo (`--olive`) come unico colore accent
-- Rimuovere eventuali sfumature "turistiche"
+### 1. Admin - Un solo campo testo missione
+Il pannello admin attualmente mostra due textarea separate ("Parte 1" e "Parte 2") con un indicatore CTA in mezzo. Tutto questo viene sostituito da una singola textarea grande, pre-popolata con il testo completo della missione (da "Chi e Pipo" fino a "rifugi segreti").
 
-### 2. Illustrazioni SVG inline (`src/components/HomepageIllustrations.tsx`)
-Creare un componente con piccole illustrazioni SVG inline stile "handmade" / line-art con colori piatti. Temi:
-- **Hero**: figura con zaino che cammina (medium, accanto al testo headline)
-- **Vicino alle card categorie**: piccole icone sparse (tenda, jeep, coppia che esplora, bussola)
-- **Vicino alla sezione missione**: figura seduta con mappa
+Cambiamenti in `src/pages/Admin.tsx`:
+- Rimuovere lo state `missionPart2Text` e il relativo `useSiteContent("mission_part2")`
+- Unire le due textarea in una sola, piu grande (circa 20 righe)
+- Rimuovere il divider CTA tra le due parti
+- Il testo di default (quando il campo e vuoto) sara il contenuto completo del fallback gia presente nel codice
+- `handleSaveMission` salvera tutto in una sola chiave DB (`mission`)
 
-Le illustrazioni saranno SVG inline (nessun file esterno), leggere, con tratto nero sottile e fill accent soft (verde Pipo diluito, beige). Stile simile alle immagini di riferimento Notion/Tally: handmade, espressive, minimali.
+### 2. MissionSection - Leggere un solo campo
+`src/components/MissionSection.tsx` usera solo `missionContent` (non piu `missionPart2Content`). Il testo viene mostrato come blocco unico con `whitespace-pre-line`.
 
-### 3. HeroSection (`src/components/HeroSection.tsx`)
-- Aggiungere illustrazione backpacker accanto all'headline (layout flex su desktop: testo a sinistra, illustrazione a destra)
-- Aumentare spaziatura verticale tra le sezioni (piu respiro)
-- Card categorie: bordi piu sottili, ombre piu leggere, stile piu "flat"
-- Aggiungere piccole illustrazioni decorative sparse intorno alla griglia categorie (posizionate absolute, opacity ridotta)
-- Sezione missione: piccola illustrazione a lato
+### 3. HeroSection - Rimuovere il fetch di mission_part2
+`src/components/HeroSection.tsx` non fara piu il fetch di `mission_part2`.
 
-### 4. Index page (`src/pages/Index.tsx`)
-- Nessun cambio strutturale, solo passaggio props se necessario
-
-### 5. Nessun cambio a pagine interne
-- `ExplorePage.tsx`, `HotspotCard.tsx`, `Admin.tsx` restano identici
-
-## Reversibilita
-Le illustrazioni sono in un componente separato (`HomepageIllustrations.tsx`). Se non piacciono, basta rimuovere quel componente e i relativi import dalla HeroSection per tornare alla versione attuale.
+### 4. Pre-popolamento del testo
+Quando il campo e vuoto nell'admin, mostrare come placeholder il testo completo della missione gia hardcoded nel fallback, cosi puoi vederlo e modificarlo. Il testo completo verra composto unendo tutte le sezioni del fallback (Chi e Pipo, Cosa fa Pipo, Per chi e Pipo, Cosa si intende per alieno, Rispetto e generazione di valore) in un formato leggibile con titoli e bullet point.
 
 ## Dettagli tecnici
 
 | File | Azione |
 |------|--------|
-| `src/components/HomepageIllustrations.tsx` | NUOVO - SVG inline per tutte le illustrazioni (backpacker, tenda, jeep, coppia, bussola, persona con mappa) |
-| `src/components/HeroSection.tsx` | Aggiungere illustrazioni dal nuovo componente, aumentare spaziatura, rendere card piu flat |
-| `src/index.css` | Piccoli ritocchi spaziatura se necessari |
+| `src/pages/Admin.tsx` | Rimuovere Part2, unire in un unico textarea, pre-popolare con fallback completo |
+| `src/components/MissionSection.tsx` | Semplificare: un solo prop `missionContent`, render unico |
+| `src/components/HeroSection.tsx` | Rimuovere fetch `mission_part2` |
 
-## Nota importante
-Questa e una prova. Se il risultato non piace, il rollback e semplice: basta rimuovere `HomepageIllustrations.tsx` e ripristinare `HeroSection.tsx` alla versione precedente (o usare il version history di Lovable).
+## Risultato
+Nell'admin vedrai un'unica textarea con tutto il testo della missione, gia visibile e modificabile liberamente come testo normale, senza separazioni o CTA in mezzo.
