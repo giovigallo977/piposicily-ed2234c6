@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Loader2 } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useHotspots } from "@/hooks/useHotspots";
 import { useSiteContent } from "@/hooks/useSiteContent";
@@ -7,7 +7,6 @@ import { useTranslatedContent } from "@/hooks/useTranslation";
 import { useMemo } from "react";
 
 interface HeroSectionProps {
-  onCtaClick: () => void;
   bgColor?: string;
 }
 
@@ -18,32 +17,23 @@ const CATEGORIES = [
   { key: "catArteECultura" as const, dbValue: "Arte e Cultura" },
 ];
 
-const HeroSection = ({ onCtaClick, bgColor }: HeroSectionProps) => {
+const HeroSection = ({ bgColor }: HeroSectionProps) => {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const { data: hotspots } = useHotspots();
 
-  // Fetch editable content from database
   const { data: heroHeadlineContent } = useSiteContent("hero_headline");
   const { data: heroSubtitleContent } = useSiteContent("hero_subtitle");
-  const { data: missionContent, isLoading: missionLoading } = useSiteContent("mission");
-  const { data: missionPart2Content, isLoading: missionPart2Loading } = useSiteContent("mission_part2");
 
-  // Translate ALL database content
-  const missionText = missionContent?.content || null;
-  const missionPart2Text = missionPart2Content?.content || null;
   const headlineText = heroHeadlineContent?.content || null;
   const subtitleText = heroSubtitleContent?.content || null;
 
-  const { translatedText: translatedMission, isTranslating: isTranslating1 } = useTranslatedContent(missionText);
-  const { translatedText: translatedMissionPart2, isTranslating: isTranslating2 } = useTranslatedContent(missionPart2Text);
   const { translatedText: translatedHeadline } = useTranslatedContent(headlineText);
   const { translatedText: translatedSubtitle } = useTranslatedContent(subtitleText);
 
   const headline = translatedHeadline || t("heroHeadline");
   const subtitle = translatedSubtitle || t("heroSubheadline");
 
-  // Get first hotspot photo per category for the grid
   const categoryImages = useMemo(() => {
     if (!hotspots) return {};
     const map: Record<string, string> = {};
@@ -54,6 +44,13 @@ const HeroSection = ({ onCtaClick, bgColor }: HeroSectionProps) => {
       }
     }
     return map;
+  }, [hotspots]);
+
+  // Get a random hotspot image for Collezioni card
+  const collezioniImage = useMemo(() => {
+    if (!hotspots) return null;
+    const withPhoto = hotspots.filter(h => h.foto_principale);
+    return withPhoto.length > 0 ? withPhoto[0].foto_principale : null;
   }, [hotspots]);
 
   const handleCategoryClick = (category: string) => {
@@ -98,9 +95,7 @@ const HeroSection = ({ onCtaClick, bgColor }: HeroSectionProps) => {
               ) : (
                 <div className="w-full h-full bg-muted" />
               )}
-              {/* Dark overlay for text readability */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-              {/* Category title */}
               <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-sm md:text-base font-bold text-left leading-tight drop-shadow-lg">
                 {t(cat.key)}
               </span>
@@ -108,39 +103,106 @@ const HeroSection = ({ onCtaClick, bgColor }: HeroSectionProps) => {
           ))}
         </div>
 
-        {/* Mission Content */}
-        {(missionContent || missionPart2Content) && (
-          <div className="w-full mt-16 max-w-md md:mx-auto">
-            {missionLoading || missionPart2Loading ? (
-              <div className="flex justify-center py-8">
-                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-              </div>
+        {/* Collezioni Card - full width */}
+        <div className="mt-3 w-full max-w-lg md:mx-auto">
+          <button
+            onClick={() => navigate("/esplora")}
+            className="relative w-full aspect-[16/9] rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
+          >
+            {collezioniImage ? (
+              <img
+                src={collezioniImage}
+                alt="Collezioni"
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              />
             ) : (
-              <>
-                {missionContent && (
-                  <p className={`font-sans text-base font-medium text-foreground leading-relaxed text-center whitespace-pre-wrap ${isTranslating1 ? "opacity-50" : ""}`}>
-                    {translatedMission || missionContent.content}
-                  </p>
-                )}
-
-                <div className="w-full max-w-sm mt-10 mb-10 mx-auto">
-                  <button
-                    onClick={onCtaClick}
-                    className="w-full px-8 py-3 font-sans text-base font-medium bg-transparent text-foreground border-2 border-foreground rounded-full transition-all duration-200 hover:bg-foreground/5 active:scale-[0.98]"
-                  >
-                    {t("heroSecondaryCtaBtn")}
-                  </button>
-                </div>
-
-                {missionPart2Content && (
-                  <p className={`font-sans text-base font-medium text-foreground leading-relaxed text-center whitespace-pre-wrap ${isTranslating2 ? "opacity-50" : ""}`}>
-                    {translatedMissionPart2 || missionPart2Content.content}
-                  </p>
-                )}
-              </>
+              <div className="w-full h-full bg-muted" />
             )}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+            <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-lg md:text-xl font-bold text-left leading-tight drop-shadow-lg">
+              Collezioni
+            </span>
+          </button>
+        </div>
+
+        {/* Scroll indicator */}
+        <div className="flex justify-center mt-10">
+          <ChevronDown className="w-6 h-6 text-foreground/40 animate-bounce" />
+        </div>
+
+        {/* Static Mission Content */}
+        <div className="w-full mt-12 max-w-md md:mx-auto space-y-10 text-left">
+          <div>
+            <h2 className="font-sans text-xl font-bold text-foreground mb-3">Chi è Pipo</h2>
+            <p className="font-sans text-base text-foreground/80 leading-relaxed">
+              Pipo è un piccolo alieno che per anni ha considerato la Terra il suo giardino segreto.
+              Oggi la ritrova piena di rumore, folle in movimento e luoghi invasi solo per essere fotografati.
+            </p>
+            <ul className="mt-4 space-y-2 font-sans text-base text-foreground/80 leading-relaxed">
+              <li>• Cerca silenzio dove tutti cercano spettacolo</li>
+              <li>• Preferisce le crepe alla vernice fresca</li>
+              <li>• Si muove "fuori radar", lontano dai percorsi obbligati</li>
+            </ul>
           </div>
-        )}
+
+          <div>
+            <h2 className="font-sans text-xl font-bold text-foreground mb-3">Cosa fa Pipo</h2>
+            <p className="font-sans text-base text-foreground/80 leading-relaxed">
+              Pipo torna sulla Terra per scovare angoli autentici: posti dove si può ancora respirare verità, senza filtri né sovrastrutture.
+            </p>
+            <ul className="mt-4 space-y-2 font-sans text-base text-foreground/80 leading-relaxed">
+              <li>• Individua luoghi e percorsi lontani dalle folle</li>
+              <li>• Li traduce in esperienze pensate per pochi, non per tutti</li>
+              <li>• Ti guida passo passo, se dimostri di meritarlo</li>
+            </ul>
+          </div>
+
+          <div>
+            <h2 className="font-sans text-xl font-bold text-foreground mb-3">Per chi è Pipo</h2>
+            <p className="font-sans text-base text-foreground/80 leading-relaxed">
+              Pipo è per Esploratori, viaggiatori, local, per chi preferisce luoghi veri a posti da cartolina e accetta di esplorare con rispetto.
+            </p>
+            <p className="font-sans text-base text-foreground/80 leading-relaxed mt-4 font-semibold">
+              Pipo è per te se:
+            </p>
+            <ul className="mt-2 space-y-2 font-sans text-base text-foreground/80 leading-relaxed">
+              <li>• ti piace evitare il turismo di massa e le file infinite</li>
+              <li>• cerchi silenzio, angoli nascosti e paesaggi "fuori radar"</li>
+              <li>• sei disposto a rispettare i luoghi, non a usarli come sfondo per foto</li>
+              <li>• vuoi percorsi essenziali, senza tour organizzati e programmi preconfezionati</li>
+            </ul>
+          </div>
+
+          <div>
+            <h2 className="font-sans text-xl font-bold text-foreground mb-3">Cosa si intende per "alieno"</h2>
+            <p className="font-sans text-base text-foreground/80 leading-relaxed">
+              Quando diciamo che Pipo è un alieno, non parliamo solo di un personaggio.
+              "Alieno" è un modo di guardare il mondo: da fuori, con occhi che non si sono ancora abituati al rumore.
+            </p>
+            <ul className="mt-4 space-y-2 font-sans text-base text-foreground/80 leading-relaxed">
+              <li>• Vede quello che gli altri non notano più</li>
+              <li>• Non si lascia ipnotizzare dalle mode o dalle foto perfette</li>
+              <li>• Sospetta di tutto ciò che esiste solo per essere mostrato, non vissuto</li>
+            </ul>
+          </div>
+
+          <div>
+            <h2 className="font-sans text-xl font-bold text-foreground mb-3">Rispetto e generazione di valore per le aree interne</h2>
+            <p className="font-sans text-base text-foreground/80 leading-relaxed">
+              Pipo rispetta la Terra in modo viscerale: tocca senza deturpare, consuma cercando di rigenerare.
+              Si aspetta che chi lo segue faccia lo stesso.
+            </p>
+            <ul className="mt-4 space-y-2 font-sans text-base text-foreground/80 leading-relaxed">
+              <li>• Nessun luogo è "contenuto": è uno spazio vivo da proteggere</li>
+              <li>• Ogni passaggio deve lasciare meno traccia possibile</li>
+              <li>• Il vero valore non è "andare", ma come ci si comporta mentre si è lì</li>
+            </ul>
+            <p className="font-sans text-base text-foreground/80 leading-relaxed mt-6 italic">
+              Se cerchi solo un posto dove fingere di essere vivo, Pipo non fa per te.
+              Se invece vuoi imparare a muoverti con rispetto, ti mostrerà i suoi rifugi segreti.
+            </p>
+          </div>
+        </div>
       </div>
     </section>
   );
