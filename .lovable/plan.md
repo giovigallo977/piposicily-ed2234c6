@@ -1,32 +1,116 @@
 
-# Piano: Importazione 10 hotspot nel database
 
-## Cosa viene fatto
+# Collezioni - Sistema di Collezioni con Hotspot
 
-Inserimento diretto nel database di 10 nuovi hotspot (Piano Battaglia esiste gia, viene saltato). Tutti avranno la **categoria vuota** cosi potrai assegnarla tu dall'admin.
+## Cosa faremo
 
-## Hotspot da inserire
+Creeremo un sistema completo di **Collezioni**: ogni collezione sara una card (simile a quelle delle categorie nella landing) con un nome e un'immagine. Cliccando su una collezione, si vedranno gli hotspot collegati a quella collezione.
 
-| # | Titolo | Zona | Ordine |
-|---|--------|------|--------|
-| 1 | Poggioreale Vecchia | Palermo | 1 |
-| 2 | Argimusco | Messina | 3 |
-| 3 | Il Cretto di Burri | Palermo | 3 |
-| 4 | Castello di Pietratagliata o Gresti | Catania | 4 |
-| 5 | Villa Romana del Casale | Agrigento | 5 |
-| 6 | Geraci Siculo e Castello | Agrigento | 6 |
-| 7 | Real Casina di Caccia di Ficuzza | Palermo | 8 |
-| 8 | Geoparco Rocca di Cerere | Enna | 9 |
-| 9 | Castello di Sperlinga | Enna | 10 |
-| 10 | Lago Maulazzo | Catania | 11 |
+## Struttura
 
-## Dettagli tecnici
+### 1. Database - Nuove tabelle
 
-- **Metodo**: 10 INSERT nella tabella `hotspots` tramite lo strumento di inserimento dati
-- **Categoria**: stringa vuota per tutti (da completare manualmente nell'admin)
-- **Foto**: gli URL delle immagini puntano al vecchio storage Supabase (`uepfkcuuqhxodtlzvrsb`), verranno inseriti cosi -- funzioneranno finche quel bucket e pubblico
-- **Piano Battaglia**: gia presente nel database, viene saltato (ordine aggiornato se necessario)
-- **Nessuna modifica al codice frontend**: la struttura delle card e dell'admin e gia pronta per mostrare e modificare tutti gli hotspot
+**Tabella `collections`**:
+- `id` (uuid, chiave primaria)
+- `nome` (testo, nome della collezione)
+- `descrizione` (testo, opzionale)
+- `immagine` (testo, URL immagine copertina)
+- `ordine` (intero, per ordinamento)
+- `created_at`, `updated_at`
 
-## Nota sulle immagini
-Le foto puntano a un altro progetto Supabase. Funzioneranno perche il bucket e pubblico, ma se in futuro vuoi migrare le immagini nel nuovo storage potrai ricaricarle dall'admin.
+**Tabella `collection_hotspots`** (tabella ponte):
+- `id` (uuid)
+- `collection_id` (riferimento a collections)
+- `hotspot_id` (riferimento a hotspots)
+- `ordine` (intero, ordine dell'hotspot dentro la collezione)
+- `created_at`
+
+Entrambe le tabelle avranno:
+- Lettura pubblica (come gli hotspot)
+- Scrittura/modifica/eliminazione solo per utenti autenticati
+
+### 2. Frontend - Pagina Collezioni
+
+**Nuova pagina `/collezioni`**: mostrera le card delle collezioni in griglia.
+
+**Nuova pagina `/collezioni/:id`**: mostrera gli hotspot appartenenti alla collezione selezionata, usando le stesse HotspotCard della pagina Esplora.
+
+**Landing page**: il bottone "Collezioni" nella homepage puntera a `/collezioni` invece che filtrare per categoria.
+
+### 3. Admin Panel - Gestione Collezioni
+
+Nuovo tab **"Collezioni"** nel pannello admin con:
+- Creare/modificare/eliminare collezioni (nome, descrizione, immagine)
+- Associare hotspot esistenti a ogni collezione tramite selezione multipla (checkbox)
+- Riordinare le collezioni
+
+---
+
+## Dettagli Tecnici
+
+### Migrazione SQL
+
+```sql
+-- Tabella collections
+CREATE TABLE public.collections (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  nome text NOT NULL,
+  descrizione text DEFAULT '',
+  immagine text DEFAULT '',
+  ordine integer DEFAULT 0,
+  created_at timestamptz DEFAULT now() NOT NULL,
+  updated_at timestamptz DEFAULT now() NOT NULL
+);
+
+-- Tabella ponte collection_hotspots
+CREATE TABLE public.collection_hotspots (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  collection_id uuid NOT NULL REFERENCES public.collections(id) ON DELETE CASCADE,
+  hotspot_id uuid NOT NULL REFERENCES public.hotspots(id) ON DELETE CASCADE,
+  ordine integer DEFAULT 0,
+  created_at timestamptz DEFAULT now() NOT NULL,
+  UNIQUE(collection_id, hotspot_id)
+);
+
+-- RLS
+ALTER TABLE public.collections ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.collection_hotspots ENABLE ROW LEVEL SECURITY;
+
+-- Policies collections
+CREATE POLICY "Collections are publicly readable" ON public.collections FOR SELECT USING (true);
+CREATE POLICY "Authenticated users can insert collections" ON public.collections FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
+CREATE POLICY "Authenticated users can update collections" ON public.collections FOR UPDATE USING (auth.uid() IS NOT NULL);
+CREATE POLICY "Authenticated users can delete collections" ON public.collections FOR DELETE USING (auth.uid() IS NOT NULL);
+
+-- Policies collection_hotspots
+CREATE POLICY "Collection hotspots are publicly readable" ON public.collection_hotspots FOR SELECT USING (true);
+CREATE POLICY "Authenticated users can insert collection hotspots" ON public.collection_hotspots FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
+CREATE POLICY "Authenticated users can update collection hotspots" ON public.collection_hotspots FOR UPDATE USING (auth.uid() IS NOT NULL);
+CREATE POLICY "Authenticated users can delete collection hotspots" ON public.collection_hotspots FOR DELETE USING (auth.uid() IS NOT NULL);
+
+-- Trigger updated_at
+CREATE TRIGGER update_collections_updated_at BEFORE UPDATE ON public.collections FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+```
+
+### Nuovi file
+
+| File | Scopo |
+|------|-------|
+| `src/hooks/useCollections.ts` | Hook CRUD per collections e collection_hotspots |
+| `src/pages/CollectionsPage.tsx` | Pagina lista collezioni |
+| `src/pages/CollectionDetailPage.tsx` | Pagina dettaglio con hotspot della collezione |
+
+### File modificati
+
+| File | Modifica |
+|------|----------|
+| `src/App.tsx` | Aggiungere route `/collezioni` e `/collezioni/:id` |
+| `src/pages/Admin.tsx` | Nuovo tab "Collezioni" con CRUD e selezione hotspot |
+| `src/components/HeroSection.tsx` | Il click su "Collezioni" punta a `/collezioni` |
+
+### Flusso utente
+
+1. **Admin** crea una collezione (nome + immagine) e seleziona gli hotspot da includere
+2. **Landing page**: card "Collezioni" porta a `/collezioni`
+3. **Pagina Collezioni**: griglia di card collezione (stile simile alle categorie)
+4. **Click su collezione**: pagina con gli hotspot di quella collezione, usando le stesse HotspotCard
