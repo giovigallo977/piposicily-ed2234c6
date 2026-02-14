@@ -1,42 +1,58 @@
 
-# Piano: Correzione errori e ottimizzazioni
 
-## Problemi trovati
+# Piano: Grafiche decorative nella landing page (gestite da admin)
 
-L'app funziona correttamente e si carica bene. Il messaggio "starting live preview" e un comportamento normale della piattaforma Lovable, non e un bug della tua app.
+## Idea
 
-Ho trovato pero 2 problemi tecnici da correggere:
+Ispirandoti allo stile Notion/Tally (doodle e illustrazioni ai lati della pagina), aggiungiamo degli "slot" per grafiche decorative nella landing page. Tu carichi le immagini dall'admin, e appaiono nella homepage nelle posizioni giuste. Su mobile spariscono o si ridimensionano per non interferire col testo.
 
-### 1. Errori 406 ripetuti (richieste fallite in loop)
-Due chiavi del database non esistono ancora: `explore_cta_text` e `homepage_bg_color`. Il codice usa `.single()` che genera un errore 406 quando non trova righe. React Query ritenta queste richieste fallite ogni pochi secondi, causando traffico di rete inutile e messaggi di errore nella console.
+## Dove appaiono le grafiche
 
-**Soluzione**: Modificare `useSiteContent` nel hook `src/hooks/useSiteContent.ts` per usare `.maybeSingle()` invece di `.single()`. Questo restituisce `null` invece di un errore quando la chiave non esiste, eliminando i retry continui.
+```text
+Desktop:                              Mobile:
++----------------------------------+  +----------------+
+|  [img]   Headline        [img]  |  |   Headline     |
+|          Subtitle               |  |   Subtitle     |
+|                                 |  |                |
+|  [img]  +------+------+  [img] |  |  +----+----+   |
+|         | Cat1 | Cat2 |        |  |  |Cat1|Cat2|   |
+|         | Cat3 | Cat4 |        |  |  |Cat3|Cat4|   |
+|         +------+------+        |  |  +----+----+   |
+|                                 |  |                |
+|  [====== Collezioni =========] |  |  [Collezioni]  |
+|  [grafichette sul banner]      |  |                |
++----------------------------------+  +----------------+
+```
 
-### 2. Warning React "Function components cannot be given refs"
-I componenti `HeroSection` e `MissionSection` ricevono ref ma non sono wrappati con `React.forwardRef()`. Questo genera warning nella console.
+- **Hero laterali (4 slot)**: 2 a sinistra, 2 a destra del contenuto hero. Visibili solo su desktop (md+), posizionati in modo assoluto. Dimensione ~80-120px, opacity leggera per non distrarre.
+- **Banner Collezioni (2 slot)**: Piccole grafichette sovrapposte al banner Collezioni, una a sinistra e una a destra. Visibili su tutte le risoluzioni ma ridimensionate su mobile.
 
-**Soluzione**: Non serve wrappare con forwardRef dato che questi componenti non hanno bisogno di ref. Il problema e probabilmente causato dal tagger di Lovable in dev. Nessuna azione necessaria.
+## Cosa si aggiunge nell'admin
+
+Nella tab **Contenuti**, una nuova card **"Grafiche Decorative"** con 6 upload:
+
+| Slot | Chiave DB | Posizione |
+|------|-----------|-----------|
+| Hero sinistra alto | `deco_hero_left_top` | A sinistra della headline |
+| Hero sinistra basso | `deco_hero_left_bottom` | A sinistra delle categorie |
+| Hero destra alto | `deco_hero_right_top` | A destra della headline |
+| Hero destra basso | `deco_hero_right_bottom` | A destra delle categorie |
+| Collezioni sinistra | `deco_collezioni_left` | Sovrapposta al banner Collezioni, lato sinistro |
+| Collezioni destra | `deco_collezioni_right` | Sovrapposta al banner Collezioni, lato destro |
+
+## Comportamento mobile-first
+
+- Le 4 grafiche hero laterali: **nascoste su mobile** (`hidden md:block`), appaiono solo da tablet in su
+- Le 2 grafiche Collezioni: visibili ma **ridimensionate** (40px su mobile, 60px su desktop)
+- Nessuna grafica interferisce col testo o causa scroll orizzontale
+- Le grafiche sono `position: absolute` con `pointer-events-none` per non bloccare i click
 
 ## Dettagli tecnici
 
 | File | Modifica |
 |------|----------|
-| `src/hooks/useSiteContent.ts` | Cambiare `.single()` in `.maybeSingle()` nella funzione `useSiteContent` (riga 21) |
+| `src/pages/Admin.tsx` | Aggiungere card "Grafiche Decorative" con 6 ImageUpload + stato + useEffect + handler salvataggio. Nuovi `useSiteContent()` per le 6 chiavi. |
+| `src/components/HeroSection.tsx` | Aggiungere 6 `useSiteContent()` per le grafiche. Renderizzare le immagini con posizionamento assoluto attorno al contenuto esistente e sul banner Collezioni. |
 
-### Codice da modificare
+La struttura esistente della homepage (headline, subtitle, griglia categorie, collezioni, missione) resta identica. Le grafiche sono un layer decorativo sovrapposto.
 
-In `src/hooks/useSiteContent.ts`, riga 21:
-```
-// Prima:
-.single();
-
-// Dopo:
-.maybeSingle();
-```
-
-Questo e l'unico cambiamento necessario. Elimina gli errori 406 ripetuti e i retry inutili.
-
-## Risultato
-- Niente piu errori 406 nella console
-- Niente piu richieste di rete ripetute ogni pochi secondi
-- L'app continua a funzionare esattamente come prima
