@@ -7,6 +7,15 @@ import { useTranslatedContent } from "@/hooks/useTranslation";
 import { useMemo } from "react";
 import MissionSection from "@/components/MissionSection";
 
+const DECO_KEYS = [
+  "deco_hero_left_top",
+  "deco_hero_left_bottom",
+  "deco_hero_right_top",
+  "deco_hero_right_bottom",
+  "deco_collezioni_left",
+  "deco_collezioni_right",
+] as const;
+
 interface HeroSectionProps {
   bgColor?: string;
 }
@@ -34,6 +43,14 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
   const { data: catImgBorghi } = useSiteContent("cat_image_borghi");
   const { data: catImgArte } = useSiteContent("cat_image_arte_cultura");
   const { data: catImgCollezioni } = useSiteContent("cat_image_collezioni");
+
+  // Decorative graphics
+  const { data: decoHeroLT } = useSiteContent("deco_hero_left_top");
+  const { data: decoHeroLB } = useSiteContent("deco_hero_left_bottom");
+  const { data: decoHeroRT } = useSiteContent("deco_hero_right_top");
+  const { data: decoHeroRB } = useSiteContent("deco_hero_right_bottom");
+  const { data: decoCollLeft } = useSiteContent("deco_collezioni_left");
+  const { data: decoCollRight } = useSiteContent("deco_collezioni_right");
 
   const headlineText = heroHeadlineContent?.content || null;
   const subtitleText = heroSubtitleContent?.content || null;
@@ -86,10 +103,24 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
 
   return (
     <section
-      className="px-6 py-12 flex flex-col min-h-[75vh] justify-center"
+      className="relative px-6 py-12 flex flex-col min-h-[75vh] justify-center overflow-hidden"
       style={{ backgroundColor: bgColor || undefined }}
     >
-      <div className="max-w-4xl mx-auto w-full md:flex md:flex-col md:items-center">
+      {/* Decorative graphics - hero laterals (desktop only) */}
+      {decoHeroLT?.content && (
+        <img src={decoHeroLT.content} alt="" className="absolute left-2 top-16 w-20 lg:w-28 hidden md:block pointer-events-none select-none opacity-80" />
+      )}
+      {decoHeroRT?.content && (
+        <img src={decoHeroRT.content} alt="" className="absolute right-2 top-16 w-20 lg:w-28 hidden md:block pointer-events-none select-none opacity-80" />
+      )}
+      {decoHeroLB?.content && (
+        <img src={decoHeroLB.content} alt="" className="absolute left-2 bottom-[40%] w-20 lg:w-28 hidden md:block pointer-events-none select-none opacity-80" />
+      )}
+      {decoHeroRB?.content && (
+        <img src={decoHeroRB.content} alt="" className="absolute right-2 bottom-[40%] w-20 lg:w-28 hidden md:block pointer-events-none select-none opacity-80" />
+      )}
+
+      <div className="max-w-4xl mx-auto w-full md:flex md:flex-col md:items-center relative z-10">
         {/* Headline */}
         <h1 className="font-sans text-[32px] md:text-[48px] font-bold leading-[1.1] text-foreground text-left md:text-center">
           {headline}
@@ -133,8 +164,14 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
           })}
         </div>
 
-        {/* Collezioni Card - full width */}
-        <div className="mt-3 w-full max-w-lg md:mx-auto">
+        {/* Collezioni Card - full width with deco graphics */}
+        <div className="mt-3 w-full max-w-lg md:mx-auto relative">
+          {decoCollLeft?.content && (
+            <img src={decoCollLeft.content} alt="" className="absolute -left-2 md:-left-6 top-1/2 -translate-y-1/2 w-10 md:w-16 pointer-events-none select-none opacity-80 z-10" />
+          )}
+          {decoCollRight?.content && (
+            <img src={decoCollRight.content} alt="" className="absolute -right-2 md:-right-6 top-1/2 -translate-y-1/2 w-10 md:w-16 pointer-events-none select-none opacity-80 z-10" />
+          )}
           <button
             onClick={() => handleCategoryClick("Collezioni")}
             className="relative w-full aspect-[16/9] rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
