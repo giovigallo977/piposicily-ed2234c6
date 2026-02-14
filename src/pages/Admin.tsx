@@ -43,7 +43,7 @@ const Admin = () => {
   const { data: missionContent, isLoading: missionLoading } = useSiteContent("mission");
   const { data: heroHeadlineContent } = useSiteContent("hero_headline");
   const { data: heroSubtitleContent } = useSiteContent("hero_subtitle");
-  const { data: heroCtaContent } = useSiteContent("hero_cta");
+  
   const { data: homepageBgColorContent } = useSiteContent("homepage_bg_color");
   // Category images
   const { data: catImgLuoghiContent } = useSiteContent("cat_image_luoghi_fantasma");
@@ -61,7 +61,7 @@ const Admin = () => {
   const [missionText, setMissionText] = useState("");
   const [heroHeadline, setHeroHeadline] = useState("");
   const [heroSubtitle, setHeroSubtitle] = useState("");
-  const [heroCta, setHeroCta] = useState("");
+  
   const [homepageBgColor, setHomepageBgColor] = useState("");
   const [catImgLuoghi, setCatImgLuoghi] = useState("");
   const [catImgNatura, setCatImgNatura] = useState("");
@@ -98,11 +98,7 @@ const Admin = () => {
     }
   }, [heroSubtitleContent]);
 
-  useEffect(() => {
-    if (heroCtaContent?.content) {
-      setHeroCta(heroCtaContent.content);
-    }
-  }, [heroCtaContent]);
+
 
   useEffect(() => {
     if (homepageBgColorContent?.content) {
@@ -195,7 +191,7 @@ const Admin = () => {
   const handleSaveHero = async () => {
     await updateSiteContent.mutateAsync({ key: "hero_headline", content: heroHeadline });
     await updateSiteContent.mutateAsync({ key: "hero_subtitle", content: heroSubtitle });
-    await updateSiteContent.mutateAsync({ key: "hero_cta", content: heroCta });
+    
     if (homepageBgColor) {
       await updateSiteContent.mutateAsync({ key: "homepage_bg_color", content: homepageBgColor });
     }
@@ -549,7 +545,7 @@ const Admin = () => {
                     Homepage Hero
                   </CardTitle>
                   <CardDescription>
-                    Headline, sottotitolo e testo del pulsante CTA nella homepage.
+                    Headline, sottotitolo e colore sfondo della homepage.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -580,19 +576,7 @@ const Admin = () => {
                       <EmojiPicker onSelect={(emoji) => setHeroSubtitle(heroSubtitle + emoji)} />
                     </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="hero_cta">Testo Pulsante CTA</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        id="hero_cta"
-                        value={heroCta}
-                        onChange={(e) => setHeroCta(e.target.value)}
-                        placeholder="Es: Portami via da qui"
-                        className="flex-1"
-                      />
-                      <EmojiPicker onSelect={(emoji) => setHeroCta(heroCta + emoji)} />
-                    </div>
-                  </div>
+                  
                   <div className="space-y-2">
                     <Label htmlFor="homepage_bg_color">Colore Sfondo Homepage (esadecimale)</Label>
                     <Input
@@ -614,7 +598,6 @@ const Admin = () => {
                       disabled={updateSiteContent.isPending || (
                         heroHeadline === heroHeadlineContent?.content && 
                         heroSubtitle === heroSubtitleContent?.content && 
-                        heroCta === heroCtaContent?.content &&
                         homepageBgColor === (homepageBgColorContent?.content || "")
                       )}
                     >
