@@ -14,6 +14,75 @@ export type Database = {
   }
   public: {
     Tables: {
+      collection_hotspots: {
+        Row: {
+          collection_id: string
+          created_at: string
+          hotspot_id: string
+          id: string
+          ordine: number | null
+        }
+        Insert: {
+          collection_id: string
+          created_at?: string
+          hotspot_id: string
+          id?: string
+          ordine?: number | null
+        }
+        Update: {
+          collection_id?: string
+          created_at?: string
+          hotspot_id?: string
+          id?: string
+          ordine?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "collection_hotspots_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "collection_hotspots_hotspot_id_fkey"
+            columns: ["hotspot_id"]
+            isOneToOne: false
+            referencedRelation: "hotspots"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      collections: {
+        Row: {
+          created_at: string
+          descrizione: string | null
+          id: string
+          immagine: string | null
+          nome: string
+          ordine: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          descrizione?: string | null
+          id?: string
+          immagine?: string | null
+          nome: string
+          ordine?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          descrizione?: string | null
+          id?: string
+          immagine?: string | null
+          nome?: string
+          ordine?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       hotspots: {
         Row: {
           categoria: string | null

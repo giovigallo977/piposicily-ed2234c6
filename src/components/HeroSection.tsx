@@ -173,7 +173,7 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
             <img src={decoCollRight.content} alt="" className="absolute -right-2 md:-right-6 top-1/2 -translate-y-1/2 w-10 md:w-16 pointer-events-none select-none opacity-80 z-10" />
           )}
           <button
-            onClick={() => handleCategoryClick("Collezioni")}
+            onClick={() => navigate("/collezioni")}
             className="relative w-full aspect-[16/9] rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
           >
             {collezioniImage ? (

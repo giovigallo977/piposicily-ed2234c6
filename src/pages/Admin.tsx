@@ -15,8 +15,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Plus, Pencil, Trash2, LogOut, ArrowLeft, FileText, MapPin } from "lucide-react";
+import { Loader2, Plus, Pencil, Trash2, LogOut, ArrowLeft, FileText, MapPin, FolderOpen } from "lucide-react";
 import pipoAlien from "@/assets/pipo-alien-new.png";
+import AdminCollectionsTab from "@/components/AdminCollectionsTab";
 
 const emptyHotspot: HotspotInsert = {
   titolo: "",
@@ -285,10 +286,14 @@ const Admin = () => {
       <main className="container mx-auto px-4 py-6">
         <div className="max-w-4xl mx-auto">
           <Tabs defaultValue="hotspots" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="hotspots" className="flex items-center gap-2">
                 <MapPin className="h-4 w-4" />
                 Hotspots
+              </TabsTrigger>
+              <TabsTrigger value="collezioni" className="flex items-center gap-2">
+                <FolderOpen className="h-4 w-4" />
+                Collezioni
               </TabsTrigger>
               <TabsTrigger value="contenuti" className="flex items-center gap-2">
                 <FileText className="h-4 w-4" />
@@ -572,6 +577,11 @@ const Admin = () => {
                   </div>
                 )}
               </div>
+            </TabsContent>
+
+            {/* Tab Collezioni */}
+            <TabsContent value="collezioni" className="space-y-6">
+              <AdminCollectionsTab />
             </TabsContent>
 
             {/* Tab Contenuti */}
