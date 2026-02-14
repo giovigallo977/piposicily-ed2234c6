@@ -18,7 +18,7 @@ export const useSiteContent = (key: string) => {
         .from("site_content" as any)
         .select("*")
         .eq("key", key)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       return data as unknown as SiteContent;
