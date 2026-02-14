@@ -51,6 +51,13 @@ const Admin = () => {
   const { data: catImgBorghiContent } = useSiteContent("cat_image_borghi");
   const { data: catImgArteContent } = useSiteContent("cat_image_arte_cultura");
   const { data: catImgCollezioniContent } = useSiteContent("cat_image_collezioni");
+  // Decorative graphics
+  const { data: decoHeroLTContent } = useSiteContent("deco_hero_left_top");
+  const { data: decoHeroLBContent } = useSiteContent("deco_hero_left_bottom");
+  const { data: decoHeroRTContent } = useSiteContent("deco_hero_right_top");
+  const { data: decoHeroRBContent } = useSiteContent("deco_hero_right_bottom");
+  const { data: decoCollLeftContent } = useSiteContent("deco_collezioni_left");
+  const { data: decoCollRightContent } = useSiteContent("deco_collezioni_right");
   // Explore CTA
   const { data: exploreCtaContent } = useSiteContent("explore_cta_text");
   const updateSiteContent = useUpdateSiteContent();
@@ -69,6 +76,12 @@ const Admin = () => {
   const [catImgArte, setCatImgArte] = useState("");
   const [catImgCollezioni, setCatImgCollezioni] = useState("");
   const [exploreCtaText, setExploreCtaText] = useState("");
+  const [decoHeroLT, setDecoHeroLT] = useState("");
+  const [decoHeroLB, setDecoHeroLB] = useState("");
+  const [decoHeroRT, setDecoHeroRT] = useState("");
+  const [decoHeroRB, setDecoHeroRB] = useState("");
+  const [decoCollLeft, setDecoCollLeft] = useState("");
+  const [decoCollRight, setDecoCollRight] = useState("");
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -125,6 +138,25 @@ const Admin = () => {
   useEffect(() => {
     if (exploreCtaContent?.content) setExploreCtaText(exploreCtaContent.content);
   }, [exploreCtaContent]);
+
+  useEffect(() => {
+    if (decoHeroLTContent?.content) setDecoHeroLT(decoHeroLTContent.content);
+  }, [decoHeroLTContent]);
+  useEffect(() => {
+    if (decoHeroLBContent?.content) setDecoHeroLB(decoHeroLBContent.content);
+  }, [decoHeroLBContent]);
+  useEffect(() => {
+    if (decoHeroRTContent?.content) setDecoHeroRT(decoHeroRTContent.content);
+  }, [decoHeroRTContent]);
+  useEffect(() => {
+    if (decoHeroRBContent?.content) setDecoHeroRB(decoHeroRBContent.content);
+  }, [decoHeroRBContent]);
+  useEffect(() => {
+    if (decoCollLeftContent?.content) setDecoCollLeft(decoCollLeftContent.content);
+  }, [decoCollLeftContent]);
+  useEffect(() => {
+    if (decoCollRightContent?.content) setDecoCollRight(decoCollRightContent.content);
+  }, [decoCollRightContent]);
 
   const handleOpenCreate = () => {
     setEditingHotspot(null);
@@ -195,6 +227,15 @@ const Admin = () => {
     if (homepageBgColor) {
       await updateSiteContent.mutateAsync({ key: "homepage_bg_color", content: homepageBgColor });
     }
+  };
+
+  const handleSaveDecoGraphics = async () => {
+    if (decoHeroLT) await updateSiteContent.mutateAsync({ key: "deco_hero_left_top", content: decoHeroLT });
+    if (decoHeroLB) await updateSiteContent.mutateAsync({ key: "deco_hero_left_bottom", content: decoHeroLB });
+    if (decoHeroRT) await updateSiteContent.mutateAsync({ key: "deco_hero_right_top", content: decoHeroRT });
+    if (decoHeroRB) await updateSiteContent.mutateAsync({ key: "deco_hero_right_bottom", content: decoHeroRB });
+    if (decoCollLeft) await updateSiteContent.mutateAsync({ key: "deco_collezioni_left", content: decoCollLeft });
+    if (decoCollRight) await updateSiteContent.mutateAsync({ key: "deco_collezioni_right", content: decoCollRight });
   };
 
 
@@ -687,6 +728,93 @@ const Admin = () => {
                         <Loader2 className="h-4 w-4 animate-spin mr-2" />
                       )}
                       Salva Foto e CTA
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+
+              {/* Grafiche Decorative */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="h-5 w-5" />
+                    Grafiche Decorative
+                  </CardTitle>
+                  <CardDescription>
+                    Illustrazioni e doodle decorativi che appaiono ai lati della homepage. Su mobile le grafiche laterali hero sono nascoste.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-sm font-medium text-muted-foreground">Hero — laterali (solo desktop)</p>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Sinistra alto</Label>
+                      <ImageUpload
+                        value={decoHeroLT}
+                        onChange={(url) => setDecoHeroLT(url)}
+                        onRemove={() => setDecoHeroLT("")}
+                        folder="deco"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Destra alto</Label>
+                      <ImageUpload
+                        value={decoHeroRT}
+                        onChange={(url) => setDecoHeroRT(url)}
+                        onRemove={() => setDecoHeroRT("")}
+                        folder="deco"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Sinistra basso</Label>
+                      <ImageUpload
+                        value={decoHeroLB}
+                        onChange={(url) => setDecoHeroLB(url)}
+                        onRemove={() => setDecoHeroLB("")}
+                        folder="deco"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Destra basso</Label>
+                      <ImageUpload
+                        value={decoHeroRB}
+                        onChange={(url) => setDecoHeroRB(url)}
+                        onRemove={() => setDecoHeroRB("")}
+                        folder="deco"
+                      />
+                    </div>
+                  </div>
+                  <p className="text-sm font-medium text-muted-foreground pt-2">Collezioni — banner</p>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>Sinistra</Label>
+                      <ImageUpload
+                        value={decoCollLeft}
+                        onChange={(url) => setDecoCollLeft(url)}
+                        onRemove={() => setDecoCollLeft("")}
+                        folder="deco"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Destra</Label>
+                      <ImageUpload
+                        value={decoCollRight}
+                        onChange={(url) => setDecoCollRight(url)}
+                        onRemove={() => setDecoCollRight("")}
+                        folder="deco"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex justify-end">
+                    <Button
+                      onClick={handleSaveDecoGraphics}
+                      disabled={updateSiteContent.isPending}
+                    >
+                      {updateSiteContent.isPending && (
+                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      )}
+                      Salva Grafiche
                     </Button>
                   </div>
                 </CardContent>
