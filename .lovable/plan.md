@@ -1,29 +1,42 @@
 
-# Piano: Rimuovere CTA inutilizzati dal backend admin
+# Piano: Correzione errori e ottimizzazioni
 
-## Problema
-Nel pannello admin (tab Contenuti > Homepage Hero) c'e un campo "Testo Pulsante CTA" (`hero_cta`) che non viene usato da nessun componente nel frontend. La homepage non ha nessun pulsante CTA collegato a questa chiave.
+## Problemi trovati
 
-## Cosa viene rimosso
+L'app funziona correttamente e si carica bene. Il messaggio "starting live preview" e un comportamento normale della piattaforma Lovable, non e un bug della tua app.
 
-Nel file `src/pages/Admin.tsx`:
-- Rimuovere `useSiteContent("hero_cta")` (riga 46)
-- Rimuovere lo state `heroCta` (riga 64)
-- Rimuovere il `useEffect` che popola `heroCta` (righe 101-105)
-- Rimuovere il campo input "Testo Pulsante CTA" dall'UI (righe 583-594)
-- Rimuovere il salvataggio di `hero_cta` da `handleSaveHero` (riga 198)
-- Rimuovere `heroCta` dalla condizione di disabilitazione del bottone "Salva Hero" (riga 617)
-- Aggiornare la descrizione della card Hero rimuovendo il riferimento al "pulsante CTA"
+Ho trovato pero 2 problemi tecnici da correggere:
 
-## Cosa resta invariato
-- Headline e Sottotitolo (usati nel frontend)
-- Colore sfondo homepage (usato nel frontend)
-- Testo CTA Esplora nella sezione categorie (usato nel frontend)
-- Missione (usata nel frontend)
-- Tutto il resto del pannello admin
+### 1. Errori 406 ripetuti (richieste fallite in loop)
+Due chiavi del database non esistono ancora: `explore_cta_text` e `homepage_bg_color`. Il codice usa `.single()` che genera un errore 406 quando non trova righe. React Query ritenta queste richieste fallite ogni pochi secondi, causando traffico di rete inutile e messaggi di errore nella console.
 
-## File coinvolti
+**Soluzione**: Modificare `useSiteContent` nel hook `src/hooks/useSiteContent.ts` per usare `.maybeSingle()` invece di `.single()`. Questo restituisce `null` invece di un errore quando la chiave non esiste, eliminando i retry continui.
 
-| File | Azione |
-|------|--------|
-| `src/pages/Admin.tsx` | Rimuovere campo hero_cta, state, useEffect, e logica di salvataggio |
+### 2. Warning React "Function components cannot be given refs"
+I componenti `HeroSection` e `MissionSection` ricevono ref ma non sono wrappati con `React.forwardRef()`. Questo genera warning nella console.
+
+**Soluzione**: Non serve wrappare con forwardRef dato che questi componenti non hanno bisogno di ref. Il problema e probabilmente causato dal tagger di Lovable in dev. Nessuna azione necessaria.
+
+## Dettagli tecnici
+
+| File | Modifica |
+|------|----------|
+| `src/hooks/useSiteContent.ts` | Cambiare `.single()` in `.maybeSingle()` nella funzione `useSiteContent` (riga 21) |
+
+### Codice da modificare
+
+In `src/hooks/useSiteContent.ts`, riga 21:
+```
+// Prima:
+.single();
+
+// Dopo:
+.maybeSingle();
+```
+
+Questo e l'unico cambiamento necessario. Elimina gli errori 406 ripetuti e i retry inutili.
+
+## Risultato
+- Niente piu errori 406 nella console
+- Niente piu richieste di rete ripetute ogni pochi secondi
+- L'app continua a funzionare esattamente come prima
