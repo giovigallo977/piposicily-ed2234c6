@@ -1,21 +1,29 @@
 
-# Piano: Dropdown categorie nell'admin per gli hotspot
+# Piano: Rimuovere CTA inutilizzati dal backend admin
 
-## Cosa cambia
+## Problema
+Nel pannello admin (tab Contenuti > Homepage Hero) c'e un campo "Testo Pulsante CTA" (`hero_cta`) che non viene usato da nessun componente nel frontend. La homepage non ha nessun pulsante CTA collegato a questa chiave.
 
-Nel form di creazione/modifica hotspot nell'admin, il campo "Categoria" attualmente e un campo di testo libero dove puoi scrivere qualsiasi cosa. Viene sostituito con un menu a tendina (dropdown) con le 4 categorie della homepage:
+## Cosa viene rimosso
 
-- Luoghi Fantasma
-- Natura
-- Borghi
-- Arte e Cultura
+Nel file `src/pages/Admin.tsx`:
+- Rimuovere `useSiteContent("hero_cta")` (riga 46)
+- Rimuovere lo state `heroCta` (riga 64)
+- Rimuovere il `useEffect` che popola `heroCta` (righe 101-105)
+- Rimuovere il campo input "Testo Pulsante CTA" dall'UI (righe 583-594)
+- Rimuovere il salvataggio di `hero_cta` da `handleSaveHero` (riga 198)
+- Rimuovere `heroCta` dalla condizione di disabilitazione del bottone "Salva Hero" (riga 617)
+- Aggiornare la descrizione della card Hero rimuovendo il riferimento al "pulsante CTA"
 
-Cosi non rischi errori di battitura e gli hotspot vengono sempre collegati correttamente ai filtri della homepage.
+## Cosa resta invariato
+- Headline e Sottotitolo (usati nel frontend)
+- Colore sfondo homepage (usato nel frontend)
+- Testo CTA Esplora nella sezione categorie (usato nel frontend)
+- Missione (usata nel frontend)
+- Tutto il resto del pannello admin
 
-## Dettagli tecnici
+## File coinvolti
 
-| File | Modifica |
-|------|----------|
-| `src/pages/Admin.tsx` | Sostituire il campo `<Input>` per "categoria" (riga ~293) con un componente `<Select>` che mostra le 4 opzioni fisse. Aggiungere import del componente Select. |
-
-Il campo Select usera i valori esatti che gia usa la homepage (`"Luoghi Fantasma"`, `"Natura"`, `"Borghi"`, `"Arte e Cultura"`), garantendo compatibilita con i filtri esistenti nella pagina Esplora.
+| File | Azione |
+|------|--------|
+| `src/pages/Admin.tsx` | Rimuovere campo hero_cta, state, useEffect, e logica di salvataggio |
