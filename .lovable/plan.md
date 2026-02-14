@@ -1,58 +1,32 @@
 
+# Piano: Importazione 10 hotspot nel database
 
-# Piano: Grafiche decorative nella landing page (gestite da admin)
+## Cosa viene fatto
 
-## Idea
+Inserimento diretto nel database di 10 nuovi hotspot (Piano Battaglia esiste gia, viene saltato). Tutti avranno la **categoria vuota** cosi potrai assegnarla tu dall'admin.
 
-Ispirandoti allo stile Notion/Tally (doodle e illustrazioni ai lati della pagina), aggiungiamo degli "slot" per grafiche decorative nella landing page. Tu carichi le immagini dall'admin, e appaiono nella homepage nelle posizioni giuste. Su mobile spariscono o si ridimensionano per non interferire col testo.
+## Hotspot da inserire
 
-## Dove appaiono le grafiche
-
-```text
-Desktop:                              Mobile:
-+----------------------------------+  +----------------+
-|  [img]   Headline        [img]  |  |   Headline     |
-|          Subtitle               |  |   Subtitle     |
-|                                 |  |                |
-|  [img]  +------+------+  [img] |  |  +----+----+   |
-|         | Cat1 | Cat2 |        |  |  |Cat1|Cat2|   |
-|         | Cat3 | Cat4 |        |  |  |Cat3|Cat4|   |
-|         +------+------+        |  |  +----+----+   |
-|                                 |  |                |
-|  [====== Collezioni =========] |  |  [Collezioni]  |
-|  [grafichette sul banner]      |  |                |
-+----------------------------------+  +----------------+
-```
-
-- **Hero laterali (4 slot)**: 2 a sinistra, 2 a destra del contenuto hero. Visibili solo su desktop (md+), posizionati in modo assoluto. Dimensione ~80-120px, opacity leggera per non distrarre.
-- **Banner Collezioni (2 slot)**: Piccole grafichette sovrapposte al banner Collezioni, una a sinistra e una a destra. Visibili su tutte le risoluzioni ma ridimensionate su mobile.
-
-## Cosa si aggiunge nell'admin
-
-Nella tab **Contenuti**, una nuova card **"Grafiche Decorative"** con 6 upload:
-
-| Slot | Chiave DB | Posizione |
-|------|-----------|-----------|
-| Hero sinistra alto | `deco_hero_left_top` | A sinistra della headline |
-| Hero sinistra basso | `deco_hero_left_bottom` | A sinistra delle categorie |
-| Hero destra alto | `deco_hero_right_top` | A destra della headline |
-| Hero destra basso | `deco_hero_right_bottom` | A destra delle categorie |
-| Collezioni sinistra | `deco_collezioni_left` | Sovrapposta al banner Collezioni, lato sinistro |
-| Collezioni destra | `deco_collezioni_right` | Sovrapposta al banner Collezioni, lato destro |
-
-## Comportamento mobile-first
-
-- Le 4 grafiche hero laterali: **nascoste su mobile** (`hidden md:block`), appaiono solo da tablet in su
-- Le 2 grafiche Collezioni: visibili ma **ridimensionate** (40px su mobile, 60px su desktop)
-- Nessuna grafica interferisce col testo o causa scroll orizzontale
-- Le grafiche sono `position: absolute` con `pointer-events-none` per non bloccare i click
+| # | Titolo | Zona | Ordine |
+|---|--------|------|--------|
+| 1 | Poggioreale Vecchia | Palermo | 1 |
+| 2 | Argimusco | Messina | 3 |
+| 3 | Il Cretto di Burri | Palermo | 3 |
+| 4 | Castello di Pietratagliata o Gresti | Catania | 4 |
+| 5 | Villa Romana del Casale | Agrigento | 5 |
+| 6 | Geraci Siculo e Castello | Agrigento | 6 |
+| 7 | Real Casina di Caccia di Ficuzza | Palermo | 8 |
+| 8 | Geoparco Rocca di Cerere | Enna | 9 |
+| 9 | Castello di Sperlinga | Enna | 10 |
+| 10 | Lago Maulazzo | Catania | 11 |
 
 ## Dettagli tecnici
 
-| File | Modifica |
-|------|----------|
-| `src/pages/Admin.tsx` | Aggiungere card "Grafiche Decorative" con 6 ImageUpload + stato + useEffect + handler salvataggio. Nuovi `useSiteContent()` per le 6 chiavi. |
-| `src/components/HeroSection.tsx` | Aggiungere 6 `useSiteContent()` per le grafiche. Renderizzare le immagini con posizionamento assoluto attorno al contenuto esistente e sul banner Collezioni. |
+- **Metodo**: 10 INSERT nella tabella `hotspots` tramite lo strumento di inserimento dati
+- **Categoria**: stringa vuota per tutti (da completare manualmente nell'admin)
+- **Foto**: gli URL delle immagini puntano al vecchio storage Supabase (`uepfkcuuqhxodtlzvrsb`), verranno inseriti cosi -- funzioneranno finche quel bucket e pubblico
+- **Piano Battaglia**: gia presente nel database, viene saltato (ordine aggiornato se necessario)
+- **Nessuna modifica al codice frontend**: la struttura delle card e dell'admin e gia pronta per mostrare e modificare tutti gli hotspot
 
-La struttura esistente della homepage (headline, subtitle, griglia categorie, collezioni, missione) resta identica. Le grafiche sono un layer decorativo sovrapposto.
-
+## Nota sulle immagini
+Le foto puntano a un altro progetto Supabase. Funzioneranno perche il bucket e pubblico, ma se in futuro vuoi migrare le immagini nel nuovo storage potrai ricaricarle dall'admin.
