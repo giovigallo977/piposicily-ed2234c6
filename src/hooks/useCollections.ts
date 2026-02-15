@@ -125,6 +125,51 @@ export const useDeleteCollection = () => {
   });
 };
 
+export const useHotspotCollections = (hotspotId: string | undefined) => {
+  return useQuery({
+    queryKey: ["hotspot_collections", hotspotId],
+    enabled: !!hotspotId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("collection_hotspots")
+        .select("collection_id")
+        .eq("hotspot_id", hotspotId!);
+      if (error) throw error;
+      return data.map((row) => row.collection_id);
+    },
+  });
+};
+
+export const useSyncHotspotCollections = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ hotspotId, collectionIds }: { hotspotId: string; collectionIds: string[] }) => {
+      const { error: deleteError } = await supabase
+        .from("collection_hotspots")
+        .delete()
+        .eq("hotspot_id", hotspotId);
+      if (deleteError) throw deleteError;
+
+      if (collectionIds.length > 0) {
+        const rows = collectionIds.map((collection_id, index) => ({
+          collection_id,
+          hotspot_id: hotspotId,
+          ordine: index,
+        }));
+        const { error: insertError } = await supabase
+          .from("collection_hotspots")
+          .insert(rows);
+        if (insertError) throw insertError;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["collection_hotspots"] });
+      queryClient.invalidateQueries({ queryKey: ["hotspot_collections"] });
+    },
+    onError: (error) => toast.error("Errore: " + error.message),
+  });
+};
+
 export const useSyncCollectionHotspots = () => {
   const queryClient = useQueryClient();
   return useMutation({

@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useHotspots, useCreateHotspot, useUpdateHotspot, useDeleteHotspot, Hotspot, HotspotInsert } from "@/hooks/useHotspots";
+import { useCollections, useHotspotCollections, useSyncHotspotCollections } from "@/hooks/useCollections";
+import { Checkbox } from "@/components/ui/checkbox";
+import { supabase } from "@/integrations/supabase/client";
 import { useSiteContent, useUpdateSiteContent } from "@/hooks/useSiteContent";
 import { ImageUpload, MultiImageUpload } from "@/components/ImageUpload";
 import { EmojiPicker } from "@/components/EmojiPicker";
@@ -39,7 +42,9 @@ const Admin = () => {
   const createMutation = useCreateHotspot();
   const updateMutation = useUpdateHotspot();
   const deleteMutation = useDeleteHotspot();
-  
+  const { data: allCollections } = useCollections();
+  const syncHotspotCollections = useSyncHotspotCollections();
+  const [selectedCollectionIds, setSelectedCollectionIds] = useState<string[]>([]);
   // Site content
   const { data: missionContent, isLoading: missionLoading } = useSiteContent("mission");
   const { data: heroHeadlineContent } = useSiteContent("hero_headline");
@@ -162,10 +167,11 @@ const Admin = () => {
   const handleOpenCreate = () => {
     setEditingHotspot(null);
     setFormData({ ...emptyHotspot, ordine: (hotspots?.length ?? 0) + 1 });
+    setSelectedCollectionIds([]);
     setIsDialogOpen(true);
   };
 
-  const handleOpenEdit = (hotspot: Hotspot) => {
+  const handleOpenEdit = async (hotspot: Hotspot) => {
     setEditingHotspot(hotspot);
     setFormData({
       titolo: hotspot.titolo,
@@ -179,6 +185,12 @@ const Admin = () => {
       tags: hotspot.tags || [],
       ordine: hotspot.ordine,
     });
+    // Carica collezioni associate
+    const { data } = await supabase
+      .from("collection_hotspots")
+      .select("collection_id")
+      .eq("hotspot_id", hotspot.id);
+    setSelectedCollectionIds(data?.map((r) => r.collection_id) || []);
     setIsDialogOpen(true);
   };
 
@@ -186,24 +198,30 @@ const Admin = () => {
   const handleDialogChange = (open: boolean) => {
     setIsDialogOpen(open);
     if (!open) {
-      // Reset del form quando il dialog viene chiuso
       setEditingHotspot(null);
       setFormData({ ...emptyHotspot });
+      setSelectedCollectionIds([]);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    let hotspotId: string;
     if (editingHotspot) {
       await updateMutation.mutateAsync({ id: editingHotspot.id, updates: formData });
+      hotspotId = editingHotspot.id;
     } else {
-      await createMutation.mutateAsync(formData);
+      const created = await createMutation.mutateAsync(formData);
+      hotspotId = created.id;
     }
     
-    // Reset esplicito dopo il salvataggio
+    // Sync collezioni
+    await syncHotspotCollections.mutateAsync({ hotspotId, collectionIds: selectedCollectionIds });
+    
     setEditingHotspot(null);
     setFormData({ ...emptyHotspot });
+    setSelectedCollectionIds([]);
     setIsDialogOpen(false);
   };
 
@@ -455,6 +473,30 @@ const Admin = () => {
                           />
                         </div>
                       </div>
+
+                      {/* Collezioni */}
+                      {allCollections && allCollections.length > 0 && (
+                        <div className="space-y-2">
+                          <Label>Collezioni</Label>
+                          <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto border rounded-md p-3">
+                            {allCollections.map((col) => (
+                              <label key={col.id} className="flex items-center gap-2 text-sm cursor-pointer">
+                                <Checkbox
+                                  checked={selectedCollectionIds.includes(col.id)}
+                                  onCheckedChange={(checked) => {
+                                    setSelectedCollectionIds((prev) =>
+                                      checked
+                                        ? [...prev, col.id]
+                                        : prev.filter((id) => id !== col.id)
+                                    );
+                                  }}
+                                />
+                                {col.nome}
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                      )}
 
                       <div className="space-y-2">
                         <Label htmlFor="link_google_maps">Link Google Maps</Label>
