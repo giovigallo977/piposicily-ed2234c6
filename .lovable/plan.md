@@ -1,67 +1,36 @@
 
 
-# Importazione 2 Hotspot da JSON
+# Aggiungere selezione Collezioni nel form Hotspot
 
-## Cosa faremo
+## Obiettivo
+Quando crei o modifichi un hotspot dal pannello Admin, potrai anche selezionare a quali collezioni appartiene direttamente dal form.
 
-Inseriremo i 2 nuovi hotspot nel database, combinando tutti i campi extra del JSON in un'unica `descrizione_completa` formattata. Il frontend si aggiornerà automaticamente.
+## Cosa cambia
 
-## Mapping dei campi
+### 1. Form Hotspot (Admin.tsx)
+- Aggiunta di una sezione "Collezioni" nel dialog di creazione/modifica hotspot
+- Lista di checkbox con tutte le collezioni disponibili (come gia fatto nel form collezioni per gli hotspot)
+- Quando salvi l'hotspot, le associazioni nella tabella `collection_hotspots` vengono aggiornate automaticamente
 
-| Campo JSON | Campo DB |
-|---|---|
-| `titolo` | `titolo` |
-| `descrizione_breve` | `descrizione_breve` |
-| `perche_pipo_ama` + `approfondimenti` + `cosa_vedere` + `pit_stop` + `nei_intorni` + `manto_stradale` + `parcheggio` + `radar_distanze` | `descrizione_completa` (testo unico formattato) |
-| `tag` | `tags` |
-| `categoria` | `categoria` |
-| `link_maps` | `link_google_maps` |
-| (non presente) | `zona` = "" |
-| (non presente) | `foto_principale` = "" |
-| (non presente) | `foto_gallery` = [] |
-
-## Ordine
-
-Gli hotspot esistenti arrivano fino a ordine 16. I nuovi saranno:
-- Labirinto di Arianna: ordine 17
-- Piramide 38 Parallelo: ordine 18
-
-## Formato della descrizione_completa
-
-Per ogni hotspot, la descrizione completa sarà composta cosi:
-
-```text
-Perché Pipo lo ama
-[testo perche_pipo_ama]
-
-Approfondimenti
-[testo approfondimenti]
-
-Cosa vedere
-- [elemento 1]
-- [elemento 2]
-- ...
-
-Pit Stop
-[testo pit_stop]
-
-Nei dintorni
-- [elemento 1]
-- [elemento 2]
-- ...
-
-Manto stradale
-[testo manto_stradale]
-
-Parcheggio
-[testo parcheggio]
-
-Radar distanze
-- Palermo: [distanza]
-- Catania: [distanza]
-- ...
-```
+### 2. Logica di sincronizzazione
+- Al caricamento del form in modifica, vengono lette le collezioni attualmente associate all'hotspot
+- Al salvataggio, le associazioni vengono sincronizzate: rimosse quelle deselezionate, aggiunte quelle nuove
 
 ## Dettagli tecnici
 
-Verranno eseguite 2 query INSERT nella tabella `hotspots` tramite il tool di inserimento dati. Nessuna modifica a file di codice o schema del database necessaria: il frontend legge già dinamicamente dalla tabella hotspots.
+### Nuovo hook: query collezioni per hotspot
+- In `useCollections.ts`, aggiungere `useHotspotCollections(hotspotId)` che legge dalla tabella `collection_hotspots` filtrando per `hotspot_id`
+
+### Nuovo hook: sync collezioni per hotspot  
+- `useSyncHotspotCollections()` che cancella le associazioni esistenti per un hotspot e le ricrea con le nuove selezioni
+
+### Modifiche a `Admin.tsx`
+- Importare `useCollections`, `useHotspotCollections`, `useSyncHotspotCollections`
+- Aggiungere stato `selectedCollectionIds: string[]`
+- Nel form, dopo la sezione tags, inserire la lista di collezioni con checkbox
+- Nel `handleSubmit`, dopo il salvataggio dell'hotspot, chiamare `syncHotspotCollections`
+- Nel `handleOpenEdit`, caricare le collezioni associate
+
+### Nessuna modifica al database
+Le tabelle `collections` e `collection_hotspots` esistono gia con la struttura necessaria.
+
