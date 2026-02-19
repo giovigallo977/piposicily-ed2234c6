@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { Plus, Minus, Map, X, ChevronLeft, ChevronRight, Lock } from "lucide-react";
+import { Plus, Minus, Map, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Hotspot } from "@/hooks/useHotspots";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -9,10 +9,9 @@ import useEmblaCarousel from "embla-carousel-react";
 interface HotspotCardProps {
   hotspot: Hotspot;
   index?: number;
-  locked?: boolean;
 }
 
-const HotspotCard = ({ hotspot, index = 0, locked = false }: HotspotCardProps) => {
+const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
@@ -52,8 +51,7 @@ const HotspotCard = ({ hotspot, index = 0, locked = false }: HotspotCardProps) =
       <div className="relative">
       <article 
         className={cn(
-          "rounded-3xl overflow-hidden shadow-lg transition-all duration-300 bg-white",
-          !locked && "hover:shadow-xl hover:-translate-y-1",
+          "rounded-3xl overflow-hidden shadow-lg transition-all duration-300 bg-white hover:shadow-xl hover:-translate-y-1",
           isTranslating && "opacity-75"
         )}
       >
@@ -178,18 +176,6 @@ const HotspotCard = ({ hotspot, index = 0, locked = false }: HotspotCardProps) =
         </div>
       </article>
 
-      {/* Glass lock overlay */}
-      {locked && (
-        <div className="absolute inset-0 z-10 rounded-3xl backdrop-blur-md bg-white/60 flex flex-col items-center justify-center gap-3 cursor-default">
-          <Lock className="w-8 h-8 text-foreground/70" strokeWidth={1.5} />
-          <p className="font-sans font-bold text-foreground/80 text-center px-6">
-            Sblocca questa categoria
-          </p>
-          <button className="mt-1 px-5 py-2.5 rounded-full bg-foreground text-background font-sans font-semibold text-sm transition-transform hover:scale-105 active:scale-95">
-            Scopri come
-          </button>
-        </div>
-      )}
       </div>
 
       {/* Lightbox */}

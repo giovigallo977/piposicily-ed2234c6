@@ -94,7 +94,7 @@ const ExplorePage = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredHotspots.map((hotspot, index) => (
-              <HotspotCard key={hotspot.id} hotspot={hotspot} index={index} locked={index >= 3} />
+              <HotspotCard key={hotspot.id} hotspot={hotspot} index={index} />
             ))}
           </div>
           
