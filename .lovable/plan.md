@@ -1,36 +1,26 @@
 
+# Rimozione del sistema di blocco contenuti
 
-# Aggiungere selezione Collezioni nel form Hotspot
+## Cosa viene rimosso
 
-## Obiettivo
-Quando crei o modifichi un hotspot dal pannello Admin, potrai anche selezionare a quali collezioni appartiene direttamente dal form.
+Il sistema di oscuramento (glassmorphism + lock) è presente in 2 file e viene eliminato completamente.
 
-## Cosa cambia
+---
 
-### 1. Form Hotspot (Admin.tsx)
-- Aggiunta di una sezione "Collezioni" nel dialog di creazione/modifica hotspot
-- Lista di checkbox con tutte le collezioni disponibili (come gia fatto nel form collezioni per gli hotspot)
-- Quando salvi l'hotspot, le associazioni nella tabella `collection_hotspots` vengono aggiornate automaticamente
+## Modifiche
 
-### 2. Logica di sincronizzazione
-- Al caricamento del form in modifica, vengono lette le collezioni attualmente associate all'hotspot
-- Al salvataggio, le associazioni vengono sincronizzate: rimosse quelle deselezionate, aggiunte quelle nuove
+### 1. `src/components/HotspotCard.tsx`
+- Rimozione della prop `locked` dall'interfaccia `HotspotCardProps`
+- Rimozione del parametro `locked = false` dalla firma del componente
+- Rimozione della logica condizionale `!locked && "hover:shadow-xl..."` — l'hover viene reso sempre attivo
+- Rimozione dell'import di `Lock` da lucide-react (non più usato)
+- Eliminazione del blocco JSX "Glass lock overlay" (~7 righe)
 
-## Dettagli tecnici
+### 2. `src/pages/ExplorePage.tsx`
+- Rimozione della prop `locked={index >= 3}` dalla chiamata a `<HotspotCard />`
+- La prop `index` rimane (usata internamente per altri scopi se necessario, altrimenti rimossa anch'essa se non servisse)
 
-### Nuovo hook: query collezioni per hotspot
-- In `useCollections.ts`, aggiungere `useHotspotCollections(hotspotId)` che legge dalla tabella `collection_hotspots` filtrando per `hotspot_id`
+---
 
-### Nuovo hook: sync collezioni per hotspot  
-- `useSyncHotspotCollections()` che cancella le associazioni esistenti per un hotspot e le ricrea con le nuove selezioni
-
-### Modifiche a `Admin.tsx`
-- Importare `useCollections`, `useHotspotCollections`, `useSyncHotspotCollections`
-- Aggiungere stato `selectedCollectionIds: string[]`
-- Nel form, dopo la sezione tags, inserire la lista di collezioni con checkbox
-- Nel `handleSubmit`, dopo il salvataggio dell'hotspot, chiamare `syncHotspotCollections`
-- Nel `handleOpenEdit`, caricare le collezioni associate
-
-### Nessuna modifica al database
-Le tabelle `collections` e `collection_hotspots` esistono gia con la struttura necessaria.
-
+## Risultato
+Tutti gli hotspot diventano accessibili e visibili senza limitazioni. Nessuna logica di paywall o blur rimane nel codice.
