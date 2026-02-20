@@ -45,7 +45,7 @@ const MissionSection = ({ missionContent }: MissionSectionProps) => {
 
   return (
     <div className="w-full mt-12 max-w-md md:mx-auto space-y-10 text-left">
-      <div className="font-sans text-base text-foreground/80 leading-relaxed whitespace-pre-line">
+      <div className="font-sans text-base font-medium text-foreground/80 leading-relaxed whitespace-pre-line">
         {displayText}
       </div>
     </div>
