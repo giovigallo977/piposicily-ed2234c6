@@ -1,33 +1,33 @@
 
 
-# Piano: Sincronizzazione Realtime degli Hotspots
+# Diagnosi: Errore Hooks, Non un Problema di Cache
 
-## Problema Identificato
+## Cosa sta succedendo
 
-Gli hotspot modificati dal backend non appaiono sulla piattaforma perche:
+Il problema NON era la mancanza di realtime. React Query aggiorna gia i dati automaticamente quando l'utente naviga o torna sulla pagina. I tuoi hotspot si caricavano correttamente prima.
 
-1. **Nessuna subscription realtime sulla tabella `hotspots`**: il hook `useHotspots` usa solo React Query con cache statica. Quando aggiungi/modifichi hotspot dal backend, il frontend non sa che deve ricaricare i dati.
-2. **La tabella `hotspots` potrebbe non essere nella pubblicazione realtime**: serve verificare e aggiungere `hotspots` alla pubblicazione `supabase_realtime`.
+L'errore attuale visibile nei log della console e:
+
+```text
+React has detected a change in the order of Hooks called by HeroSection
+Previous render: hook 14 = useContext
+Next render:     hook 14 = useEffect
+```
+
+Questo succede perche la modifica a `useHotspots.tsx` (aggiunta di `useQueryClient` + `useEffect`) ha cambiato il numero di hooks interni. Il sistema di hot-reload non gestisce questo cambio e causa un crash del componente.
 
 ## Soluzione
 
-### 1. Migrazione Database
-Aggiungere la tabella `hotspots` alla pubblicazione realtime (se non gia presente):
+**Nessuna modifica al codice necessaria.** La modifica realtime che abbiamo fatto e corretta e funzionante. Il problema e solo il hot-reload.
 
-```sql
-ALTER PUBLICATION supabase_realtime ADD TABLE public.hotspots;
-```
+Un **refresh completo della pagina** (F5 o Ctrl+R) nella preview risolve l'errore immediatamente. Dopo il refresh, tutti gli hotspot appariranno correttamente, e in piu avrai il beneficio del realtime istantaneo.
 
-### 2. Modifica `src/hooks/useHotspots.tsx`
-Aggiungere una subscription realtime che invalida la cache React Query quando arrivano cambiamenti. Pattern identico a quello gia usato in `useSiteContent.ts`:
+## Riepilogo
 
-- Singleton globale che ascolta `postgres_changes` su `public.hotspots`
-- Su ogni evento (`INSERT`, `UPDATE`, `DELETE`), chiama `queryClient.invalidateQueries({ queryKey: ["hotspots"] })`
-- `useEffect` nel hook `useHotspots` per inizializzare la subscription
+| Prima | Dopo |
+|-------|------|
+| Hotspot si aggiornano quando cambi tab o navighi | Hotspot si aggiornano **istantaneamente** senza azioni |
+| Funzionava gia bene | Funziona meglio + errore temporaneo da hot-reload |
 
-Risultato: ogni modifica fatta dal pannello admin o direttamente dal backend si riflette immediatamente su tutti i client connessi, senza refresh.
-
-### File Modificati
-- `supabase/migrations/` -- nuova migrazione per pubblicazione realtime
-- `src/hooks/useHotspots.tsx` -- aggiunta subscription realtime
+Nessun file da modificare. Solo un refresh della preview.
 
