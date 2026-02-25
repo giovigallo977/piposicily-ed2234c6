@@ -1,13 +1,17 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronsLeft } from "lucide-react";
+import { ChevronsLeft, LogIn, Loader2 } from "lucide-react";
 import { useCollections } from "@/hooks/useCollections";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Loader2 } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import PremiumModal from "@/components/PremiumModal";
 
 const CollectionsPage = () => {
   const navigate = useNavigate();
   const { data: collections, isLoading } = useCollections();
   const { t } = useLanguage();
+  const { user } = useAuth();
+  const [premiumModalOpen, setPremiumModalOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-background">
@@ -16,7 +20,13 @@ const CollectionsPage = () => {
           <ChevronsLeft className="w-8 h-8 text-foreground" strokeWidth={2.5} />
         </button>
         <h1 className="font-sans text-xl font-bold text-foreground">{t("collections")}</h1>
-        <div className="w-12" />
+        {!user ? (
+          <button onClick={() => setPremiumModalOpen(true)} className="p-2 transition-all duration-200 hover:scale-110" aria-label="Login">
+            <LogIn className="w-6 h-6 text-foreground" />
+          </button>
+        ) : (
+          <div className="w-12" />
+        )}
       </header>
 
       <main className="container mx-auto px-4 py-6 pb-24">
@@ -58,6 +68,7 @@ const CollectionsPage = () => {
           )}
         </div>
       </main>
+      <PremiumModal open={premiumModalOpen} onOpenChange={setPremiumModalOpen} />
     </div>
   );
 };

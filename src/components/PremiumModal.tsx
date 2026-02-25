@@ -7,6 +7,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { Lock, Check, Sparkles, Loader2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface PremiumModalProps {
   open: boolean;
@@ -16,9 +17,10 @@ interface PremiumModalProps {
 const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
   const { user, signUp, signIn } = useAuth();
   const { language } = useLanguage();
+  const queryClient = useQueryClient();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
 
   const texts = language === "it" ? {
@@ -31,15 +33,17 @@ const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
     priceLabel: "una tantum",
     payButton: "Paga €4.99 e sblocca tutto",
     emailPlaceholder: "La tua email",
-    passwordPlaceholder: "Scegli una password",
+    passwordPlaceholder: "La tua password",
     signupLabel: "Crea account e paga",
-    loginLabel: "Accedi e paga",
+    loginLabel: "Accedi",
     switchToLogin: "Hai già un account? Accedi",
     switchToSignup: "Non hai un account? Registrati",
     signupError: "Errore nella registrazione",
     loginError: "Errore nell'accesso",
     checkEmail: "Controlla la tua email per confermare la registrazione",
     paymentError: "Errore nell'avvio del pagamento",
+    alreadyPaid: "Hai già pagato? Effettua l'accesso",
+    welcomeBack: "Bentornato! Accesso premium attivo.",
   } : {
     title: "Unlock Pipo Premium",
     subtitle: "Full access to all hotspots",
@@ -50,15 +54,17 @@ const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
     priceLabel: "one-time",
     payButton: "Pay €4.99 and unlock all",
     emailPlaceholder: "Your email",
-    passwordPlaceholder: "Choose a password",
+    passwordPlaceholder: "Your password",
     signupLabel: "Create account & pay",
-    loginLabel: "Login & pay",
+    loginLabel: "Log in",
     switchToLogin: "Already have an account? Login",
     switchToSignup: "Don't have an account? Sign up",
     signupError: "Registration error",
     loginError: "Login error",
     checkEmail: "Check your email to confirm registration",
     paymentError: "Error starting payment",
+    alreadyPaid: "Already paid? Log in",
+    welcomeBack: "Welcome back! Premium access active.",
   };
 
   const handlePay = async () => {
@@ -76,6 +82,23 @@ const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
     }
   };
 
+  const checkPremiumAndAct = async () => {
+    // Check if user is already premium
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("is_premium")
+      .single();
+
+    if (profile?.is_premium) {
+      // Already premium — close modal and refresh
+      toast({ title: texts.welcomeBack });
+      await queryClient.invalidateQueries({ queryKey: ["premium-status"] });
+      onOpenChange(false);
+      return true;
+    }
+    return false;
+  };
+
   const handleAuth = async () => {
     setLoading(true);
     try {
@@ -85,8 +108,15 @@ const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
           toast({ title: texts.loginError, description: error.message, variant: "destructive" });
           return;
         }
-        // After login, start payment
-        setTimeout(handlePay, 500);
+        // Wait for session to propagate, then check premium
+        setTimeout(async () => {
+          const alreadyPremium = await checkPremiumAndAct();
+          if (!alreadyPremium) {
+            // Not premium yet — show pay button (user is now authenticated, UI will re-render)
+            setLoading(false);
+          }
+        }, 600);
+        return;
       } else {
         const { error } = await signUp(email, password);
         if (error) {
@@ -135,6 +165,11 @@ const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
           </Button>
         ) : (
           <div className="space-y-3">
+            {isLogin && (
+              <p className="text-xs text-center text-muted-foreground font-medium">
+                {texts.alreadyPaid}
+              </p>
+            )}
             <Input
               type="email"
               placeholder={texts.emailPlaceholder}

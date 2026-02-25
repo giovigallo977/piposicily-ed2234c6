@@ -1,10 +1,11 @@
 import { useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ChevronsLeft, Sparkles, Loader2 } from "lucide-react";
+import { ChevronsLeft, Sparkles, Loader2, LogIn } from "lucide-react";
 import { useCollectionById, useCollectionHotspots } from "@/hooks/useCollections";
 import { useHotspots } from "@/hooks/useHotspots";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { usePremiumStatus } from "@/hooks/usePremiumStatus";
+import { useAuth } from "@/hooks/useAuth";
 import HotspotCard from "@/components/HotspotCard";
 import PremiumModal from "@/components/PremiumModal";
 
@@ -13,6 +14,7 @@ const CollectionDetailPage = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const { isPremium } = usePremiumStatus();
+  const { user } = useAuth();
   const { data: collection, isLoading: collLoading } = useCollectionById(id);
   const { data: collectionHotspots, isLoading: chLoading } = useCollectionHotspots(id);
   const { data: allHotspots, isLoading: hLoading } = useHotspots();
@@ -38,7 +40,13 @@ const CollectionDetailPage = () => {
         <h1 className="font-sans text-xl font-bold text-foreground truncate max-w-[60%]">
           {collection?.nome || t("collection")}
         </h1>
-        <div className="w-12" />
+        {!user ? (
+          <button onClick={() => setPremiumModalOpen(true)} className="p-2 transition-all duration-200 hover:scale-110" aria-label="Login">
+            <LogIn className="w-6 h-6 text-foreground" />
+          </button>
+        ) : (
+          <div className="w-12" />
+        )}
       </header>
 
       {/* Premium banner */}
