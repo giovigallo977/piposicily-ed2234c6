@@ -1,42 +1,66 @@
 
 
-# Piano: Logica Premium nelle Collezioni
+# Piano: Login intelligente per utenti Premium
 
-## Problema
+## Problema attuale
 
-La pagina dettaglio collezione (`CollectionDetailPage`) mostra tutte le schede hotspot senza restrizioni. Deve invece seguire la stessa logica della pagina Esplora: solo la **prima scheda** della collezione è gratuita, le altre sono bloccate (blur + lucchetto) per gli utenti non premium.
+Quando un utente ha gia pagato ma non e loggato, cliccando su un hotspot bloccato vede il modal di registrazione/pagamento generico. Non c'e modo rapido per fare login senza passare dal modal premium.
 
-## Modifiche
+## Modifiche previste
 
-**File: `src/pages/CollectionDetailPage.tsx`**
+### 1. PremiumModal piu intelligente (`src/components/PremiumModal.tsx`)
 
-1. Importare `useState` e i componenti necessari: `usePremiumStatus`, `PremiumModal`, `Sparkles`
-2. Aggiungere lo stato per il modal premium
-3. Aggiungere il banner premium (come in ExplorePage) che mostra "1/N schede disponibili" e il link "Sblocca tutto"
-4. Nel rendering delle card, passare `locked={true}` a tutte le card tranne la prima (index 0), e `isFree={true}` alla prima card — solo per utenti non premium
-5. Passare `onLockedClick` per aprire il modal premium
+- Quando l'utente non e autenticato, mostrare per default la vista **Login** (non Signup), con il messaggio "Hai gia pagato? Effettua l'accesso"
+- Cambiare `isLogin` default a `true` invece di `false`
+- Dopo il login, verificare lo stato premium: se l'utente e gia premium, chiudere il modal e ricaricare i dati (senza ridirigere a Stripe)
+- Solo se non e premium dopo il login, procedere con il pagamento
 
-### Logica specifica
+### 2. Bottone Login nell'header (`src/pages/ExplorePage.tsx` e `src/pages/CollectionDetailPage.tsx`)
 
-- La **prima scheda** (index 0) nella collezione è sempre gratuita
-- Tutte le altre (index > 0) sono bloccate se l'utente non è premium
-- Il banner mostra "1/{totale} schede disponibili" con il pulsante "Sblocca tutto"
-- Click su card bloccata o sul banner apre il `PremiumModal`
+- Aggiungere un piccolo bottone login in alto a destra (icona `LogIn`) visibile solo quando l'utente **non e autenticato**
+- Click sul bottone apre il PremiumModal (che ora parte dalla vista login)
+- Se l'utente e gia autenticato e premium, mostrare il badge "Premium Member" (gia presente in ExplorePage)
+- Se autenticato ma non premium, nessun bottone login (il modal si apre dalle card bloccate)
 
-### Struttura risultante
+### 3. Flusso post-login nel PremiumModal
 
 ```text
-┌─────────────────────────────┐
-│  ← Header (nome collezione) │
-├─────────────────────────────┤
-│  ✨ 1/6 disponibili  [Sblocca tutto]  │  ← solo non-premium
-├─────────────────────────────┤
-│  Card 1 (GRATUITO badge)    │  ← visibile
-│  Card 2 (🔒 blur)          │  ← bloccata
-│  Card 3 (🔒 blur)          │  ← bloccata
-│  ...                        │
-└─────────────────────────────┘
+Utente clicca card bloccata
+        │
+        ▼
+  PremiumModal si apre
+  (default: form Login)
+        │
+   Utente fa login
+        │
+        ▼
+  Verifica premium status
+        │
+   ┌────┴────┐
+   │         │
+Premium   Non Premium
+   │         │
+   ▼         ▼
+Chiudi    Mostra bottone
+modal +   "Paga €4.99"
+refresh
 ```
 
-Nessuna modifica al database o ad altri file necessaria.
+### File modificati
+
+1. **`src/components/PremiumModal.tsx`**
+   - Default `isLogin = true`
+   - Dopo login: controllare `profiles.is_premium` prima di avviare il pagamento
+   - Se gia premium: chiudere modal, invalidare query cache premium-status
+   - Testo aggiornato: "Hai gia pagato? Accedi" / "Already paid? Log in"
+
+2. **`src/pages/ExplorePage.tsx`**
+   - Aggiungere icona `LogIn` in alto a destra (al posto dello spacer) quando utente non autenticato
+   - Click apre PremiumModal
+
+3. **`src/pages/CollectionDetailPage.tsx`**
+   - Stesso bottone login in alto a destra quando utente non autenticato
+
+4. **`src/pages/CollectionsPage.tsx`** (se ha un header)
+   - Stesso pattern per coerenza
 
