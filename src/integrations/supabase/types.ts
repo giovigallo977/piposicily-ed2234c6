@@ -83,6 +83,54 @@ export type Database = {
         }
         Relationships: []
       }
+      free_spots: {
+        Row: {
+          categoria: string | null
+          created_at: string
+          descrizione_breve: string
+          descrizione_completa: string
+          foto_gallery: string[] | null
+          foto_principale: string | null
+          id: string
+          link_google_maps: string | null
+          ordine: number | null
+          tags: string[] | null
+          titolo: string
+          updated_at: string
+          zona: string | null
+        }
+        Insert: {
+          categoria?: string | null
+          created_at?: string
+          descrizione_breve?: string
+          descrizione_completa?: string
+          foto_gallery?: string[] | null
+          foto_principale?: string | null
+          id?: string
+          link_google_maps?: string | null
+          ordine?: number | null
+          tags?: string[] | null
+          titolo: string
+          updated_at?: string
+          zona?: string | null
+        }
+        Update: {
+          categoria?: string | null
+          created_at?: string
+          descrizione_breve?: string
+          descrizione_completa?: string
+          foto_gallery?: string[] | null
+          foto_principale?: string | null
+          id?: string
+          link_google_maps?: string | null
+          ordine?: number | null
+          tags?: string[] | null
+          titolo?: string
+          updated_at?: string
+          zona?: string | null
+        }
+        Relationships: []
+      }
       hotspots: {
         Row: {
           categoria: string | null
