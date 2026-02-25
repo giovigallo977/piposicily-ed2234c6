@@ -65,7 +65,7 @@ const ExplorePage = () => {
         <div className="flex items-center gap-2">
           <img alt="Pipo" className="h-10 w-10 object-contain" draggable={false} src="/lovable-uploads/c09259c8-f4e2-4940-b26d-61c1f4a134ae.png" />
           {isPremium && (
-            <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-primary text-primary-foreground">
+            <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-olive text-olive-foreground">
               {t("premiumMember")}
             </span>
           )}
@@ -97,12 +97,12 @@ const ExplorePage = () => {
           onClick={() => setPremiumModalOpen(true)}
         >
           <div className="flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-primary" />
+            <Sparkles className="w-4 h-4 text-olive" />
             <span className="text-sm font-medium">
               {freeCards}/{totalCards} {t("cardsAvailable")}
             </span>
           </div>
-          <span className="text-xs font-bold text-primary">{t("unlockAll")}</span>
+          <span className="text-xs font-bold text-olive">{t("unlockAll")}</span>
         </div>
       )}
 

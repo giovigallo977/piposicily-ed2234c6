@@ -87,7 +87,7 @@ const HotspotCard = ({ hotspot, index = 0, locked = false, isFree = false, onLoc
           {/* Free badge */}
           {isFree && !locked && (
             <div className="absolute top-3 left-3">
-              <span className="px-2.5 py-1 text-[10px] font-bold rounded-full bg-primary text-primary-foreground tracking-wider">
+              <span className="px-2.5 py-1 text-[10px] font-bold rounded-full bg-olive text-olive-foreground tracking-wider">
                 {t("freeBadge")}
               </span>
             </div>
