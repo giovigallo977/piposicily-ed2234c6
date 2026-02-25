@@ -1,60 +1,34 @@
 
 
-# Piano: Immagini per le categorie Free Spots
+# Piano: Semplificare Free Spots (rimuovere categorie, solo lista piatta)
 
-## Obiettivo
-Permettere di caricare un'immagine per ogni categoria dei Free Spots (Lavorare, Studiare, Eat & Drink) dal pannello admin, e salvarla nel backend.
+## Situazione attuale
 
-## Approccio
-Creare una nuova tabella `free_spot_categories` nel database con campi `nome` (chiave unica) e `immagine` (URL). Questo approccio e piu pulito rispetto a usare `site_content` perche permette di gestire le categorie come entita strutturate (e in futuro aggiungerne di nuove).
+- La **copertina** della card "Free Spots" in homepage e gia gestibile dall'admin (campo `cat_image_free_spots` nella sezione "Immagini Categorie" dell'admin). Questo funziona gia.
+- La pagina `/free-spots` ha filtri per sotto-categorie (Lavorare, Studiare, Eat & Drink) e mostra immagini di categoria dalla tabella `free_spot_categories`. Tu non vuoi queste sotto-categorie.
+- L'admin Free Spots ha una sezione "Immagini Categorie" e un campo "Categoria" nel form dello spot. Non servono.
+
+## Cosa cambia
+
+Rimuovere tutto il sistema di sotto-categorie dai Free Spots. Gli spot si aggiungono e si vedono in una lista semplice, esattamente come gli hotspot nelle altre categorie (Arte e Cultura, Natura, ecc.).
 
 ## Modifiche
 
-### 1. Database: nuova tabella `free_spot_categories`
-```sql
-CREATE TABLE public.free_spot_categories (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  nome text UNIQUE NOT NULL,
-  immagine text DEFAULT '',
-  ordine integer DEFAULT 0,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  updated_at timestamptz NOT NULL DEFAULT now()
-);
+### 1. `src/pages/FreeSpotsPage.tsx`
+- Rimuovere i filtri chip (Tutti, Lavorare, Studiare, Eat & Drink)
+- Rimuovere l'import e l'uso di `useFreeSpotCategories`
+- Rimuovere l'header immagine categoria
+- Mostrare tutti i free spots in una lista piatta senza filtri
 
-ALTER TABLE public.free_spot_categories ENABLE ROW LEVEL SECURITY;
+### 2. `src/components/AdminFreeSpotsTab.tsx`
+- Rimuovere la sezione "Immagini Categorie" in cima
+- Rimuovere il campo Select "Categoria" dal form di creazione/modifica spot
+- Rimuovere l'import di `useFreeSpotCategories` e `useUpdateFreeSpotCategory`
+- Rimuovere la costante `FREE_SPOT_CATEGORIES`
 
--- Lettura pubblica
-CREATE POLICY "Free spot categories are publicly readable"
-  ON public.free_spot_categories FOR SELECT USING (true);
+### 3. Nessuna modifica al database
+La tabella `free_spot_categories` resta nel database (non da fastidio) ma non viene piu usata dal codice. La colonna `categoria` nella tabella `free_spots` resta ma non viene piu mostrata nel form.
 
--- CRUD per utenti autenticati (admin)
-CREATE POLICY "Authenticated users can update free spot categories"
-  ON public.free_spot_categories FOR UPDATE USING (auth.uid() IS NOT NULL);
-CREATE POLICY "Authenticated users can insert free spot categories"
-  ON public.free_spot_categories FOR INSERT WITH CHECK (auth.uid() IS NOT NULL);
-
--- Seed iniziale con le 3 categorie
-INSERT INTO public.free_spot_categories (nome, ordine) VALUES
-  ('Lavorare', 1),
-  ('Studiare', 2),
-  ('Eat & Drink', 3);
-```
-
-### 2. Nuovo hook `src/hooks/useFreeSpotCategories.ts`
-- `useFreeSpotCategories()` -- query per leggere le categorie con immagine
-- `useUpdateFreeSpotCategory()` -- mutation per aggiornare l'immagine
-
-### 3. Sezione nell'admin `AdminFreeSpotsTab.tsx`
-- Aggiungere una sezione "Categorie" sopra la lista degli spot
-- Per ogni categoria: mostra nome + campo ImageUpload per caricare/cambiare la foto
-- Usa il bucket `hotspot-images` gia esistente
-
-### 4. Frontend `FreeSpotsPage.tsx`
-- Leggere le categorie dal database
-- Mostrare l'immagine della categoria accanto ai filtri chip (o come header della sezione filtrata)
-
-## Dettagli tecnici
-- Il bucket `hotspot-images` e gia pubblico e pronto per l'uso
-- Le categorie vengono pre-inserite con il seed, quindi l'admin deve solo caricare le foto
-- Il componente `ImageUpload` gia esistente gestisce upload e preview
+### 4. Nessuna modifica all'admin homepage
+L'upload della copertina della card "Free Spots" in homepage e gia presente nell'admin principale (sezione immagini categorie) e funziona correttamente tramite `site_content`.
 
