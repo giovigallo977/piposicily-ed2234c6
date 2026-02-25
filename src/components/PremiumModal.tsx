@@ -67,7 +67,7 @@ const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
       const { data, error } = await supabase.functions.invoke("create-payment");
       if (error) throw error;
       if (data?.url) {
-        window.open(data.url, "_blank");
+        window.location.href = data.url;
       }
     } catch (error: any) {
       toast({ title: texts.paymentError, description: error.message, variant: "destructive" });
