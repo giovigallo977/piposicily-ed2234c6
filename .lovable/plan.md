@@ -1,46 +1,46 @@
 
 
-# Piano: Aggiornamento automatico garantito per bookmark, PWA e scorciatoie
+# Piano: Forzare aggiornamento reale per PWA, bookmark e scorciatoie
 
-## Problema
+## Il problema reale
 
-Quando apri l'app da un bookmark, una scorciatoia sul telefono, o dalla PWA installata, potresti vedere una versione vecchia perché:
+I meta tag anti-cache che abbiamo aggiunto non bastano. Il **service worker** intercetta le richieste **prima** che arrivino al browser, quindi i meta tag vengono ignorati. Quando apri l'app da bookmark o PWA installata:
 
-1. Il browser può servire la pagina dalla sua cache HTTP **prima** ancora che il service worker intervenga
-2. Il controllo aggiornamenti parte solo dopo 30 secondi, non immediatamente all'apertura
-3. Non ci sono istruzioni anti-cache sull'HTML principale (`index.html`)
+1. Il vecchio service worker serve l'HTML e gli asset dalla sua cache interna (precache)
+2. Solo **dopo** il caricamento controlla se c'è un aggiornamento
+3. L'aggiornamento si applica al **prossimo** avvio, non a quello corrente
+
+Risultato: vedi sempre la versione precedente, non quella appena pubblicata.
 
 ## Soluzione
 
-Due interventi complementari che coprono tutti gli scenari (bookmark browser, PWA installata, scorciatoia home screen):
+Aggiungere una regola di **runtime caching** per le pagine HTML con strategia `NetworkFirst`. Questo forza il service worker a chiedere sempre prima al server la versione più recente dell'HTML, usando la cache solo come fallback offline.
 
-### 1. File: `index.html` - Meta tag anti-cache
+### File: `vite.config.ts`
 
-Aggiungere nel `<head>` meta tag che impediscono al browser di servire una copia vecchia dell'HTML:
-
-```html
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-<meta http-equiv="Pragma" content="no-cache" />
-<meta http-equiv="Expires" content="0" />
-```
-
-Questo forza il browser a richiedere sempre l'HTML fresco dal server. Gli asset (JS, CSS, immagini) restano cachati normalmente grazie agli hash di Vite.
-
-### 2. File: `src/pwa-updater.ts` - Check immediato all'apertura
-
-Aggiungere un `reg.update()` immediato quando l'app si carica (non solo nel ciclo ogni 30s). Così anche aprendo da bookmark o scorciatoia, il service worker controlla subito se c'è una versione nuova:
+Aggiungere nella sezione `workbox.runtimeCaching` una regola per i documenti di navigazione (HTML):
 
 ```typescript
-// Dentro registerPWAUpdater, dopo il check del waiting worker:
-navigator.serviceWorker.getRegistration().then(async (reg) => {
-  // ... codice esistente per waiting/updatefound ...
-  
-  // Forza un check immediato all'apertura
-  try { await reg?.update(); } catch {}
-});
+{
+  urlPattern: ({ request }) => request.mode === 'navigate',
+  handler: 'NetworkFirst',
+  options: {
+    cacheName: 'html-cache',
+    expiration: {
+      maxEntries: 10,
+      maxAgeSeconds: 60 * 60, // 1 ora max
+    },
+    networkTimeoutSeconds: 3, // dopo 3s usa cache (offline)
+  },
+}
 ```
+
+Questo garantisce che:
+- **Online**: l'HTML viene sempre scaricato dal server (versione aggiornata)
+- **Offline**: si usa la cache come fallback (l'app continua a funzionare)
+- **PWA installata, bookmark, scorciatoia**: tutti vedono la versione più recente
 
 ### Nessun altro file modificato
 
-La configurazione Workbox (`skipWaiting`, `clientsClaim`, `cleanupOutdatedCaches`) resta invariata. Questi due interventi coprono il gap mancante: il primo impedisce che il browser serva HTML vecchio, il secondo garantisce che il SW verifichi subito gli aggiornamenti.
+Il `pwa-updater.ts` e i meta tag in `index.html` restano come sono (sono complementari ma non sufficienti da soli).
 
