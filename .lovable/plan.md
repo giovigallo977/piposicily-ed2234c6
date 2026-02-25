@@ -1,66 +1,75 @@
 
 
-# Piano: Login intelligente per utenti Premium
+# Piano: Miglioramento UX del PremiumModal
 
-## Problema attuale
+## Analisi dello stato attuale
 
-Quando un utente ha gia pagato ma non e loggato, cliccando su un hotspot bloccato vede il modal di registrazione/pagamento generico. Non c'e modo rapido per fare login senza passare dal modal premium.
+Il sistema è **già funzionante** per la maggior parte dei requisiti:
+- Navigazione libera senza registrazione
+- Icona Login in alto a destra (ExplorePage, CollectionsPage, CollectionDetailPage)
+- 1 hotspot gratuito per categoria/collezione, altri bloccati con blur + lucchetto
+- PremiumModal con login di default e verifica premium post-login
+- Stripe checkout €4.99 one-time
+- Pagina /payment-success con verifica automatica
+- Edge functions create-payment e verify-payment funzionanti
+
+## Cosa manca / da migliorare
+
+Il modal attuale mostra un singolo form che alterna tra Login e Signup tramite un link di testo in basso. L'utente chiede un'esperienza più chiara con **due opzioni visivamente distinte** e un campo "conferma password" nella registrazione.
 
 ## Modifiche previste
 
-### 1. PremiumModal piu intelligente (`src/components/PremiumModal.tsx`)
+### File: `src/components/PremiumModal.tsx`
 
-- Quando l'utente non e autenticato, mostrare per default la vista **Login** (non Signup), con il messaggio "Hai gia pagato? Effettua l'accesso"
-- Cambiare `isLogin` default a `true` invece di `false`
-- Dopo il login, verificare lo stato premium: se l'utente e gia premium, chiudere il modal e ricaricare i dati (senza ridirigere a Stripe)
-- Solo se non e premium dopo il login, procedere con il pagamento
+**Ristrutturare il modal in 3 viste:**
 
-### 2. Bottone Login nell'header (`src/pages/ExplorePage.tsx` e `src/pages/CollectionDetailPage.tsx`)
+1. **Vista iniziale (scelta)**: Due bottoni chiari
+   - "Già registrato? Accedi" → porta alla vista Login
+   - "Sblocca tutto — €4.99" → porta alla vista Signup+Pay
 
-- Aggiungere un piccolo bottone login in alto a destra (icona `LogIn`) visibile solo quando l'utente **non e autenticato**
-- Click sul bottone apre il PremiumModal (che ora parte dalla vista login)
-- Se l'utente e gia autenticato e premium, mostrare il badge "Premium Member" (gia presente in ExplorePage)
-- Se autenticato ma non premium, nessun bottone login (il modal si apre dalle card bloccate)
+2. **Vista Login**: Form email + password, bottone "Accedi"
+   - Dopo login: verifica premium → se già premium chiude il modal, altrimenti mostra bottone "Paga €4.99"
+   - Link "← Torna indietro" per tornare alla vista scelta
 
-### 3. Flusso post-login nel PremiumModal
+3. **Vista Signup+Pay**: Form email + password + conferma password, bottone "Crea account e paga €4.99"
+   - Dopo signup riuscito: mostra toast "Controlla email per conferma"
+   - Link "← Torna indietro" per tornare alla vista scelta
+
+**Flusso visuale:**
 
 ```text
-Utente clicca card bloccata
-        │
-        ▼
-  PremiumModal si apre
-  (default: form Login)
-        │
-   Utente fa login
-        │
-        ▼
-  Verifica premium status
-        │
-   ┌────┴────┐
-   │         │
-Premium   Non Premium
-   │         │
-   ▼         ▼
-Chiudi    Mostra bottone
-modal +   "Paga €4.99"
-refresh
+┌──────────────────────────────┐
+│    ✨ Sblocca Pipo Premium   │
+│                              │
+│  ✓ Tutte le schede sbloccate │
+│  ✓ Paghi una volta sola      │
+│  ✓ Aggiornamenti inclusi     │
+│                              │
+│     ┌──── €4.99 ────┐       │
+│     │   una tantum   │       │
+│     └────────────────┘       │
+│                              │
+│  ┌────────────────────────┐  │
+│  │ Già registrato? Accedi │  │  ← bottone outline
+│  └────────────────────────┘  │
+│  ┌────────────────────────┐  │
+│  │ Sblocca tutto — €4.99  │  │  ← bottone primary
+│  └────────────────────────┘  │
+│                              │
+│  (se user già loggato:       │
+│   mostra solo "Paga €4.99") │
+└──────────────────────────────┘
 ```
 
-### File modificati
+### Dettagli tecnici
 
-1. **`src/components/PremiumModal.tsx`**
-   - Default `isLogin = true`
-   - Dopo login: controllare `profiles.is_premium` prima di avviare il pagamento
-   - Se gia premium: chiudere modal, invalidare query cache premium-status
-   - Testo aggiornato: "Hai gia pagato? Accedi" / "Already paid? Log in"
+- Nuovo state `view: "choice" | "login" | "signup"` al posto di `isLogin: boolean`
+- Campo `confirmPassword` aggiunto per la vista signup con validazione match
+- Se l'utente è già autenticato (`user` presente), skip direttamente alla vista pagamento (bottone "Paga €4.99")
+- Reset della vista a "choice" quando il modal si chiude
+- Nessuna modifica a edge functions, database o altre pagine
 
-2. **`src/pages/ExplorePage.tsx`**
-   - Aggiungere icona `LogIn` in alto a destra (al posto dello spacer) quando utente non autenticato
-   - Click apre PremiumModal
+### File coinvolti
 
-3. **`src/pages/CollectionDetailPage.tsx`**
-   - Stesso bottone login in alto a destra quando utente non autenticato
-
-4. **`src/pages/CollectionsPage.tsx`** (se ha un header)
-   - Stesso pattern per coerenza
+Solo **`src/components/PremiumModal.tsx`** — tutte le altre pagine e componenti restano invariati.
 
