@@ -1,75 +1,95 @@
 
 
-# Piano: Miglioramento UX del PremiumModal
+# Piano: Sezione "Posti per..." sempre gratuita nelle Collezioni
 
-## Analisi dello stato attuale
+## Concetto
 
-Il sistema è **già funzionante** per la maggior parte dei requisiti:
-- Navigazione libera senza registrazione
-- Icona Login in alto a destra (ExplorePage, CollectionsPage, CollectionDetailPage)
-- 1 hotspot gratuito per categoria/collezione, altri bloccati con blur + lucchetto
-- PremiumModal con login di default e verifica premium post-login
-- Stripe checkout €4.99 one-time
-- Pagina /payment-success con verifica automatica
-- Edge functions create-payment e verify-payment funzionanti
+Aggiungere una nuova sezione nella pagina Collezioni dedicata a locali e posti utili (lavorare, studiare, eat&drink), con schede identiche alle HotspotCard ma **sempre gratuite** (nessun lucchetto, nessun controllo premium).
 
-## Cosa manca / da migliorare
+## Approccio tecnico
 
-Il modal attuale mostra un singolo form che alterna tra Login e Signup tramite un link di testo in basso. L'utente chiede un'esperienza più chiara con **due opzioni visivamente distinte** e un campo "conferma password" nella registrazione.
+### 1. Nuova tabella database: `free_spots`
 
-## Modifiche previste
+Creare una tabella separata dagli hotspots per questi posti gratuiti, con struttura simile ma semplificata:
 
-### File: `src/components/PremiumModal.tsx`
+```sql
+CREATE TABLE public.free_spots (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  titolo text NOT NULL,
+  descrizione_breve text NOT NULL DEFAULT '',
+  descrizione_completa text NOT NULL DEFAULT '',
+  foto_principale text DEFAULT '',
+  foto_gallery text[] DEFAULT ARRAY[]::text[],
+  link_google_maps text DEFAULT '',
+  categoria text DEFAULT '', -- "Lavorare", "Studiare", "Eat & Drink"
+  zona text DEFAULT '',
+  tags text[] DEFAULT ARRAY[]::text[],
+  ordine integer DEFAULT 0,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
 
-**Ristrutturare il modal in 3 viste:**
-
-1. **Vista iniziale (scelta)**: Due bottoni chiari
-   - "Già registrato? Accedi" → porta alla vista Login
-   - "Sblocca tutto — €4.99" → porta alla vista Signup+Pay
-
-2. **Vista Login**: Form email + password, bottone "Accedi"
-   - Dopo login: verifica premium → se già premium chiude il modal, altrimenti mostra bottone "Paga €4.99"
-   - Link "← Torna indietro" per tornare alla vista scelta
-
-3. **Vista Signup+Pay**: Form email + password + conferma password, bottone "Crea account e paga €4.99"
-   - Dopo signup riuscito: mostra toast "Controlla email per conferma"
-   - Link "← Torna indietro" per tornare alla vista scelta
-
-**Flusso visuale:**
-
-```text
-┌──────────────────────────────┐
-│    ✨ Sblocca Pipo Premium   │
-│                              │
-│  ✓ Tutte le schede sbloccate │
-│  ✓ Paghi una volta sola      │
-│  ✓ Aggiornamenti inclusi     │
-│                              │
-│     ┌──── €4.99 ────┐       │
-│     │   una tantum   │       │
-│     └────────────────┘       │
-│                              │
-│  ┌────────────────────────┐  │
-│  │ Già registrato? Accedi │  │  ← bottone outline
-│  └────────────────────────┘  │
-│  ┌────────────────────────┐  │
-│  │ Sblocca tutto — €4.99  │  │  ← bottone primary
-│  └────────────────────────┘  │
-│                              │
-│  (se user già loggato:       │
-│   mostra solo "Paga €4.99") │
-└──────────────────────────────┘
+-- RLS: lettura pubblica, scrittura autenticata
+ALTER TABLE public.free_spots ENABLE ROW LEVEL SECURITY;
+-- SELECT pubblica
+-- INSERT/UPDATE/DELETE per autenticati
 ```
 
-### Dettagli tecnici
+Motivo per tabella separata: evita di mischiare logiche di locking/premium con contenuti sempre gratuiti. Struttura identica a `hotspots` per poter riusare `HotspotCard`.
 
-- Nuovo state `view: "choice" | "login" | "signup"` al posto di `isLogin: boolean`
-- Campo `confirmPassword` aggiunto per la vista signup con validazione match
-- Se l'utente è già autenticato (`user` presente), skip direttamente alla vista pagamento (bottone "Paga €4.99")
-- Reset della vista a "choice" quando il modal si chiude
-- Nessuna modifica a edge functions, database o altre pagine
+### 2. Hook: `src/hooks/useFreeSpots.ts`
 
-### File coinvolti
+Hook con le stesse operazioni CRUD di `useHotspots` ma sulla tabella `free_spots`. Query key: `["free-spots"]`.
 
-Solo **`src/components/PremiumModal.tsx`** — tutte le altre pagine e componenti restano invariati.
+### 3. Pagina CollectionsPage — Sezione "Posti per..."
+
+Sotto la griglia collezioni esistente, aggiungere:
+
+- Titolo sezione: "Posti per: Lavorare, Studiare e Eat & Drink"
+- Filtri a chip per categoria: Tutti | Lavorare | Studiare | Eat & Drink
+- Griglia di `HotspotCard` con `locked={false}` e senza badge free/premium
+
+Il layout sarà coerente con il resto dell'app.
+
+### 4. Admin — Nuovo tab "Free Spots"
+
+Aggiungere un tab nel pannello admin per gestire i free spots con lo stesso form usato per gli hotspots (titolo, descrizione, foto, categoria con opzioni predefinite: Lavorare, Studiare, Eat & Drink).
+
+### 5. File modificati
+
+| File | Modifica |
+|------|----------|
+| **Migrazione SQL** | Nuova tabella `free_spots` con RLS |
+| `src/hooks/useFreeSpots.ts` | **Nuovo** — CRUD hook |
+| `src/pages/CollectionsPage.tsx` | Aggiunta sezione free spots con filtri |
+| `src/pages/Admin.tsx` | Nuovo tab "Free Spots" con form CRUD |
+
+### 6. Flusso visuale nella pagina Collezioni
+
+```text
+┌─────────────────────────────┐
+│  ← Collezioni         🔑   │  header
+├─────────────────────────────┤
+│  [Collezione 1] [Coll. 2]  │  griglia collezioni
+│  [Collezione 3] [Coll. 4]  │  (esistente, invariata)
+├─────────────────────────────┤
+│                             │
+│  Posti per: Lavorare,       │  titolo sezione
+│  Studiare e Eat & Drink     │
+│                             │
+│  [Tutti] [Lavorare]         │  filtri chip
+│  [Studiare] [Eat & Drink]   │
+│                             │
+│  ┌─────────────────────┐    │
+│  │ HotspotCard (free)  │    │  schede sempre sbloccate
+│  └─────────────────────┘    │
+│  ┌─────────────────────┐    │
+│  │ HotspotCard (free)  │    │
+│  └─────────────────────┘    │
+└─────────────────────────────┘
+```
+
+### 7. Riuso di HotspotCard
+
+I dati `free_spots` hanno la stessa struttura di `Hotspot`, quindi `HotspotCard` funziona senza modifiche — basta passare `locked={false}` e omettere `isFree`/`onLockedClick`.
 
