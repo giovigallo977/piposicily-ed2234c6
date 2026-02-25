@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Lock, Check, Sparkles } from "lucide-react";
+import { Lock, Check, Sparkles, Loader2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface PremiumModalProps {
   open: boolean;
@@ -35,11 +36,10 @@ const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
     loginLabel: "Accedi e paga",
     switchToLogin: "Hai già un account? Accedi",
     switchToSignup: "Non hai un account? Registrati",
-    alreadyLoggedIn: "Sei già loggato!",
-    stripeNotReady: "Il pagamento sarà disponibile a breve!",
     signupError: "Errore nella registrazione",
     loginError: "Errore nell'accesso",
     checkEmail: "Controlla la tua email per confermare la registrazione",
+    paymentError: "Errore nell'avvio del pagamento",
   } : {
     title: "Unlock Pipo Premium",
     subtitle: "Full access to all hotspots",
@@ -55,11 +55,25 @@ const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
     loginLabel: "Login & pay",
     switchToLogin: "Already have an account? Login",
     switchToSignup: "Don't have an account? Sign up",
-    alreadyLoggedIn: "You're already logged in!",
-    stripeNotReady: "Payment will be available soon!",
     signupError: "Registration error",
     loginError: "Login error",
     checkEmail: "Check your email to confirm registration",
+    paymentError: "Error starting payment",
+  };
+
+  const handlePay = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-payment");
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      }
+    } catch (error: any) {
+      toast({ title: texts.paymentError, description: error.message, variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleAuth = async () => {
@@ -71,6 +85,8 @@ const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
           toast({ title: texts.loginError, description: error.message, variant: "destructive" });
           return;
         }
+        // After login, start payment
+        setTimeout(handlePay, 500);
       } else {
         const { error } = await signUp(email, password);
         if (error) {
@@ -78,17 +94,10 @@ const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
           return;
         }
         toast({ title: texts.checkEmail });
-        return;
       }
-      // After successful login, show stripe placeholder
-      handlePay();
     } finally {
       setLoading(false);
     }
-  };
-
-  const handlePay = () => {
-    toast({ title: texts.stripeNotReady, description: "🚧" });
   };
 
   const benefits = [texts.benefit1, texts.benefit2, texts.benefit3];
@@ -105,30 +114,26 @@ const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
 
         <p className="text-sm text-muted-foreground">{texts.subtitle}</p>
 
-        {/* Benefits */}
         <ul className="space-y-2 my-2">
           {benefits.map((b, i) => (
             <li key={i} className="flex items-center gap-2 text-sm">
-              <Check className="w-4 h-4 text-olive flex-shrink-0" style={{ color: "hsl(var(--olive))" }} />
+              <Check className="w-4 h-4 flex-shrink-0" style={{ color: "hsl(var(--olive))" }} />
               {b}
             </li>
           ))}
         </ul>
 
-        {/* Price */}
         <div className="text-center py-3 rounded-xl bg-muted">
           <span className="text-3xl font-bold">{texts.price}</span>
           <span className="text-sm text-muted-foreground ml-2">{texts.priceLabel}</span>
         </div>
 
         {user ? (
-          /* Already logged in — just pay */
-          <Button onClick={handlePay} className="w-full bg-foreground text-background hover:bg-foreground/90 font-semibold">
-            <Lock className="w-4 h-4 mr-2" />
+          <Button onClick={handlePay} disabled={loading} className="w-full bg-foreground text-background hover:bg-foreground/90 font-semibold">
+            {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Lock className="w-4 h-4 mr-2" />}
             {texts.payButton}
           </Button>
         ) : (
-          /* Auth form */
           <div className="space-y-3">
             <Input
               type="email"
@@ -147,7 +152,7 @@ const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
               disabled={loading || !email || !password}
               className="w-full bg-foreground text-background hover:bg-foreground/90 font-semibold"
             >
-              <Lock className="w-4 h-4 mr-2" />
+              {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Lock className="w-4 h-4 mr-2" />}
               {isLogin ? texts.loginLabel : texts.signupLabel}
             </Button>
             <button
