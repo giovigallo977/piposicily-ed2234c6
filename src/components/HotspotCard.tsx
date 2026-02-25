@@ -104,7 +104,13 @@ const HotspotCard = ({ hotspot, index = 0, locked = false, isFree = false, onLoc
             
             {/* Bottone espansione */}
             <button
-              onClick={() => setIsExpanded(!isExpanded)}
+              onClick={() => {
+                if (locked) {
+                  onLockedClick?.();
+                  return;
+                }
+                setIsExpanded(!isExpanded);
+              }}
               className="w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95 flex-shrink-0 bg-muted"
               aria-expanded={isExpanded}
               aria-label={isExpanded ? t("hideDetails") : t("showDetails")}
