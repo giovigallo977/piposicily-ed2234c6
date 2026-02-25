@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Lock, Check, Sparkles, Loader2 } from "lucide-react";
+import { Lock, Check, Sparkles, Loader2, ArrowLeft } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
@@ -14,16 +14,19 @@ interface PremiumModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
+type ModalView = "choice" | "login" | "signup";
+
 const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
   const { user, signUp, signIn } = useAuth();
   const { language } = useLanguage();
   const queryClient = useQueryClient();
+  const [view, setView] = useState<ModalView>("choice");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLogin, setIsLogin] = useState(true);
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const texts = language === "it" ? {
+  const t = language === "it" ? {
     title: "Sblocca Pipo Premium",
     subtitle: "Accesso completo a tutti gli hotspot",
     benefit1: "Tutte le schede sbloccate per sempre",
@@ -31,19 +34,21 @@ const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
     benefit3: "Aggiornamenti futuri inclusi",
     price: "€4.99",
     priceLabel: "una tantum",
+    loginBtn: "Già registrato? Accedi",
+    signupBtn: "Sblocca tutto — €4.99",
     payButton: "Paga €4.99 e sblocca tutto",
     emailPlaceholder: "La tua email",
     passwordPlaceholder: "La tua password",
-    signupLabel: "Crea account e paga",
+    confirmPasswordPlaceholder: "Conferma password",
+    signupLabel: "Crea account e paga €4.99",
     loginLabel: "Accedi",
-    switchToLogin: "Hai già un account? Accedi",
-    switchToSignup: "Non hai un account? Registrati",
+    back: "← Torna indietro",
     signupError: "Errore nella registrazione",
     loginError: "Errore nell'accesso",
     checkEmail: "Controlla la tua email per confermare la registrazione",
     paymentError: "Errore nell'avvio del pagamento",
-    alreadyPaid: "Hai già pagato? Effettua l'accesso",
     welcomeBack: "Bentornato! Accesso premium attivo.",
+    passwordMismatch: "Le password non corrispondono",
   } : {
     title: "Unlock Pipo Premium",
     subtitle: "Full access to all hotspots",
@@ -52,19 +57,34 @@ const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
     benefit3: "Future updates included",
     price: "€4.99",
     priceLabel: "one-time",
+    loginBtn: "Already registered? Log in",
+    signupBtn: "Unlock all — €4.99",
     payButton: "Pay €4.99 and unlock all",
     emailPlaceholder: "Your email",
     passwordPlaceholder: "Your password",
-    signupLabel: "Create account & pay",
+    confirmPasswordPlaceholder: "Confirm password",
+    signupLabel: "Create account & pay €4.99",
     loginLabel: "Log in",
-    switchToLogin: "Already have an account? Login",
-    switchToSignup: "Don't have an account? Sign up",
+    back: "← Go back",
     signupError: "Registration error",
     loginError: "Login error",
     checkEmail: "Check your email to confirm registration",
     paymentError: "Error starting payment",
-    alreadyPaid: "Already paid? Log in",
     welcomeBack: "Welcome back! Premium access active.",
+    passwordMismatch: "Passwords don't match",
+  };
+
+  const resetForm = () => {
+    setEmail("");
+    setPassword("");
+    setConfirmPassword("");
+    setView("choice");
+    setLoading(false);
+  };
+
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen) resetForm();
+    onOpenChange(isOpen);
   };
 
   const handlePay = async () => {
@@ -76,126 +96,187 @@ const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
         window.location.href = data.url;
       }
     } catch (error: any) {
-      toast({ title: texts.paymentError, description: error.message, variant: "destructive" });
+      toast({ title: t.paymentError, description: error.message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
   };
 
-  const checkPremiumAndAct = async () => {
-    // Check if user is already premium
+  const checkPremiumAndAct = async (): Promise<boolean> => {
     const { data: profile } = await supabase
       .from("profiles")
       .select("is_premium")
       .single();
 
     if (profile?.is_premium) {
-      // Already premium — close modal and refresh
-      toast({ title: texts.welcomeBack });
+      toast({ title: t.welcomeBack });
       await queryClient.invalidateQueries({ queryKey: ["premium-status"] });
-      onOpenChange(false);
+      handleOpenChange(false);
       return true;
     }
     return false;
   };
 
-  const handleAuth = async () => {
+  const handleLogin = async () => {
     setLoading(true);
     try {
-      if (isLogin) {
-        const { error } = await signIn(email, password);
-        if (error) {
-          toast({ title: texts.loginError, description: error.message, variant: "destructive" });
-          return;
-        }
-        // Wait for session to propagate, then check premium
-        setTimeout(async () => {
-          const alreadyPremium = await checkPremiumAndAct();
-          if (!alreadyPremium) {
-            // Not premium yet — show pay button (user is now authenticated, UI will re-render)
-            setLoading(false);
-          }
-        }, 600);
+      const { error } = await signIn(email, password);
+      if (error) {
+        toast({ title: t.loginError, description: error.message, variant: "destructive" });
         return;
-      } else {
-        const { error } = await signUp(email, password);
-        if (error) {
-          toast({ title: texts.signupError, description: error.message, variant: "destructive" });
-          return;
-        }
-        toast({ title: texts.checkEmail });
       }
+      // Wait for session, then check premium
+      setTimeout(async () => {
+        const alreadyPremium = await checkPremiumAndAct();
+        if (!alreadyPremium) {
+          setLoading(false);
+          // User is now logged in but not premium — UI will re-render to show pay button
+        }
+      }, 600);
+    } catch {
+      setLoading(false);
+    }
+  };
+
+  const handleSignup = async () => {
+    if (password !== confirmPassword) {
+      toast({ title: t.passwordMismatch, variant: "destructive" });
+      return;
+    }
+    setLoading(true);
+    try {
+      const { error } = await signUp(email, password);
+      if (error) {
+        toast({ title: t.signupError, description: error.message, variant: "destructive" });
+        return;
+      }
+      toast({ title: t.checkEmail });
     } finally {
       setLoading(false);
     }
   };
 
-  const benefits = [texts.benefit1, texts.benefit2, texts.benefit3];
+  const benefits = [t.benefit1, t.benefit2, t.benefit3];
+
+  // Header + benefits + price (shared across all views)
+  const renderHeader = () => (
+    <>
+      <DialogHeader>
+        <DialogTitle className="flex items-center gap-2 text-xl">
+          <Sparkles className="w-5 h-5 text-primary" />
+          {t.title}
+        </DialogTitle>
+      </DialogHeader>
+      <p className="text-sm text-muted-foreground">{t.subtitle}</p>
+      <ul className="space-y-2 my-2">
+        {benefits.map((b, i) => (
+          <li key={i} className="flex items-center gap-2 text-sm">
+            <Check className="w-4 h-4 flex-shrink-0" style={{ color: "hsl(var(--olive))" }} />
+            {b}
+          </li>
+        ))}
+      </ul>
+      <div className="text-center py-3 rounded-xl bg-muted">
+        <span className="text-3xl font-bold">{t.price}</span>
+        <span className="text-sm text-muted-foreground ml-2">{t.priceLabel}</span>
+      </div>
+    </>
+  );
+
+  const renderBackButton = () => (
+    <button
+      onClick={() => { setView("choice"); setLoading(false); }}
+      className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+    >
+      <ArrowLeft className="w-3 h-3" />
+      {t.back}
+    </button>
+  );
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-xl">
-            <Sparkles className="w-5 h-5 text-primary" />
-            {texts.title}
-          </DialogTitle>
-        </DialogHeader>
+        {renderHeader()}
 
-        <p className="text-sm text-muted-foreground">{texts.subtitle}</p>
-
-        <ul className="space-y-2 my-2">
-          {benefits.map((b, i) => (
-            <li key={i} className="flex items-center gap-2 text-sm">
-              <Check className="w-4 h-4 flex-shrink-0" style={{ color: "hsl(var(--olive))" }} />
-              {b}
-            </li>
-          ))}
-        </ul>
-
-        <div className="text-center py-3 rounded-xl bg-muted">
-          <span className="text-3xl font-bold">{texts.price}</span>
-          <span className="text-sm text-muted-foreground ml-2">{texts.priceLabel}</span>
-        </div>
-
+        {/* Already authenticated → show pay button directly */}
         {user ? (
           <Button onClick={handlePay} disabled={loading} className="w-full bg-foreground text-background hover:bg-foreground/90 font-semibold">
             {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Lock className="w-4 h-4 mr-2" />}
-            {texts.payButton}
+            {t.payButton}
           </Button>
-        ) : (
+        ) : view === "choice" ? (
+          /* Choice view: two clear buttons */
           <div className="space-y-3">
-            {isLogin && (
-              <p className="text-xs text-center text-muted-foreground font-medium">
-                {texts.alreadyPaid}
-              </p>
-            )}
+            <Button
+              variant="outline"
+              onClick={() => setView("login")}
+              className="w-full font-semibold"
+            >
+              {t.loginBtn}
+            </Button>
+            <Button
+              onClick={() => setView("signup")}
+              className="w-full bg-foreground text-background hover:bg-foreground/90 font-semibold"
+            >
+              <Sparkles className="w-4 h-4 mr-2" />
+              {t.signupBtn}
+            </Button>
+          </div>
+        ) : view === "login" ? (
+          /* Login view */
+          <div className="space-y-3">
+            {renderBackButton()}
             <Input
               type="email"
-              placeholder={texts.emailPlaceholder}
+              placeholder={t.emailPlaceholder}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
             <Input
               type="password"
-              placeholder={texts.passwordPlaceholder}
+              placeholder={t.passwordPlaceholder}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
             <Button
-              onClick={handleAuth}
+              onClick={handleLogin}
               disabled={loading || !email || !password}
               className="w-full bg-foreground text-background hover:bg-foreground/90 font-semibold"
             >
               {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Lock className="w-4 h-4 mr-2" />}
-              {isLogin ? texts.loginLabel : texts.signupLabel}
+              {t.loginLabel}
             </Button>
-            <button
-              onClick={() => setIsLogin(!isLogin)}
-              className="w-full text-xs text-muted-foreground underline"
+          </div>
+        ) : (
+          /* Signup view */
+          <div className="space-y-3">
+            {renderBackButton()}
+            <Input
+              type="email"
+              placeholder={t.emailPlaceholder}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <Input
+              type="password"
+              placeholder={t.passwordPlaceholder}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <Input
+              type="password"
+              placeholder={t.confirmPasswordPlaceholder}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+            />
+            <Button
+              onClick={handleSignup}
+              disabled={loading || !email || !password || !confirmPassword}
+              className="w-full bg-foreground text-background hover:bg-foreground/90 font-semibold"
             >
-              {isLogin ? texts.switchToSignup : texts.switchToLogin}
-            </button>
+              {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Sparkles className="w-4 h-4 mr-2" />}
+              {t.signupLabel}
+            </Button>
           </div>
         )}
       </DialogContent>
