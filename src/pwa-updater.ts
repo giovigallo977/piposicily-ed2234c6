@@ -22,7 +22,7 @@ export const registerPWAUpdater = () => {
   }, UPDATE_INTERVAL_MS);
 
   // If a waiting SW exists on load, activate it right away
-  navigator.serviceWorker.getRegistration().then((reg) => {
+  navigator.serviceWorker.getRegistration().then(async (reg) => {
     if (reg?.waiting) {
       reg.waiting.postMessage({ type: "SKIP_WAITING" });
     }
@@ -34,6 +34,9 @@ export const registerPWAUpdater = () => {
         }
       });
     });
+
+    // Force an immediate update check on app launch
+    try { await reg?.update(); } catch {}
   });
 };
 
