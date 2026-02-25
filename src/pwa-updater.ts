@@ -40,8 +40,24 @@ export const registerPWAUpdater = () => {
   });
 };
 
-// Check for updates when user returns to the app (tab focus or app resume)
+// Check for updates when user returns to the app (tab focus, app resume, iOS pageshow)
 export const registerVisibilityUpdater = () => {
+  // iOS standalone PWA: pageshow fires reliably on app resume
+  window.addEventListener("pageshow", async (event) => {
+    if ("serviceWorker" in navigator) {
+      try {
+        const reg = await navigator.serviceWorker.getRegistration();
+        await reg?.update();
+        // If coming from bfcache, force reload to get fresh content
+        if (event.persisted) {
+          window.location.reload();
+        }
+      } catch {
+        // Silently ignore
+      }
+    }
+  });
+
   document.addEventListener("visibilitychange", async () => {
     if (document.visibilityState === "visible" && "serviceWorker" in navigator) {
       try {
