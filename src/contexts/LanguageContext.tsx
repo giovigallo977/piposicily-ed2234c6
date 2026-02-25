@@ -61,6 +61,13 @@ export const translations = {
     catNatura: "Natura",
     catBorghi: "Borghi",
     catArteECultura: "Arte e Cultura",
+
+    // Premium
+    premiumBadge: "PREMIUM",
+    freeBadge: "GRATUITO",
+    premiumMember: "Membro Premium",
+    unlockAll: "Sblocca tutto!",
+    cardsAvailable: "schede disponibili",
   },
   en: {
     // Navigation
@@ -113,6 +120,13 @@ export const translations = {
     catNatura: "Nature",
     catBorghi: "Villages",
     catArteECultura: "Art & Culture",
+
+    // Premium
+    premiumBadge: "PREMIUM",
+    freeBadge: "FREE",
+    premiumMember: "Premium Member",
+    unlockAll: "Unlock all!",
+    cardsAvailable: "cards available",
   },
 } as const;
 

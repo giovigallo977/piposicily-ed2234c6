@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { Plus, Minus, Map, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, Minus, Map, X, ChevronLeft, ChevronRight, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { Hotspot } from "@/hooks/useHotspots";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -9,9 +9,12 @@ import useEmblaCarousel from "embla-carousel-react";
 interface HotspotCardProps {
   hotspot: Hotspot;
   index?: number;
+  locked?: boolean;
+  isFree?: boolean;
+  onLockedClick?: () => void;
 }
 
-const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
+const HotspotCard = ({ hotspot, index = 0, locked = false, isFree = false, onLockedClick }: HotspotCardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
@@ -48,25 +51,45 @@ const HotspotCard = ({ hotspot, index = 0 }: HotspotCardProps) => {
 
   return (
     <>
-      <div className="relative">
+      <div className="relative" onClick={locked ? onLockedClick : undefined}>
       <article 
         className={cn(
           "rounded-3xl overflow-hidden shadow-lg transition-all duration-300 bg-white hover:shadow-xl hover:-translate-y-1",
-          isTranslating && "opacity-75"
+          isTranslating && "opacity-75",
+          locked && "cursor-pointer"
         )}
       >
         {/* Immagine principale */}
-        <div className="aspect-[4/3] bg-muted overflow-hidden">
+        <div className="aspect-[4/3] bg-muted overflow-hidden relative">
           {hotspot.foto_principale ? (
             <img
               src={hotspot.foto_principale}
               alt={translated.titolo}
-              className="w-full h-full object-cover"
+              className={cn("w-full h-full object-cover", locked && "blur-sm scale-105")}
               loading="lazy"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-muted">
               <span className="text-muted-foreground text-sm">{t("photo")}</span>
+            </div>
+          )}
+
+          {/* Locked overlay */}
+          {locked && (
+            <div className="absolute inset-0 bg-foreground/40 flex items-center justify-center">
+              <div className="flex flex-col items-center gap-1">
+                <Lock className="w-8 h-8 text-background" />
+                <span className="text-xs font-bold text-background tracking-wider">{t("premiumBadge")}</span>
+              </div>
+            </div>
+          )}
+
+          {/* Free badge */}
+          {isFree && !locked && (
+            <div className="absolute top-3 left-3">
+              <span className="px-2.5 py-1 text-[10px] font-bold rounded-full bg-primary text-primary-foreground tracking-wider">
+                {t("freeBadge")}
+              </span>
             </div>
           )}
         </div>

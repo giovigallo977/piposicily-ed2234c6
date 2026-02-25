@@ -1,11 +1,13 @@
 import { useState, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ChevronsLeft, Filter } from "lucide-react";
+import { ChevronsLeft, Filter, Sparkles } from "lucide-react";
 import HotspotCard from "@/components/HotspotCard";
+import PremiumModal from "@/components/PremiumModal";
 import { useHotspots } from "@/hooks/useHotspots";
 import { useHotspotCategories } from "@/hooks/useSiteContent";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedCategories } from "@/hooks/useTranslatedCategories";
+import { usePremiumStatus } from "@/hooks/usePremiumStatus";
 import { Loader2 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
@@ -16,10 +18,24 @@ const ExplorePage = () => {
   const { data: categories = [] } = useHotspotCategories();
   const { t } = useLanguage();
   const { translatedCategories } = useTranslatedCategories(categories);
+  const { isPremium } = usePremiumStatus();
 
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [premiumModalOpen, setPremiumModalOpen] = useState(false);
 
   const categoriaParam = searchParams.get("categoria");
+
+  // Track first hotspot per category
+  const firstPerCategory = useMemo(() => {
+    if (!hotspots) return new Set<string>();
+    const seen = new Map<string, string>();
+    const sorted = [...hotspots].sort((a, b) => (a.ordine ?? 0) - (b.ordine ?? 0));
+    for (const h of sorted) {
+      const cat = h.categoria || "__none__";
+      if (!seen.has(cat)) seen.set(cat, h.id);
+    }
+    return new Set(seen.values());
+  }, [hotspots]);
 
   const filteredHotspots = useMemo(() => {
     if (!hotspots) return [];
@@ -33,25 +49,32 @@ const ExplorePage = () => {
     return result;
   }, [hotspots, categoriaParam, selectedCategory]);
 
-  const handleBack = () => {
-    navigate("/");
-  };
+  const totalCards = hotspots?.length ?? 0;
+  const freeCards = firstPerCategory.size;
+
+  const handleBack = () => navigate("/");
 
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-background py-4 px-6 flex items-center justify-between">
         <button onClick={handleBack} className="p-2 transition-all duration-200 hover:scale-110" aria-label={t("backLabel")}>
-          <ChevronsLeft className="w-8 h-8 text-black" strokeWidth={2.5} />
+          <ChevronsLeft className="w-8 h-8 text-foreground" strokeWidth={2.5} />
         </button>
         
-        <img alt="Pipo" className="h-10 w-10 object-contain" draggable={false} src="/lovable-uploads/c09259c8-f4e2-4940-b26d-61c1f4a134ae.png" />
+        <div className="flex items-center gap-2">
+          <img alt="Pipo" className="h-10 w-10 object-contain" draggable={false} src="/lovable-uploads/c09259c8-f4e2-4940-b26d-61c1f4a134ae.png" />
+          {isPremium && (
+            <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-primary text-primary-foreground">
+              {t("premiumMember")}
+            </span>
+          )}
+        </div>
         
-        {/* Filter button */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button className="p-2 transition-all duration-200 hover:scale-110" aria-label={t("filter")}>
-              <Filter className="w-6 h-6 text-black" strokeWidth={2} />
+              <Filter className="w-6 h-6 text-foreground" strokeWidth={2} />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48 bg-background border border-border">
@@ -67,10 +90,26 @@ const ExplorePage = () => {
         </DropdownMenu>
       </header>
 
-      {/* Active filters display */}
+      {/* Premium banner */}
+      {!isPremium && totalCards > 0 && (
+        <div
+          className="mx-4 mb-4 p-3 rounded-2xl bg-muted flex items-center justify-between cursor-pointer hover:bg-accent transition-colors"
+          onClick={() => setPremiumModalOpen(true)}
+        >
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-primary" />
+            <span className="text-sm font-medium">
+              {freeCards}/{totalCards} {t("cardsAvailable")}
+            </span>
+          </div>
+          <span className="text-xs font-bold text-primary">{t("unlockAll")}</span>
+        </div>
+      )}
+
+      {/* Active filters */}
       {selectedCategory && (
         <div className="px-6 py-2 flex flex-wrap gap-2 justify-center">
-          <button onClick={() => setSelectedCategory(null)} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-black text-white font-sans">
+          <button onClick={() => setSelectedCategory(null)} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-foreground text-background font-sans">
             {selectedCategory}
             <span className="ml-1">×</span>
           </button>
@@ -93,9 +132,20 @@ const ExplorePage = () => {
           )}
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredHotspots.map((hotspot, index) => (
-              <HotspotCard key={hotspot.id} hotspot={hotspot} index={index} />
-            ))}
+            {filteredHotspots.map((hotspot, index) => {
+              const isFreeCard = firstPerCategory.has(hotspot.id);
+              const isLocked = !isPremium && !isFreeCard;
+              return (
+                <HotspotCard
+                  key={hotspot.id}
+                  hotspot={hotspot}
+                  index={index}
+                  locked={isLocked}
+                  isFree={!isPremium ? isFreeCard : false}
+                  onLockedClick={() => setPremiumModalOpen(true)}
+                />
+              );
+            })}
           </div>
           
           {!isLoading && filteredHotspots.length === 0 && hotspots && hotspots.length > 0 && (
@@ -111,6 +161,8 @@ const ExplorePage = () => {
           )}
         </div>
       </main>
+
+      <PremiumModal open={premiumModalOpen} onOpenChange={setPremiumModalOpen} />
     </div>
   );
 };
