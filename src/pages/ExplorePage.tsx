@@ -1,12 +1,12 @@
 import { useState, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ChevronsLeft, Sparkles } from "lucide-react";
+import { ChevronsLeft, Sparkles, LogIn, Loader2 } from "lucide-react";
 import HotspotCard from "@/components/HotspotCard";
 import PremiumModal from "@/components/PremiumModal";
 import { useHotspots } from "@/hooks/useHotspots";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { usePremiumStatus } from "@/hooks/usePremiumStatus";
-import { Loader2 } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 const ExplorePage = () => {
   const navigate = useNavigate();
@@ -14,6 +14,7 @@ const ExplorePage = () => {
   const { data: hotspots, isLoading, error } = useHotspots();
   const { t } = useLanguage();
   const { isPremium } = usePremiumStatus();
+  const { user } = useAuth();
 
   const [premiumModalOpen, setPremiumModalOpen] = useState(false);
 
@@ -60,7 +61,13 @@ const ExplorePage = () => {
             </span>
           )}
         </div>
-        <div className="w-8" /> {/* Spacer for centering */}
+        {!user ? (
+          <button onClick={() => setPremiumModalOpen(true)} className="p-2 transition-all duration-200 hover:scale-110" aria-label="Login">
+            <LogIn className="w-6 h-6 text-foreground" />
+          </button>
+        ) : (
+          <div className="w-8" />
+        )}
       </header>
 
       {/* Premium banner */}
