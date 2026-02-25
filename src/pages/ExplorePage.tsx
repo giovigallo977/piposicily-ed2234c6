@@ -1,26 +1,20 @@
 import { useState, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ChevronsLeft, Filter, Sparkles } from "lucide-react";
+import { ChevronsLeft, Sparkles } from "lucide-react";
 import HotspotCard from "@/components/HotspotCard";
 import PremiumModal from "@/components/PremiumModal";
 import { useHotspots } from "@/hooks/useHotspots";
-import { useHotspotCategories } from "@/hooks/useSiteContent";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useTranslatedCategories } from "@/hooks/useTranslatedCategories";
 import { usePremiumStatus } from "@/hooks/usePremiumStatus";
 import { Loader2 } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 const ExplorePage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { data: hotspots, isLoading, error } = useHotspots();
-  const { data: categories = [] } = useHotspotCategories();
   const { t } = useLanguage();
-  const { translatedCategories } = useTranslatedCategories(categories);
   const { isPremium } = usePremiumStatus();
 
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [premiumModalOpen, setPremiumModalOpen] = useState(false);
 
   const categoriaParam = searchParams.get("categoria");
@@ -39,15 +33,11 @@ const ExplorePage = () => {
 
   const filteredHotspots = useMemo(() => {
     if (!hotspots) return [];
-    let result = hotspots;
     if (categoriaParam) {
-      result = result.filter(h => h.categoria === categoriaParam);
+      return hotspots.filter(h => h.categoria === categoriaParam);
     }
-    if (selectedCategory) {
-      result = result.filter(h => h.categoria === selectedCategory);
-    }
-    return result;
-  }, [hotspots, categoriaParam, selectedCategory]);
+    return hotspots;
+  }, [hotspots, categoriaParam]);
 
   const totalCards = hotspots?.length ?? 0;
   const freeCards = firstPerCategory.size;
@@ -70,24 +60,7 @@ const ExplorePage = () => {
             </span>
           )}
         </div>
-        
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button className="p-2 transition-all duration-200 hover:scale-110" aria-label={t("filter")}>
-              <Filter className="w-6 h-6 text-foreground" strokeWidth={2} />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48 bg-background border border-border">
-            <DropdownMenuItem onClick={() => setSelectedCategory(null)} className={`cursor-pointer font-sans ${!selectedCategory ? "bg-muted" : ""}`}>
-              {t("allCategories")}
-            </DropdownMenuItem>
-            {categories.map((category, index) => (
-              <DropdownMenuItem key={category} onClick={() => setSelectedCategory(category)} className={`cursor-pointer font-sans ${selectedCategory === category ? "bg-muted" : ""}`}>
-                {translatedCategories[index] || category}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className="w-8" /> {/* Spacer for centering */}
       </header>
 
       {/* Premium banner */}
@@ -106,15 +79,6 @@ const ExplorePage = () => {
         </div>
       )}
 
-      {/* Active filters */}
-      {selectedCategory && (
-        <div className="px-6 py-2 flex flex-wrap gap-2 justify-center">
-          <button onClick={() => setSelectedCategory(null)} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium bg-foreground text-background font-sans">
-            {selectedCategory}
-            <span className="ml-1">×</span>
-          </button>
-        </div>
-      )}
 
       {/* Content */}
       <main className="container mx-auto px-4 py-6 pb-24">
