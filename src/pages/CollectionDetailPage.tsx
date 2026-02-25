@@ -1,19 +1,22 @@
+import { useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ChevronsLeft } from "lucide-react";
+import { ChevronsLeft, Sparkles, Loader2 } from "lucide-react";
 import { useCollectionById, useCollectionHotspots } from "@/hooks/useCollections";
 import { useHotspots } from "@/hooks/useHotspots";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { usePremiumStatus } from "@/hooks/usePremiumStatus";
 import HotspotCard from "@/components/HotspotCard";
-import { Loader2 } from "lucide-react";
-import { useMemo } from "react";
+import PremiumModal from "@/components/PremiumModal";
 
 const CollectionDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const { isPremium } = usePremiumStatus();
   const { data: collection, isLoading: collLoading } = useCollectionById(id);
   const { data: collectionHotspots, isLoading: chLoading } = useCollectionHotspots(id);
   const { data: allHotspots, isLoading: hLoading } = useHotspots();
+  const [premiumModalOpen, setPremiumModalOpen] = useState(false);
 
   const hotspots = useMemo(() => {
     if (!collectionHotspots || !allHotspots) return [];
@@ -24,6 +27,7 @@ const CollectionDetailPage = () => {
   }, [collectionHotspots, allHotspots]);
 
   const isLoading = collLoading || chLoading || hLoading;
+  const totalCards = hotspots.length;
 
   return (
     <div className="min-h-screen bg-background">
@@ -37,6 +41,22 @@ const CollectionDetailPage = () => {
         <div className="w-12" />
       </header>
 
+      {/* Premium banner */}
+      {!isPremium && totalCards > 0 && (
+        <div
+          className="mx-4 mb-4 p-3 rounded-2xl bg-muted flex items-center justify-between cursor-pointer hover:bg-accent transition-colors"
+          onClick={() => setPremiumModalOpen(true)}
+        >
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-olive" />
+            <span className="text-sm font-medium">
+              1/{totalCards} {t("cardsAvailable")}
+            </span>
+          </div>
+          <span className="text-xs font-bold text-olive">{t("unlockAll")}</span>
+        </div>
+      )}
+
       <main className="container mx-auto px-4 py-6 pb-24">
         <div className="max-w-6xl mx-auto">
           {isLoading && (
@@ -46,9 +66,20 @@ const CollectionDetailPage = () => {
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {hotspots.map((hotspot, index) => (
-              <HotspotCard key={hotspot.id} hotspot={hotspot} index={index} />
-            ))}
+            {hotspots.map((hotspot, index) => {
+              const isFreeCard = index === 0;
+              const isLocked = !isPremium && !isFreeCard;
+              return (
+                <HotspotCard
+                  key={hotspot.id}
+                  hotspot={hotspot}
+                  index={index}
+                  locked={isLocked}
+                  isFree={!isPremium ? isFreeCard : false}
+                  onLockedClick={() => setPremiumModalOpen(true)}
+                />
+              );
+            })}
           </div>
 
           {!isLoading && hotspots.length === 0 && (
@@ -58,6 +89,8 @@ const CollectionDetailPage = () => {
           )}
         </div>
       </main>
+
+      <PremiumModal open={premiumModalOpen} onOpenChange={setPremiumModalOpen} />
     </div>
   );
 };
