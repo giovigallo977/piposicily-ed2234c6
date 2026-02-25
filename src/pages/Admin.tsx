@@ -18,9 +18,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Plus, Pencil, Trash2, LogOut, ArrowLeft, FileText, MapPin, FolderOpen } from "lucide-react";
+import { Loader2, Plus, Pencil, Trash2, LogOut, ArrowLeft, FileText, MapPin, FolderOpen, Users } from "lucide-react";
 import pipoAlien from "@/assets/pipo-alien-new.png";
 import AdminCollectionsTab from "@/components/AdminCollectionsTab";
+import AdminUsersTab from "@/components/AdminUsersTab";
 
 const emptyHotspot: HotspotInsert = {
   titolo: "",
@@ -304,7 +305,7 @@ const Admin = () => {
       <main className="container mx-auto px-4 py-6">
         <div className="max-w-4xl mx-auto">
           <Tabs defaultValue="hotspots" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="hotspots" className="flex items-center gap-2">
                 <MapPin className="h-4 w-4" />
                 Hotspots
@@ -316,6 +317,10 @@ const Admin = () => {
               <TabsTrigger value="contenuti" className="flex items-center gap-2">
                 <FileText className="h-4 w-4" />
                 Contenuti
+              </TabsTrigger>
+              <TabsTrigger value="utenti" className="flex items-center gap-2">
+                <Users className="h-4 w-4" />
+                Utenti
               </TabsTrigger>
             </TabsList>
 
@@ -923,6 +928,11 @@ const Admin = () => {
                   )}
                 </CardContent>
               </Card>
+            </TabsContent>
+
+            {/* Tab Utenti */}
+            <TabsContent value="utenti">
+              <AdminUsersTab />
             </TabsContent>
           </Tabs>
         </div>
