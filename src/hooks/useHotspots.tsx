@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useEffect } from "react";
 
 export interface Hotspot {
   id: string;
@@ -21,7 +22,33 @@ export interface Hotspot {
 export type HotspotInsert = Omit<Hotspot, "id" | "created_at" | "updated_at">;
 export type HotspotUpdate = Partial<HotspotInsert>;
 
+// Global realtime subscription singleton
+let realtimeInitialized = false;
+
+const initHotspotsRealtime = (queryClient: ReturnType<typeof useQueryClient>) => {
+  if (realtimeInitialized) return;
+  realtimeInitialized = true;
+
+  supabase
+    .channel("hotspots_changes")
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "hotspots" },
+      () => {
+        queryClient.invalidateQueries({ queryKey: ["hotspots"] });
+        queryClient.invalidateQueries({ queryKey: ["hotspot-categories"] });
+      }
+    )
+    .subscribe();
+};
+
 export const useHotspots = () => {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    initHotspotsRealtime(queryClient);
+  }, [queryClient]);
+
   return useQuery({
     queryKey: ["hotspots"],
     queryFn: async () => {
