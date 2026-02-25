@@ -42,6 +42,9 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
   const { data: catImgArte } = useSiteContent("cat_image_arte_cultura");
   const { data: catImgCollezioni } = useSiteContent("cat_image_collezioni");
   const { data: catImgFreeSpots } = useSiteContent("cat_image_free_spots");
+  // Free Spots card labels
+  const { data: freeSpotsLabelContent } = useSiteContent("cat_label_free_spots");
+  const { data: freeSpotsSubLabelContent } = useSiteContent("cat_sublabel_free_spots");
 
   // Decorative graphics
   const { data: decoHeroLT } = useSiteContent("deco_hero_left_top");
@@ -56,6 +59,11 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
   const { translatedText: translatedHeadline } = useTranslatedContent(headlineText);
   const { translatedText: translatedSubtitle } = useTranslatedContent(subtitleText);
   const { translatedText: translatedExploreCta } = useTranslatedContent(exploreCtaText);
+  const { translatedText: translatedFreeSpotsLabel } = useTranslatedContent(freeSpotsLabelContent?.content || null);
+  const { translatedText: translatedFreeSpotsSubLabel } = useTranslatedContent(freeSpotsSubLabelContent?.content || null);
+
+  const freeSpotsLabel = translatedFreeSpotsLabel || "Free Spots";
+  const freeSpotsSubLabel = translatedFreeSpotsSubLabel || "Work, Study & Eat&Drink";
 
   const headline = translatedHeadline || t("heroHeadline");
   const subtitle = translatedSubtitle || t("heroSubheadline");
@@ -194,8 +202,9 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
               <div className="w-full h-full bg-muted" />
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-            <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-sm md:text-base font-bold text-left leading-tight drop-shadow-lg">
-              Lavorare, Studiare & Eat
+            <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-left leading-tight drop-shadow-lg flex flex-col">
+              <span className="text-sm md:text-base font-bold">{freeSpotsLabel}</span>
+              <span className="text-xs md:text-sm font-medium opacity-90">{freeSpotsSubLabel}</span>
             </span>
           </button>
         </div>

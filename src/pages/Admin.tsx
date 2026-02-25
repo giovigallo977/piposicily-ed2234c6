@@ -64,8 +64,10 @@ const Admin = () => {
   const { data: decoHeroLBContent } = useSiteContent("deco_hero_left_bottom");
   const { data: decoHeroRTContent } = useSiteContent("deco_hero_right_top");
   const { data: decoHeroRBContent } = useSiteContent("deco_hero_right_bottom");
-  const { data: decoCollLeftContent } = useSiteContent("deco_collezioni_left");
-  const { data: decoCollRightContent } = useSiteContent("deco_collezioni_right");
+  // Free Spots card labels
+  const { data: freeSpotsLabelContent } = useSiteContent("cat_label_free_spots");
+  const { data: freeSpotsSubLabelContent } = useSiteContent("cat_sublabel_free_spots");
+  const { data: catImgFreeSpotsContent } = useSiteContent("cat_image_free_spots");
   // Explore CTA
   const { data: exploreCtaContent } = useSiteContent("explore_cta_text");
   const updateSiteContent = useUpdateSiteContent();
@@ -88,8 +90,9 @@ const Admin = () => {
   const [decoHeroLB, setDecoHeroLB] = useState("");
   const [decoHeroRT, setDecoHeroRT] = useState("");
   const [decoHeroRB, setDecoHeroRB] = useState("");
-  const [decoCollLeft, setDecoCollLeft] = useState("");
-  const [decoCollRight, setDecoCollRight] = useState("");
+  const [freeSpotsLabel, setFreeSpotsLabel] = useState("");
+  const [freeSpotsSubLabel, setFreeSpotsSubLabel] = useState("");
+  const [catImgFreeSpots, setCatImgFreeSpots] = useState("");
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -160,11 +163,14 @@ const Admin = () => {
     if (decoHeroRBContent?.content) setDecoHeroRB(decoHeroRBContent.content);
   }, [decoHeroRBContent]);
   useEffect(() => {
-    if (decoCollLeftContent?.content) setDecoCollLeft(decoCollLeftContent.content);
-  }, [decoCollLeftContent]);
+    if (freeSpotsLabelContent?.content) setFreeSpotsLabel(freeSpotsLabelContent.content);
+  }, [freeSpotsLabelContent]);
   useEffect(() => {
-    if (decoCollRightContent?.content) setDecoCollRight(decoCollRightContent.content);
-  }, [decoCollRightContent]);
+    if (freeSpotsSubLabelContent?.content) setFreeSpotsSubLabel(freeSpotsSubLabelContent.content);
+  }, [freeSpotsSubLabelContent]);
+  useEffect(() => {
+    if (catImgFreeSpotsContent?.content) setCatImgFreeSpots(catImgFreeSpotsContent.content);
+  }, [catImgFreeSpotsContent]);
 
   const handleOpenCreate = () => {
     setEditingHotspot(null);
@@ -255,8 +261,6 @@ const Admin = () => {
     if (decoHeroLB) await updateSiteContent.mutateAsync({ key: "deco_hero_left_bottom", content: decoHeroLB });
     if (decoHeroRT) await updateSiteContent.mutateAsync({ key: "deco_hero_right_top", content: decoHeroRT });
     if (decoHeroRB) await updateSiteContent.mutateAsync({ key: "deco_hero_right_bottom", content: decoHeroRB });
-    if (decoCollLeft) await updateSiteContent.mutateAsync({ key: "deco_collezioni_left", content: decoCollLeft });
-    if (decoCollRight) await updateSiteContent.mutateAsync({ key: "deco_collezioni_right", content: decoCollRight });
   };
 
 
@@ -266,7 +270,10 @@ const Admin = () => {
     if (catImgBorghi) await updateSiteContent.mutateAsync({ key: "cat_image_borghi", content: catImgBorghi });
     if (catImgArte) await updateSiteContent.mutateAsync({ key: "cat_image_arte_cultura", content: catImgArte });
     if (catImgCollezioni) await updateSiteContent.mutateAsync({ key: "cat_image_collezioni", content: catImgCollezioni });
+    if (catImgFreeSpots) await updateSiteContent.mutateAsync({ key: "cat_image_free_spots", content: catImgFreeSpots });
     if (exploreCtaText) await updateSiteContent.mutateAsync({ key: "explore_cta_text", content: exploreCtaText });
+    if (freeSpotsLabel) await updateSiteContent.mutateAsync({ key: "cat_label_free_spots", content: freeSpotsLabel });
+    if (freeSpotsSubLabel) await updateSiteContent.mutateAsync({ key: "cat_sublabel_free_spots", content: freeSpotsSubLabel });
   };
 
   if (authLoading || isLoading) {
@@ -764,12 +771,39 @@ const Admin = () => {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label>Collezioni (card larga)</Label>
+                    <Label>Collezioni</Label>
                     <ImageUpload
                       value={catImgCollezioni}
                       onChange={(url) => setCatImgCollezioni(url)}
                       onRemove={() => setCatImgCollezioni("")}
                       folder="categories"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Free Spots</Label>
+                    <ImageUpload
+                      value={catImgFreeSpots}
+                      onChange={(url) => setCatImgFreeSpots(url)}
+                      onRemove={() => setCatImgFreeSpots("")}
+                      folder="categories"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="free_spots_label">Titolo card Free Spots</Label>
+                    <Input
+                      id="free_spots_label"
+                      value={freeSpotsLabel}
+                      onChange={(e) => setFreeSpotsLabel(e.target.value)}
+                      placeholder="Es: Free Spots"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="free_spots_sublabel">Sottotitolo card Free Spots</Label>
+                    <Input
+                      id="free_spots_sublabel"
+                      value={freeSpotsSubLabel}
+                      onChange={(e) => setFreeSpotsSubLabel(e.target.value)}
+                      placeholder="Es: Work, Study & Eat&Drink"
                     />
                   </div>
                   <div className="space-y-2">
@@ -843,27 +877,6 @@ const Admin = () => {
                         value={decoHeroRB}
                         onChange={(url) => setDecoHeroRB(url)}
                         onRemove={() => setDecoHeroRB("")}
-                        folder="deco"
-                      />
-                    </div>
-                  </div>
-                  <p className="text-sm font-medium text-muted-foreground pt-2">Collezioni — banner</p>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Sinistra</Label>
-                      <ImageUpload
-                        value={decoCollLeft}
-                        onChange={(url) => setDecoCollLeft(url)}
-                        onRemove={() => setDecoCollLeft("")}
-                        folder="deco"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Destra</Label>
-                      <ImageUpload
-                        value={decoCollRight}
-                        onChange={(url) => setDecoCollRight(url)}
-                        onRemove={() => setDecoCollRight("")}
                         folder="deco"
                       />
                     </div>
