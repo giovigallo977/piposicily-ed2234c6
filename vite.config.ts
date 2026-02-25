@@ -54,8 +54,7 @@ export default defineConfig(({ mode }) => ({
       skipWaiting: true,
       clientsClaim: true,
       cleanupOutdatedCaches: true,
-      navigateFallback: undefined,
-      navigateFallbackDenylist: [/^\/~oauth/],
+      navigateFallbackDenylist: [/./],
       runtimeCaching: [
           {
             urlPattern: ({ request }: { request: Request }) => request.mode === 'navigate',

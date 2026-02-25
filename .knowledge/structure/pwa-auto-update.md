@@ -6,8 +6,7 @@ L'app è una PWA con un sistema multi-livello per garantire che bookmark, scorci
 
 - `skipWaiting: true` e `clientsClaim: true` per attivazione immediata del nuovo SW
 - `cleanupOutdatedCaches: true` per rimuovere cache obsolete
-- **`navigateFallback: undefined`** — CRITICO: disabilita la `NavigationRoute` precache di Workbox che altrimenti intercetterebbe tutte le navigazioni prima della route `NetworkFirst`, servendo HTML vecchio dal precache.
-- `navigateFallbackDenylist: [/^\/~oauth/]` per escludere OAuth dal fallback
+- **`navigateFallbackDenylist: [/./]`** — CRITICO: il plugin genera sempre una `NavigationRoute` precache (anche con `navigateFallback: undefined`). Questa denylist con regex `/./` (matcha tutto) rende la NavigationRoute inefficace, lasciando il `NetworkFirst` runtime come unico handler per le navigazioni.
 - **Runtime caching NetworkFirst per HTML**: tutte le richieste di navigazione (`request.mode === 'navigate'`) usano strategia `NetworkFirst` con timeout 3s e cache `html-cache`. Questo forza il download dell'HTML fresco dal server quando online, usando la cache solo come fallback offline.
 - Runtime caching `NetworkFirst` per API Supabase (cache 5 min)
 - Runtime caching `CacheFirst` per immagini (cache 7 giorni)
@@ -16,7 +15,8 @@ L'app è una PWA con un sistema multi-livello per garantire che bookmark, scorci
 Il problema "app non si aggiorna mai su iOS" era causato dalla priorità delle route nel SW generato da Workbox:
 1. Workbox generava una `NavigationRoute` (precache fallback) che matchava tutte le navigazioni
 2. La route `NetworkFirst` runtime veniva registrata dopo, ma non veniva mai raggiunta
-3. Soluzione: `navigateFallback: undefined` elimina la NavigationRoute, lasciando il `NetworkFirst` come unico handler per le navigazioni
+3. Fix 1 (`navigateFallback: undefined`): NON funziona — il plugin ignora `undefined` e genera comunque la NavigationRoute con `index.html`
+4. Fix 2 definitivo: `navigateFallbackDenylist: [/./]` — la NavigationRoute esiste ma non matcha mai nessun URL, lasciando il `NetworkFirst` come unico handler
 
 ## 2. Meta tag anti-cache (index.html)
 
