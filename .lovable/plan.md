@@ -1,138 +1,92 @@
 
 
-# Piano: Pagamento Prima, Account Dopo
+# Piano: Pulizia e Coerenza Flusso Accesso + Pagamento
 
-## Problema attuale
-Il flusso attuale richiede registrazione (email + password) PRIMA del pagamento. Questo crea frizione e abbandono. L'utente vuole il contrario: **prima paghi su Stripe, poi l'account viene creato automaticamente**.
+## Analisi stato attuale
 
-## Nuovo flusso UX
+Dopo aver esaminato il codice, la struttura base e gia corretta:
+- Login/Logout in header su tutte le pagine ✅
+- PremiumModal con "Sblocca tutto" + "Hai gia pagato? Accedi" ✅
+- Flusso payment-first con complete-purchase ✅
+- Hotspot locking (primo per categoria gratuito) ✅
 
-```text
-Utente anonimo naviga l'app
-        │
-        ▼
-Clicca hotspot bloccato
-        │
-        ▼
-Modal semplice: "Sblocca tutto – €4.99"
-        │
-        ▼
-Redirect a Stripe Checkout (inserisce email + paga)
-        │
-        ▼
-Stripe reindirizza a /payment-success?session_id=xxx
-        │
-        ▼
-Pagina chiede di creare una password
-        │
-        ▼
-Edge function: verifica pagamento, crea account, segna premium
-        │
-        ▼
-Auto-login → tutto sbloccato
-```
+## Cosa manca / da correggere
 
-Per utenti che tornano: pulsante "Login" in alto a destra.
+### 1. PaymentSuccess: email precompilata non mostrata
 
----
+Attualmente la pagina mostra solo i campi password. Il prompt richiede che l'email (da Stripe) sia visibile e non modificabile. Serve:
+- Aggiungere un endpoint o modificare `complete-purchase` per poter recuperare l'email dalla sessione Stripe **prima** di inviare la password
+- Oppure creare una piccola edge function `get-session-email` che dato il `session_id` restituisce solo l'email
+- Mostrare l'email come campo read-only nella pagina
 
-## Modifiche dettagliate
+**Approccio scelto**: aggiungere una nuova edge function `get-session-email` (semplice, sicura) che restituisce l'email dal session Stripe. La PaymentSuccess la chiama al mount per precompilare il campo.
 
-### 1. PremiumModal.tsx — Semplificazione radicale
+### 2. Logout: toast di conferma
 
-Rimuovere le viste "signup" e "choice" con form email/password. Il modal diventa:
+Al momento il logout non mostra nessun feedback. Aggiungere un toast "Sei uscito" / "Logged out" su tutte le pagine che hanno il pulsante Logout (MinimalHeader, ExplorePage, CollectionsPage, CollectionDetailPage, FreeSpotsPage).
 
-**Se utente NON autenticato:**
-- Titolo: "Sblocca tutti gli hotspot"
-- Testo: "Accesso completo a tutte le mappe Pipo. Pagamento unico 4,99€ – accesso per sempre."
-- Benefici (lista con check)
-- Prezzo grosso: €4.99 una tantum
-- **Pulsante principale**: "Sblocca tutto – €4.99" → chiama `create-payment` (senza auth) → redirect a Stripe
-- **Link secondario**: "Hai gia pagato? Accedi" → mostra form login (email + password)
+**Approccio**: creare una funzione `handleSignOut` centralizzata che chiama `signOut()` e poi mostra il toast.
 
-**Se utente autenticato ma non premium:**
-- Stesso layout, pulsante "Sblocca tutto – €4.99" con auth
+### 3. PremiumModal: guardia "gia premium"
 
-**Se utente autenticato e premium:**
-- Non dovrebbe mai apparire
+Se un utente premium apre il modal (caso raro), mostrare "Sei gia Premium ✨ — Tutti gli hotspot sono sbloccati" invece del flusso di pagamento.
 
-Niente piu form di registrazione nel modal. La registrazione avviene DOPO il pagamento.
+### 4. config.toml: verify_jwt mancante
 
-### 2. Edge function: create-payment — Rimuovere obbligo auth
+Il file `supabase/config.toml` non ha le configurazioni `verify_jwt = false` per `create-payment` e `complete-purchase`. Vanno aggiunte (piu la nuova `get-session-email`).
 
-File: `supabase/functions/create-payment/index.ts`
+### 5. PaymentSuccess: redirect alla home dopo successo
 
-- Aggiungere `verify_jwt = false` nella config
-- Se l'utente e autenticato (header Authorization presente), usare la sua email
-- Se NON autenticato, creare la sessione Stripe senza email prefissata (Stripe la chiede nel checkout)
-- Aggiungere `{CHECKOUT_SESSION_ID}` alla success_url: `/payment-success?session_id={CHECKOUT_SESSION_ID}`
-
-### 3. Nuova edge function: complete-purchase
-
-File: `supabase/functions/complete-purchase/index.ts`
-
-Questa funzione:
-1. Riceve `session_id` e `password` dal frontend
-2. Verifica il pagamento con Stripe (session.payment_status === "paid")
-3. Recupera l'email del cliente dalla sessione Stripe
-4. Crea l'account utente via `supabaseAdmin.auth.admin.createUser({ email, password, email_confirm: true })`
-5. Se l'utente esiste gia (ha pagato prima), aggiorna solo lo stato premium
-6. Inserisce/aggiorna il profilo con `is_premium = true`
-7. Restituisce `{ success: true, email }` al frontend
-8. Il frontend fa `signIn(email, password)` per auto-login
-
-verify_jwt = false (l'utente non ha ancora un account).
-
-### 4. PaymentSuccess.tsx — Pagina "Crea la tua password"
-
-Dopo il redirect da Stripe, la pagina:
-1. Mostra "Pagamento completato!" con icona di successo
-2. Chiede di creare una password (2 campi: password + conferma)
-3. Al submit, chiama `complete-purchase` con session_id e password
-4. Dopo la risposta, fa `signIn(email, password)` per auto-login
-5. Invalida le query premium-status
-6. Reindirizza a `/esplora`
-
-Se l'utente e gia autenticato (caso raro), salta la creazione password e verifica direttamente con `verify-payment`.
-
-### 5. config.toml — JWT config per le nuove funzioni
-
-Aggiungere:
-```toml
-[functions.create-payment]
-verify_jwt = false
-
-[functions.complete-purchase]
-verify_jwt = false
-```
-
-### 6. Login separato dal Premium Modal
-
-Il form di login (per utenti che hanno gia pagato) resta nel PremiumModal come vista secondaria. Cliccando "Hai gia pagato? Accedi" si mostra il form email+password. Dopo il login, si verifica lo stato premium e si chiude il modal.
-
-### 7. Nessuna modifica a
-
-- Header Login/Logout: resta come implementato
-- HotspotCard: resta come implementato (lucchetto + blur)
-- usePremiumStatus: resta come implementato
-- verify-payment: resta come backup per utenti gia autenticati
+Il prompt dice redirect alla home, attualmente va a `/esplora`. Cambiare in `/` con toast "Accesso Premium attivo".
 
 ---
 
 ## File da modificare/creare
 
-| File | Azione |
-|------|--------|
-| `src/components/PremiumModal.tsx` | Semplificare: rimuovere vista signup, tenere solo "Sblocca tutto" + "Hai gia pagato? Accedi" |
-| `supabase/functions/create-payment/index.ts` | Rendere funzionante senza auth, aggiungere session_id alla success_url |
-| `supabase/functions/complete-purchase/index.ts` | **Nuovo** — verifica pagamento, crea account, segna premium |
-| `src/pages/PaymentSuccess.tsx` | Riprogettare: form password + auto-login dopo pagamento |
-| `supabase/config.toml` | Aggiungere verify_jwt = false per create-payment e complete-purchase |
+| File | Azione | Dettaglio |
+|------|--------|-----------|
+| `supabase/functions/get-session-email/index.ts` | **Nuovo** | Riceve `session_id`, restituisce email da Stripe |
+| `src/pages/PaymentSuccess.tsx` | Modifica | Aggiungere fetch email al mount, mostrare campo email read-only, redirect a `/` |
+| `src/components/PremiumModal.tsx` | Modifica | Aggiungere guardia "gia premium" |
+| `src/components/MinimalHeader.tsx` | Modifica | Toast su logout |
+| `src/pages/ExplorePage.tsx` | Modifica | Toast su logout |
+| `src/pages/CollectionsPage.tsx` | Modifica | Toast su logout |
+| `src/pages/CollectionDetailPage.tsx` | Modifica | Toast su logout |
+| `src/pages/FreeSpotsPage.tsx` | Modifica | Toast su logout |
+| `supabase/config.toml` | Modifica | Aggiungere verify_jwt = false per le 3 edge functions |
 
-## Sicurezza
+---
 
-- `complete-purchase` verifica SEMPRE il pagamento con Stripe prima di creare l'account
-- Il session_id e un token one-time di Stripe, non riutilizzabile per creare account multipli
-- Se il pagamento non risulta "paid", la funzione rifiuta la richiesta
-- Password scelta dall'utente, non generata automaticamente
+## Dettagli tecnici
+
+### get-session-email edge function
+
+```typescript
+// Riceve { session_id }
+// Verifica con Stripe
+// Restituisce { email } o errore
+```
+verify_jwt = false (utente non autenticato dopo pagamento).
+
+### PaymentSuccess — nuovo flusso
+
+1. Al mount, se c'e `session_id`, chiama `get-session-email` per ottenere l'email
+2. Mostra email in campo Input disabled
+3. Utente inserisce password + conferma
+4. Submit chiama `complete-purchase` come ora
+5. Dopo successo: toast "Accesso Premium attivo" e redirect a `/`
+
+### Logout toast
+
+In ogni pagina con pulsante Logout, il click chiama:
+```typescript
+const handleLogout = async () => {
+  await signOut();
+  toast({ title: language === "it" ? "Sei uscito" : "Logged out" });
+};
+```
+
+### PremiumModal guardia premium
+
+All'inizio del render, se `isPremium === true`, mostrare messaggio "Sei gia Premium" con pulsante per chiudere il modal. Niente form, niente Stripe.
 
