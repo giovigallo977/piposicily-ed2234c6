@@ -1,33 +1,26 @@
 
 
-# Diagnosi: Errore Hooks, Non un Problema di Cache
+# Diagnosi: Contrasto Badge e Banner
 
-## Cosa sta succedendo
+## Problema
 
-Il problema NON era la mancanza di realtime. React Query aggiorna gia i dati automaticamente quando l'utente naviga o torna sulla pagina. I tuoi hotspot si caricavano correttamente prima.
+Il badge "GRATUITO" e la scritta "Sblocca tutto" dovrebbero usare il colore `olive` scuro per garantire leggibilità, come già corretto in precedenza. Verificando il codice attuale:
 
-L'errore attuale visibile nei log della console e:
+- **Badge "GRATUITO"** (HotspotCard.tsx riga 90): usa `bg-olive text-olive-foreground` — corretto
+- **"Sblocca tutto"** (ExplorePage.tsx riga 78): usa `text-olive` — corretto
 
-```text
-React has detected a change in the order of Hooks called by HeroSection
-Previous render: hook 14 = useContext
-Next render:     hook 14 = useEffect
-```
-
-Questo succede perche la modifica a `useHotspots.tsx` (aggiunta di `useQueryClient` + `useEffect`) ha cambiato il numero di hooks interni. Il sistema di hot-reload non gestisce questo cambio e causa un crash del componente.
+Tuttavia, il valore CSS di `--olive` in `index.css` è `138 52% 55%` (luminosità 55%), mentre il design principle documenta `152 46% 43%` (luminosità 43%, più scuro). La luminosità al 55% rende il testo meno leggibile su sfondi chiari.
 
 ## Soluzione
 
-**Nessuna modifica al codice necessaria.** La modifica realtime che abbiamo fatto e corretta e funzionante. Il problema e solo il hot-reload.
+Allineare la variabile `--olive` al valore documentato nei design principles, più scuro e contrastato:
 
-Un **refresh completo della pagina** (F5 o Ctrl+R) nella preview risolve l'errore immediatamente. Dopo il refresh, tutti gli hotspot appariranno correttamente, e in piu avrai il beneficio del realtime istantaneo.
+**File: `src/index.css`**
+- Cambiare `--olive: 138 52% 55%` → `--olive: 152 46% 43%`
 
-## Riepilogo
+Questo renderà immediatamente più scuri e leggibili tutti gli elementi che usano il colore olive: badge "GRATUITO", scritta "Sblocca tutto", badge "Membro Premium", e il bottone NAVIGA.
 
-| Prima | Dopo |
-|-------|------|
-| Hotspot si aggiornano quando cambi tab o navighi | Hotspot si aggiornano **istantaneamente** senza azioni |
-| Funzionava gia bene | Funziona meglio + errore temporaneo da hot-reload |
+## Impatto
 
-Nessun file da modificare. Solo un refresh della preview.
+Un'unica modifica CSS che si propaga automaticamente a tutti i componenti. Nessun file di componenti da toccare.
 
