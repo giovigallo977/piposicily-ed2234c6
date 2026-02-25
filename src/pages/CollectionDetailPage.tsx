@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
 import HotspotCard from "@/components/HotspotCard";
 import PremiumModal from "@/components/PremiumModal";
+import LoginModal from "@/components/LoginModal";
 
 const CollectionDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -20,6 +21,7 @@ const CollectionDetailPage = () => {
   const { data: collectionHotspots, isLoading: chLoading } = useCollectionHotspots(id);
   const { data: allHotspots, isLoading: hLoading } = useHotspots();
   const [premiumModalOpen, setPremiumModalOpen] = useState(false);
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
 
   const hotspots = useMemo(() => {
     if (!collectionHotspots || !allHotspots) return [];
@@ -42,7 +44,7 @@ const CollectionDetailPage = () => {
           {collection?.nome || t("collection")}
         </h1>
         {!user ? (
-          <button onClick={() => setPremiumModalOpen(true)} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
+          <button onClick={() => setLoginModalOpen(true)} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
             Login
           </button>
         ) : (
@@ -102,6 +104,7 @@ const CollectionDetailPage = () => {
       </main>
 
       <PremiumModal open={premiumModalOpen} onOpenChange={setPremiumModalOpen} />
+      <LoginModal open={loginModalOpen} onOpenChange={setLoginModalOpen} />
     </div>
   );
 };

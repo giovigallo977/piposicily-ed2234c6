@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { ChevronsLeft, Sparkles, Loader2 } from "lucide-react";
 import HotspotCard from "@/components/HotspotCard";
 import PremiumModal from "@/components/PremiumModal";
+import LoginModal from "@/components/LoginModal";
 import { useHotspots } from "@/hooks/useHotspots";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { usePremiumStatus } from "@/hooks/usePremiumStatus";
@@ -18,6 +19,7 @@ const ExplorePage = () => {
   const { user, signOut } = useAuth();
 
   const [premiumModalOpen, setPremiumModalOpen] = useState(false);
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
 
   const categoriaParam = searchParams.get("categoria");
 
@@ -63,7 +65,7 @@ const ExplorePage = () => {
           )}
         </div>
         {!user ? (
-          <button onClick={() => setPremiumModalOpen(true)} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
+          <button onClick={() => setLoginModalOpen(true)} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
             Login
           </button>
         ) : (
@@ -137,6 +139,7 @@ const ExplorePage = () => {
       </main>
 
       <PremiumModal open={premiumModalOpen} onOpenChange={setPremiumModalOpen} />
+      <LoginModal open={loginModalOpen} onOpenChange={setLoginModalOpen} />
     </div>
   );
 };

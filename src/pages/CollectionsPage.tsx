@@ -5,14 +5,14 @@ import { useCollections } from "@/hooks/useCollections";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
-import PremiumModal from "@/components/PremiumModal";
+import LoginModal from "@/components/LoginModal";
 
 const CollectionsPage = () => {
   const navigate = useNavigate();
   const { data: collections, isLoading } = useCollections();
   const { t, language } = useLanguage();
   const { user, signOut } = useAuth();
-  const [premiumModalOpen, setPremiumModalOpen] = useState(false);
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-background">
@@ -22,7 +22,7 @@ const CollectionsPage = () => {
         </button>
         <h1 className="font-sans text-xl font-bold text-foreground">{t("collections")}</h1>
         {!user ? (
-          <button onClick={() => setPremiumModalOpen(true)} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
+          <button onClick={() => setLoginModalOpen(true)} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
             Login
           </button>
         ) : (
@@ -71,7 +71,7 @@ const CollectionsPage = () => {
           )}
         </div>
       </main>
-      <PremiumModal open={premiumModalOpen} onOpenChange={setPremiumModalOpen} />
+      <LoginModal open={loginModalOpen} onOpenChange={setLoginModalOpen} />
     </div>
   );
 };

@@ -5,7 +5,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
 import { useState } from "react";
-import PremiumModal from "@/components/PremiumModal";
+import LoginModal from "@/components/LoginModal";
 import HotspotCard from "@/components/HotspotCard";
 import type { Hotspot } from "@/hooks/useHotspots";
 
@@ -14,7 +14,7 @@ const FreeSpotsPage = () => {
   const { data: freeSpots, isLoading } = useFreeSpots();
   const { t, language } = useLanguage();
   const { user, signOut } = useAuth();
-  const [premiumModalOpen, setPremiumModalOpen] = useState(false);
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-background">
@@ -24,7 +24,7 @@ const FreeSpotsPage = () => {
         </button>
         <h1 className="font-sans text-xl font-bold text-foreground">Free Spots</h1>
         {!user ? (
-          <button onClick={() => setPremiumModalOpen(true)} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
+          <button onClick={() => setLoginModalOpen(true)} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
             Login
           </button>
         ) : (
@@ -60,7 +60,7 @@ const FreeSpotsPage = () => {
           )}
         </div>
       </main>
-      <PremiumModal open={premiumModalOpen} onOpenChange={setPremiumModalOpen} />
+      <LoginModal open={loginModalOpen} onOpenChange={setLoginModalOpen} />
     </div>
   );
 };
