@@ -83,7 +83,8 @@ serve(async (req) => {
       status: 200,
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
+    console.error("Purchase completion failed:", error);
+    return new Response(JSON.stringify({ error: "Unable to complete purchase" }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });
