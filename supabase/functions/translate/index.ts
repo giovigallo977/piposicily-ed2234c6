@@ -13,6 +13,32 @@ serve(async (req) => {
 
   try {
     const { text, texts, targetLanguage, batch } = await req.json();
+
+    // Input validation
+    if (text && (typeof text !== "string" || text.length > 10000)) {
+      return new Response(
+        JSON.stringify({ error: "Text must be a string of max 10000 characters" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+    if (batch && texts) {
+      const entries = Object.entries(texts);
+      if (entries.length > 50) {
+        return new Response(
+          JSON.stringify({ error: "Maximum 50 texts per batch" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      for (const [, value] of entries) {
+        if (value && typeof value === "string" && value.length > 10000) {
+          return new Response(
+            JSON.stringify({ error: "Each text must be max 10000 characters" }),
+            { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+      }
+    }
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
     if (!LOVABLE_API_KEY) {
@@ -176,7 +202,7 @@ Return JSON only:`;
   } catch (error) {
     console.error("Translation error:", error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "Translation failed" }),
+      JSON.stringify({ error: "Translation service unavailable" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
