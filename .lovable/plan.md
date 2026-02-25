@@ -1,26 +1,42 @@
 
 
-# Diagnosi: Contrasto Badge e Banner
+# Piano: Logica Premium nelle Collezioni
 
 ## Problema
 
-Il badge "GRATUITO" e la scritta "Sblocca tutto" dovrebbero usare il colore `olive` scuro per garantire leggibilità, come già corretto in precedenza. Verificando il codice attuale:
+La pagina dettaglio collezione (`CollectionDetailPage`) mostra tutte le schede hotspot senza restrizioni. Deve invece seguire la stessa logica della pagina Esplora: solo la **prima scheda** della collezione è gratuita, le altre sono bloccate (blur + lucchetto) per gli utenti non premium.
 
-- **Badge "GRATUITO"** (HotspotCard.tsx riga 90): usa `bg-olive text-olive-foreground` — corretto
-- **"Sblocca tutto"** (ExplorePage.tsx riga 78): usa `text-olive` — corretto
+## Modifiche
 
-Tuttavia, il valore CSS di `--olive` in `index.css` è `138 52% 55%` (luminosità 55%), mentre il design principle documenta `152 46% 43%` (luminosità 43%, più scuro). La luminosità al 55% rende il testo meno leggibile su sfondi chiari.
+**File: `src/pages/CollectionDetailPage.tsx`**
 
-## Soluzione
+1. Importare `useState` e i componenti necessari: `usePremiumStatus`, `PremiumModal`, `Sparkles`
+2. Aggiungere lo stato per il modal premium
+3. Aggiungere il banner premium (come in ExplorePage) che mostra "1/N schede disponibili" e il link "Sblocca tutto"
+4. Nel rendering delle card, passare `locked={true}` a tutte le card tranne la prima (index 0), e `isFree={true}` alla prima card — solo per utenti non premium
+5. Passare `onLockedClick` per aprire il modal premium
 
-Allineare la variabile `--olive` al valore documentato nei design principles, più scuro e contrastato:
+### Logica specifica
 
-**File: `src/index.css`**
-- Cambiare `--olive: 138 52% 55%` → `--olive: 152 46% 43%`
+- La **prima scheda** (index 0) nella collezione è sempre gratuita
+- Tutte le altre (index > 0) sono bloccate se l'utente non è premium
+- Il banner mostra "1/{totale} schede disponibili" con il pulsante "Sblocca tutto"
+- Click su card bloccata o sul banner apre il `PremiumModal`
 
-Questo renderà immediatamente più scuri e leggibili tutti gli elementi che usano il colore olive: badge "GRATUITO", scritta "Sblocca tutto", badge "Membro Premium", e il bottone NAVIGA.
+### Struttura risultante
 
-## Impatto
+```text
+┌─────────────────────────────┐
+│  ← Header (nome collezione) │
+├─────────────────────────────┤
+│  ✨ 1/6 disponibili  [Sblocca tutto]  │  ← solo non-premium
+├─────────────────────────────┤
+│  Card 1 (GRATUITO badge)    │  ← visibile
+│  Card 2 (🔒 blur)          │  ← bloccata
+│  Card 3 (🔒 blur)          │  ← bloccata
+│  ...                        │
+└─────────────────────────────┘
+```
 
-Un'unica modifica CSS che si propaga automaticamente a tutti i componenti. Nessun file di componenti da toccare.
+Nessuna modifica al database o ad altri file necessaria.
 
