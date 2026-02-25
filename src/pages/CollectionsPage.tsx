@@ -1,19 +1,21 @@
 import { useNavigate } from "react-router-dom";
 import { ChevronsLeft } from "lucide-react";
 import { useCollections } from "@/hooks/useCollections";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Loader2 } from "lucide-react";
 
 const CollectionsPage = () => {
   const navigate = useNavigate();
   const { data: collections, isLoading } = useCollections();
+  const { t } = useLanguage();
 
   return (
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-50 bg-background py-4 px-6 flex items-center justify-between">
-        <button onClick={() => navigate("/")} className="p-2 transition-all duration-200 hover:scale-110" aria-label="Indietro">
+        <button onClick={() => navigate("/")} className="p-2 transition-all duration-200 hover:scale-110" aria-label={t("backLabel")}>
           <ChevronsLeft className="w-8 h-8 text-foreground" strokeWidth={2.5} />
         </button>
-        <h1 className="font-sans text-xl font-bold text-foreground">Collezioni</h1>
+        <h1 className="font-sans text-xl font-bold text-foreground">{t("collections")}</h1>
         <div className="w-12" />
       </header>
 
@@ -51,7 +53,7 @@ const CollectionsPage = () => {
 
           {!isLoading && collections?.length === 0 && (
             <div className="text-center py-12 text-muted-foreground font-sans italic">
-              <p>Nessuna collezione disponibile.</p>
+              <p>{t("noCollections")}</p>
             </div>
           )}
         </div>

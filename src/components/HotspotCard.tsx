@@ -133,7 +133,7 @@ const HotspotCard = ({ hotspot, index = 0, locked = false, isFree = false, onLoc
               )}
               {hotspot.zona && (
                 <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold bg-foreground text-background">
-                  📍 zona {hotspot.zona}
+                  📍 {t("zone")} {hotspot.zona}
                 </span>
               )}
             </div>
