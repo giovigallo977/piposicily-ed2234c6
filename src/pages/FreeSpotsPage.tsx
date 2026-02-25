@@ -1,28 +1,19 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronsLeft, LogIn, Loader2 } from "lucide-react";
 import { useFreeSpots } from "@/hooks/useFreeSpots";
-import { useFreeSpotCategories } from "@/hooks/useFreeSpotCategories";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
+import { useState } from "react";
 import PremiumModal from "@/components/PremiumModal";
 import HotspotCard from "@/components/HotspotCard";
 import type { Hotspot } from "@/hooks/useHotspots";
 
-const FREE_SPOT_FILTERS = ["Tutti", "Lavorare", "Studiare", "Eat & Drink"];
-
 const FreeSpotsPage = () => {
   const navigate = useNavigate();
   const { data: freeSpots, isLoading } = useFreeSpots();
-  const { data: categories } = useFreeSpotCategories();
   const { t } = useLanguage();
   const { user } = useAuth();
   const [premiumModalOpen, setPremiumModalOpen] = useState(false);
-  const [activeFilter, setActiveFilter] = useState("Tutti");
-
-  const filteredSpots = freeSpots?.filter((spot) =>
-    activeFilter === "Tutti" ? true : spot.categoria === activeFilter
-  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -42,37 +33,6 @@ const FreeSpotsPage = () => {
 
       <main className="container mx-auto px-4 py-6 pb-24">
         <div className="max-w-lg mx-auto">
-          {/* Filtri chip */}
-          <div className="flex flex-wrap gap-2 mb-6">
-            {FREE_SPOT_FILTERS.map((filter) => (
-              <button
-                key={filter}
-                onClick={() => setActiveFilter(filter)}
-                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-200 ${
-                  activeFilter === filter
-                    ? "bg-foreground text-background"
-                    : "bg-muted text-foreground hover:bg-muted/80"
-                }`}
-              >
-                {filter}
-              </button>
-            ))}
-          </div>
-
-          {/* Category image header */}
-          {activeFilter !== "Tutti" && (() => {
-            const cat = categories?.find((c) => c.nome === activeFilter);
-            return cat?.immagine ? (
-              <div className="mb-6 rounded-xl overflow-hidden">
-                <img
-                  src={cat.immagine}
-                  alt={cat.nome}
-                  className="w-full h-40 object-cover"
-                />
-              </div>
-            ) : null;
-          })()}
-
           {isLoading && (
             <div className="flex justify-center py-12">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -80,7 +40,7 @@ const FreeSpotsPage = () => {
           )}
 
           <div className="space-y-6">
-            {filteredSpots?.map((spot, index) => (
+            {freeSpots?.map((spot, index) => (
               <HotspotCard
                 key={spot.id}
                 hotspot={spot as unknown as Hotspot}
@@ -93,12 +53,6 @@ const FreeSpotsPage = () => {
           {!isLoading && (!freeSpots || freeSpots.length === 0) && (
             <p className="text-center py-12 text-muted-foreground font-sans italic">
               Nessun free spot ancora.
-            </p>
-          )}
-
-          {!isLoading && freeSpots && freeSpots.length > 0 && filteredSpots?.length === 0 && (
-            <p className="text-center py-8 text-muted-foreground font-sans italic text-sm">
-              Nessun posto in questa categoria.
             </p>
           )}
         </div>
