@@ -123,12 +123,19 @@ const HotspotCard = ({ hotspot, index = 0, locked = false, isFree = false, onLoc
             </button>
           </div>
 
-          {/* Categoria sotto il titolo */}
-          {translated.categoria && (
-            <div className="mt-4 mb-4">
-              <span className="px-3 py-1.5 text-xs font-bold rounded-full bg-foreground text-background">
-                {translated.categoria}
-              </span>
+          {/* Categoria + Zona */}
+          {(translated.categoria || hotspot.zona) && (
+            <div className="mt-4 mb-4 flex flex-wrap items-center gap-2">
+              {translated.categoria && (
+                <span className="px-3 py-1.5 text-xs font-bold rounded-full bg-foreground text-background">
+                  {translated.categoria}
+                </span>
+              )}
+              {hotspot.zona && (
+                <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold bg-foreground text-background">
+                  📍 zona {hotspot.zona}
+                </span>
+              )}
             </div>
           )}
 
@@ -159,14 +166,6 @@ const HotspotCard = ({ hotspot, index = 0, locked = false, isFree = false, onLoc
                 {translated.descrizione_completa}
               </p>
 
-              {/* Zona badge */}
-              {hotspot.zona && (
-                <div className="mt-4">
-                  <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium shadow-sm bg-foreground text-background">
-                    📍 zona {hotspot.zona}
-                  </span>
-                </div>
-              )}
               
               {/* Link Naviga */}
               {hotspot.link_google_maps && (
