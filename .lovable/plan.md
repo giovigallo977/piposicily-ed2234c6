@@ -1,53 +1,29 @@
 
 
-# Piano: Sistema Premium senza Stripe (per ora)
+# Fix contrasto badge "GRATUITO" e "Sblocca tutto"
 
-Implemento tutta la parte frontend del sistema premium (badge, blur, modal, logica free/locked) e la parte database (tabella profiles, trigger, RLS). Stripe verrà configurato in seguito — per ora il bottone di pagamento nel modal mostrerà un placeholder.
+Il problema è che i badge usano `bg-primary text-primary-foreground` dove `--primary` è un giallo-verde chiaro (HSL 72 96% 62%) e `--primary-foreground` è bianco — contrasto pessimo.
 
-## Cosa viene fatto ora
+## Modifiche
 
-### 1. Database — Migrazione
-- Creo tabella `profiles` con `user_id`, `is_premium`, `premium_since`, `stripe_session_id`
-- Trigger per auto-creare profilo alla registrazione
-- RLS: ogni utente legge solo il proprio profilo
+### 1. Badge "GRATUITO" in `HotspotCard.tsx` (riga 90)
+- Da: `bg-primary text-primary-foreground` (giallo chiaro + bianco)
+- A: `bg-olive text-white` (verde Pipo #52C471 + testo bianco — leggibile)
 
-### 2. `src/hooks/useAuth.tsx` — Aggiunta `signUp`
-- Aggiungo funzione `signUp(email, password)` al context
+### 2. Badge "PREMIUM" overlay in `HotspotCard.tsx` (riga 82)
+- Verifico che sia già leggibile (usa `text-background` su sfondo scuro — ok)
 
-### 3. `src/hooks/usePremiumStatus.ts` — Nuovo
-- Se non autenticato: `isPremium = false`
-- Se autenticato: query `profiles.is_premium`
+### 3. Banner "Sblocca tutto" in `ExplorePage.tsx` (riga 105)
+- Da: `text-primary` (giallo chiaro, illeggibile)
+- A: `text-olive font-bold` (verde Pipo, leggibile)
 
-### 4. `src/components/PremiumModal.tsx` — Nuovo
-- Modal con benefici (accesso completo, nessun abbonamento, aggiornamenti futuri)
-- Due stati: utente non loggato (form registrazione) / utente loggato non premium (solo bottone pagamento)
-- Bottone "Paga €4.99" — per ora mostra toast "Stripe sarà configurato a breve"
-- Design accattivante con lista benefici
+### 4. Icona Sparkles nel banner (riga 100)
+- Da: `text-primary`
+- A: `text-olive`
 
-### 5. `src/components/HotspotCard.tsx` — Modifica
-- Aggiungo props `locked` e `isFree`
-- Se `locked`: immagine sfocata, overlay con icona Lock + "PREMIUM", click apre PremiumModal
-- Se `isFree`: badge "GRATUITO" verde
-- Se né locked né free (utente premium): nessun badge
+### 5. Badge "Membro Premium" in header (riga 68)
+- Da: `bg-primary text-primary-foreground`
+- A: `bg-olive text-white`
 
-### 6. `src/pages/ExplorePage.tsx` — Modifica
-- Raggruppo hotspot per categoria, il primo di ogni categoria è gratuito
-- Se `isPremium` → tutto sbloccato, nessun badge
-- Banner in alto: "X/Y schede disponibili — Sblocca tutto!"
-- Se premium: badge "Membro Premium"
-
-## Cosa viene rimandato
-- Abilitazione Stripe e creazione Edge Functions (`create-checkout`, `stripe-webhook`)
-- Il bottone di pagamento nel modal sarà un placeholder funzionale
-
-## File coinvolti
-
-| File | Azione |
-|------|--------|
-| Migrazione DB | Nuova — profiles + trigger + RLS |
-| `src/hooks/useAuth.tsx` | Modifica — signUp |
-| `src/hooks/usePremiumStatus.ts` | Nuovo |
-| `src/components/PremiumModal.tsx` | Nuovo |
-| `src/components/HotspotCard.tsx` | Modifica — locked/free/badge |
-| `src/pages/ExplorePage.tsx` | Modifica — logica categoria + banner |
+Tutti i badge passeranno dal giallo-verde chiaro al verde Pipo (`--olive: 138 52% 55%`) con testo bianco, garantendo un contrasto forte e leggibile.
 
