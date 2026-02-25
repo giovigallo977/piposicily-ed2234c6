@@ -12,7 +12,7 @@ const FreeSpotsPage = () => {
   const navigate = useNavigate();
   const { data: freeSpots, isLoading } = useFreeSpots();
   const { t } = useLanguage();
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const [premiumModalOpen, setPremiumModalOpen] = useState(false);
 
   return (
@@ -27,7 +27,9 @@ const FreeSpotsPage = () => {
             <LogIn className="w-6 h-6 text-foreground" />
           </button>
         ) : (
-          <div className="w-12" />
+          <button onClick={() => signOut()} className="p-2 transition-all duration-200 hover:scale-110" aria-label="Logout">
+            <LogIn className="w-6 h-6 text-foreground rotate-180" />
+          </button>
         )}
       </header>
 

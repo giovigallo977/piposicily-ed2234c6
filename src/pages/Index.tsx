@@ -1,7 +1,6 @@
 import MinimalHeader from "@/components/MinimalHeader";
 import HeroSection from "@/components/HeroSection";
 import { useSiteContent } from "@/hooks/useSiteContent";
-
 const Index = () => {
   const { data: homepageBgColorContent } = useSiteContent("homepage_bg_color");
   

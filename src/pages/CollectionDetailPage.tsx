@@ -14,7 +14,7 @@ const CollectionDetailPage = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const { isPremium } = usePremiumStatus();
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
   const { data: collection, isLoading: collLoading } = useCollectionById(id);
   const { data: collectionHotspots, isLoading: chLoading } = useCollectionHotspots(id);
   const { data: allHotspots, isLoading: hLoading } = useHotspots();
@@ -45,7 +45,9 @@ const CollectionDetailPage = () => {
             <LogIn className="w-6 h-6 text-foreground" />
           </button>
         ) : (
-          <div className="w-12" />
+          <button onClick={() => signOut()} className="p-2 transition-all duration-200 hover:scale-110" aria-label="Logout">
+            <LogIn className="w-6 h-6 text-foreground rotate-180" />
+          </button>
         )}
       </header>
 

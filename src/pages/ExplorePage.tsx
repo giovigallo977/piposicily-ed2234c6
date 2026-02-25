@@ -14,7 +14,7 @@ const ExplorePage = () => {
   const { data: hotspots, isLoading, error } = useHotspots();
   const { t } = useLanguage();
   const { isPremium } = usePremiumStatus();
-  const { user } = useAuth();
+  const { user, signOut } = useAuth();
 
   const [premiumModalOpen, setPremiumModalOpen] = useState(false);
 
@@ -66,7 +66,9 @@ const ExplorePage = () => {
             <LogIn className="w-6 h-6 text-foreground" />
           </button>
         ) : (
-          <div className="w-8" />
+          <button onClick={() => signOut()} className="p-2 transition-all duration-200 hover:scale-110" aria-label="Logout">
+            <LogIn className="w-6 h-6 text-foreground rotate-180" />
+          </button>
         )}
       </header>
 

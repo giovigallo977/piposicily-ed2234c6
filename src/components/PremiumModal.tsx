@@ -150,7 +150,22 @@ const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
         toast({ title: t.signupError, description: error.message, variant: "destructive" });
         return;
       }
-      toast({ title: t.checkEmail });
+      // Try auto-login and redirect to Stripe
+      const { error: loginError } = await signIn(email, password);
+      if (loginError) {
+        // Email confirmation likely required
+        toast({ title: t.checkEmail });
+        return;
+      }
+      // Auto-login succeeded, redirect to payment
+      const { data, error: payError } = await supabase.functions.invoke("create-payment");
+      if (payError) throw payError;
+      if (data?.url) {
+        window.location.href = data.url;
+        return;
+      }
+    } catch (error: any) {
+      toast({ title: t.paymentError, description: error.message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
