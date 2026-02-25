@@ -1,35 +1,28 @@
 
 
-# Spostare badge "Zona" accanto alla categoria
+## Problem
 
-## Problema
-Il badge zona è attualmente dentro il contenuto espanso (accordion), visibile solo dopo aver cliccato "+". L'utente vuole vederlo subito, accanto al badge categoria.
+User signups are disabled in the authentication configuration. When a new user tries to register via the Premium modal, the backend rejects the request with "422: Signups not allowed for this instance."
 
-## Modifica
+## Root Cause
 
-### `src/components/HotspotCard.tsx`
+The authentication system is configured to block new user registrations. This was likely set intentionally to restrict access to admin-only, but the premium payment flow requires public signups.
 
-1. **Rimuovere** il blocco zona dal contenuto espanso (dentro `overflow-hidden`, circa riga 153-158)
+## Plan
 
-2. **Aggiungere** il badge zona nella sezione categoria (riga ~125), trasformandola in una riga con entrambi i badge affiancati:
+1. **Enable user signups** using the authentication configuration tool — toggle "Enable Signups" to `true`.
 
-```tsx
-{/* Categoria + Zona */}
-{(translated.categoria || hotspot.zona) && (
-  <div className="mt-4 mb-4 flex flex-wrap items-center gap-2">
-    {translated.categoria && (
-      <span className="px-3 py-1.5 text-xs font-bold rounded-full bg-foreground text-background">
-        {translated.categoria}
-      </span>
-    )}
-    {hotspot.zona && (
-      <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold bg-foreground text-background">
-        📍 zona {hotspot.zona}
-      </span>
-    )}
-  </div>
-)}
+2. **Keep email confirmation enabled** — users should verify their email before gaining access, as per current best practices. The existing `PremiumModal` already handles this flow (shows "check your email" toast after signup).
+
+No code changes are needed — this is purely a backend configuration change.
+
+## Technical Detail
+
+The auth logs show repeated `signup_disabled` errors:
+```
+"error_code": "signup_disabled"
+"error": "422: Signups not allowed for this instance"
 ```
 
-Un solo file modificato, nessuna modifica al database.
+The fix is a single configuration toggle on the authentication system.
 
