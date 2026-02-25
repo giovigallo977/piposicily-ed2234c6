@@ -1,32 +1,42 @@
 
 
-# Piano: Griglia homepage 2+2+2
+# Piano: Titolo card Free Spots da backend
 
 ## Cosa cambia
 
-La card "Collezioni" attualmente è full-width (aspect 16:9) sotto la griglia 2x2. Va trasformata in una card quadrata (aspect-square) identica alle altre 4 categorie, e affiancata da una nuova card "Free Spots" anch'essa quadrata. Il risultato: una griglia uniforme 3 righe x 2 colonne.
+1. Il testo della card Free Spots nella homepage diventa **"Free Spots"** come titolo principale e **"Work, Study & Eat&Drink"** come sottotitolo, entrambi modificabili dal backend tramite `site_content`.
 
-```text
-[Luoghi Fantasma]  [Natura]
-[Borghi]           [Arte e Cultura]
-[Collezioni]       [Free Spots]
-```
+2. Due nuove chiavi in `site_content`:
+   - `cat_label_free_spots` → titolo (default: "Free Spots")
+   - `cat_sublabel_free_spots` → sottotitolo (default: "Work, Study & Eat&Drink")
 
-La pagina Collezioni e il suo contenuto interno restano completamente invariati.
+3. Nel componente `HeroSection.tsx`, il testo hardcoded viene sostituito con contenuto dal DB + traduzione automatica, seguendo il pattern già usato per le altre sezioni.
 
 ## Modifiche tecniche
 
 ### File: `src/components/HeroSection.tsx`
 
-1. **Aggiungere** fetch immagine free spots: `useSiteContent("cat_image_free_spots")` con fallback a muted
-2. **Rimuovere** il blocco separato "Collezioni Card" full-width (righe 167-193), incluse le grafiche decorative laterali (`decoCollLeft`, `decoCollRight`)
-3. **Estendere la griglia** esistente (riga 140) aggiungendo dopo il `.map()` delle 4 categorie due card extra dentro lo stesso `grid grid-cols-2`:
-   - Card "Collezioni" — aspect-square, stesse classi delle altre card, click naviga a `/collezioni`, immagine da `catImgCollezioni`
-   - Card "Free Spots" — aspect-square, titolo "Lavorare, Studiare & Eat", click naviga a `/collezioni` (dove la sezione free spots è già presente), immagine da `cat_image_free_spots`
-4. **Pulizia**: rimuovere import/fetch di `decoCollLeft` e `decoCollRight` dato che non servono piu nella card quadrata
+- Aggiungere due `useSiteContent` per le nuove chiavi
+- Aggiungere due `useTranslatedContent` per la traduzione
+- Nella card Free Spots, sostituire il testo fisso con due `<span>`: titolo in grassetto e sottotitolo più piccolo sotto
 
-### Nessun altro file modificato
+Layout della card:
+```text
+┌──────────────────┐
+│                   │
+│   [immagine]      │
+│                   │
+│  Free Spots       │  ← titolo (da DB)
+│  Work, Study &    │  ← sottotitolo (da DB)
+│  Eat&Drink        │
+└──────────────────┘
+```
 
-- La pagina Collezioni resta invariata con collezioni + sezione free spots
-- Nessuna modifica al database o agli hook
+### File: `src/pages/Admin.tsx`
+
+- Nella sezione di gestione contenuti (dove si editano hero_headline, hero_subtitle ecc.), aggiungere due campi per `cat_label_free_spots` e `cat_sublabel_free_spots`, coerenti con gli altri campi già gestiti.
+
+### Nessuna modifica al database
+
+Le chiavi vengono create automaticamente al primo salvataggio dall'admin (il pattern `site_content` supporta upsert).
 
