@@ -4,12 +4,13 @@ import { ChevronsLeft, Loader2 } from "lucide-react";
 import { useCollections } from "@/hooks/useCollections";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
+import { toast } from "@/hooks/use-toast";
 import PremiumModal from "@/components/PremiumModal";
 
 const CollectionsPage = () => {
   const navigate = useNavigate();
   const { data: collections, isLoading } = useCollections();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { user, signOut } = useAuth();
   const [premiumModalOpen, setPremiumModalOpen] = useState(false);
 
@@ -25,7 +26,7 @@ const CollectionsPage = () => {
             Login
           </button>
         ) : (
-          <button onClick={() => signOut()} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
+          <button onClick={async () => { await signOut(); toast({ title: language === "it" ? "Sei uscito" : "Logged out" }); }} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
             Logout
           </button>
         )}

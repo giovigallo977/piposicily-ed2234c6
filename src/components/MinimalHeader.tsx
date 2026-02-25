@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
+import { toast } from "@/hooks/use-toast";
 
 import PremiumModal from "@/components/PremiumModal";
 
@@ -62,7 +63,7 @@ const MinimalHeader = ({ bgColor }: MinimalHeaderProps) => {
                 Login
               </button>
             ) : (
-              <button onClick={() => signOut()} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
+              <button onClick={async () => { await signOut(); toast({ title: language === "it" ? "Sei uscito" : "Logged out" }); }} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
                 Logout
               </button>
             )}

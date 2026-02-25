@@ -3,6 +3,7 @@ import { ChevronsLeft, Loader2 } from "lucide-react";
 import { useFreeSpots } from "@/hooks/useFreeSpots";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
+import { toast } from "@/hooks/use-toast";
 import { useState } from "react";
 import PremiumModal from "@/components/PremiumModal";
 import HotspotCard from "@/components/HotspotCard";
@@ -11,7 +12,7 @@ import type { Hotspot } from "@/hooks/useHotspots";
 const FreeSpotsPage = () => {
   const navigate = useNavigate();
   const { data: freeSpots, isLoading } = useFreeSpots();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { user, signOut } = useAuth();
   const [premiumModalOpen, setPremiumModalOpen] = useState(false);
 
@@ -27,7 +28,7 @@ const FreeSpotsPage = () => {
             Login
           </button>
         ) : (
-          <button onClick={() => signOut()} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
+          <button onClick={async () => { await signOut(); toast({ title: language === "it" ? "Sei uscito" : "Logged out" }); }} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
             Logout
           </button>
         )}
