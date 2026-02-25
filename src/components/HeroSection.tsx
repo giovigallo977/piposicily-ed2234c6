@@ -189,7 +189,7 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
 
           {/* Free Spots Card */}
           <button
-            onClick={() => navigate("/collezioni")}
+            onClick={() => navigate("/free-spots")}
             className="relative aspect-square rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
           >
             {catImgFreeSpots?.content ? (
