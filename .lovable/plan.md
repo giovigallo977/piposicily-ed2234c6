@@ -1,58 +1,65 @@
 
 
-# Piano: Separare Login da PremiumModal
+# Piano: Fix Premium Status — Dati + Bug verify-payment
 
-## Problema identificato
+## Problema
 
-Attualmente il pulsante **Login** nell'header apre il `PremiumModal`, che mostra prima "Sblocca tutto – €4.99" e poi il link "Hai gia pagato? Accedi". Questo e confuso: chi clicca **Login** vuole accedere, non vedere una schermata di pagamento.
+L'utente ha pagato su Stripe ma il profilo nel database mostra `is_premium: false`, `premium_since: null`, `stripe_session_id: null`. Questo perché:
 
-I 4 punti essenziali richiesti sono gia implementati nel codice, ma c'e un problema UX critico: **Login e pagamento sono mescolati nello stesso modal**.
+1. La funzione `complete-purchase` non è mai stata eseguita (0 log) — il flusso post-pagamento si è interrotto
+2. La funzione `verify-payment` (fallback) ha un bug: cerca `stripe.customers.list({ email })` ma per pagamenti anonimi Stripe potrebbe non creare un customer object, quindi la verifica restituisce sempre `false`
 
-## Cosa funziona gia
+## Correzioni
 
-1. **Stripe checkout** — `create-payment` edge function + redirect ✅
-2. **Creazione password dopo pagamento** — `PaymentSuccess` + `complete-purchase` + `get-session-email` ✅
-3. **Login per utenti che tornano** — form email+password nel PremiumModal (vista "login") ✅
-4. **Guardia "gia premium"** — PremiumModal mostra "Sei gia Premium ✨" ✅
+### 1. Fix immediato: aggiornare il profilo dell'utente nel database
 
-## Cosa va corretto
+Eseguire una migration SQL per settare `is_premium = true` per l'utente `alessandro.borzi94@gmail.com` che ha già pagato.
 
-Il pulsante **Login** nell'header deve aprire **direttamente il form di login** (email + password), non il PremiumModal con il pulsante di pagamento.
-
-### Soluzione
-
-Creare un `LoginModal` separato, semplice:
-- Titolo: "Accedi" / "Log in"
-- Campi: email + password
-- Pulsante: "Accedi"
-- Dopo login: verifica premium, chiudi modal, toast di benvenuto
-- Se credenziali errate: messaggio chiaro
-
-Il `PremiumModal` resta per gli hotspot bloccati (pagamento + link "Hai gia pagato? Accedi").
-
-### Flussi risultanti
-
-```text
-Pulsante "Login" in header
-        → LoginModal (solo email + password)
-        → Login → premium check → tutto sbloccato
-
-Hotspot bloccato click
-        → PremiumModal (pagamento + link login)
-        → "Sblocca tutto" → Stripe → PaymentSuccess
-        → oppure "Hai gia pagato? Accedi" → form login
+```sql
+UPDATE profiles
+SET is_premium = true, premium_since = now()
+WHERE email = 'alessandro.borzi94@gmail.com';
 ```
 
-## File da modificare/creare
+### 2. Fix strutturale: correggere verify-payment
+
+La funzione attualmente:
+1. Cerca un customer Stripe per email → se non trova, restituisce `false`
+2. Lista le checkout sessions per quel customer
+
+Il problema: per pagamenti anonimi (senza account Stripe preesistente), il customer potrebbe non esistere.
+
+**Fix**: cercare direttamente le checkout sessions per email usando `stripe.checkout.sessions.list()` con filtro email, oppure usare `stripe.customers.list` E anche `stripe.checkout.sessions.list({ customer_details: { email } })`.
+
+Approccio scelto: usare `stripe.checkout.sessions.list()` e filtrare per `customer_details.email` o `customer_email` nel risultato, dato che l'API Stripe permette di cercare sessions anche senza customer ID.
+
+```typescript
+// Invece di cercare solo per customer:
+// 1. Prima prova con customers.list (utenti con account Stripe)
+// 2. Se non trova, cerca tutte le checkout sessions recenti e filtra per email
+const sessions = await stripe.checkout.sessions.list({ limit: 100 });
+const paid = sessions.data.some(s =>
+  s.payment_status === "paid" &&
+  s.mode === "payment" &&
+  (s.customer_details?.email === user.email || s.customer_email === user.email)
+);
+```
+
+### 3. Invalidazione cache dopo login nel LoginModal
+
+Il LoginModal attualmente invalida `premium-status` dopo login, ma con un `setTimeout(600ms)` che potrebbe non essere sufficiente. Migliorare facendo un `await` sulla invalidazione e forzando un refetch.
+
+## File da modificare
 
 | File | Azione |
 |------|--------|
-| `src/components/LoginModal.tsx` | **Nuovo** — Modal semplice con form login |
-| `src/components/MinimalHeader.tsx` | Modifica — usare LoginModal invece di PremiumModal per il pulsante Login |
-| `src/pages/ExplorePage.tsx` | Modifica — stesso cambio se ha un pulsante Login diretto |
-| `src/pages/CollectionsPage.tsx` | Modifica — stesso cambio |
-| `src/pages/CollectionDetailPage.tsx` | Modifica — stesso cambio |
-| `src/pages/FreeSpotsPage.tsx` | Modifica — stesso cambio |
+| Migration SQL | Fix dati utente `is_premium = true` |
+| `supabase/functions/verify-payment/index.ts` | Cercare sessions per email, non solo per customer |
+| `src/components/LoginModal.tsx` | Rimuovere setTimeout, fare invalidazione diretta |
 
-Nessuna modifica a edge functions, database, o logica di pagamento. Solo separazione UX tra Login e Acquisto.
+## Risultato atteso
+
+- L'utente `alessandro.borzi94@gmail.com` vedrà immediatamente tutti gli hotspot sbloccati
+- Futuri utenti che pagano ma il cui `complete-purchase` fallisce verranno recuperati dal `verify-payment` corretto
+- Il login aggiorna immediatamente lo stato premium senza delay
 
