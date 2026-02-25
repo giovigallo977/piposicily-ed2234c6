@@ -1,42 +1,46 @@
 
 
-# Piano: Titolo card Free Spots da backend
+# Piano: Aggiornamento automatico garantito per bookmark, PWA e scorciatoie
 
-## Cosa cambia
+## Problema
 
-1. Il testo della card Free Spots nella homepage diventa **"Free Spots"** come titolo principale e **"Work, Study & Eat&Drink"** come sottotitolo, entrambi modificabili dal backend tramite `site_content`.
+Quando apri l'app da un bookmark, una scorciatoia sul telefono, o dalla PWA installata, potresti vedere una versione vecchia perché:
 
-2. Due nuove chiavi in `site_content`:
-   - `cat_label_free_spots` → titolo (default: "Free Spots")
-   - `cat_sublabel_free_spots` → sottotitolo (default: "Work, Study & Eat&Drink")
+1. Il browser può servire la pagina dalla sua cache HTTP **prima** ancora che il service worker intervenga
+2. Il controllo aggiornamenti parte solo dopo 30 secondi, non immediatamente all'apertura
+3. Non ci sono istruzioni anti-cache sull'HTML principale (`index.html`)
 
-3. Nel componente `HeroSection.tsx`, il testo hardcoded viene sostituito con contenuto dal DB + traduzione automatica, seguendo il pattern già usato per le altre sezioni.
+## Soluzione
 
-## Modifiche tecniche
+Due interventi complementari che coprono tutti gli scenari (bookmark browser, PWA installata, scorciatoia home screen):
 
-### File: `src/components/HeroSection.tsx`
+### 1. File: `index.html` - Meta tag anti-cache
 
-- Aggiungere due `useSiteContent` per le nuove chiavi
-- Aggiungere due `useTranslatedContent` per la traduzione
-- Nella card Free Spots, sostituire il testo fisso con due `<span>`: titolo in grassetto e sottotitolo più piccolo sotto
+Aggiungere nel `<head>` meta tag che impediscono al browser di servire una copia vecchia dell'HTML:
 
-Layout della card:
-```text
-┌──────────────────┐
-│                   │
-│   [immagine]      │
-│                   │
-│  Free Spots       │  ← titolo (da DB)
-│  Work, Study &    │  ← sottotitolo (da DB)
-│  Eat&Drink        │
-└──────────────────┘
+```html
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
 ```
 
-### File: `src/pages/Admin.tsx`
+Questo forza il browser a richiedere sempre l'HTML fresco dal server. Gli asset (JS, CSS, immagini) restano cachati normalmente grazie agli hash di Vite.
 
-- Nella sezione di gestione contenuti (dove si editano hero_headline, hero_subtitle ecc.), aggiungere due campi per `cat_label_free_spots` e `cat_sublabel_free_spots`, coerenti con gli altri campi già gestiti.
+### 2. File: `src/pwa-updater.ts` - Check immediato all'apertura
 
-### Nessuna modifica al database
+Aggiungere un `reg.update()` immediato quando l'app si carica (non solo nel ciclo ogni 30s). Così anche aprendo da bookmark o scorciatoia, il service worker controlla subito se c'è una versione nuova:
 
-Le chiavi vengono create automaticamente al primo salvataggio dall'admin (il pattern `site_content` supporta upsert).
+```typescript
+// Dentro registerPWAUpdater, dopo il check del waiting worker:
+navigator.serviceWorker.getRegistration().then(async (reg) => {
+  // ... codice esistente per waiting/updatefound ...
+  
+  // Forza un check immediato all'apertura
+  try { await reg?.update(); } catch {}
+});
+```
+
+### Nessun altro file modificato
+
+La configurazione Workbox (`skipWaiting`, `clientsClaim`, `cleanupOutdatedCaches`) resta invariata. Questi due interventi coprono il gap mancante: il primo impedisce che il browser serva HTML vecchio, il secondo garantisce che il SW verifichi subito gli aggiornamenti.
 
