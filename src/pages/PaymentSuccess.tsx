@@ -17,6 +17,8 @@ const PaymentSuccess = () => {
   const { language } = useLanguage();
   const queryClient = useQueryClient();
 
+  const [email, setEmail] = useState("");
+  const [emailLoading, setEmailLoading] = useState(false);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -24,34 +26,50 @@ const PaymentSuccess = () => {
   const [verifyingExisting, setVerifyingExisting] = useState(!!user);
 
   const t = language === "it" ? {
-    title: "Pagamento completato! 🎉",
-    subtitle: "Crea una password per accedere ai tuoi hotspot in futuro.",
+    title: "Pagamento completato! ✅",
+    subtitle: "Il tuo accesso premium è quasi pronto.\nCrea una password per attivare il tuo account.",
+    emailLabel: "Email",
     passwordPlaceholder: "Crea una password",
     confirmPlaceholder: "Conferma password",
-    submitBtn: "Attiva il tuo accesso",
+    submitBtn: "Attiva il mio accesso",
     mismatch: "Le password non corrispondono",
     tooShort: "La password deve avere almeno 6 caratteri",
     error: "Errore nell'attivazione. Riprova.",
-    successTitle: "Tutto pronto!",
-    successSubtitle: "Ora hai accesso a tutti gli hotspot di Pipo. Buona esplorazione! 🛸",
+    successToast: "Accesso Premium attivo",
     cta: "Inizia ad esplorare",
     verifying: "Verifica pagamento in corso…",
     noSession: "Sessione di pagamento non trovata.",
   } : {
-    title: "Payment complete! 🎉",
-    subtitle: "Create a password to access your hotspots in the future.",
+    title: "Payment complete! ✅",
+    subtitle: "Your premium access is almost ready.\nCreate a password to activate your account.",
+    emailLabel: "Email",
     passwordPlaceholder: "Create a password",
     confirmPlaceholder: "Confirm password",
-    submitBtn: "Activate your access",
+    submitBtn: "Activate my access",
     mismatch: "Passwords don't match",
     tooShort: "Password must be at least 6 characters",
     error: "Activation error. Please try again.",
-    successTitle: "All set!",
-    successSubtitle: "You now have access to all Pipo hotspots. Happy exploring! 🛸",
+    successToast: "Premium access active",
     cta: "Start exploring",
     verifying: "Verifying payment…",
     noSession: "Payment session not found.",
   };
+
+  // Fetch email from Stripe session
+  useEffect(() => {
+    if (!sessionId || user) return;
+    const fetchEmail = async () => {
+      setEmailLoading(true);
+      try {
+        const { data, error } = await supabase.functions.invoke("get-session-email", {
+          body: { session_id: sessionId },
+        });
+        if (!error && data?.email) setEmail(data.email);
+      } catch {}
+      setEmailLoading(false);
+    };
+    fetchEmail();
+  }, [sessionId, user]);
 
   // If user is already authenticated, just verify payment
   useEffect(() => {
@@ -93,6 +111,7 @@ const PaymentSuccess = () => {
       if (loginError) throw loginError;
 
       await queryClient.invalidateQueries({ queryKey: ["premium-status"] });
+      toast({ title: t.successToast });
       setCompleted(true);
     } catch (error: any) {
       toast({ title: t.error, description: error.message, variant: "destructive" });
@@ -113,16 +132,15 @@ const PaymentSuccess = () => {
     );
   }
 
-  // Completed — show success
+  // Completed — redirect to home
   if (completed) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-6">
         <div className="text-center max-w-sm space-y-6">
           <CheckCircle className="h-16 w-16 mx-auto" style={{ color: "hsl(var(--olive))" }} />
-          <h1 className="text-2xl font-bold">{t.successTitle}</h1>
-          <p className="text-muted-foreground">{t.successSubtitle}</p>
+          <h1 className="text-2xl font-bold">{t.successToast}</h1>
           <Button
-            onClick={() => navigate("/esplora")}
+            onClick={() => navigate("/")}
             className="w-full bg-foreground text-background hover:bg-foreground/90 font-semibold"
           >
             {t.cta}
@@ -138,7 +156,7 @@ const PaymentSuccess = () => {
       <div className="min-h-screen bg-background flex items-center justify-center p-6">
         <div className="text-center max-w-sm space-y-6">
           <p className="text-muted-foreground">{t.noSession}</p>
-          <Button onClick={() => navigate("/esplora")} variant="outline" className="w-full">
+          <Button onClick={() => navigate("/")} variant="outline" className="w-full">
             {t.cta}
           </Button>
         </div>
@@ -153,10 +171,21 @@ const PaymentSuccess = () => {
         <div className="text-center space-y-2">
           <CheckCircle className="h-14 w-14 mx-auto" style={{ color: "hsl(var(--olive))" }} />
           <h1 className="text-2xl font-bold">{t.title}</h1>
-          <p className="text-sm text-muted-foreground">{t.subtitle}</p>
+          <p className="text-sm text-muted-foreground whitespace-pre-line">{t.subtitle}</p>
         </div>
 
         <div className="space-y-3">
+          {/* Email read-only */}
+          <div>
+            <label className="text-xs text-muted-foreground mb-1 block">{t.emailLabel}</label>
+            <Input
+              type="email"
+              value={email}
+              disabled
+              className="bg-muted"
+              placeholder={emailLoading ? "..." : ""}
+            />
+          </div>
           <Input
             type="password"
             placeholder={t.passwordPlaceholder}
@@ -171,7 +200,7 @@ const PaymentSuccess = () => {
           />
           <Button
             onClick={handleSubmit}
-            disabled={loading || !password || !confirmPassword}
+            disabled={loading || !password || !confirmPassword || !email}
             className="w-full bg-foreground text-background hover:bg-foreground/90 font-semibold py-6 text-base"
           >
             {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Lock className="w-4 h-4 mr-2" />}

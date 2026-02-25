@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { usePremiumStatus } from "@/hooks/usePremiumStatus";
 import { Lock, Check, Sparkles, Loader2, ArrowLeft } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -19,6 +20,7 @@ type ModalView = "main" | "login";
 const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
   const { user, signIn } = useAuth();
   const { language } = useLanguage();
+  const { isPremium } = usePremiumStatus();
   const queryClient = useQueryClient();
   const [view, setView] = useState<ModalView>("main");
   const [email, setEmail] = useState("");
@@ -26,8 +28,8 @@ const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
   const [loading, setLoading] = useState(false);
 
   const t = language === "it" ? {
-    title: "Sblocca tutti gli hotspot",
-    subtitle: "Accesso completo a tutte le mappe Pipo.\nPagamento unico 4,99€ – accesso per sempre.",
+    title: "Sblocca tutte le mappe Pipo",
+    subtitle: "Accesso completo a tutti gli hotspot.\nPagamento unico. Per sempre.",
     benefit1: "Tutte le schede sbloccate per sempre",
     benefit2: "Nessun abbonamento, paghi una volta sola",
     benefit3: "Aggiornamenti futuri inclusi",
@@ -42,9 +44,12 @@ const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
     loginError: "Errore nell'accesso",
     paymentError: "Errore nell'avvio del pagamento",
     welcomeBack: "Bentornato! Accesso premium attivo.",
+    alreadyPremiumTitle: "Sei già Premium ✨",
+    alreadyPremiumText: "Tutti gli hotspot sono sbloccati.",
+    close: "Chiudi",
   } : {
-    title: "Unlock all hotspots",
-    subtitle: "Full access to all Pipo maps.\nOne-time payment €4.99 – access forever.",
+    title: "Unlock all Pipo maps",
+    subtitle: "Full access to all hotspots.\nOne-time payment. Forever.",
     benefit1: "All cards unlocked forever",
     benefit2: "No subscription, pay once",
     benefit3: "Future updates included",
@@ -59,6 +64,9 @@ const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
     loginError: "Login error",
     paymentError: "Error starting payment",
     welcomeBack: "Welcome back! Premium access active.",
+    alreadyPremiumTitle: "You're already Premium ✨",
+    alreadyPremiumText: "All hotspots are unlocked.",
+    close: "Close",
   };
 
   const resetForm = () => {
@@ -97,7 +105,6 @@ const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
         setLoading(false);
         return;
       }
-      // Wait for session, then check premium
       setTimeout(async () => {
         const { data: profile } = await supabase
           .from("profiles")
@@ -109,7 +116,6 @@ const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
           await queryClient.invalidateQueries({ queryKey: ["premium-status"] });
           handleOpenChange(false);
         } else {
-          // Logged in but not premium — show pay button
           setLoading(false);
         }
       }, 600);
@@ -119,6 +125,24 @@ const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
   };
 
   const benefits = [t.benefit1, t.benefit2, t.benefit3];
+
+  // Premium guard
+  if (isPremium && user) {
+    return (
+      <Dialog open={open} onOpenChange={handleOpenChange}>
+        <DialogContent className="sm:max-w-md">
+          <div className="text-center space-y-4 py-4">
+            <Sparkles className="w-10 h-10 text-olive mx-auto" />
+            <h2 className="text-xl font-bold">{t.alreadyPremiumTitle}</h2>
+            <p className="text-muted-foreground">{t.alreadyPremiumText}</p>
+            <Button onClick={() => handleOpenChange(false)} variant="outline" className="w-full">
+              {t.close}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>

@@ -6,13 +6,14 @@ import { useHotspots } from "@/hooks/useHotspots";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { usePremiumStatus } from "@/hooks/usePremiumStatus";
 import { useAuth } from "@/hooks/useAuth";
+import { toast } from "@/hooks/use-toast";
 import HotspotCard from "@/components/HotspotCard";
 import PremiumModal from "@/components/PremiumModal";
 
 const CollectionDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { isPremium } = usePremiumStatus();
   const { user, signOut } = useAuth();
   const { data: collection, isLoading: collLoading } = useCollectionById(id);
@@ -45,7 +46,7 @@ const CollectionDetailPage = () => {
             Login
           </button>
         ) : (
-          <button onClick={() => signOut()} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
+          <button onClick={async () => { await signOut(); toast({ title: language === "it" ? "Sei uscito" : "Logged out" }); }} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
             Logout
           </button>
         )}

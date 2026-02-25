@@ -7,12 +7,13 @@ import { useHotspots } from "@/hooks/useHotspots";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { usePremiumStatus } from "@/hooks/usePremiumStatus";
 import { useAuth } from "@/hooks/useAuth";
+import { toast } from "@/hooks/use-toast";
 
 const ExplorePage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { data: hotspots, isLoading, error } = useHotspots();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { isPremium } = usePremiumStatus();
   const { user, signOut } = useAuth();
 
@@ -66,7 +67,7 @@ const ExplorePage = () => {
             Login
           </button>
         ) : (
-          <button onClick={() => signOut()} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
+          <button onClick={async () => { await signOut(); toast({ title: language === "it" ? "Sei uscito" : "Logged out" }); }} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
             Logout
           </button>
         )}
