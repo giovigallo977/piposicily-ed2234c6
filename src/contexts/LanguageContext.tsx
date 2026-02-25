@@ -68,6 +68,15 @@ export const translations = {
     premiumMember: "Membro Premium",
     unlockAll: "Sblocca tutto!",
     cardsAvailable: "schede disponibili",
+
+    // Collections
+    collections: "Collezioni",
+    collection: "Collezione",
+    noCollections: "Nessuna collezione disponibile.",
+    noHotspotsCollection: "Nessun hotspot in questa collezione.",
+
+    // Zone
+    zone: "zona",
   },
   en: {
     // Navigation
@@ -127,6 +136,15 @@ export const translations = {
     premiumMember: "Premium Member",
     unlockAll: "Unlock all!",
     cardsAvailable: "cards available",
+
+    // Collections
+    collections: "Collections",
+    collection: "Collection",
+    noCollections: "No collections available.",
+    noHotspotsCollection: "No hotspots in this collection.",
+
+    // Zone
+    zone: "zone",
   },
 } as const;
 

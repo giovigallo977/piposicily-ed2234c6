@@ -187,7 +187,7 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
             <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-lg md:text-xl font-bold text-left leading-tight drop-shadow-lg">
-              Collezioni
+              {t("collections")}
             </span>
           </button>
         </div>
