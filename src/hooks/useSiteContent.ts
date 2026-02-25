@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useEffect } from "react";
 
 export interface SiteContent {
   id: string;
@@ -10,7 +11,38 @@ export interface SiteContent {
   updated_at: string;
 }
 
+// Global realtime subscription singleton
+let realtimeInitialized = false;
+
+const initRealtimeSync = (queryClient: ReturnType<typeof useQueryClient>) => {
+  if (realtimeInitialized) return;
+  realtimeInitialized = true;
+
+  supabase
+    .channel("site_content_changes")
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "site_content" },
+      (payload) => {
+        const record = payload.new as SiteContent | undefined;
+        if (record?.key) {
+          queryClient.invalidateQueries({ queryKey: ["site-content", record.key] });
+        } else {
+          // For deletes, invalidate all
+          queryClient.invalidateQueries({ queryKey: ["site-content"] });
+        }
+      }
+    )
+    .subscribe();
+};
+
 export const useSiteContent = (key: string) => {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    initRealtimeSync(queryClient);
+  }, [queryClient]);
+
   return useQuery({
     queryKey: ["site-content", key],
     queryFn: async () => {
