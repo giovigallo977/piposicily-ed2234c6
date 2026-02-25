@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ChevronsLeft, Sparkles, LogIn, Loader2 } from "lucide-react";
+import { ChevronsLeft, Sparkles, Loader2 } from "lucide-react";
 import HotspotCard from "@/components/HotspotCard";
 import PremiumModal from "@/components/PremiumModal";
 import { useHotspots } from "@/hooks/useHotspots";
@@ -62,12 +62,12 @@ const ExplorePage = () => {
           )}
         </div>
         {!user ? (
-          <button onClick={() => setPremiumModalOpen(true)} className="p-2 transition-all duration-200 hover:scale-110" aria-label="Login">
-            <LogIn className="w-6 h-6 text-foreground" />
+          <button onClick={() => setPremiumModalOpen(true)} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
+            Login
           </button>
         ) : (
-          <button onClick={() => signOut()} className="p-2 transition-all duration-200 hover:scale-110" aria-label="Logout">
-            <LogIn className="w-6 h-6 text-foreground rotate-180" />
+          <button onClick={() => signOut()} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
+            Logout
           </button>
         )}
       </header>
