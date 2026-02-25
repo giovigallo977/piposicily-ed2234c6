@@ -3,7 +3,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
 
-import PremiumModal from "@/components/PremiumModal";
+import LoginModal from "@/components/LoginModal";
 
 interface MinimalHeaderProps {
   bgColor?: string;
@@ -12,7 +12,7 @@ interface MinimalHeaderProps {
 const MinimalHeader = ({ bgColor }: MinimalHeaderProps) => {
   const { language, setLanguage } = useLanguage();
   const { user, signOut } = useAuth();
-  const [premiumModalOpen, setPremiumModalOpen] = useState(false);
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
 
   return (
     <>
@@ -59,7 +59,7 @@ const MinimalHeader = ({ bgColor }: MinimalHeaderProps) => {
 
             {/* Login/Logout - Right */}
             {!user ? (
-              <button onClick={() => setPremiumModalOpen(true)} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
+              <button onClick={() => setLoginModalOpen(true)} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
                 Login
               </button>
             ) : (
@@ -70,7 +70,7 @@ const MinimalHeader = ({ bgColor }: MinimalHeaderProps) => {
           </div>
         </div>
       </header>
-      <PremiumModal open={premiumModalOpen} onOpenChange={setPremiumModalOpen} />
+      <LoginModal open={loginModalOpen} onOpenChange={setLoginModalOpen} />
     </>
   );
 };
