@@ -105,20 +105,17 @@ const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
         setLoading(false);
         return;
       }
-      setTimeout(async () => {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("is_premium")
-          .single();
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("is_premium")
+        .single();
 
-        if (profile?.is_premium) {
-          toast({ title: t.welcomeBack });
-          await queryClient.invalidateQueries({ queryKey: ["premium-status"] });
-          handleOpenChange(false);
-        } else {
-          setLoading(false);
-        }
-      }, 600);
+      if (profile?.is_premium) {
+        toast({ title: t.welcomeBack });
+      }
+      await queryClient.invalidateQueries({ queryKey: ["premium-status"] });
+      await queryClient.refetchQueries({ queryKey: ["premium-status"] });
+      handleOpenChange(false);
     } catch {
       setLoading(false);
     }
@@ -147,75 +144,83 @@ const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-xl">
-            <Sparkles className="w-5 h-5 text-primary" />
-            {t.title}
-          </DialogTitle>
-        </DialogHeader>
-        <p className="text-sm text-muted-foreground whitespace-pre-line">{t.subtitle}</p>
-        <ul className="space-y-2 my-2">
-          {benefits.map((b, i) => (
-            <li key={i} className="flex items-center gap-2 text-sm">
-              <Check className="w-4 h-4 flex-shrink-0" style={{ color: "hsl(var(--olive))" }} />
-              {b}
-            </li>
-          ))}
-        </ul>
-        <div className="text-center py-3 rounded-xl bg-muted">
-          <span className="text-3xl font-bold">{t.price}</span>
-          <span className="text-sm text-muted-foreground ml-2">{t.priceLabel}</span>
-        </div>
-
         {view === "main" ? (
-          <div className="space-y-3">
-            <Button
-              onClick={handlePay}
-              disabled={loading}
-              className="w-full bg-foreground text-background hover:bg-foreground/90 font-semibold text-base py-6"
-            >
-              {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Lock className="w-4 h-4 mr-2" />}
-              {t.unlockBtn}
-            </Button>
-            {!user && (
+          <>
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 text-xl">
+                <Sparkles className="w-5 h-5 text-primary" />
+                {t.title}
+              </DialogTitle>
+            </DialogHeader>
+            <p className="text-sm text-muted-foreground whitespace-pre-line">{t.subtitle}</p>
+            <ul className="space-y-2 my-2">
+              {benefits.map((b, i) => (
+                <li key={i} className="flex items-center gap-2 text-sm">
+                  <Check className="w-4 h-4 flex-shrink-0" style={{ color: "hsl(var(--olive))" }} />
+                  {b}
+                </li>
+              ))}
+            </ul>
+            <div className="text-center py-3 rounded-xl bg-muted">
+              <span className="text-3xl font-bold">{t.price}</span>
+              <span className="text-sm text-muted-foreground ml-2">{t.priceLabel}</span>
+            </div>
+            <div className="space-y-3">
+              <Button
+                onClick={handlePay}
+                disabled={loading}
+                className="w-full bg-foreground text-background hover:bg-foreground/90 font-semibold text-base py-6"
+              >
+                {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Lock className="w-4 h-4 mr-2" />}
+                {t.unlockBtn}
+              </Button>
+              {!user && (
+                <button
+                  onClick={() => setView("login")}
+                  className="w-full text-center text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4"
+                >
+                  {t.loginLink}
+                </button>
+              )}
+            </div>
+          </>
+        ) : (
+          <>
+            <DialogHeader>
+              <DialogTitle className="text-xl">{t.loginLabel}</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-3 pt-2">
+              <Input
+                type="email"
+                placeholder={t.emailPlaceholder}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <Input
+                type="password"
+                placeholder={t.passwordPlaceholder}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && email && password && !loading) handleLogin();
+                }}
+              />
+              <Button
+                onClick={handleLogin}
+                disabled={loading || !email || !password}
+                className="w-full bg-foreground text-background hover:bg-foreground/90 font-semibold"
+              >
+                {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Lock className="w-4 h-4 mr-2" />}
+                {t.loginLabel}
+              </Button>
               <button
-                onClick={() => setView("login")}
+                onClick={() => { setView("main"); setLoading(false); }}
                 className="w-full text-center text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-4"
               >
-                {t.loginLink}
+                {language === "it" ? "Sblocca tutti gli hotspot a €4.99 →" : "Unlock all hotspots for €4.99 →"}
               </button>
-            )}
-          </div>
-        ) : (
-          <div className="space-y-3">
-            <button
-              onClick={() => { setView("main"); setLoading(false); }}
-              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <ArrowLeft className="w-3 h-3" />
-              {t.back}
-            </button>
-            <Input
-              type="email"
-              placeholder={t.emailPlaceholder}
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <Input
-              type="password"
-              placeholder={t.passwordPlaceholder}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <Button
-              onClick={handleLogin}
-              disabled={loading || !email || !password}
-              className="w-full bg-foreground text-background hover:bg-foreground/90 font-semibold"
-            >
-              {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Lock className="w-4 h-4 mr-2" />}
-              {t.loginLabel}
-            </Button>
-          </div>
+            </div>
+          </>
         )}
       </DialogContent>
     </Dialog>
