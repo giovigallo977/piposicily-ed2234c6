@@ -2,16 +2,27 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronsLeft, LogIn, Loader2 } from "lucide-react";
 import { useCollections } from "@/hooks/useCollections";
+import { useFreeSpots } from "@/hooks/useFreeSpots";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
 import PremiumModal from "@/components/PremiumModal";
+import HotspotCard from "@/components/HotspotCard";
+import type { Hotspot } from "@/hooks/useHotspots";
+
+const FREE_SPOT_FILTERS = ["Tutti", "Lavorare", "Studiare", "Eat & Drink"];
 
 const CollectionsPage = () => {
   const navigate = useNavigate();
   const { data: collections, isLoading } = useCollections();
+  const { data: freeSpots, isLoading: freeSpotsLoading } = useFreeSpots();
   const { t } = useLanguage();
   const { user } = useAuth();
   const [premiumModalOpen, setPremiumModalOpen] = useState(false);
+  const [activeFilter, setActiveFilter] = useState("Tutti");
+
+  const filteredSpots = freeSpots?.filter((spot) =>
+    activeFilter === "Tutti" ? true : spot.categoria === activeFilter
+  );
 
   return (
     <div className="min-h-screen bg-background">
@@ -65,6 +76,55 @@ const CollectionsPage = () => {
             <div className="text-center py-12 text-muted-foreground font-sans italic">
               <p>{t("noCollections")}</p>
             </div>
+          )}
+
+          {/* Sezione Free Spots */}
+          {(freeSpots && freeSpots.length > 0) && (
+            <section className="mt-10">
+              <h2 className="font-sans text-lg font-bold text-foreground mb-4">
+                Posti per: Lavorare, Studiare e Eat & Drink
+              </h2>
+
+              {/* Filtri chip */}
+              <div className="flex flex-wrap gap-2 mb-6">
+                {FREE_SPOT_FILTERS.map((filter) => (
+                  <button
+                    key={filter}
+                    onClick={() => setActiveFilter(filter)}
+                    className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all duration-200 ${
+                      activeFilter === filter
+                        ? "bg-foreground text-background"
+                        : "bg-muted text-foreground hover:bg-muted/80"
+                    }`}
+                  >
+                    {filter}
+                  </button>
+                ))}
+              </div>
+
+              {freeSpotsLoading && (
+                <div className="flex justify-center py-8">
+                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                </div>
+              )}
+
+              <div className="space-y-6">
+                {filteredSpots?.map((spot, index) => (
+                  <HotspotCard
+                    key={spot.id}
+                    hotspot={spot as unknown as Hotspot}
+                    index={index}
+                    locked={false}
+                  />
+                ))}
+              </div>
+
+              {!freeSpotsLoading && filteredSpots?.length === 0 && (
+                <p className="text-center py-8 text-muted-foreground font-sans italic text-sm">
+                  Nessun posto in questa categoria.
+                </p>
+              )}
+            </section>
           )}
         </div>
       </main>
