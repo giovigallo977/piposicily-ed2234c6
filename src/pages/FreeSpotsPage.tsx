@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronsLeft, LogIn, Loader2 } from "lucide-react";
 import { useFreeSpots } from "@/hooks/useFreeSpots";
+import { useFreeSpotCategories } from "@/hooks/useFreeSpotCategories";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
 import PremiumModal from "@/components/PremiumModal";
@@ -13,6 +14,7 @@ const FREE_SPOT_FILTERS = ["Tutti", "Lavorare", "Studiare", "Eat & Drink"];
 const FreeSpotsPage = () => {
   const navigate = useNavigate();
   const { data: freeSpots, isLoading } = useFreeSpots();
+  const { data: categories } = useFreeSpotCategories();
   const { t } = useLanguage();
   const { user } = useAuth();
   const [premiumModalOpen, setPremiumModalOpen] = useState(false);
@@ -56,6 +58,20 @@ const FreeSpotsPage = () => {
               </button>
             ))}
           </div>
+
+          {/* Category image header */}
+          {activeFilter !== "Tutti" && (() => {
+            const cat = categories?.find((c) => c.nome === activeFilter);
+            return cat?.immagine ? (
+              <div className="mb-6 rounded-xl overflow-hidden">
+                <img
+                  src={cat.immagine}
+                  alt={cat.nome}
+                  className="w-full h-40 object-cover"
+                />
+              </div>
+            ) : null;
+          })()}
 
           {isLoading && (
             <div className="flex justify-center py-12">

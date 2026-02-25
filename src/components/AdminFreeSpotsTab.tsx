@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useFreeSpots, useCreateFreeSpot, useUpdateFreeSpot, useDeleteFreeSpot, FreeSpot, FreeSpotInsert } from "@/hooks/useFreeSpots";
+import { useFreeSpotCategories, useUpdateFreeSpotCategory } from "@/hooks/useFreeSpotCategories";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,6 +28,8 @@ const emptySpot: FreeSpotInsert = {
 };
 
 const AdminFreeSpotsTab = () => {
+  const { data: categories } = useFreeSpotCategories();
+  const updateCategoryMutation = useUpdateFreeSpotCategory();
   const { data: spots, isLoading } = useFreeSpots();
   const createMutation = useCreateFreeSpot();
   const updateMutation = useUpdateFreeSpot();
@@ -98,6 +101,27 @@ const AdminFreeSpotsTab = () => {
 
   return (
     <div className="space-y-6">
+      {/* Categorie con immagini */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Immagini Categorie</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 sm:grid-cols-3">
+            {categories?.map((cat) => (
+              <div key={cat.id} className="space-y-2">
+                <Label className="font-semibold">{cat.nome}</Label>
+                <ImageUpload
+                  value={cat.immagine || ""}
+                  onChange={(url) => updateCategoryMutation.mutate({ id: cat.id, immagine: url })}
+                  bucket="hotspot-images"
+                />
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
       <div className="flex items-center justify-between">
         <h2 className="font-heading text-2xl font-bold">Gestione Free Spots</h2>
         <Dialog open={isDialogOpen} onOpenChange={handleDialogChange}>

@@ -83,6 +83,33 @@ export type Database = {
         }
         Relationships: []
       }
+      free_spot_categories: {
+        Row: {
+          created_at: string
+          id: string
+          immagine: string | null
+          nome: string
+          ordine: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          immagine?: string | null
+          nome: string
+          ordine?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          immagine?: string | null
+          nome?: string
+          ordine?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       free_spots: {
         Row: {
           categoria: string | null
