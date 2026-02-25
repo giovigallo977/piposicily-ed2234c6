@@ -1,46 +1,42 @@
 
 
-# Piano: Forzare aggiornamento reale per PWA, bookmark e scorciatoie
+# Piano: Aggiornare la memoria DNA pwa-auto-update
 
-## Il problema reale
+Il file della memoria DNA va aggiornato per riflettere tutte le configurazioni PWA attualmente in uso.
 
-I meta tag anti-cache che abbiamo aggiunto non bastano. Il **service worker** intercetta le richieste **prima** che arrivino al browser, quindi i meta tag vengono ignorati. Quando apri l'app da bookmark o PWA installata:
+### File: `.knowledge/structure/backend-sync-principle.md` — Nessuna modifica
 
-1. Il vecchio service worker serve l'HTML e gli asset dalla sua cache interna (precache)
-2. Solo **dopo** il caricamento controlla se c'è un aggiornamento
-3. L'aggiornamento si applica al **prossimo** avvio, non a quello corrente
+### Nuovo/aggiornato: memoria DNA `pwa-auto-update`
 
-Risultato: vedi sempre la versione precedente, non quella appena pubblicata.
+Il contenuto aggiornato sarà:
 
-## Soluzione
+---
 
-Aggiungere una regola di **runtime caching** per le pagine HTML con strategia `NetworkFirst`. Questo forza il service worker a chiedere sempre prima al server la versione più recente dell'HTML, usando la cache solo come fallback offline.
+**L'app è una PWA con un sistema multi-livello per garantire che bookmark, scorciatoie e PWA installata mostrino sempre la versione più recente:**
 
-### File: `vite.config.ts`
+1. **Service Worker (vite.config.ts)**
+   - `skipWaiting: true` e `clientsClaim: true` per attivazione immediata del nuovo SW
+   - `cleanupOutdatedCaches: true` per rimuovere cache obsolete
+   - `navigateFallbackDenylist: [/^\/~oauth/]` per escludere OAuth dal fallback
+   - **Runtime caching NetworkFirst per HTML**: tutte le richieste di navigazione (`request.mode === 'navigate'`) usano strategia `NetworkFirst` con timeout 3s e cache `html-cache`. Questo forza il download dell'HTML fresco dal server quando online, usando la cache solo come fallback offline.
+   - Runtime caching `NetworkFirst` per API Supabase (cache 5 min)
+   - Runtime caching `CacheFirst` per immagini (cache 7 giorni)
 
-Aggiungere nella sezione `workbox.runtimeCaching` una regola per i documenti di navigazione (HTML):
+2. **Meta tag anti-cache (index.html)**
+   - `Cache-Control: no-cache, no-store, must-revalidate`
+   - `Pragma: no-cache`
+   - `Expires: 0`
+   - Impediscono al browser di servire HTML vecchio dalla cache HTTP
 
-```typescript
-{
-  urlPattern: ({ request }) => request.mode === 'navigate',
-  handler: 'NetworkFirst',
-  options: {
-    cacheName: 'html-cache',
-    expiration: {
-      maxEntries: 10,
-      maxAgeSeconds: 60 * 60, // 1 ora max
-    },
-    networkTimeoutSeconds: 3, // dopo 3s usa cache (offline)
-  },
-}
-```
+3. **PWA Updater (src/pwa-updater.ts)**
+   - Check immediato `reg.update()` all'apertura dell'app (non solo periodico)
+   - Polling ogni 30 secondi per aggiornamenti SW
+   - `SKIP_WAITING` automatico quando un nuovo SW è in attesa
+   - Reload automatico su `controllerchange`
+   - Check su `visibilitychange` (ritorno alla tab/app)
+   - Check su `focus` (switching tab desktop)
 
-Questo garantisce che:
-- **Online**: l'HTML viene sempre scaricato dal server (versione aggiornata)
-- **Offline**: si usa la cache come fallback (l'app continua a funzionare)
-- **PWA installata, bookmark, scorciatoia**: tutti vedono la versione più recente
+---
 
-### Nessun altro file modificato
-
-Il `pwa-updater.ts` e i meta tag in `index.html` restano come sono (sono complementari ma non sufficienti da soli).
+Questo è un singolo file da aggiornare nella memoria del progetto.
 
