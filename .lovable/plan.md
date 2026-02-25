@@ -1,47 +1,26 @@
 
 
-# Piano: Sostituire icone Login/Logout con testo
+# Piano: Aggiornare i testi del PremiumModal
 
-## Problema
-Attualmente il pulsante Login/Logout usa un'icona freccia (`LogIn` di Lucide) che non si capisce. L'utente vuole testo chiaro: **"Login"** quando non sei loggato, **"Logout"** quando sei loggato.
+## Cosa cambia
 
-## Modifiche
+Aggiornare le label dei due pulsanti nella vista "choice" del PremiumModal per usare la formula richiesta:
 
-Sostituire in **tutti e 5 i file** l'icona `LogIn` con testo semplice:
+### Testi attuali → Nuovi testi
 
-### File da modificare
+**Italiano:**
+- `loginBtn`: "Già registrato? Accedi" → **"Sei già registrato? Accedi con mail e password"**
+- `signupBtn`: "Sblocca tutto — €4.99" → **"Non sei registrato? Sblocca tutti gli hotspot a €4.99"**
 
-| File | Riga |
-|------|------|
-| `src/components/MinimalHeader.tsx` | righe 60-68 |
-| `src/pages/ExplorePage.tsx` | righe 64-72 |
-| `src/pages/CollectionsPage.tsx` | righe 23-31 |
-| `src/pages/CollectionDetailPage.tsx` | righe 43-51 |
-| `src/pages/FreeSpotsPage.tsx` | righe 25-33 |
+**Inglese:**
+- `loginBtn`: "Already registered? Log in" → **"Already registered? Log in with email and password"**
+- `signupBtn`: "Unlock all — €4.99" → **"Not registered? Unlock all hotspots for €4.99"**
 
-### Cosa cambia
+## File da modificare
 
-Da:
-```tsx
-<button ...><LogIn className="w-6 h-6 text-foreground" /></button>
-// oppure
-<button ...><LogIn className="w-6 h-6 text-foreground rotate-180" /></button>
-```
+| File | Modifica |
+|------|----------|
+| `src/components/PremiumModal.tsx` | Righe 37-38 (IT) e 60-61 (EN): aggiornare le stringhe `loginBtn` e `signupBtn` |
 
-A:
-```tsx
-<button onClick={() => setPremiumModalOpen(true)}
-  className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
-  Login
-</button>
-// oppure
-<button onClick={() => signOut()}
-  className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
-  Logout
-</button>
-```
-
-L'import di `LogIn` da Lucide verra rimosso da tutti i file dove non serve piu.
-
-Nessuna modifica alla logica: cliccando "Login" si apre il PremiumModal (che chiede di sbloccare l'app), cliccando "Logout" si esce.
+Nessuna modifica alla logica, solo copy.
 
