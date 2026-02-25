@@ -1,92 +1,58 @@
 
 
-# Piano: Pulizia e Coerenza Flusso Accesso + Pagamento
+# Piano: Separare Login da PremiumModal
 
-## Analisi stato attuale
+## Problema identificato
 
-Dopo aver esaminato il codice, la struttura base e gia corretta:
-- Login/Logout in header su tutte le pagine ✅
-- PremiumModal con "Sblocca tutto" + "Hai gia pagato? Accedi" ✅
-- Flusso payment-first con complete-purchase ✅
-- Hotspot locking (primo per categoria gratuito) ✅
+Attualmente il pulsante **Login** nell'header apre il `PremiumModal`, che mostra prima "Sblocca tutto – €4.99" e poi il link "Hai gia pagato? Accedi". Questo e confuso: chi clicca **Login** vuole accedere, non vedere una schermata di pagamento.
 
-## Cosa manca / da correggere
+I 4 punti essenziali richiesti sono gia implementati nel codice, ma c'e un problema UX critico: **Login e pagamento sono mescolati nello stesso modal**.
 
-### 1. PaymentSuccess: email precompilata non mostrata
+## Cosa funziona gia
 
-Attualmente la pagina mostra solo i campi password. Il prompt richiede che l'email (da Stripe) sia visibile e non modificabile. Serve:
-- Aggiungere un endpoint o modificare `complete-purchase` per poter recuperare l'email dalla sessione Stripe **prima** di inviare la password
-- Oppure creare una piccola edge function `get-session-email` che dato il `session_id` restituisce solo l'email
-- Mostrare l'email come campo read-only nella pagina
+1. **Stripe checkout** — `create-payment` edge function + redirect ✅
+2. **Creazione password dopo pagamento** — `PaymentSuccess` + `complete-purchase` + `get-session-email` ✅
+3. **Login per utenti che tornano** — form email+password nel PremiumModal (vista "login") ✅
+4. **Guardia "gia premium"** — PremiumModal mostra "Sei gia Premium ✨" ✅
 
-**Approccio scelto**: aggiungere una nuova edge function `get-session-email` (semplice, sicura) che restituisce l'email dal session Stripe. La PaymentSuccess la chiama al mount per precompilare il campo.
+## Cosa va corretto
 
-### 2. Logout: toast di conferma
+Il pulsante **Login** nell'header deve aprire **direttamente il form di login** (email + password), non il PremiumModal con il pulsante di pagamento.
 
-Al momento il logout non mostra nessun feedback. Aggiungere un toast "Sei uscito" / "Logged out" su tutte le pagine che hanno il pulsante Logout (MinimalHeader, ExplorePage, CollectionsPage, CollectionDetailPage, FreeSpotsPage).
+### Soluzione
 
-**Approccio**: creare una funzione `handleSignOut` centralizzata che chiama `signOut()` e poi mostra il toast.
+Creare un `LoginModal` separato, semplice:
+- Titolo: "Accedi" / "Log in"
+- Campi: email + password
+- Pulsante: "Accedi"
+- Dopo login: verifica premium, chiudi modal, toast di benvenuto
+- Se credenziali errate: messaggio chiaro
 
-### 3. PremiumModal: guardia "gia premium"
+Il `PremiumModal` resta per gli hotspot bloccati (pagamento + link "Hai gia pagato? Accedi").
 
-Se un utente premium apre il modal (caso raro), mostrare "Sei gia Premium ✨ — Tutti gli hotspot sono sbloccati" invece del flusso di pagamento.
+### Flussi risultanti
 
-### 4. config.toml: verify_jwt mancante
+```text
+Pulsante "Login" in header
+        → LoginModal (solo email + password)
+        → Login → premium check → tutto sbloccato
 
-Il file `supabase/config.toml` non ha le configurazioni `verify_jwt = false` per `create-payment` e `complete-purchase`. Vanno aggiunte (piu la nuova `get-session-email`).
-
-### 5. PaymentSuccess: redirect alla home dopo successo
-
-Il prompt dice redirect alla home, attualmente va a `/esplora`. Cambiare in `/` con toast "Accesso Premium attivo".
-
----
+Hotspot bloccato click
+        → PremiumModal (pagamento + link login)
+        → "Sblocca tutto" → Stripe → PaymentSuccess
+        → oppure "Hai gia pagato? Accedi" → form login
+```
 
 ## File da modificare/creare
 
-| File | Azione | Dettaglio |
-|------|--------|-----------|
-| `supabase/functions/get-session-email/index.ts` | **Nuovo** | Riceve `session_id`, restituisce email da Stripe |
-| `src/pages/PaymentSuccess.tsx` | Modifica | Aggiungere fetch email al mount, mostrare campo email read-only, redirect a `/` |
-| `src/components/PremiumModal.tsx` | Modifica | Aggiungere guardia "gia premium" |
-| `src/components/MinimalHeader.tsx` | Modifica | Toast su logout |
-| `src/pages/ExplorePage.tsx` | Modifica | Toast su logout |
-| `src/pages/CollectionsPage.tsx` | Modifica | Toast su logout |
-| `src/pages/CollectionDetailPage.tsx` | Modifica | Toast su logout |
-| `src/pages/FreeSpotsPage.tsx` | Modifica | Toast su logout |
-| `supabase/config.toml` | Modifica | Aggiungere verify_jwt = false per le 3 edge functions |
+| File | Azione |
+|------|--------|
+| `src/components/LoginModal.tsx` | **Nuovo** — Modal semplice con form login |
+| `src/components/MinimalHeader.tsx` | Modifica — usare LoginModal invece di PremiumModal per il pulsante Login |
+| `src/pages/ExplorePage.tsx` | Modifica — stesso cambio se ha un pulsante Login diretto |
+| `src/pages/CollectionsPage.tsx` | Modifica — stesso cambio |
+| `src/pages/CollectionDetailPage.tsx` | Modifica — stesso cambio |
+| `src/pages/FreeSpotsPage.tsx` | Modifica — stesso cambio |
 
----
-
-## Dettagli tecnici
-
-### get-session-email edge function
-
-```typescript
-// Riceve { session_id }
-// Verifica con Stripe
-// Restituisce { email } o errore
-```
-verify_jwt = false (utente non autenticato dopo pagamento).
-
-### PaymentSuccess — nuovo flusso
-
-1. Al mount, se c'e `session_id`, chiama `get-session-email` per ottenere l'email
-2. Mostra email in campo Input disabled
-3. Utente inserisce password + conferma
-4. Submit chiama `complete-purchase` come ora
-5. Dopo successo: toast "Accesso Premium attivo" e redirect a `/`
-
-### Logout toast
-
-In ogni pagina con pulsante Logout, il click chiama:
-```typescript
-const handleLogout = async () => {
-  await signOut();
-  toast({ title: language === "it" ? "Sei uscito" : "Logged out" });
-};
-```
-
-### PremiumModal guardia premium
-
-All'inizio del render, se `isPremium === true`, mostrare messaggio "Sei gia Premium" con pulsante per chiudere il modal. Niente form, niente Stripe.
+Nessuna modifica a edge functions, database, o logica di pagamento. Solo separazione UX tra Login e Acquisto.
 
