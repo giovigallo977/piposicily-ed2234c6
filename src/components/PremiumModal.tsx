@@ -34,8 +34,8 @@ const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
     benefit3: "Aggiornamenti futuri inclusi",
     price: "€4.99",
     priceLabel: "una tantum",
-    loginBtn: "Sei già registrato? Accedi con mail e password",
-    signupBtn: "Non sei registrato? Sblocca tutti gli hotspot a €4.99",
+    loginBtn: "Sei già registrato? Accedi con le tue credenziali",
+    signupBtn: "Sblocca tutti gli hotspot per sempre a €4.99",
     payButton: "Paga €4.99 e sblocca tutto",
     emailPlaceholder: "La tua email",
     passwordPlaceholder: "La tua password",
@@ -57,8 +57,8 @@ const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
     benefit3: "Future updates included",
     price: "€4.99",
     priceLabel: "one-time",
-    loginBtn: "Already registered? Log in with email and password",
-    signupBtn: "Not registered? Unlock all hotspots for €4.99",
+    loginBtn: "Already registered? Log in with your credentials",
+    signupBtn: "Unlock all hotspots forever for €4.99",
     payButton: "Pay €4.99 and unlock all",
     emailPlaceholder: "Your email",
     passwordPlaceholder: "Your password",
@@ -223,18 +223,18 @@ const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
           /* Choice view: two clear buttons */
           <div className="space-y-3">
             <Button
-              variant="outline"
-              onClick={() => setView("login")}
-              className="w-full font-semibold"
-            >
-              {t.loginBtn}
-            </Button>
-            <Button
               onClick={() => setView("signup")}
               className="w-full bg-foreground text-background hover:bg-foreground/90 font-semibold"
             >
               <Sparkles className="w-4 h-4 mr-2" />
               {t.signupBtn}
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setView("login")}
+              className="w-full font-semibold"
+            >
+              {t.loginBtn}
             </Button>
           </div>
         ) : view === "login" ? (
