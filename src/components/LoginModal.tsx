@@ -63,20 +63,20 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
         setLoading(false);
         return;
       }
-      setTimeout(async () => {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("is_premium")
-          .single();
+      // Direct check + invalidation without setTimeout
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("is_premium")
+        .single();
 
-        if (profile?.is_premium) {
-          toast({ title: t.welcomeBack });
-        } else {
-          toast({ title: t.welcomeGeneric });
-        }
-        await queryClient.invalidateQueries({ queryKey: ["premium-status"] });
-        handleOpenChange(false);
-      }, 600);
+      if (profile?.is_premium) {
+        toast({ title: t.welcomeBack });
+      } else {
+        toast({ title: t.welcomeGeneric });
+      }
+      await queryClient.invalidateQueries({ queryKey: ["premium-status"] });
+      await queryClient.refetchQueries({ queryKey: ["premium-status"] });
+      handleOpenChange(false);
     } catch {
       setLoading(false);
     }

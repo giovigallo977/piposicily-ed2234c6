@@ -29,20 +29,29 @@ serve(async (req) => {
       apiVersion: "2025-08-27.basil",
     });
 
-    // Check if user has completed a payment for our product
+    // Check if user has completed a payment — search sessions directly by email
+    // This handles anonymous checkouts where no Stripe customer object exists
+    let paid = false;
+
+    // First try via customer object
     const customers = await stripe.customers.list({ email: user.email, limit: 1 });
-    if (customers.data.length === 0) {
-      return new Response(JSON.stringify({ isPremium: false }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+    if (customers.data.length > 0) {
+      const sessions = await stripe.checkout.sessions.list({
+        customer: customers.data[0].id,
+        limit: 10,
       });
+      paid = sessions.data.some(s => s.payment_status === "paid" && s.mode === "payment");
     }
 
-    const sessions = await stripe.checkout.sessions.list({
-      customer: customers.data[0].id,
-      limit: 10,
-    });
-
-    const paid = sessions.data.some(s => s.payment_status === "paid" && s.mode === "payment");
+    // Fallback: search all recent sessions by email (for anonymous checkouts)
+    if (!paid) {
+      const allSessions = await stripe.checkout.sessions.list({ limit: 100 });
+      paid = allSessions.data.some(s =>
+        s.payment_status === "paid" &&
+        s.mode === "payment" &&
+        (s.customer_details?.email === user.email || s.customer_email === user.email)
+      );
+    }
 
     if (paid) {
       // Update profile to premium
