@@ -28,8 +28,19 @@ const PaymentSuccess = () => {
   };
 
   useEffect(() => {
-    if (!user) return;
     const verify = async () => {
+      if (!user) {
+        // User not authenticated — wait a bit for session to restore
+        await new Promise(r => setTimeout(r, 3000));
+      }
+      // Re-check user from auth state
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) {
+        // Still no user — show generic success and let them navigate
+        setSuccess(true);
+        setVerifying(false);
+        return;
+      }
       try {
         const { data, error } = await supabase.functions.invoke("verify-payment");
         if (!error && data?.isPremium) {
@@ -56,14 +67,14 @@ const PaymentSuccess = () => {
             <CheckCircle className="h-16 w-16 text-olive mx-auto" style={{ color: "hsl(var(--olive))" }} />
             <h1 className="text-2xl font-bold">{texts.title}</h1>
             <p className="text-muted-foreground">{texts.subtitle}</p>
-            <Button onClick={() => navigate("/explore")} className="w-full bg-foreground text-background hover:bg-foreground/90 font-semibold">
+            <Button onClick={() => navigate("/esplora")} className="w-full bg-foreground text-background hover:bg-foreground/90 font-semibold">
               {texts.cta}
             </Button>
           </>
         ) : (
           <>
             <p className="text-muted-foreground">{texts.error}</p>
-            <Button onClick={() => navigate("/explore")} variant="outline" className="w-full">
+            <Button onClick={() => navigate("/esplora")} variant="outline" className="w-full">
               {texts.cta}
             </Button>
           </>
