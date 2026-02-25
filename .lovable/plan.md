@@ -1,65 +1,48 @@
 
 
-# Piano: Fix Premium Status — Dati + Bug verify-payment
+# Piano: Fix vista login nel PremiumModal
 
-## Problema
+## Problemi identificati
 
-L'utente ha pagato su Stripe ma il profilo nel database mostra `is_premium: false`, `premium_since: null`, `stripe_session_id: null`. Questo perché:
+1. **UX confusa**: Quando clicchi "Hai già pagato? Accedi", la vista login mostra ancora il prezzo €4.99 in alto + il form login sotto. Dovrebbe mostrare SOLO il form login pulito, con sotto un link per tornare alla vista pagamento.
 
-1. La funzione `complete-purchase` non è mai stata eseguita (0 log) — il flusso post-pagamento si è interrotto
-2. La funzione `verify-payment` (fallback) ha un bug: cerca `stripe.customers.list({ email })` ma per pagamenti anonimi Stripe potrebbe non creare un customer object, quindi la verifica restituisce sempre `false`
+2. **Login non funziona**: Il `handleLogin` nel PremiumModal usa ancora `setTimeout(600ms)` (non aggiornato come il LoginModal). Questo causa il mancato aggiornamento dello stato premium dopo il login.
 
 ## Correzioni
 
-### 1. Fix immediato: aggiornare il profilo dell'utente nel database
+### 1. Vista "login" nel PremiumModal: layout pulito
 
-Eseguire una migration SQL per settare `is_premium = true` per l'utente `alessandro.borzi94@gmail.com` che ha già pagato.
+Quando `view === "login"`:
+- Nascondere il blocco prezzo (€4.99)
+- Nascondere subtitle e benefits
+- Mostrare solo: titolo "Accedi" + form email/password + pulsante "Accedi"
+- Sotto il form: link "Sblocca tutti gli hotspot a €4.99" per tornare alla vista pagamento
 
-```sql
-UPDATE profiles
-SET is_premium = true, premium_since = now()
-WHERE email = 'alessandro.borzi94@gmail.com';
-```
+### 2. Fix handleLogin: rimuovere setTimeout
 
-### 2. Fix strutturale: correggere verify-payment
-
-La funzione attualmente:
-1. Cerca un customer Stripe per email → se non trova, restituisce `false`
-2. Lista le checkout sessions per quel customer
-
-Il problema: per pagamenti anonimi (senza account Stripe preesistente), il customer potrebbe non esistere.
-
-**Fix**: cercare direttamente le checkout sessions per email usando `stripe.checkout.sessions.list()` con filtro email, oppure usare `stripe.customers.list` E anche `stripe.checkout.sessions.list({ customer_details: { email } })`.
-
-Approccio scelto: usare `stripe.checkout.sessions.list()` e filtrare per `customer_details.email` o `customer_email` nel risultato, dato che l'API Stripe permette di cercare sessions anche senza customer ID.
-
-```typescript
-// Invece di cercare solo per customer:
-// 1. Prima prova con customers.list (utenti con account Stripe)
-// 2. Se non trova, cerca tutte le checkout sessions recenti e filtra per email
-const sessions = await stripe.checkout.sessions.list({ limit: 100 });
-const paid = sessions.data.some(s =>
-  s.payment_status === "paid" &&
-  s.mode === "payment" &&
-  (s.customer_details?.email === user.email || s.customer_email === user.email)
-);
-```
-
-### 3. Invalidazione cache dopo login nel LoginModal
-
-Il LoginModal attualmente invalida `premium-status` dopo login, ma con un `setTimeout(600ms)` che potrebbe non essere sufficiente. Migliorare facendo un `await` sulla invalidazione e forzando un refetch.
+Allineare la logica del `handleLogin` a quella già corretta nel `LoginModal`:
+- Rimuovere `setTimeout`
+- Fare `await` su `invalidateQueries` e `refetchQueries`
+- Chiudere il modal dopo successo (sia premium che non)
 
 ## File da modificare
 
 | File | Azione |
 |------|--------|
-| Migration SQL | Fix dati utente `is_premium = true` |
-| `supabase/functions/verify-payment/index.ts` | Cercare sessions per email, non solo per customer |
-| `src/components/LoginModal.tsx` | Rimuovere setTimeout, fare invalidazione diretta |
+| `src/components/PremiumModal.tsx` | Ristrutturare la vista login + fix handleLogin |
 
-## Risultato atteso
+## Dettaglio modifiche PremiumModal.tsx
 
-- L'utente `alessandro.borzi94@gmail.com` vedrà immediatamente tutti gli hotspot sbloccati
-- Futuri utenti che pagano ma il cui `complete-purchase` fallisce verranno recuperati dal `verify-payment` corretto
-- Il login aggiorna immediatamente lo stato premium senza delay
+**handleLogin** (linee 99-125): sostituire il `setTimeout` con logica diretta come nel LoginModal:
+```typescript
+const { error } = await signIn(email, password);
+if (error) { toast error; return; }
+const { data: profile } = await supabase.from("profiles").select("is_premium").single();
+if (profile?.is_premium) toast({ title: t.welcomeBack });
+await queryClient.invalidateQueries({ queryKey: ["premium-status"] });
+await queryClient.refetchQueries({ queryKey: ["premium-status"] });
+handleOpenChange(false);
+```
+
+**Vista login** (linee 147-220): quando `view === "login"`, nascondere subtitle, benefits, e prezzo. Mostrare solo il form con titolo "Accedi" e sotto un link testuale "Sblocca tutti gli hotspot a €4.99 →" che torna alla vista main.
 
