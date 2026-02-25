@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
-import { LogIn } from "lucide-react";
+
 import PremiumModal from "@/components/PremiumModal";
 
 interface MinimalHeaderProps {
@@ -58,12 +58,12 @@ const MinimalHeader = ({ bgColor }: MinimalHeaderProps) => {
 
             {/* Login/Logout - Right */}
             {!user ? (
-              <button onClick={() => setPremiumModalOpen(true)} className="p-2 transition-all duration-200 hover:scale-110" aria-label="Login">
-                <LogIn className="w-5 h-5 text-foreground" />
+              <button onClick={() => setPremiumModalOpen(true)} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
+                Login
               </button>
             ) : (
-              <button onClick={() => signOut()} className="p-2 transition-all duration-200 hover:scale-110" aria-label="Logout">
-                <LogIn className="w-5 h-5 text-foreground rotate-180" />
+              <button onClick={() => signOut()} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
+                Logout
               </button>
             )}
           </div>

@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ChevronsLeft, Sparkles, Loader2, LogIn } from "lucide-react";
+import { ChevronsLeft, Sparkles, Loader2 } from "lucide-react";
 import { useCollectionById, useCollectionHotspots } from "@/hooks/useCollections";
 import { useHotspots } from "@/hooks/useHotspots";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -41,12 +41,12 @@ const CollectionDetailPage = () => {
           {collection?.nome || t("collection")}
         </h1>
         {!user ? (
-          <button onClick={() => setPremiumModalOpen(true)} className="p-2 transition-all duration-200 hover:scale-110" aria-label="Login">
-            <LogIn className="w-6 h-6 text-foreground" />
+          <button onClick={() => setPremiumModalOpen(true)} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
+            Login
           </button>
         ) : (
-          <button onClick={() => signOut()} className="p-2 transition-all duration-200 hover:scale-110" aria-label="Logout">
-            <LogIn className="w-6 h-6 text-foreground rotate-180" />
+          <button onClick={() => signOut()} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
+            Logout
           </button>
         )}
       </header>
