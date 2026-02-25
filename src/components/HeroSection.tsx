@@ -12,8 +12,6 @@ const DECO_KEYS = [
   "deco_hero_left_bottom",
   "deco_hero_right_top",
   "deco_hero_right_bottom",
-  "deco_collezioni_left",
-  "deco_collezioni_right",
 ] as const;
 
 interface HeroSectionProps {
@@ -43,14 +41,13 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
   const { data: catImgBorghi } = useSiteContent("cat_image_borghi");
   const { data: catImgArte } = useSiteContent("cat_image_arte_cultura");
   const { data: catImgCollezioni } = useSiteContent("cat_image_collezioni");
+  const { data: catImgFreeSpots } = useSiteContent("cat_image_free_spots");
 
   // Decorative graphics
   const { data: decoHeroLT } = useSiteContent("deco_hero_left_top");
   const { data: decoHeroLB } = useSiteContent("deco_hero_left_bottom");
   const { data: decoHeroRT } = useSiteContent("deco_hero_right_top");
   const { data: decoHeroRB } = useSiteContent("deco_hero_right_bottom");
-  const { data: decoCollLeft } = useSiteContent("deco_collezioni_left");
-  const { data: decoCollRight } = useSiteContent("deco_collezioni_right");
 
   const headlineText = heroHeadlineContent?.content || null;
   const subtitleText = heroSubtitleContent?.content || null;
@@ -162,32 +159,43 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
               </button>
             );
           })}
-        </div>
-
-        {/* Collezioni Card - full width with deco graphics */}
-        <div className="mt-3 w-full max-w-lg md:mx-auto relative">
-          {decoCollLeft?.content && (
-            <img src={decoCollLeft.content} alt="" className="absolute -left-2 md:-left-6 top-1/2 -translate-y-1/2 w-10 md:w-16 pointer-events-none select-none opacity-80 z-10" />
-          )}
-          {decoCollRight?.content && (
-            <img src={decoCollRight.content} alt="" className="absolute -right-2 md:-right-6 top-1/2 -translate-y-1/2 w-10 md:w-16 pointer-events-none select-none opacity-80 z-10" />
-          )}
+          {/* Collezioni Card */}
           <button
             onClick={() => navigate("/collezioni")}
-            className="relative w-full aspect-[16/9] rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
+            className="relative aspect-square rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
           >
             {collezioniImage ? (
               <img
                 src={collezioniImage}
-                alt="Collezioni"
+                alt={t("collections")}
                 className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
               />
             ) : (
               <div className="w-full h-full bg-muted" />
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-            <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-lg md:text-xl font-bold text-left leading-tight drop-shadow-lg">
+            <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-sm md:text-base font-bold text-left leading-tight drop-shadow-lg">
               {t("collections")}
+            </span>
+          </button>
+
+          {/* Free Spots Card */}
+          <button
+            onClick={() => navigate("/collezioni")}
+            className="relative aspect-square rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
+          >
+            {catImgFreeSpots?.content ? (
+              <img
+                src={catImgFreeSpots.content}
+                alt="Lavorare, Studiare & Eat"
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+            ) : (
+              <div className="w-full h-full bg-muted" />
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+            <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-sm md:text-base font-bold text-left leading-tight drop-shadow-lg">
+              Lavorare, Studiare & Eat
             </span>
           </button>
         </div>
