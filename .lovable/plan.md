@@ -1,70 +1,39 @@
 
-Obiettivo: risolvere in modo definitivo il fatto che su iOS (browser, bookmark e PWA installata) l’app resti alla versione vecchia.
 
-Stato attuale verificato:
-- Ho analizzato la configurazione PWA e il service worker pubblicato.
-- Nel service worker live sono presenti due route di navigazione:
-  1) una `NavigationRoute` che serve `index.html` dal precache
-  2) la tua nuova route `NetworkFirst` per `request.mode === "navigate"`
-- In Workbox vince la prima route che matcha: quindi la `NavigationRoute` intercetta prima e la `NetworkFirst` di fatto non entra quasi mai.
-- Questo spiega perfettamente il sintomo “non cambia mai” anche dopo pubblicazione.
+# Piano: Fix definitivo NavigationRoute nel Service Worker
 
-Chiarimenti già raccolti (critici):
-- Dove succede: Browser normale + PWA installata + Bookmark
-- Dispositivo: iOS
-- Comportamento: non cambia mai
+## Problema confermato
+Ho verificato il service worker pubblicato su `piposicily.lovable.app/sw.js`. Contiene ancora due route:
+1. `NavigationRoute` con `createHandlerBoundToURL("index.html")` -- serve HTML dal precache
+2. `NetworkFirst` per `request.mode === 'navigate'` -- mai raggiunta
 
-Piano di intervento (implementazione):
-1) Disattivare l’intercettazione navigazione “precache fallback” che sta bypassando `NetworkFirst`
-   - File: `vite.config.ts`
-   - Modifica: rendere la `NavigationRoute` non applicabile a tutte le pagine (denylist totale) oppure disabilitarla esplicitamente.
-   - Effetto: le navigazioni useranno davvero la route `NetworkFirst` e scaricheranno `index.html` fresco quando online.
+`navigateFallback: undefined` non funziona: il plugin vite-plugin-pwa ignora `undefined` e genera comunque la NavigationRoute con `index.html` come default.
 
-2) Mantenere la route `NetworkFirst` per HTML come route primaria
-   - File: `vite.config.ts`
-   - Confermare:
-     - `urlPattern: ({ request }) => request.mode === "navigate"`
-     - `handler: "NetworkFirst"`
-     - `networkTimeoutSeconds: 3`
-     - cache dedicata `html-cache`
-   - Effetto: online prende l’HTML nuovo, offline fallback da cache.
+## Soluzione
+Usare `navigateFallbackDenylist: [/./]` (regex che matcha tutto) per rendere la NavigationRoute inefficace su qualsiasi URL. In questo modo la NavigationRoute esiste nel codice ma non matcha mai, e tutte le navigazioni cadono sulla route `NetworkFirst`.
 
-3) Rafforzare trigger update su iOS app resume
-   - File: `src/pwa-updater.ts`
-   - Aggiungere listener `pageshow` (iOS lo usa spesso al ritorno da home screen/standalone).
-   - Effetto: quando riapri da icona/bookmark viene fatto `reg.update()` immediato anche nei casi dove `focus/visibilitychange` non sono affidabili.
+## File da modificare
 
-4) Allineare “DNA memory” reale del progetto
-   - File: `.knowledge/structure/pwa-auto-update.md`
-   - Confermare che documenta anche questa correzione strutturale (priorità route SW / fallback disattivato).
+### 1. `vite.config.ts`
+- Cambiare `navigateFallbackDenylist` da `[/^\/~oauth/]` a `[/./]`
+- Questo fa si che la NavigationRoute (che il plugin genera comunque) non matchi nessun URL
+- La route `NetworkFirst` diventa l'unico handler effettivo per le navigazioni
 
-5) Validazione end-to-end post-fix (obbligatoria)
-   - Test matrix:
-     - Safari URL diretto
-     - Bookmark Safari
-     - PWA installata da home screen
-   - Per ogni scenario:
-     1. pubblicare una modifica visibile (es. testo hero con timestamp)
-     2. chiudere e riaprire
-     3. verificare che appaia la versione nuova
-   - Se una sola superficie resta vecchia: eseguire “one-time recovery” su iOS (rimozione app da home + clear website data + reinstallazione).
+### 2. `.knowledge/structure/pwa-auto-update.md`
+- Aggiornare la documentazione con la soluzione corretta (`navigateFallbackDenylist: [/./]` invece di `navigateFallback: undefined`)
 
-Dettagli tecnici (sezione dedicata):
-- Root cause tecnico:
-  - Non era un problema di meta tag o solo polling.
-  - Era un problema di priorità delle route nel SW: precache navigation fallback precedeva `NetworkFirst`.
-- Perché iOS soffre di più:
-  - lifecycle SW/standalone più aggressivo sulla persistenza cache e aggiornamenti non sempre immediati su resume.
-- Criterio di successo:
-  - Nuova pubblicazione visibile entro 1 riapertura app in tutte e 3 le modalità (browser, bookmark, PWA).
+## Dettagli tecnici
 
-Rischi e mitigazioni:
-- Rischio: togliendo fallback precache potresti cambiare il comportamento offline su primo avvio.
-- Mitigazione: `NetworkFirst` con cache HTML già copre il fallback dopo almeno un caricamento online; validare anche scenario offline dopo primo load.
+La NavigationRoute di Workbox usa `denylist` per escludere URL. Con `[/./]` (matcha qualsiasi stringa con almeno un carattere), la route non intercetta mai nessuna navigazione. Il risultato e che solo la route runtime `NetworkFirst` gestisce le navigazioni, scaricando HTML fresco dal server.
 
-Ordine esecuzione proposto:
-1. Patch `vite.config.ts` (route precedence fix)
-2. Patch `src/pwa-updater.ts` (`pageshow`)
-3. Verifica service worker generato in build
-4. Pubblicazione
-5. Test E2E iOS (browser/bookmark/PWA)
+Perche `navigateFallback: undefined` non funzionava:
+- vite-plugin-pwa internamente usa `index.html` come default quando il valore e `undefined`/non impostato
+- Non esiste un modo documentato per impedire la generazione della NavigationRoute con `generateSW`
+- La denylist totale e l'unico approccio affidabile senza passare a `injectManifest`
+
+## Dopo la pubblicazione
+Sul dispositivo iOS:
+1. Impostazioni Safari > Avanzate > Dati dei siti web > Elimina dati per piposicily.lovable.app
+2. Se PWA installata: rimuovere da Home Screen e reinstallare
+3. Questo e un reset una tantum necessario perche il vecchio SW con la NavigationRoute attiva e gia installato
+
