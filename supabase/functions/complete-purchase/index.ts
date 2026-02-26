@@ -26,15 +26,12 @@ serve(async (req) => {
   });
 
   try {
-    const { session_id, password } = await req.json();
-    if (!session_id || !password) {
-      throw new Error("session_id and password are required");
-    }
-    if (password.length < 6) {
-      throw new Error("Password must be at least 6 characters");
+    const { session_id } = await req.json();
+    if (!session_id) {
+      throw new Error("session_id is required");
     }
 
-    // Verify payment with Stripe
+    // 1. Verify payment with Stripe
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
       apiVersion: "2025-08-27.basil",
     });
@@ -49,7 +46,7 @@ serve(async (req) => {
       throw new Error("No email found in payment session");
     }
 
-    // Use REST API to find existing user by email
+    // 2. Find existing user
     const listRes = await fetch(
       `${supabaseUrl}/auth/v1/admin/users?page=1&per_page=50`,
       { headers: adminHeaders }
@@ -62,29 +59,16 @@ serve(async (req) => {
     let userId: string;
 
     if (existingUser) {
-      // User exists — update password via REST API
       userId = existingUser.id;
-      const updateRes = await fetch(
-        `${supabaseUrl}/auth/v1/admin/users/${userId}`,
-        {
-          method: "PUT",
-          headers: adminHeaders,
-          body: JSON.stringify({ password }),
-        }
-      );
-      if (!updateRes.ok) {
-        const err = await updateRes.text();
-        console.error("Failed to update user password:", err);
-        throw new Error("Failed to update user");
-      }
     } else {
-      // Create new user via REST API
+      // 3. Create user with random password (magic link only)
+      const randomPassword = crypto.randomUUID() + crypto.randomUUID();
       const createRes = await fetch(
         `${supabaseUrl}/auth/v1/admin/users`,
         {
           method: "POST",
           headers: adminHeaders,
-          body: JSON.stringify({ email, password, email_confirm: true }),
+          body: JSON.stringify({ email, password: randomPassword, email_confirm: true }),
         }
       );
       if (!createRes.ok) {
@@ -94,14 +78,12 @@ serve(async (req) => {
       }
       const createData = await createRes.json();
       userId = createData.id;
-    }
 
-    // Mark as premium (the trigger handle_new_user creates the profile row)
-    // Small delay to let the trigger fire for new users
-    if (!existingUser) {
+      // Wait for handle_new_user trigger
       await new Promise((r) => setTimeout(r, 500));
     }
 
+    // 4. Update profile as premium
     await supabaseAdmin
       .from("profiles")
       .update({
@@ -110,6 +92,29 @@ serve(async (req) => {
         stripe_session_id: session_id,
       })
       .eq("user_id", userId);
+
+    // 5. Send magic link via OTP REST API
+    const origin = req.headers.get("origin") || "https://piposicily.lovable.app";
+    const otpRes = await fetch(`${supabaseUrl}/auth/v1/otp`, {
+      method: "POST",
+      headers: {
+        "apikey": serviceRoleKey,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        create_user: false,
+        gotrue_meta_security: {},
+        code_challenge: null,
+        code_challenge_method: null,
+      }),
+    });
+
+    if (!otpRes.ok) {
+      const otpErr = await otpRes.text();
+      console.error("Failed to send magic link:", otpErr);
+      // Don't throw — purchase is complete, magic link is secondary
+    }
 
     return new Response(JSON.stringify({ success: true, email }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

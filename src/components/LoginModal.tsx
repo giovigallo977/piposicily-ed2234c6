@@ -4,11 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { usePremiumStatus } from "@/hooks/usePremiumStatus";
-import { Lock, Loader2 } from "lucide-react";
+import { Mail, Loader2, CheckCircle } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
-import { useQueryClient } from "@tanstack/react-query";
 
 interface LoginModalProps {
   open: boolean;
@@ -16,37 +13,34 @@ interface LoginModalProps {
 }
 
 const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
-  const { signIn } = useAuth();
+  const { sendMagicLink } = useAuth();
   const { language } = useLanguage();
-  const queryClient = useQueryClient();
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [sent, setSent] = useState(false);
 
   const t = language === "it"
     ? {
         title: "Accedi",
         emailPlaceholder: "La tua email",
-        passwordPlaceholder: "La tua password",
-        loginBtn: "Accedi",
-        loginError: "Errore nell'accesso",
-        welcomeBack: "Bentornato! Accesso premium attivo.",
-        welcomeGeneric: "Accesso effettuato.",
+        sendBtn: "Invia link di accesso",
+        sent: "Controlla la tua email per accedere",
+        sentDesc: "Ti abbiamo inviato un link magico.",
+        error: "Errore nell'invio del link",
       }
     : {
         title: "Log in",
         emailPlaceholder: "Your email",
-        passwordPlaceholder: "Your password",
-        loginBtn: "Log in",
-        loginError: "Login error",
-        welcomeBack: "Welcome back! Premium access active.",
-        welcomeGeneric: "Logged in successfully.",
+        sendBtn: "Send access link",
+        sent: "Check your email to log in",
+        sentDesc: "We sent you a magic link.",
+        error: "Error sending link",
       };
 
   const resetForm = () => {
     setEmail("");
-    setPassword("");
     setLoading(false);
+    setSent(false);
   };
 
   const handleOpenChange = (isOpen: boolean) => {
@@ -54,32 +48,20 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
     onOpenChange(isOpen);
   };
 
-  const handleLogin = async () => {
+  const handleSend = async () => {
     setLoading(true);
     try {
-      const { error } = await signIn(email, password);
+      const { error } = await sendMagicLink(email);
       if (error) {
-        toast({ title: t.loginError, description: error.message, variant: "destructive" });
+        toast({ title: t.error, description: error.message, variant: "destructive" });
         setLoading(false);
         return;
       }
-      // Direct check + invalidation without setTimeout
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("is_premium")
-        .single();
-
-      if (profile?.is_premium) {
-        toast({ title: t.welcomeBack });
-      } else {
-        toast({ title: t.welcomeGeneric });
-      }
-      await queryClient.invalidateQueries({ queryKey: ["premium-status"] });
-      await queryClient.refetchQueries({ queryKey: ["premium-status"] });
-      handleOpenChange(false);
+      setSent(true);
     } catch {
-      setLoading(false);
+      toast({ title: t.error, variant: "destructive" });
     }
+    setLoading(false);
   };
 
   return (
@@ -88,31 +70,34 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
         <DialogHeader>
           <DialogTitle className="text-xl">{t.title}</DialogTitle>
         </DialogHeader>
-        <div className="space-y-3 pt-2">
-          <Input
-            type="email"
-            placeholder={t.emailPlaceholder}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <Input
-            type="password"
-            placeholder={t.passwordPlaceholder}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && email && password && !loading) handleLogin();
-            }}
-          />
-          <Button
-            onClick={handleLogin}
-            disabled={loading || !email || !password}
-            className="w-full bg-foreground text-background hover:bg-foreground/90 font-semibold"
-          >
-            {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Lock className="w-4 h-4 mr-2" />}
-            {t.loginBtn}
-          </Button>
-        </div>
+        {sent ? (
+          <div className="text-center space-y-4 py-4">
+            <CheckCircle className="w-10 h-10 mx-auto" style={{ color: "hsl(var(--olive))" }} />
+            <p className="font-semibold">{t.sent}</p>
+            <p className="text-sm text-muted-foreground">{t.sentDesc}</p>
+            {email && <p className="text-xs text-muted-foreground font-mono">{email}</p>}
+          </div>
+        ) : (
+          <div className="space-y-3 pt-2">
+            <Input
+              type="email"
+              placeholder={t.emailPlaceholder}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && email && !loading) handleSend();
+              }}
+            />
+            <Button
+              onClick={handleSend}
+              disabled={loading || !email}
+              className="w-full bg-foreground text-background hover:bg-foreground/90 font-semibold"
+            >
+              {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Mail className="w-4 h-4 mr-2" />}
+              {t.sendBtn}
+            </Button>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );

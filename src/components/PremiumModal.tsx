@@ -5,10 +5,9 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/useAuth";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { usePremiumStatus } from "@/hooks/usePremiumStatus";
-import { Lock, Check, Sparkles, Loader2, ArrowLeft } from "lucide-react";
+import { Lock, Check, Sparkles, Loader2, Mail, CheckCircle } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { useQueryClient } from "@tanstack/react-query";
 
 interface PremiumModalProps {
   open: boolean;
@@ -18,14 +17,13 @@ interface PremiumModalProps {
 type ModalView = "main" | "login";
 
 const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
-  const { user, signIn } = useAuth();
+  const { user, sendMagicLink } = useAuth();
   const { language } = useLanguage();
   const { isPremium } = usePremiumStatus();
-  const queryClient = useQueryClient();
   const [view, setView] = useState<ModalView>("main");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [linkSent, setLinkSent] = useState(false);
 
   const t = language === "it" ? {
     title: "Sblocca tutte le mappe Pipo",
@@ -39,11 +37,11 @@ const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
     loginLink: "Hai già pagato? Accedi",
     loginLabel: "Accedi",
     emailPlaceholder: "La tua email",
-    passwordPlaceholder: "La tua password",
-    back: "← Torna indietro",
-    loginError: "Errore nell'accesso",
+    sendBtn: "Invia link di accesso",
+    linkSent: "Controlla la tua email per accedere",
+    linkSentDesc: "Ti abbiamo inviato un link magico.",
+    loginError: "Errore nell'invio del link",
     paymentError: "Errore nell'avvio del pagamento",
-    welcomeBack: "Bentornato! Accesso premium attivo.",
     alreadyPremiumTitle: "Sei già Premium ✨",
     alreadyPremiumText: "Tutti gli hotspot sono sbloccati.",
     close: "Chiudi",
@@ -59,11 +57,11 @@ const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
     loginLink: "Already paid? Log in",
     loginLabel: "Log in",
     emailPlaceholder: "Your email",
-    passwordPlaceholder: "Your password",
-    back: "← Go back",
-    loginError: "Login error",
+    sendBtn: "Send access link",
+    linkSent: "Check your email to log in",
+    linkSentDesc: "We sent you a magic link.",
+    loginError: "Error sending link",
     paymentError: "Error starting payment",
-    welcomeBack: "Welcome back! Premium access active.",
     alreadyPremiumTitle: "You're already Premium ✨",
     alreadyPremiumText: "All hotspots are unlocked.",
     close: "Close",
@@ -71,9 +69,9 @@ const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
 
   const resetForm = () => {
     setEmail("");
-    setPassword("");
     setView("main");
     setLoading(false);
+    setLinkSent(false);
   };
 
   const handleOpenChange = (isOpen: boolean) => {
@@ -96,29 +94,20 @@ const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
     }
   };
 
-  const handleLogin = async () => {
+  const handleSendLink = async () => {
     setLoading(true);
     try {
-      const { error } = await signIn(email, password);
+      const { error } = await sendMagicLink(email);
       if (error) {
         toast({ title: t.loginError, description: error.message, variant: "destructive" });
         setLoading(false);
         return;
       }
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("is_premium")
-        .single();
-
-      if (profile?.is_premium) {
-        toast({ title: t.welcomeBack });
-      }
-      await queryClient.invalidateQueries({ queryKey: ["premium-status"] });
-      await queryClient.refetchQueries({ queryKey: ["premium-status"] });
-      handleOpenChange(false);
+      setLinkSent(true);
     } catch {
-      setLoading(false);
+      toast({ title: t.loginError, variant: "destructive" });
     }
+    setLoading(false);
   };
 
   const benefits = [t.benefit1, t.benefit2, t.benefit3];
@@ -184,6 +173,13 @@ const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
               )}
             </div>
           </>
+        ) : linkSent ? (
+          <div className="text-center space-y-4 py-4">
+            <CheckCircle className="w-10 h-10 mx-auto" style={{ color: "hsl(var(--olive))" }} />
+            <p className="font-semibold">{t.linkSent}</p>
+            <p className="text-sm text-muted-foreground">{t.linkSentDesc}</p>
+            {email && <p className="text-xs text-muted-foreground font-mono">{email}</p>}
+          </div>
         ) : (
           <>
             <DialogHeader>
@@ -195,23 +191,17 @@ const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
                 placeholder={t.emailPlaceholder}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-              />
-              <Input
-                type="password"
-                placeholder={t.passwordPlaceholder}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter" && email && password && !loading) handleLogin();
+                  if (e.key === "Enter" && email && !loading) handleSendLink();
                 }}
               />
               <Button
-                onClick={handleLogin}
-                disabled={loading || !email || !password}
+                onClick={handleSendLink}
+                disabled={loading || !email}
                 className="w-full bg-foreground text-background hover:bg-foreground/90 font-semibold"
               >
-                {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Lock className="w-4 h-4 mr-2" />}
-                {t.loginLabel}
+                {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Mail className="w-4 h-4 mr-2" />}
+                {t.sendBtn}
               </Button>
               <button
                 onClick={() => { setView("main"); setLoading(false); }}

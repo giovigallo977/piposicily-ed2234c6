@@ -9,21 +9,12 @@ export const usePremiumStatus = () => {
     queryKey: ["premium-status", user?.id],
     queryFn: async () => {
       if (!user) return false;
-      // First check local profile
       const { data } = await supabase
         .from("profiles")
         .select("is_premium")
         .eq("user_id", user.id)
         .single();
-      if (data?.is_premium) return true;
-
-      // If not premium locally, verify with Stripe
-      try {
-        const { data: verifyData } = await supabase.functions.invoke("verify-payment");
-        if (verifyData?.isPremium) return true;
-      } catch {}
-
-      return false;
+      return data?.is_premium ?? false;
     },
     enabled: !!user,
     staleTime: 30_000,
