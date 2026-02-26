@@ -71,6 +71,17 @@ const PaymentSuccess = () => {
     fetchEmail();
   }, [sessionId, user]);
 
+  // Auto-redirect after completion
+  useEffect(() => {
+    if (!completed) return;
+    const timer = setTimeout(async () => {
+      await queryClient.invalidateQueries({ queryKey: ["premium-status"] });
+      await queryClient.refetchQueries({ queryKey: ["premium-status"] });
+      navigate("/", { replace: true });
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, [completed, navigate, queryClient]);
+
   // If user is already authenticated, just verify payment
   useEffect(() => {
     if (!user || !verifyingExisting) return;
@@ -87,7 +98,6 @@ const PaymentSuccess = () => {
     const timer = setTimeout(verify, 2000);
     return () => clearTimeout(timer);
   }, [user]);
-
   const handleSubmit = async () => {
     if (password !== confirmPassword) {
       toast({ title: t.mismatch, variant: "destructive" });
@@ -153,12 +163,9 @@ const PaymentSuccess = () => {
         <div className="text-center max-w-sm space-y-6">
           <CheckCircle className="h-16 w-16 mx-auto" style={{ color: "hsl(var(--olive))" }} />
           <h1 className="text-2xl font-bold">{t.successToast}</h1>
-          <Button
-            onClick={() => navigate("/")}
-            className="w-full bg-foreground text-background hover:bg-foreground/90 font-semibold"
-          >
-            {t.cta}
-          </Button>
+          <p className="text-sm text-muted-foreground">
+            {language === "it" ? "Reindirizzamento in corso…" : "Redirecting…"}
+          </p>
         </div>
       </div>
     );
@@ -170,7 +177,7 @@ const PaymentSuccess = () => {
       <div className="min-h-screen bg-background flex items-center justify-center p-6">
         <div className="text-center max-w-sm space-y-6">
           <p className="text-muted-foreground">{t.noSession}</p>
-          <Button onClick={() => navigate("/")} variant="outline" className="w-full">
+          <Button onClick={() => navigate("/", { replace: true })} variant="outline" className="w-full">
             {t.cta}
           </Button>
         </div>
