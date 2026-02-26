@@ -12,11 +12,18 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  const supabaseAdmin = createClient(
-    Deno.env.get("SUPABASE_URL") ?? "",
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-    { auth: { persistSession: false } }
-  );
+  const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
+  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+
+  const adminHeaders = {
+    "Authorization": `Bearer ${serviceRoleKey}`,
+    "apikey": serviceRoleKey,
+    "Content-Type": "application/json",
+  };
+
+  const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
+    auth: { persistSession: false },
+  });
 
   try {
     const { session_id, password } = await req.json();
@@ -42,31 +49,57 @@ serve(async (req) => {
       throw new Error("No email found in payment session");
     }
 
-    // Check if user already exists
-    const { data: existingUsers } = await supabaseAdmin.auth.admin.listUsers();
-    const existingUser = existingUsers?.users?.find(u => u.email === email);
+    // Use REST API to find existing user by email
+    const listRes = await fetch(
+      `${supabaseUrl}/auth/v1/admin/users?page=1&per_page=50`,
+      { headers: adminHeaders }
+    );
+    const listData = await listRes.json();
+    const existingUser = listData?.users?.find(
+      (u: any) => u.email === email
+    );
 
     let userId: string;
 
     if (existingUser) {
-      // User exists — update password and ensure premium
+      // User exists — update password via REST API
       userId = existingUser.id;
-      await supabaseAdmin.auth.admin.updateUser(userId, { password });
+      const updateRes = await fetch(
+        `${supabaseUrl}/auth/v1/admin/users/${userId}`,
+        {
+          method: "PUT",
+          headers: adminHeaders,
+          body: JSON.stringify({ password }),
+        }
+      );
+      if (!updateRes.ok) {
+        const err = await updateRes.text();
+        console.error("Failed to update user password:", err);
+        throw new Error("Failed to update user");
+      }
     } else {
-      // Create new user
-      const { data: newUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
-        email,
-        password,
-        email_confirm: true,
-      });
-      if (createError) throw createError;
-      userId = newUser.user.id;
+      // Create new user via REST API
+      const createRes = await fetch(
+        `${supabaseUrl}/auth/v1/admin/users`,
+        {
+          method: "POST",
+          headers: adminHeaders,
+          body: JSON.stringify({ email, password, email_confirm: true }),
+        }
+      );
+      if (!createRes.ok) {
+        const err = await createRes.text();
+        console.error("Failed to create user:", err);
+        throw new Error("Failed to create user");
+      }
+      const createData = await createRes.json();
+      userId = createData.id;
     }
 
     // Mark as premium (the trigger handle_new_user creates the profile row)
     // Small delay to let the trigger fire for new users
     if (!existingUser) {
-      await new Promise(r => setTimeout(r, 500));
+      await new Promise((r) => setTimeout(r, 500));
     }
 
     await supabaseAdmin
@@ -84,9 +117,12 @@ serve(async (req) => {
     });
   } catch (error) {
     console.error("Purchase completion failed:", error);
-    return new Response(JSON.stringify({ error: "Unable to complete purchase" }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 500,
-    });
+    return new Response(
+      JSON.stringify({ error: "Unable to complete purchase" }),
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 500,
+      }
+    );
   }
 });
