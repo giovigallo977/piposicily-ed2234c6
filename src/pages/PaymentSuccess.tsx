@@ -34,11 +34,11 @@ const PaymentSuccess = () => {
     submitBtn: "Attiva il mio accesso",
     mismatch: "Le password non corrispondono",
     tooShort: "La password deve avere almeno 6 caratteri",
-    error: "Errore nell'attivazione. Riprova.",
     successToast: "Accesso Premium attivo",
     cta: "Inizia ad esplorare",
     verifying: "Verifica pagamento in corso…",
     noSession: "Sessione di pagamento non trovata.",
+    recoveryError: "C'è stato un problema tecnico. Il tuo pagamento è registrato. Riprova tra qualche secondo o accedi manualmente.",
   } : {
     title: "Payment complete! ✅",
     subtitle: "Your premium access is almost ready.\nCreate a password to activate your account.",
@@ -48,11 +48,11 @@ const PaymentSuccess = () => {
     submitBtn: "Activate my access",
     mismatch: "Passwords don't match",
     tooShort: "Password must be at least 6 characters",
-    error: "Activation error. Please try again.",
     successToast: "Premium access active",
     cta: "Start exploring",
     verifying: "Verifying payment…",
     noSession: "Payment session not found.",
+    recoveryError: "There was a technical issue. Your payment is registered. Please try again in a few seconds or log in manually.",
   };
 
   // Fetch email from Stripe session
@@ -103,18 +103,32 @@ const PaymentSuccess = () => {
       const { data, error } = await supabase.functions.invoke("complete-purchase", {
         body: { session_id: sessionId, password },
       });
-      if (error) throw error;
-      if (!data?.success) throw new Error(data?.error || "Unknown error");
 
-      // Auto-login
-      const { error: loginError } = await signIn(data.email, password);
-      if (loginError) throw loginError;
+      if (!error && data?.success) {
+        // Happy path
+        await signIn(data.email, password);
+        await queryClient.invalidateQueries({ queryKey: ["premium-status"] });
+        toast({ title: t.successToast });
+        setCompleted(true);
+        return;
+      }
 
-      await queryClient.invalidateQueries({ queryKey: ["premium-status"] });
-      toast({ title: t.successToast });
-      setCompleted(true);
-    } catch (error: any) {
-      toast({ title: t.error, description: error.message, variant: "destructive" });
+      // Recovery: try login anyway (user may have been created despite error)
+      const { error: loginError } = await signIn(email, password);
+      if (!loginError) {
+        const { data: verifyData } = await supabase.functions.invoke("verify-payment");
+        if (verifyData?.isPremium) {
+          await queryClient.invalidateQueries({ queryKey: ["premium-status"] });
+          toast({ title: t.successToast });
+          setCompleted(true);
+          return;
+        }
+      }
+
+      // Final fallback: reassuring message
+      toast({ title: t.recoveryError });
+    } catch {
+      toast({ title: t.recoveryError });
     } finally {
       setLoading(false);
     }
@@ -175,7 +189,6 @@ const PaymentSuccess = () => {
         </div>
 
         <div className="space-y-3">
-          {/* Email read-only */}
           <div>
             <label className="text-xs text-muted-foreground mb-1 block">{t.emailLabel}</label>
             <Input
