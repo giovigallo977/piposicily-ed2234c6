@@ -48,7 +48,7 @@ serve(async (req) => {
 
     // 2. Find existing user
     const listRes = await fetch(
-      `${supabaseUrl}/auth/v1/admin/users?page=1&per_page=50`,
+      `${supabaseUrl}/auth/v1/admin/users?page=1&per_page=1000`,
       { headers: adminHeaders }
     );
     const listData = await listRes.json();
@@ -107,6 +107,7 @@ serve(async (req) => {
         gotrue_meta_security: {},
         code_challenge: null,
         code_challenge_method: null,
+        email_redirect_to: origin,
       }),
     });
 

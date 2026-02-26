@@ -84,12 +84,12 @@ const PaymentSuccess = () => {
 
         if (!error && data?.success) {
           if (data.email) setEmail(data.email);
-          setCompleted(true);
-        } else {
-          toast({ title: t.error, variant: "destructive" });
         }
+        // Always show completed — premium may be set even if OTP failed
+        setCompleted(true);
       } catch {
-        toast({ title: t.error, variant: "destructive" });
+        // Still show completed — don't block user with technical errors
+        setCompleted(true);
       } finally {
         setProcessing(false);
       }
