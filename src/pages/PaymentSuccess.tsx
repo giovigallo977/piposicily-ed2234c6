@@ -26,6 +26,7 @@ const PaymentSuccess = () => {
     successTitle: "Pagamento completato! ✅",
     successSubtitle: "Il tuo accesso premium è attivo.",
     checkEmail: "📩 Ti abbiamo inviato un link per accedere. Controlla la tua email.",
+    spamHint: "Se non trovi l'email, controlla anche nella cartella spam.",
     resendBtn: "Invia di nuovo il link",
     resent: "Link inviato! Controlla la tua email.",
     noSession: "Sessione di pagamento non trovata.",
@@ -37,6 +38,7 @@ const PaymentSuccess = () => {
     successTitle: "Payment complete! ✅",
     successSubtitle: "Your premium access is active.",
     checkEmail: "📩 We sent you a link to access your account. Check your email.",
+    spamHint: "If you don't see the email, check your spam folder too.",
     resendBtn: "Send link again",
     resent: "Link sent! Check your email.",
     noSession: "Payment session not found.",
@@ -135,6 +137,7 @@ const PaymentSuccess = () => {
             {email && (
               <p className="text-xs text-muted-foreground font-mono">{email}</p>
             )}
+            <p className="text-xs text-muted-foreground italic">{t.spamHint}</p>
           </div>
           <Button
             onClick={handleResend}
