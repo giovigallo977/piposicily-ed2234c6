@@ -53,6 +53,7 @@ const Admin = () => {
   const { data: heroSubtitleContent } = useSiteContent("hero_subtitle");
   
   const { data: homepageBgColorContent } = useSiteContent("homepage_bg_color");
+  const { data: heroBgImageContent } = useSiteContent("hero_bg_image");
   // Category images
   const { data: catImgLuoghiContent } = useSiteContent("cat_image_luoghi_fantasma");
   const { data: catImgNaturaContent } = useSiteContent("cat_image_natura");
@@ -93,6 +94,7 @@ const Admin = () => {
   const [freeSpotsLabel, setFreeSpotsLabel] = useState("");
   const [freeSpotsSubLabel, setFreeSpotsSubLabel] = useState("");
   const [catImgFreeSpots, setCatImgFreeSpots] = useState("");
+  const [heroBgImage, setHeroBgImage] = useState("");
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -171,6 +173,9 @@ const Admin = () => {
   useEffect(() => {
     if (catImgFreeSpotsContent?.content) setCatImgFreeSpots(catImgFreeSpotsContent.content);
   }, [catImgFreeSpotsContent]);
+  useEffect(() => {
+    if (heroBgImageContent?.content) setHeroBgImage(heroBgImageContent.content);
+  }, [heroBgImageContent]);
 
   const handleOpenCreate = () => {
     setEditingHotspot(null);
@@ -253,6 +258,12 @@ const Admin = () => {
     
     if (homepageBgColor) {
       await updateSiteContent.mutateAsync({ key: "homepage_bg_color", content: homepageBgColor });
+    }
+    if (heroBgImage) {
+      await updateSiteContent.mutateAsync({ key: "hero_bg_image", content: heroBgImage });
+    } else if (heroBgImageContent?.content) {
+      // Clear the image if removed
+      await updateSiteContent.mutateAsync({ key: "hero_bg_image", content: "" });
     }
   };
 
@@ -701,6 +712,15 @@ const Admin = () => {
                         style={{ backgroundColor: homepageBgColor }}
                       />
                     )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Immagine di Sfondo Hero</Label>
+                    <ImageUpload
+                      value={heroBgImage}
+                      onChange={(url) => setHeroBgImage(url)}
+                      onRemove={() => setHeroBgImage("")}
+                      folder="hero"
+                    />
                   </div>
                   <div className="flex justify-end">
                     <Button 

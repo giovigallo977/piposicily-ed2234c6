@@ -34,6 +34,7 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
   const { data: hotspots } = useHotspots();
 
   const { data: heroHeadlineContent } = useSiteContent("hero_headline");
+  const { data: heroBgImageContent } = useSiteContent("hero_bg_image");
   const { data: heroSubtitleContent } = useSiteContent("hero_subtitle");
   const { data: exploreCtaContent } = useSiteContent("explore_cta_text");
   const { data: missionContent } = useSiteContent("mission");
@@ -54,6 +55,9 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
   const { data: decoHeroLB } = useSiteContent("deco_hero_left_bottom");
   const { data: decoHeroRT } = useSiteContent("deco_hero_right_top");
   const { data: decoHeroRB } = useSiteContent("deco_hero_right_bottom");
+
+  const heroBgImage = heroBgImageContent?.content || null;
+  const hasHeroBg = !!heroBgImage;
 
   const headlineText = heroHeadlineContent?.content || null;
   const subtitleText = heroSubtitleContent?.content || null;
@@ -116,40 +120,48 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
     >
       {/* Fullscreen hero text area */}
       <div className="relative min-h-[100dvh] flex flex-col items-center justify-center px-6">
+        {/* Background image */}
+        {hasHeroBg && (
+          <>
+            <img src={heroBgImage} alt="" className="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none select-none" />
+            <div className="absolute inset-0 bg-black/40 z-0" />
+          </>
+        )}
+
         {/* Decorative graphics - hero laterals (desktop only) */}
         {decoHeroLT?.content && (
-          <img src={decoHeroLT.content} alt="" className="absolute left-2 top-16 w-20 lg:w-28 hidden md:block pointer-events-none select-none opacity-80" />
+          <img src={decoHeroLT.content} alt="" className="absolute left-2 top-16 w-20 lg:w-28 hidden md:block pointer-events-none select-none opacity-80 z-[1]" />
         )}
         {decoHeroRT?.content && (
-          <img src={decoHeroRT.content} alt="" className="absolute right-2 top-16 w-20 lg:w-28 hidden md:block pointer-events-none select-none opacity-80" />
+          <img src={decoHeroRT.content} alt="" className="absolute right-2 top-16 w-20 lg:w-28 hidden md:block pointer-events-none select-none opacity-80 z-[1]" />
         )}
         {decoHeroLB?.content && (
-          <img src={decoHeroLB.content} alt="" className="absolute left-2 bottom-[40%] w-20 lg:w-28 hidden md:block pointer-events-none select-none opacity-80" />
+          <img src={decoHeroLB.content} alt="" className="absolute left-2 bottom-[40%] w-20 lg:w-28 hidden md:block pointer-events-none select-none opacity-80 z-[1]" />
         )}
         {decoHeroRB?.content && (
-          <img src={decoHeroRB.content} alt="" className="absolute right-2 bottom-[40%] w-20 lg:w-28 hidden md:block pointer-events-none select-none opacity-80" />
+          <img src={decoHeroRB.content} alt="" className="absolute right-2 bottom-[40%] w-20 lg:w-28 hidden md:block pointer-events-none select-none opacity-80 z-[1]" />
         )}
 
         <div className="max-w-4xl mx-auto w-full flex flex-col items-center relative z-10 -mt-12">
           {/* Headline */}
-          <h1 className="font-sans text-[32px] md:text-[48px] font-bold leading-[1.1] text-foreground text-center">
+          <h1 className={`font-sans text-[32px] md:text-[48px] font-bold leading-[1.1] text-center ${hasHeroBg ? "text-white" : "text-foreground"}`}>
             {headline}
           </h1>
 
           {/* Subtitle */}
-          <p className="font-sans text-base font-medium text-foreground text-center mt-8 max-w-md mx-auto">
+          <p className={`font-sans text-base font-medium text-center mt-8 max-w-md mx-auto ${hasHeroBg ? "text-white/90" : "text-foreground"}`}>
             {subtitle}
           </p>
 
           {/* CTA Text */}
-          <p className="font-sans text-lg font-bold italic text-foreground text-center mt-6">
+          <p className={`font-sans text-lg font-bold italic text-center mt-6 ${hasHeroBg ? "text-white" : "text-foreground"}`}>
             {exploreCta}
           </p>
 
           {/* Unlock Button */}
           <button
             onClick={() => setPremiumOpen(true)}
-            className="mt-8 px-8 py-3 rounded-full bg-foreground text-background font-bold text-base hover:bg-foreground/90 transition-colors shadow-lg"
+            className={`mt-8 px-8 py-3 rounded-full font-bold text-base transition-colors shadow-lg ${hasHeroBg ? "bg-white text-foreground hover:bg-white/90" : "bg-foreground text-background hover:bg-foreground/90"}`}
           >
             Sblocca Pipo a 4,99€
           </button>
@@ -157,8 +169,8 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
 
         {/* Scroll indicator */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1">
-          <span className="hidden md:block text-xs text-foreground/40 font-medium">Scorri</span>
-          <ChevronDown className="w-8 h-8 md:w-10 md:h-10 text-foreground/50 animate-bounce" />
+          <span className={`hidden md:block text-xs font-medium ${hasHeroBg ? "text-white/50" : "text-foreground/40"}`}>Scorri</span>
+          <ChevronDown className={`w-8 h-8 md:w-10 md:h-10 animate-bounce ${hasHeroBg ? "text-white/60" : "text-foreground/50"}`} />
         </div>
       </div>
 
