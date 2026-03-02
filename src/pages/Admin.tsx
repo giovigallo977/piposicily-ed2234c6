@@ -54,6 +54,7 @@ const Admin = () => {
   
   const { data: homepageBgColorContent } = useSiteContent("homepage_bg_color");
   const { data: heroBgImageContent } = useSiteContent("hero_bg_image");
+  const { data: heroFontColorContent } = useSiteContent("hero_font_color");
   // Category images
   const { data: catImgLuoghiContent } = useSiteContent("cat_image_luoghi_fantasma");
   const { data: catImgNaturaContent } = useSiteContent("cat_image_natura");
@@ -95,6 +96,7 @@ const Admin = () => {
   const [freeSpotsSubLabel, setFreeSpotsSubLabel] = useState("");
   const [catImgFreeSpots, setCatImgFreeSpots] = useState("");
   const [heroBgImage, setHeroBgImage] = useState("");
+  const [heroFontColor, setHeroFontColor] = useState("");
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -176,6 +178,9 @@ const Admin = () => {
   useEffect(() => {
     if (heroBgImageContent?.content) setHeroBgImage(heroBgImageContent.content);
   }, [heroBgImageContent]);
+  useEffect(() => {
+    if (heroFontColorContent?.content) setHeroFontColor(heroFontColorContent.content);
+  }, [heroFontColorContent]);
 
   const handleOpenCreate = () => {
     setEditingHotspot(null);
@@ -264,6 +269,11 @@ const Admin = () => {
     } else if (heroBgImageContent?.content) {
       // Clear the image if removed
       await updateSiteContent.mutateAsync({ key: "hero_bg_image", content: "" });
+    }
+    if (heroFontColor) {
+      await updateSiteContent.mutateAsync({ key: "hero_font_color", content: heroFontColor });
+    } else if (heroFontColorContent?.content) {
+      await updateSiteContent.mutateAsync({ key: "hero_font_color", content: "" });
     }
   };
 
@@ -722,6 +732,23 @@ const Admin = () => {
                       folder="hero"
                     />
                   </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="hero_font_color">Colore Font Hero (esadecimale)</Label>
+                    <Input
+                      id="hero_font_color"
+                      value={heroFontColor}
+                      onChange={(e) => setHeroFontColor(e.target.value)}
+                      placeholder="Es: #FFFFFF"
+                    />
+                    {heroFontColor && (
+                      <div 
+                        className="w-full h-8 rounded border flex items-center justify-center text-sm font-bold"
+                        style={{ backgroundColor: homepageBgColor || '#000', color: heroFontColor }}
+                      >
+                        Anteprima testo
+                      </div>
+                    )}
+                  </div>
                   <div className="flex justify-end">
                     <Button 
                       onClick={handleSaveHero}
@@ -729,7 +756,8 @@ const Admin = () => {
                         heroHeadline === heroHeadlineContent?.content && 
                         heroSubtitle === heroSubtitleContent?.content && 
                         homepageBgColor === (homepageBgColorContent?.content || "") &&
-                        heroBgImage === (heroBgImageContent?.content || "")
+                        heroBgImage === (heroBgImageContent?.content || "") &&
+                        heroFontColor === (heroFontColorContent?.content || "")
                       )}
                     >
                       {updateSiteContent.isPending && (

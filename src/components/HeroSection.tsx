@@ -55,9 +55,11 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
   const { data: decoHeroLB } = useSiteContent("deco_hero_left_bottom");
   const { data: decoHeroRT } = useSiteContent("deco_hero_right_top");
   const { data: decoHeroRB } = useSiteContent("deco_hero_right_bottom");
+  const { data: heroFontColorContent } = useSiteContent("hero_font_color");
 
   const heroBgImage = heroBgImageContent?.content || null;
   const hasHeroBg = !!heroBgImage;
+  const heroFontColor = heroFontColorContent?.content || null;
 
   const headlineText = heroHeadlineContent?.content || null;
   const subtitleText = heroSubtitleContent?.content || null;
@@ -144,24 +146,41 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
 
         <div className="max-w-4xl mx-auto w-full flex flex-col items-center relative z-10 -mt-12">
           {/* Headline */}
-          <h1 className={`font-sans text-[32px] md:text-[48px] font-bold leading-[1.1] text-center ${hasHeroBg ? "text-white" : "text-foreground"}`}>
+          <h1
+            className={`font-sans text-[32px] md:text-[48px] font-bold leading-[1.1] text-center ${!heroFontColor ? (hasHeroBg ? "text-white" : "text-foreground") : ""}`}
+            style={heroFontColor ? { color: heroFontColor } : undefined}
+          >
             {headline}
           </h1>
 
           {/* Subtitle */}
-          <p className={`font-sans text-xl md:text-2xl font-bold text-center mt-8 max-w-md mx-auto ${hasHeroBg ? "text-white/90" : "text-foreground"}`}>
+          <p
+            className={`font-sans text-xl md:text-2xl font-bold text-center mt-8 max-w-md mx-auto ${!heroFontColor ? (hasHeroBg ? "text-white/90" : "text-foreground") : ""}`}
+            style={heroFontColor ? { color: heroFontColor } : undefined}
+          >
             {subtitle}
           </p>
 
           {/* CTA Text */}
-          <p className={`font-sans text-base md:text-xl font-bold text-center mt-6 ${hasHeroBg ? "text-white" : "text-foreground"}`}>
+          <p
+            className={`font-sans text-base md:text-xl font-bold text-center mt-6 ${!heroFontColor ? (hasHeroBg ? "text-white" : "text-foreground") : ""}`}
+            style={heroFontColor ? { color: heroFontColor } : undefined}
+          >
             {exploreCta}
           </p>
 
           {/* Scroll indicator */}
           <div className="mt-8 flex flex-col items-center gap-1">
-            <span className="text-xs font-medium text-white/70">{t("scrollDown")}</span>
-            <ChevronDown className="w-8 h-8 animate-bounce text-white/80" />
+            <span
+              className={`text-xs font-medium ${!heroFontColor ? "text-white/70" : ""}`}
+              style={heroFontColor ? { color: heroFontColor, opacity: 0.7 } : undefined}
+            >
+              {t("scrollDown")}
+            </span>
+            <ChevronDown
+              className={`w-8 h-8 animate-bounce ${!heroFontColor ? "text-white/80" : ""}`}
+              style={heroFontColor ? { color: heroFontColor, opacity: 0.8 } : undefined}
+            />
           </div>
         </div>
       </div>
