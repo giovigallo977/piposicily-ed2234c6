@@ -1,8 +1,14 @@
 
 
-## Piano: Colore bianco fisso per indicatore scroll
+## Piano: Tradurre "Scorri" con il sistema multilingua
 
-### Modifica in `src/components/HeroSection.tsx`
+La scritta "Scorri" sulla riga 163 di `HeroSection.tsx` è hardcoded in italiano. Va aggiunta al sistema di traduzione.
 
-**Righe 163-164:** Rimuovere le classi condizionali e usare sempre `text-white` per "Scorri" e `text-white` per la freccia ChevronDown.
+### Modifiche
+
+1. **`src/contexts/LanguageContext.tsx`** — Aggiungere chiave `scrollDown`:
+   - IT: `"Scorri"`
+   - EN: `"Scroll"`
+
+2. **`src/components/HeroSection.tsx`** — Riga 163: sostituire `"Scorri"` con `t("scrollDown")`
 
