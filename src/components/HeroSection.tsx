@@ -158,19 +158,11 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
             {exploreCta}
           </p>
 
-          {/* Unlock Button */}
-          <button
-            onClick={() => setPremiumOpen(true)}
-            className={`mt-8 px-8 py-3 rounded-full font-bold text-base transition-colors shadow-lg ${hasHeroBg ? "bg-white text-foreground hover:bg-white/90" : "bg-foreground text-background hover:bg-foreground/90"}`}
-          >
-            Sblocca Pipo a 4,99€
-          </button>
-        </div>
-
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1">
-          <span className={`hidden md:block text-xs font-medium ${hasHeroBg ? "text-white/50" : "text-foreground/40"}`}>Scorri</span>
-          <ChevronDown className={`w-8 h-8 md:w-10 md:h-10 animate-bounce ${hasHeroBg ? "text-white/60" : "text-foreground/50"}`} />
+          {/* Scroll indicator */}
+          <div className="mt-8 flex flex-col items-center gap-1">
+            <span className={`text-xs font-medium ${hasHeroBg ? "text-white/50" : "text-foreground/40"}`}>Scorri</span>
+            <ChevronDown className={`w-8 h-8 animate-bounce ${hasHeroBg ? "text-white/60" : "text-foreground/50"}`} />
+          </div>
         </div>
       </div>
 
