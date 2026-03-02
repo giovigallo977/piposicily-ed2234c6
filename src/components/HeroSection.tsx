@@ -130,7 +130,7 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
           <img src={decoHeroRB.content} alt="" className="absolute right-2 bottom-[40%] w-20 lg:w-28 hidden md:block pointer-events-none select-none opacity-80" />
         )}
 
-        <div className="max-w-4xl mx-auto w-full md:flex md:flex-col md:items-center relative z-10 -mt-12">
+        <div className="max-w-4xl mx-auto w-full flex flex-col items-center relative z-10 -mt-12">
           {/* Headline */}
           <h1 className="font-sans text-[32px] md:text-[48px] font-bold leading-[1.1] text-foreground text-center">
             {headline}
