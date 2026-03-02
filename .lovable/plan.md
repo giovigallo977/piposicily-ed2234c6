@@ -1,59 +1,27 @@
 
 
-## Piano: Hero fullscreen con scroll verso categorie
+## Piano: Bottone CTA + layout hero migliorato
 
-### Cosa cambia
+### Modifiche in `src/components/HeroSection.tsx`
 
-Separare la sezione hero in due parti:
-1. **Schermo 1** (fullscreen): Header + Headline + Subtitle + CTA text, centrati verticalmente, occupano `min-h-[100dvh]` (usando `dvh` per PWA/mobile che tiene conto della barra browser)
-2. **Schermo 2** (sotto scroll): Griglia categorie + Mission
+**1. Aggiungere stato per PremiumModal**
+- Importare `useState` e `PremiumModal`
+- Aggiungere `const [premiumOpen, setPremiumOpen] = useState(false)`
 
-### File da modificare
+**2. Riorganizzare spaziatura verticale del contenuto hero (linee 131-146)**
 
-**`src/components/HeroSection.tsx`**
+Layout desiderato dall'alto verso il basso, dentro il container centrato:
+- Headline ("La Sicilia fuori dal turismo di massa") — spostato leggermente piu' in alto con margin-top negativo o padding-top ridotto
+- Subtitle ("Luoghi nascosti...") — `mt-8` invece di `mt-6`, per piu' respiro
+- CTA text ("Una guida per perdersi...") — `mt-6` invece di `mt-10`
+- **Nuovo bottone** "Sblocca Pipo a 4,99€" — `mt-8`, stile bold, rounded-full, colore primary, apre PremiumModal al click
 
-- Wrappare headline + subtitle + CTA in un container con `min-h-[100dvh]` e `flex items-center justify-center` (sottraendo l'altezza dell'header ~72px con `pt-0` dato che l'header e' fuori)
-- Spostare la griglia categorie e MissionSection fuori da questo container fullscreen, in modo che appaiano solo scrollando
-- Aggiungere un indicatore visivo di scroll (freccia animata verso il basso) in fondo alla sezione hero fullscreen
+**3. Freccia scroll**
+- Gia' presente ma solo `w-8 h-8`. Renderla piu' visibile su widescreen: `w-8 h-8 md:w-10 md:h-10`
+- Aggiungere testo piccolo sopra la freccia tipo "Scorri" visibile solo su desktop
 
-**`src/pages/Index.tsx`**
+**4. Aggiungere `<PremiumModal>` nel render**
+- `<PremiumModal open={premiumOpen} onOpenChange={setPremiumOpen} />` alla fine della section
 
-- Rimuovere il passaggio di `min-h-[75vh]` dalla section, dato che ora il layout e' gestito internamente con due blocchi separati
-
-### Struttura risultante
-
-```text
-┌─────────────────────────┐
-│  Header (Pipo logo)     │  ← gia' fuori da HeroSection
-├─────────────────────────┤
-│                         │
-│  "La Sicilia fuori      │
-│   dal turismo di massa" │  ← fullscreen (100dvh - header)
-│                         │
-│  Subtitle               │
-│  CTA italic             │
-│                         │
-│        ↓ (scroll hint)  │
-├─────────────────────────┤
-│  ┌──────┐ ┌──────┐     │
-│  │ Cat1 │ │ Cat2 │     │  ← appare scrollando
-│  └──────┘ └──────┘     │
-│  ┌──────┐ ┌──────┐     │
-│  │ Cat3 │ │ Cat4 │     │
-│  └──────┘ └──────┘     │
-│  ┌──────┐ ┌──────┐     │
-│  │Colle.│ │Free  │     │
-│  └──────┘ └──────┘     │
-│                         │
-│  Mission section        │
-└─────────────────────────┘
-```
-
-### Dettaglio tecnico
-
-1. La section esterna perde `min-h-[75vh]` e `justify-center`
-2. Nuovo div interno per l'hero text: `min-h-[calc(100dvh-72px)] flex flex-col items-center justify-center`
-3. Le decorative graphics restano posizionate nella zona fullscreen
-4. Freccia scroll: un `ChevronDown` animato con `animate-bounce`, posizionato in basso al centro della zona fullscreen
-5. La griglia categorie mantiene stile identico, solo spostata sotto il blocco fullscreen
+### Nessun altro file da modificare
 
