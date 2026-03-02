@@ -1,3 +1,4 @@
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 
@@ -5,8 +6,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useHotspots } from "@/hooks/useHotspots";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { useTranslatedContent } from "@/hooks/useTranslation";
-import { useMemo } from "react";
 import MissionSection from "@/components/MissionSection";
+import PremiumModal from "@/components/PremiumModal";
 
 const DECO_KEYS = [
   "deco_hero_left_top",
@@ -29,6 +30,7 @@ const CATEGORIES = [
 const HeroSection = ({ bgColor }: HeroSectionProps) => {
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const [premiumOpen, setPremiumOpen] = useState(false);
   const { data: hotspots } = useHotspots();
 
   const { data: heroHeadlineContent } = useSiteContent("hero_headline");
@@ -128,26 +130,35 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
           <img src={decoHeroRB.content} alt="" className="absolute right-2 bottom-[40%] w-20 lg:w-28 hidden md:block pointer-events-none select-none opacity-80" />
         )}
 
-        <div className="max-w-4xl mx-auto w-full md:flex md:flex-col md:items-center relative z-10">
+        <div className="max-w-4xl mx-auto w-full md:flex md:flex-col md:items-center relative z-10 -mt-12">
           {/* Headline */}
           <h1 className="font-sans text-[32px] md:text-[48px] font-bold leading-[1.1] text-foreground text-left md:text-center">
             {headline}
           </h1>
 
           {/* Subtitle */}
-          <p className="font-sans text-base font-medium text-foreground text-left md:text-center mt-6 max-w-md md:mx-auto">
+          <p className="font-sans text-base font-medium text-foreground text-left md:text-center mt-8 max-w-md md:mx-auto">
             {subtitle}
           </p>
 
           {/* CTA Text */}
-          <p className="font-sans text-lg font-bold italic text-foreground text-center mt-10">
+          <p className="font-sans text-lg font-bold italic text-foreground text-center mt-6">
             {exploreCta}
           </p>
+
+          {/* Unlock Button */}
+          <button
+            onClick={() => setPremiumOpen(true)}
+            className="mt-8 px-8 py-3 rounded-full bg-primary text-primary-foreground font-bold text-base hover:bg-primary/90 transition-colors shadow-lg"
+          >
+            Sblocca Pipo a 4,99€
+          </button>
         </div>
 
         {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
-          <ChevronDown className="w-8 h-8 text-foreground/50 animate-bounce" />
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1">
+          <span className="hidden md:block text-xs text-foreground/40 font-medium">Scorri</span>
+          <ChevronDown className="w-8 h-8 md:w-10 md:h-10 text-foreground/50 animate-bounce" />
         </div>
       </div>
 
@@ -228,6 +239,7 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
           />
         </div>
       </div>
+      <PremiumModal open={premiumOpen} onOpenChange={setPremiumOpen} />
     </section>
   );
 };
