@@ -1,27 +1,14 @@
 
 
-## Piano: Bottone CTA + layout hero migliorato
+## Piano: Centrare testi hero + fix contrasto bottone
 
-### Modifiche in `src/components/HeroSection.tsx`
+### File: `src/components/HeroSection.tsx`
 
-**1. Aggiungere stato per PremiumModal**
-- Importare `useState` e `PremiumModal`
-- Aggiungere `const [premiumOpen, setPremiumOpen] = useState(false)`
+**1. Centrare tutti i testi (anche su mobile)**
+- Riga 135: headline da `text-left md:text-center` → `text-center`
+- Riga 140: subtitle da `text-left md:text-center` → `text-center`
 
-**2. Riorganizzare spaziatura verticale del contenuto hero (linee 131-146)**
-
-Layout desiderato dall'alto verso il basso, dentro il container centrato:
-- Headline ("La Sicilia fuori dal turismo di massa") — spostato leggermente piu' in alto con margin-top negativo o padding-top ridotto
-- Subtitle ("Luoghi nascosti...") — `mt-8` invece di `mt-6`, per piu' respiro
-- CTA text ("Una guida per perdersi...") — `mt-6` invece di `mt-10`
-- **Nuovo bottone** "Sblocca Pipo a 4,99€" — `mt-8`, stile bold, rounded-full, colore primary, apre PremiumModal al click
-
-**3. Freccia scroll**
-- Gia' presente ma solo `w-8 h-8`. Renderla piu' visibile su widescreen: `w-8 h-8 md:w-10 md:h-10`
-- Aggiungere testo piccolo sopra la freccia tipo "Scorri" visibile solo su desktop
-
-**4. Aggiungere `<PremiumModal>` nel render**
-- `<PremiumModal open={premiumOpen} onOpenChange={setPremiumOpen} />` alla fine della section
-
-### Nessun altro file da modificare
+**2. Fix contrasto bottone "Sblocca Pipo a 4,99€"**
+- Riga 152: cambiare da `bg-primary text-primary-foreground` (bianco su lime verde brillante, poco leggibile) a `bg-foreground text-background` (testo chiaro su sfondo scuro, massimo contrasto) oppure usare il verde Pipo scuro `bg-olive text-white` che ha contrasto garantito (come da design principles)
+- Approccio consigliato: `bg-foreground text-background` per massima leggibilità, con `hover:bg-foreground/90`
 
