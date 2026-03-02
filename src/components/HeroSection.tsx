@@ -126,7 +126,7 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
         {hasHeroBg && (
           <>
             <img src={heroBgImage} alt="" className="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none select-none" />
-            <div className="absolute inset-0 bg-black/40 z-0" />
+            
           </>
         )}
 
