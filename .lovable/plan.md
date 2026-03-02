@@ -1,16 +1,12 @@
 
 
-## Piano: Uniformare stili subtitle e CTA text
+## Piano: Migliorare dimensioni testi hero
 
-### Problema
-- Il subtitle ("Luoghi nascosti...") ha `text-base font-medium` — troppo piccolo e leggero
-- Il CTA ("Una guida per perdersi...") ha `text-lg font-bold italic` — bold ma in corsivo
+### Modifiche in `src/components/HeroSection.tsx`
 
-### Fix in `src/components/HeroSection.tsx`
+**Subtitle ("Luoghi nascosti..."):** da `text-lg` a `text-xl md:text-2xl` — più grande, specialmente su desktop
 
-**Riga 152 (subtitle):** cambiare da `text-base font-medium` a `text-lg font-bold` — stesso peso e dimensione del CTA
+**CTA text ("Una guida per perdersi..."):** da `text-lg` a `text-base md:text-xl` — leggermente più piccolo del subtitle ma comunque più leggibile su desktop rispetto a ora
 
-**Riga 157 (CTA text):** rimuovere `italic` dalla classe, mantenendo `text-lg font-bold`
-
-Risultato: entrambi i testi saranno `text-lg font-bold` senza corsivo.
+Entrambi mantengono `font-bold` e nessun corsivo.
 
