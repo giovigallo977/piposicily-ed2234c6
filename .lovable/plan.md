@@ -1,23 +1,16 @@
 
 
-## Piano: Fix bottone "Salva Hero" disabilitato
+## Piano: Uniformare stili subtitle e CTA text
 
 ### Problema
+- Il subtitle ("Luoghi nascosti...") ha `text-base font-medium` — troppo piccolo e leggero
+- Il CTA ("Una guida per perdersi...") ha `text-lg font-bold italic` — bold ma in corsivo
 
-Il bottone "Salva Hero" (riga 728-732) ha una condizione `disabled` che controlla solo `heroHeadline`, `heroSubtitle` e `homepageBgColor`. Non include `heroBgImage`, quindi quando cambi solo l'immagine di sfondo il bottone resta disabilitato.
+### Fix in `src/components/HeroSection.tsx`
 
-### Fix in `src/pages/Admin.tsx` (righe 728-732)
+**Riga 152 (subtitle):** cambiare da `text-base font-medium` a `text-lg font-bold` — stesso peso e dimensione del CTA
 
-Aggiungere il confronto `heroBgImage === (heroBgImageContent?.content || "")` alla condizione disabled:
+**Riga 157 (CTA text):** rimuovere `italic` dalla classe, mantenendo `text-lg font-bold`
 
-```typescript
-disabled={updateSiteContent.isPending || (
-  heroHeadline === heroHeadlineContent?.content && 
-  heroSubtitle === heroSubtitleContent?.content && 
-  homepageBgColor === (homepageBgColorContent?.content || "") &&
-  heroBgImage === (heroBgImageContent?.content || "")
-)}
-```
-
-Nessun altro file da modificare.
+Risultato: entrambi i testi saranno `text-lg font-bold` senza corsivo.
 
