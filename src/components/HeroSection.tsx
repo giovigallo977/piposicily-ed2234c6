@@ -160,7 +160,7 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
 
           {/* Scroll indicator */}
           <div className="mt-8 flex flex-col items-center gap-1">
-            <span className="text-xs font-medium text-white/70">Scorri</span>
+            <span className="text-xs font-medium text-white/70">{t("scrollDown")}</span>
             <ChevronDown className="w-8 h-8 animate-bounce text-white/80" />
           </div>
         </div>

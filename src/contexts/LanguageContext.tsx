@@ -77,6 +77,9 @@ export const translations = {
 
     // Zone
     zone: "zona",
+
+    // Scroll
+    scrollDown: "Scorri",
   },
   en: {
     // Navigation
@@ -145,6 +148,9 @@ export const translations = {
 
     // Zone
     zone: "zone",
+
+    // Scroll
+    scrollDown: "Scroll",
   },
 } as const;
 
