@@ -401,6 +401,7 @@ const Admin = () => {
                               <SelectItem value="Natura">Natura</SelectItem>
                               <SelectItem value="Borghi">Borghi</SelectItem>
                               <SelectItem value="Arte e Cultura">Arte e Cultura</SelectItem>
+                              <SelectItem value="Free Spots">Free Spots</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
