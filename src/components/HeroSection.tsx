@@ -149,12 +149,12 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
           </h1>
 
           {/* Subtitle */}
-          <p className={`font-sans text-lg font-bold text-center mt-8 max-w-md mx-auto ${hasHeroBg ? "text-white/90" : "text-foreground"}`}>
+          <p className={`font-sans text-xl md:text-2xl font-bold text-center mt-8 max-w-md mx-auto ${hasHeroBg ? "text-white/90" : "text-foreground"}`}>
             {subtitle}
           </p>
 
           {/* CTA Text */}
-          <p className={`font-sans text-lg font-bold text-center mt-6 ${hasHeroBg ? "text-white" : "text-foreground"}`}>
+          <p className={`font-sans text-base md:text-xl font-bold text-center mt-6 ${hasHeroBg ? "text-white" : "text-foreground"}`}>
             {exploreCta}
           </p>
 
