@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { ChevronDown } from "lucide-react";
 
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useHotspots } from "@/hooks/useHotspots";
@@ -108,111 +109,124 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
 
   return (
     <section
-      className="relative px-6 py-12 flex flex-col min-h-[75vh] justify-center overflow-hidden"
+      className="relative flex flex-col overflow-hidden"
       style={{ backgroundColor: bgColor || undefined }}
     >
-      {/* Decorative graphics - hero laterals (desktop only) */}
-      {decoHeroLT?.content && (
-        <img src={decoHeroLT.content} alt="" className="absolute left-2 top-16 w-20 lg:w-28 hidden md:block pointer-events-none select-none opacity-80" />
-      )}
-      {decoHeroRT?.content && (
-        <img src={decoHeroRT.content} alt="" className="absolute right-2 top-16 w-20 lg:w-28 hidden md:block pointer-events-none select-none opacity-80" />
-      )}
-      {decoHeroLB?.content && (
-        <img src={decoHeroLB.content} alt="" className="absolute left-2 bottom-[40%] w-20 lg:w-28 hidden md:block pointer-events-none select-none opacity-80" />
-      )}
-      {decoHeroRB?.content && (
-        <img src={decoHeroRB.content} alt="" className="absolute right-2 bottom-[40%] w-20 lg:w-28 hidden md:block pointer-events-none select-none opacity-80" />
-      )}
+      {/* Fullscreen hero text area */}
+      <div className="relative min-h-[100dvh] flex flex-col items-center justify-center px-6">
+        {/* Decorative graphics - hero laterals (desktop only) */}
+        {decoHeroLT?.content && (
+          <img src={decoHeroLT.content} alt="" className="absolute left-2 top-16 w-20 lg:w-28 hidden md:block pointer-events-none select-none opacity-80" />
+        )}
+        {decoHeroRT?.content && (
+          <img src={decoHeroRT.content} alt="" className="absolute right-2 top-16 w-20 lg:w-28 hidden md:block pointer-events-none select-none opacity-80" />
+        )}
+        {decoHeroLB?.content && (
+          <img src={decoHeroLB.content} alt="" className="absolute left-2 bottom-[40%] w-20 lg:w-28 hidden md:block pointer-events-none select-none opacity-80" />
+        )}
+        {decoHeroRB?.content && (
+          <img src={decoHeroRB.content} alt="" className="absolute right-2 bottom-[40%] w-20 lg:w-28 hidden md:block pointer-events-none select-none opacity-80" />
+        )}
 
-      <div className="max-w-4xl mx-auto w-full md:flex md:flex-col md:items-center relative z-10">
-        {/* Headline */}
-        <h1 className="font-sans text-[32px] md:text-[48px] font-bold leading-[1.1] text-foreground text-left md:text-center">
-          {headline}
-        </h1>
+        <div className="max-w-4xl mx-auto w-full md:flex md:flex-col md:items-center relative z-10">
+          {/* Headline */}
+          <h1 className="font-sans text-[32px] md:text-[48px] font-bold leading-[1.1] text-foreground text-left md:text-center">
+            {headline}
+          </h1>
 
-        {/* Subtitle */}
-        <p className="font-sans text-base font-medium text-foreground text-left md:text-center mt-6 max-w-md md:mx-auto">
-          {subtitle}
-        </p>
+          {/* Subtitle */}
+          <p className="font-sans text-base font-medium text-foreground text-left md:text-center mt-6 max-w-md md:mx-auto">
+            {subtitle}
+          </p>
 
-        {/* CTA Text */}
-        <p className="font-sans text-lg font-bold italic text-foreground text-center mt-10">
-          {exploreCta}
-        </p>
-
-        {/* 2x2 Category Grid */}
-        <div className="grid grid-cols-2 gap-3 mt-6 w-full max-w-lg md:mx-auto">
-          {CATEGORIES.map((cat) => {
-            const img = getCategoryImage(cat.dbValue);
-            return (
-              <button
-                key={cat.dbValue}
-                onClick={() => handleCategoryClick(cat.dbValue)}
-                className="relative aspect-square rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
-              >
-                {img ? (
-                  <img
-                    src={img}
-                    alt={t(cat.key)}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-muted" />
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-sm md:text-base font-bold text-left leading-tight drop-shadow-lg">
-                  {t(cat.key)}
-                </span>
-              </button>
-            );
-          })}
-          {/* Collezioni Card */}
-          <button
-            onClick={() => navigate("/collezioni")}
-            className="relative aspect-square rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
-          >
-            {collezioniImage ? (
-              <img
-                src={collezioniImage}
-                alt={t("collections")}
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-              />
-            ) : (
-              <div className="w-full h-full bg-muted" />
-            )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-            <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-sm md:text-base font-bold text-left leading-tight drop-shadow-lg">
-              {t("collections")}
-            </span>
-          </button>
-
-          {/* Free Spots Card */}
-          <button
-            onClick={() => navigate("/free-spots")}
-            className="relative aspect-square rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
-          >
-            {catImgFreeSpots?.content ? (
-              <img
-                src={catImgFreeSpots.content}
-                alt="Lavorare, Studiare & Eat"
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-              />
-            ) : (
-              <div className="w-full h-full bg-muted" />
-            )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-            <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-left leading-tight drop-shadow-lg flex flex-col">
-              <span className="text-sm md:text-base font-bold">{freeSpotsLabel}</span>
-              <span className="text-xs md:text-sm font-medium opacity-90">{freeSpotsSubLabel}</span>
-            </span>
-          </button>
+          {/* CTA Text */}
+          <p className="font-sans text-lg font-bold italic text-foreground text-center mt-10">
+            {exploreCta}
+          </p>
         </div>
 
-        {/* Mission Content from DB */}
-        <MissionSection
-          missionContent={missionContent?.content}
-        />
+        {/* Scroll indicator */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
+          <ChevronDown className="w-8 h-8 text-foreground/50 animate-bounce" />
+        </div>
+      </div>
+
+      {/* Categories + Mission (visible on scroll) */}
+      <div className="px-6 py-12">
+        <div className="max-w-4xl mx-auto w-full md:flex md:flex-col md:items-center">
+          {/* 2x2 Category Grid */}
+          <div className="grid grid-cols-2 gap-3 w-full max-w-lg md:mx-auto">
+            {CATEGORIES.map((cat) => {
+              const img = getCategoryImage(cat.dbValue);
+              return (
+                <button
+                  key={cat.dbValue}
+                  onClick={() => handleCategoryClick(cat.dbValue)}
+                  className="relative aspect-square rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
+                >
+                  {img ? (
+                    <img
+                      src={img}
+                      alt={t(cat.key)}
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-muted" />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                  <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-sm md:text-base font-bold text-left leading-tight drop-shadow-lg">
+                    {t(cat.key)}
+                  </span>
+                </button>
+              );
+            })}
+            {/* Collezioni Card */}
+            <button
+              onClick={() => navigate("/collezioni")}
+              className="relative aspect-square rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
+            >
+              {collezioniImage ? (
+                <img
+                  src={collezioniImage}
+                  alt={t("collections")}
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+              ) : (
+                <div className="w-full h-full bg-muted" />
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+              <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-sm md:text-base font-bold text-left leading-tight drop-shadow-lg">
+                {t("collections")}
+              </span>
+            </button>
+
+            {/* Free Spots Card */}
+            <button
+              onClick={() => navigate("/free-spots")}
+              className="relative aspect-square rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
+            >
+              {catImgFreeSpots?.content ? (
+                <img
+                  src={catImgFreeSpots.content}
+                  alt="Lavorare, Studiare & Eat"
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                />
+              ) : (
+                <div className="w-full h-full bg-muted" />
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+              <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-left leading-tight drop-shadow-lg flex flex-col">
+                <span className="text-sm md:text-base font-bold">{freeSpotsLabel}</span>
+                <span className="text-xs md:text-sm font-medium opacity-90">{freeSpotsSubLabel}</span>
+              </span>
+            </button>
+          </div>
+
+          {/* Mission Content from DB */}
+          <MissionSection
+            missionContent={missionContent?.content}
+          />
+        </div>
       </div>
     </section>
   );
