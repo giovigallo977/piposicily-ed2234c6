@@ -728,7 +728,8 @@ const Admin = () => {
                       disabled={updateSiteContent.isPending || (
                         heroHeadline === heroHeadlineContent?.content && 
                         heroSubtitle === heroSubtitleContent?.content && 
-                        homepageBgColor === (homepageBgColorContent?.content || "")
+                        homepageBgColor === (homepageBgColorContent?.content || "") &&
+                        heroBgImage === (heroBgImageContent?.content || "")
                       )}
                     >
                       {updateSiteContent.isPending && (
