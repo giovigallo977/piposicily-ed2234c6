@@ -25,12 +25,15 @@ export const useFreeSpots = () => {
   return useQuery({
     queryKey: ["free-spots"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("free_spots")
-        .select("*")
-        .order("ordine", { ascending: true });
-      if (error) throw error;
-      return data as FreeSpot[];
+      const [freeRes, hotspotRes] = await Promise.all([
+        supabase.from("free_spots").select("*"),
+        supabase.from("hotspots").select("*").eq("categoria", "Free Spots"),
+      ]);
+      if (freeRes.error) throw freeRes.error;
+      if (hotspotRes.error) throw hotspotRes.error;
+      const combined = [...(freeRes.data || []), ...(hotspotRes.data || [])]
+        .sort((a, b) => (a.ordine ?? 999) - (b.ordine ?? 999));
+      return combined as FreeSpot[];
     },
   });
 };
