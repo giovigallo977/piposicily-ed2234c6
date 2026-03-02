@@ -132,12 +132,12 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
 
         <div className="max-w-4xl mx-auto w-full md:flex md:flex-col md:items-center relative z-10 -mt-12">
           {/* Headline */}
-          <h1 className="font-sans text-[32px] md:text-[48px] font-bold leading-[1.1] text-foreground text-left md:text-center">
+          <h1 className="font-sans text-[32px] md:text-[48px] font-bold leading-[1.1] text-foreground text-center">
             {headline}
           </h1>
 
           {/* Subtitle */}
-          <p className="font-sans text-base font-medium text-foreground text-left md:text-center mt-8 max-w-md md:mx-auto">
+          <p className="font-sans text-base font-medium text-foreground text-center mt-8 max-w-md mx-auto">
             {subtitle}
           </p>
 
@@ -149,7 +149,7 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
           {/* Unlock Button */}
           <button
             onClick={() => setPremiumOpen(true)}
-            className="mt-8 px-8 py-3 rounded-full bg-primary text-primary-foreground font-bold text-base hover:bg-primary/90 transition-colors shadow-lg"
+            className="mt-8 px-8 py-3 rounded-full bg-foreground text-background font-bold text-base hover:bg-foreground/90 transition-colors shadow-lg"
           >
             Sblocca Pipo a 4,99€
           </button>
