@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { useHotspots, useCreateHotspot, useUpdateHotspot, useDeleteHotspot, Hotspot, HotspotInsert } from "@/hooks/useHotspots";
+import { useHotspots, useCreateHotspot, useUpdateHotspot, useDeleteHotspot, useReorderHotspots, Hotspot, HotspotInsert } from "@/hooks/useHotspots";
 import { useCollections, useHotspotCollections, useSyncHotspotCollections } from "@/hooks/useCollections";
 import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,7 +18,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Plus, Pencil, Trash2, LogOut, ArrowLeft, FileText, MapPin, FolderOpen, Users, Coffee } from "lucide-react";
+import { Loader2, Plus, Pencil, Trash2, LogOut, ArrowLeft, FileText, MapPin, FolderOpen, Users, Coffee, ArrowUp, ArrowDown } from "lucide-react";
 import pipoAlien from "@/assets/pipo-alien-new.png";
 import AdminCollectionsTab from "@/components/AdminCollectionsTab";
 import AdminUsersTab from "@/components/AdminUsersTab";
@@ -44,6 +44,7 @@ const Admin = () => {
   const createMutation = useCreateHotspot();
   const updateMutation = useUpdateHotspot();
   const deleteMutation = useDeleteHotspot();
+  const reorderMutation = useReorderHotspots();
   const { data: allCollections } = useCollections();
   const syncHotspotCollections = useSyncHotspotCollections();
   const [selectedCollectionIds, setSelectedCollectionIds] = useState<string[]>([]);
@@ -566,91 +567,141 @@ const Admin = () => {
                 </Dialog>
               </div>
 
-              {/* Hotspots list */}
-              <div className="space-y-4">
+              {/* Hotspots list grouped by category */}
+              <div className="space-y-6">
                 {hotspots && hotspots.length > 0 ? (
-                  hotspots.map((hotspot) => (
-                    <Card key={hotspot.id} className="overflow-hidden">
-                      <div className="flex items-start gap-4 p-4">
-                        {/* Image thumbnail */}
-                        {hotspot.foto_principale && (
-                          <div className="flex-shrink-0">
-                            <img
-                              src={hotspot.foto_principale}
-                              alt={hotspot.titolo}
-                              className="w-20 h-20 object-cover rounded-lg"
-                            />
-                          </div>
-                        )}
-                        
-                        {/* Content */}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between gap-2">
-                            <div>
-                              <h3 className="font-semibold text-lg truncate">{hotspot.titolo}</h3>
-                              <div className="flex flex-wrap gap-2 mt-1">
-                                {hotspot.categoria && (
-                                  <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-muted text-muted-foreground">
-                                    {hotspot.categoria}
-                                  </span>
-                                )}
-                                {hotspot.zona && (
-                                  <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-olive/20 text-olive">
-                                    📍 {hotspot.zona}
-                                  </span>
-                                )}
-                              </div>
-                              <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                                {hotspot.descrizione_breve}
-                              </p>
-                              {hotspot.tags && hotspot.tags.length > 0 && (
-                                <div className="flex flex-wrap gap-1 mt-2">
-                                  {hotspot.tags.filter(Boolean).map((tag, i) => (
-                                    <span key={i} className="inline-flex items-center px-1.5 py-0.5 rounded text-xs bg-muted/50 text-muted-foreground font-mono">
-                                      {tag}
-                                    </span>
-                                  ))}
-                                </div>
-                              )}
-                            </div>
-                            <div className="flex items-center gap-1 flex-shrink-0">
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                onClick={() => handleOpenEdit(hotspot)}
-                              >
-                                <Pencil className="h-4 w-4" />
-                              </Button>
-                              <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                  <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
-                                    <Trash2 className="h-4 w-4" />
+                  (() => {
+                    const grouped = hotspots.reduce<Record<string, Hotspot[]>>((acc, h) => {
+                      const cat = h.categoria || "Senza Categoria";
+                      if (!acc[cat]) acc[cat] = [];
+                      acc[cat].push(h);
+                      return acc;
+                    }, {});
+                    // Sort each group by ordine
+                    Object.values(grouped).forEach(arr => arr.sort((a, b) => (a.ordine ?? 999) - (b.ordine ?? 999)));
+
+                    const handleSwap = (catItems: Hotspot[], idx: number, direction: "up" | "down") => {
+                      const targetIdx = direction === "up" ? idx - 1 : idx + 1;
+                      if (targetIdx < 0 || targetIdx >= catItems.length) return;
+                      const a = catItems[idx];
+                      const b = catItems[targetIdx];
+                      reorderMutation.mutate([
+                        { id: a.id, ordine: b.ordine ?? 0 },
+                        { id: b.id, ordine: a.ordine ?? 0 },
+                      ]);
+                    };
+
+                    return Object.entries(grouped).map(([categoria, items]) => (
+                      <div key={categoria}>
+                        <h3 className="font-heading text-lg font-bold mb-3 flex items-center gap-2">
+                          {categoria}
+                          <span className="text-xs font-normal text-muted-foreground">({items.length})</span>
+                        </h3>
+                        <div className="space-y-2">
+                          {items.map((hotspot, idx) => (
+                            <Card key={hotspot.id} className="overflow-hidden">
+                              <div className="flex items-start gap-4 p-4">
+                                {/* Reorder arrows */}
+                                <div className="flex flex-col gap-1 flex-shrink-0 pt-1">
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-6 w-6"
+                                    disabled={idx === 0 || reorderMutation.isPending}
+                                    onClick={() => handleSwap(items, idx, "up")}
+                                  >
+                                    <ArrowUp className="h-3 w-3" />
                                   </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                  <AlertDialogHeader>
-                                    <AlertDialogTitle>Eliminare questo hotspot?</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                      Questa azione non può essere annullata. L'hotspot "{hotspot.titolo}" sarà eliminato definitivamente.
-                                    </AlertDialogDescription>
-                                  </AlertDialogHeader>
-                                  <AlertDialogFooter>
-                                    <AlertDialogCancel>Annulla</AlertDialogCancel>
-                                    <AlertDialogAction 
-                                      onClick={() => handleDelete(hotspot.id)}
-                                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                    >
-                                      Elimina
-                                    </AlertDialogAction>
-                                  </AlertDialogFooter>
-                                </AlertDialogContent>
-                              </AlertDialog>
-                            </div>
-                          </div>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-6 w-6"
+                                    disabled={idx === items.length - 1 || reorderMutation.isPending}
+                                    onClick={() => handleSwap(items, idx, "down")}
+                                  >
+                                    <ArrowDown className="h-3 w-3" />
+                                  </Button>
+                                </div>
+
+                                {/* Image thumbnail */}
+                                {hotspot.foto_principale && (
+                                  <div className="flex-shrink-0">
+                                    <img
+                                      src={hotspot.foto_principale}
+                                      alt={hotspot.titolo}
+                                      className="w-20 h-20 object-cover rounded-lg"
+                                    />
+                                  </div>
+                                )}
+                                
+                                {/* Content */}
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-start justify-between gap-2">
+                                    <div>
+                                      <h3 className="font-semibold text-lg truncate flex items-center gap-2">
+                                        {hotspot.titolo}
+                                        {idx === 0 && (
+                                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-green-100 text-green-800">
+                                            FREE
+                                          </span>
+                                        )}
+                                      </h3>
+                                      <div className="flex flex-wrap gap-2 mt-1">
+                                        {hotspot.zona && (
+                                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-olive/20 text-olive">
+                                            📍 {hotspot.zona}
+                                          </span>
+                                        )}
+                                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-muted text-muted-foreground">
+                                          ordine: {hotspot.ordine ?? 0}
+                                        </span>
+                                      </div>
+                                      <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                                        {hotspot.descrizione_breve}
+                                      </p>
+                                    </div>
+                                    <div className="flex items-center gap-1 flex-shrink-0">
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => handleOpenEdit(hotspot)}
+                                      >
+                                        <Pencil className="h-4 w-4" />
+                                      </Button>
+                                      <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                          <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive">
+                                            <Trash2 className="h-4 w-4" />
+                                          </Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                          <AlertDialogHeader>
+                                            <AlertDialogTitle>Eliminare questo hotspot?</AlertDialogTitle>
+                                            <AlertDialogDescription>
+                                              Questa azione non può essere annullata. L'hotspot "{hotspot.titolo}" sarà eliminato definitivamente.
+                                            </AlertDialogDescription>
+                                          </AlertDialogHeader>
+                                          <AlertDialogFooter>
+                                            <AlertDialogCancel>Annulla</AlertDialogCancel>
+                                            <AlertDialogAction 
+                                              onClick={() => handleDelete(hotspot.id)}
+                                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                            >
+                                              Elimina
+                                            </AlertDialogAction>
+                                          </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                      </AlertDialog>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </Card>
+                          ))}
                         </div>
                       </div>
-                    </Card>
-                  ))
+                    ));
+                  })()
                 ) : (
                   <div className="text-center py-12 text-muted-foreground">
                     <p>Nessun hotspot presente.</p>
