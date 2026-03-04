@@ -1,21 +1,29 @@
 
 
-## Piano: Mostrare hotspot "Free Spots" nella pagina Free Spots
+## Piano: Riordinamento hotspot per categoria nell'admin
 
-### Situazione attuale
-- La pagina Free Spots (`/free-spots`) legge SOLO dalla tabella `free_spots`
-- Gli hotspot con categoria "Free Spots" nella tabella `hotspots` non vengono mostrati in quella pagina
-- Le altre categorie (Luoghi Fantasma, Natura, ecc.) funzionano perche la pagina Esplora filtra dalla tabella `hotspots` per categoria
+### Obiettivo
+Aggiungere nella tab Hotspot dell'admin la possibilità di riordinare gli hotspot **raggruppati per categoria**, così da controllare quale appare per primo (e quindi gratuito) in ogni categoria.
 
-### Modifica
+### Come funziona ora
+- Gli hotspot hanno un campo `ordine` globale
+- La pagina Esplora determina il primo hotspot gratuito per categoria ordinando per `ordine`
+- Nell'admin, la lista hotspot è piatta senza raggruppamento
 
-**`src/hooks/useFreeSpots.ts`** — Nel hook `useFreeSpots`, aggiungere una query parallela alla tabella `hotspots` filtrata per `categoria = "Free Spots"`, e unire i risultati con quelli della tabella `free_spots`, ordinando tutto per `ordine`.
+### Modifiche
 
-In pratica:
-1. Fetch da `free_spots` (come ora)
-2. Fetch da `hotspots` dove `categoria = 'Free Spots'`
-3. Merge dei due array, ordinati per `ordine`
-4. Ritornare il risultato combinato
+**`src/pages/Admin.tsx`** — Nella sezione lista hotspot (riga ~569+):
+1. Raggruppare gli hotspot per categoria (usando un `useMemo`)
+2. Mostrare ogni gruppo con un header categoria
+3. Per ogni gruppo, aggiungere pulsanti freccia su/giù per spostare l'ordine dell'hotspot all'interno della sua categoria
+4. Al click delle frecce, aggiornare il campo `ordine` degli hotspot coinvolti tramite `useUpdateHotspot`
+5. Il primo hotspot di ogni categoria avrà un badge "FREE" visivo per rendere chiaro quale sarà gratuito
 
-Nessuna modifica necessaria a `FreeSpotsPage.tsx` perche gia usa il tipo `Hotspot` per il rendering (`spot as unknown as Hotspot`).
+**`src/hooks/useHotspots.tsx`** — Aggiungere un hook `useReorderHotspot` (mutation batch) per aggiornare l'ordine di due hotspot in un colpo solo (swap).
+
+### Dettaglio tecnico
+- Raggruppamento: `hotspots.reduce()` per `categoria`
+- Riordino: swap dei valori `ordine` tra due hotspot adiacenti nella stessa categoria
+- Nessuna modifica al database: il campo `ordine` esiste già
+- La logica "primo = free" in `ExplorePage` rimane invariata
 
