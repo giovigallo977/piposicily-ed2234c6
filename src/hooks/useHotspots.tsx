@@ -133,3 +133,25 @@ export const useDeleteHotspot = () => {
     },
   });
 };
+
+export const useReorderHotspots = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (updates: { id: string; ordine: number }[]) => {
+      for (const u of updates) {
+        const { error } = await supabase
+          .from("hotspots")
+          .update({ ordine: u.ordine })
+          .eq("id", u.id);
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["hotspots"] });
+    },
+    onError: (error) => {
+      toast.error("Errore nel riordino: " + error.message);
+    },
+  });
+};
