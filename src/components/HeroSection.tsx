@@ -9,12 +9,6 @@ import { useTranslatedContent } from "@/hooks/useTranslation";
 import MissionSection from "@/components/MissionSection";
 import PremiumModal from "@/components/PremiumModal";
 
-const DECO_KEYS = [
-  "deco_hero_left_top",
-  "deco_hero_left_bottom",
-  "deco_hero_right_top",
-  "deco_hero_right_bottom",
-] as const;
 
 interface HeroSectionProps {
   bgColor?: string;

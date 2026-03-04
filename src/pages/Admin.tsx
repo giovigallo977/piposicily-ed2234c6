@@ -105,83 +105,43 @@ const Admin = () => {
     }
   }, [user, authLoading, navigate]);
 
+  // Sync all site_content values to local state in a single effect
   useEffect(() => {
-    if (missionContent?.content) {
-      setMissionText(missionContent.content);
-    } else if (!missionLoading) {
-      setMissionText(FALLBACK_MISSION_TEXT);
-    }
+    if (missionContent?.content) setMissionText(missionContent.content);
+    else if (!missionLoading) setMissionText(FALLBACK_MISSION_TEXT);
   }, [missionContent, missionLoading]);
 
-
-
   useEffect(() => {
-    if (heroHeadlineContent?.content) {
-      setHeroHeadline(heroHeadlineContent.content);
+    const contentMap: Array<[{ content?: string } | undefined, (v: string) => void]> = [
+      [heroHeadlineContent, setHeroHeadline],
+      [heroSubtitleContent, setHeroSubtitle],
+      [homepageBgColorContent, setHomepageBgColor],
+      [catImgLuoghiContent, setCatImgLuoghi],
+      [catImgNaturaContent, setCatImgNatura],
+      [catImgBorghiContent, setCatImgBorghi],
+      [catImgArteContent, setCatImgArte],
+      [catImgCollezioniContent, setCatImgCollezioni],
+      [exploreCtaContent, setExploreCtaText],
+      [decoHeroLTContent, setDecoHeroLT],
+      [decoHeroLBContent, setDecoHeroLB],
+      [decoHeroRTContent, setDecoHeroRT],
+      [decoHeroRBContent, setDecoHeroRB],
+      [freeSpotsLabelContent, setFreeSpotsLabel],
+      [freeSpotsSubLabelContent, setFreeSpotsSubLabel],
+      [catImgFreeSpotsContent, setCatImgFreeSpots],
+      [heroBgImageContent, setHeroBgImage],
+      [heroFontColorContent, setHeroFontColor],
+    ];
+    for (const [content, setter] of contentMap) {
+      if (content?.content) setter(content.content);
     }
-  }, [heroHeadlineContent]);
-
-  useEffect(() => {
-    if (heroSubtitleContent?.content) {
-      setHeroSubtitle(heroSubtitleContent.content);
-    }
-  }, [heroSubtitleContent]);
-
-
-
-  useEffect(() => {
-    if (homepageBgColorContent?.content) {
-      setHomepageBgColor(homepageBgColorContent.content);
-    }
-  }, [homepageBgColorContent]);
-
-
-  useEffect(() => {
-    if (catImgLuoghiContent?.content) setCatImgLuoghi(catImgLuoghiContent.content);
-  }, [catImgLuoghiContent]);
-  useEffect(() => {
-    if (catImgNaturaContent?.content) setCatImgNatura(catImgNaturaContent.content);
-  }, [catImgNaturaContent]);
-  useEffect(() => {
-    if (catImgBorghiContent?.content) setCatImgBorghi(catImgBorghiContent.content);
-  }, [catImgBorghiContent]);
-  useEffect(() => {
-    if (catImgArteContent?.content) setCatImgArte(catImgArteContent.content);
-  }, [catImgArteContent]);
-  useEffect(() => {
-    if (catImgCollezioniContent?.content) setCatImgCollezioni(catImgCollezioniContent.content);
-  }, [catImgCollezioniContent]);
-  useEffect(() => {
-    if (exploreCtaContent?.content) setExploreCtaText(exploreCtaContent.content);
-  }, [exploreCtaContent]);
-
-  useEffect(() => {
-    if (decoHeroLTContent?.content) setDecoHeroLT(decoHeroLTContent.content);
-  }, [decoHeroLTContent]);
-  useEffect(() => {
-    if (decoHeroLBContent?.content) setDecoHeroLB(decoHeroLBContent.content);
-  }, [decoHeroLBContent]);
-  useEffect(() => {
-    if (decoHeroRTContent?.content) setDecoHeroRT(decoHeroRTContent.content);
-  }, [decoHeroRTContent]);
-  useEffect(() => {
-    if (decoHeroRBContent?.content) setDecoHeroRB(decoHeroRBContent.content);
-  }, [decoHeroRBContent]);
-  useEffect(() => {
-    if (freeSpotsLabelContent?.content) setFreeSpotsLabel(freeSpotsLabelContent.content);
-  }, [freeSpotsLabelContent]);
-  useEffect(() => {
-    if (freeSpotsSubLabelContent?.content) setFreeSpotsSubLabel(freeSpotsSubLabelContent.content);
-  }, [freeSpotsSubLabelContent]);
-  useEffect(() => {
-    if (catImgFreeSpotsContent?.content) setCatImgFreeSpots(catImgFreeSpotsContent.content);
-  }, [catImgFreeSpotsContent]);
-  useEffect(() => {
-    if (heroBgImageContent?.content) setHeroBgImage(heroBgImageContent.content);
-  }, [heroBgImageContent]);
-  useEffect(() => {
-    if (heroFontColorContent?.content) setHeroFontColor(heroFontColorContent.content);
-  }, [heroFontColorContent]);
+  }, [
+    heroHeadlineContent, heroSubtitleContent, homepageBgColorContent,
+    catImgLuoghiContent, catImgNaturaContent, catImgBorghiContent, catImgArteContent,
+    catImgCollezioniContent, exploreCtaContent, decoHeroLTContent, decoHeroLBContent,
+    decoHeroRTContent, decoHeroRBContent, freeSpotsLabelContent, freeSpotsSubLabelContent,
+    catImgFreeSpotsContent, heroBgImageContent, heroFontColorContent,
+  ]);
 
   const handleOpenCreate = () => {
     setEditingHotspot(null);
