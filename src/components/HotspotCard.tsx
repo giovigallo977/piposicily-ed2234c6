@@ -163,7 +163,7 @@ const HotspotCard = ({ hotspot, index = 0, locked = false, isFree = false, onLoc
             <div className="overflow-hidden">
               {/* Descrizione completa */}
               <p className="leading-relaxed whitespace-pre-line font-sans text-sm text-foreground">
-                {translated.descrizione_completa}
+                <Linkify text={translated.descrizione_completa} />
               </p>
 
               
