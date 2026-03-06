@@ -1,31 +1,17 @@
 
 
-## Piano: Pulizia codice, rimozione duplicati e ottimizzazione
+## Problema trovato
 
-### Problemi trovati
+I dati nel database mostrano che **Villa Malfitano** e **Giardino Inglese** hanno la categoria vuota (`""`) invece di `"Palermo Liberty"`. Non è un bug del codice ma un dato errato nel database.
 
-1. **`DECO_KEYS` inutilizzato** in `HeroSection.tsx` (riga 12-17) — costante definita ma mai usata
-2. **`useFreeSpotCategories.ts` orfano** — hook mai importato da nessun componente, codice morto
-3. **20+ `useEffect` duplicati in `Admin.tsx`** (righe 102-184) — ogni campo site_content ha un `useEffect` separato per sincronizzare stato locale. Possono essere consolidati in un unico `useEffect`
-4. **Righe vuote superflue** in `Admin.tsx` (righe 116-117, 130-131, 138, 288, 933, 999-1001) — spazi vuoti senza scopo
-5. **`useFreeSpots` query duplicata** — Il hook fa 2 query parallele (tabella `free_spots` + tabella `hotspots` filtrata per "Free Spots"). Questo e corretto per il funzionamento ma i dati dalla tabella `free_spots` vengono anche mostrati nel tab admin `AdminFreeSpotsTab`, che gestisce una tabella separata. Non e un bug, ma va tenuto presente
-6. **`(supabase as any)`** in `useFreeSpotCategories.ts` — cast non necessario dato che il tipo esiste gia in `types.ts`
+### Causa probabile
+Quando hai modificato la categoria di questi hotspot, il salvataggio potrebbe non essere andato a buon fine, oppure il campo categoria è stato sovrascritto con un valore vuoto.
 
-### Modifiche previste
+### Correzione
 
-**`src/components/HeroSection.tsx`**
-- Rimuovere la costante `DECO_KEYS` inutilizzata (righe 12-17)
+**Aggiornamento dati nel database** — Impostare `categoria = 'Palermo Liberty'` per i due hotspot:
+- `Villa Malfitano` (id: `7648426f-5a24-47e3-aa1d-221ff8ffa6c5`)
+- `Giardino Inglese` (id: `9acff83b-0d62-4c3f-bb84-55466a9ce9dc`)
 
-**`src/hooks/useFreeSpotCategories.ts`**
-- Eliminare il file intero (codice morto, mai usato)
-
-**`src/pages/Admin.tsx`**
-- Consolidare i 20 `useEffect` (righe 102-184) in un singolo `useEffect` che sincronizza tutti i valori site_content in un colpo solo
-- Rimuovere righe vuote superflue
-- Risultato: circa 80 righe in meno
-
-### Nessuna modifica a
-- Logica business (free spots, hotspots, premium, auth)
-- Database / migrazioni
-- Componenti pubblici (HotspotCard, ExplorePage, FreeSpotsPage)
+Nessuna modifica al codice necessaria.
 
