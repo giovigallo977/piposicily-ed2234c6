@@ -6,6 +6,25 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedHotspot } from "@/hooks/useTranslation";
 import useEmblaCarousel from "embla-carousel-react";
 
+/** Converts URLs in text into clickable links */
+const Linkify = ({ text }: { text: string }) => {
+  const urlRegex = /(https?:\/\/[^\s,;!?)]+(?:\.[^\s,;!?)]+)*)/g;
+  const parts = text.split(urlRegex);
+  return (
+    <>
+      {parts.map((part, i) =>
+        urlRegex.test(part) ? (
+          <a key={i} href={part} target="_blank" rel="noopener noreferrer" className="text-primary underline break-all">
+            {part}
+          </a>
+        ) : (
+          <span key={i}>{part}</span>
+        )
+      )}
+    </>
+  );
+};
+
 interface HotspotCardProps {
   hotspot: Hotspot;
   index?: number;
@@ -163,7 +182,7 @@ const HotspotCard = ({ hotspot, index = 0, locked = false, isFree = false, onLoc
             <div className="overflow-hidden">
               {/* Descrizione completa */}
               <p className="leading-relaxed whitespace-pre-line font-sans text-sm text-foreground">
-                {translated.descrizione_completa}
+                <Linkify text={translated.descrizione_completa} />
               </p>
 
               

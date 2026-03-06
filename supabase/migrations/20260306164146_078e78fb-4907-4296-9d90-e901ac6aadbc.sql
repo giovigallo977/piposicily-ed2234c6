@@ -1,0 +1,1 @@
+UPDATE hotspots SET categoria = 'Palermo Liberty' WHERE id IN ('98a0cf83-05be-4837-8222-fa561934163d', 'd2b8344a-5caa-4e1b-bc51-179733c3e2b3');
