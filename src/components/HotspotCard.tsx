@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { Plus, Minus, Map, X, ChevronLeft, ChevronRight, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { trackEvent } from "@/lib/trackEvent";
 import type { Hotspot } from "@/hooks/useHotspots";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedHotspot } from "@/hooks/useTranslation";
