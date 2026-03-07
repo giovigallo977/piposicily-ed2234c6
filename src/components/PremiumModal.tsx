@@ -8,6 +8,7 @@ import { usePremiumStatus } from "@/hooks/usePremiumStatus";
 import { Lock, Check, Sparkles, Loader2, Mail, CheckCircle } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { trackEvent } from "@/lib/trackEvent";
 
 interface PremiumModalProps {
   open: boolean;
