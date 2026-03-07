@@ -81,6 +81,7 @@ const PremiumModal = ({ open, onOpenChange }: PremiumModalProps) => {
   };
 
   const handlePay = async () => {
+    trackEvent("payment_click");
     setLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke("create-payment");
