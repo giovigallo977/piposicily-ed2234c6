@@ -25,11 +25,11 @@ const FreeSpotsPage = () => {
         <h1 className="font-sans text-xl font-bold text-foreground">Free Spots</h1>
         {!user ? (
           <button onClick={() => setLoginModalOpen(true)} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
-            Login
+            {t("login")}
           </button>
         ) : (
-          <button onClick={async () => { await signOut(); toast({ title: language === "it" ? "Sei uscito" : "Logged out" }); }} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
-            Logout
+          <button onClick={async () => { await signOut(); toast({ title: t("loggedOut") }); }} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
+            {t("logoutLabel")}
           </button>
         )}
       </header>
