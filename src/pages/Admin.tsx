@@ -84,10 +84,6 @@ const Admin = () => {
   const [catImgArte, setCatImgArte] = useState("");
   const [catImgCollezioni, setCatImgCollezioni] = useState("");
   const [exploreCtaText, setExploreCtaText] = useState("");
-  const [decoHeroLT, setDecoHeroLT] = useState("");
-  const [decoHeroLB, setDecoHeroLB] = useState("");
-  const [decoHeroRT, setDecoHeroRT] = useState("");
-  const [decoHeroRB, setDecoHeroRB] = useState("");
   const [freeSpotsLabel, setFreeSpotsLabel] = useState("");
   const [freeSpotsSubLabel, setFreeSpotsSubLabel] = useState("");
   const [catImgFreeSpots, setCatImgFreeSpots] = useState("");
