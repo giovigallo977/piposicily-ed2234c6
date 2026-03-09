@@ -80,6 +80,14 @@ export const translations = {
 
     // Scroll
     scrollDown: "Scorri",
+
+    // Auth
+    login: "Login",
+    logoutLabel: "Logout",
+    loggedOut: "Sei uscito",
+
+    // Free spots
+    noFreeSpots: "Nessun free spot ancora.",
   },
   en: {
     // Navigation
