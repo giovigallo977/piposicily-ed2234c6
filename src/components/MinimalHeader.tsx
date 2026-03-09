@@ -10,7 +10,7 @@ interface MinimalHeaderProps {
 }
 
 const MinimalHeader = ({ bgColor }: MinimalHeaderProps) => {
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
   const { user, signOut } = useAuth();
   const [loginModalOpen, setLoginModalOpen] = useState(false);
 
