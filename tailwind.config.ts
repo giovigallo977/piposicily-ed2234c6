@@ -41,8 +41,8 @@ export default {
   				'ui-monospace',
   				'monospace'
   			],
-  			bubbles: [
-  				'Rubik Bubbles"',
+  		bubbles: [
+  				'"Rubik Bubbles"',
   				'cursive'
   			]
   		},
