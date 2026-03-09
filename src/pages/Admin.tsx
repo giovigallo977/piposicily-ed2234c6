@@ -259,6 +259,10 @@ const Admin = () => {
               <h1 className="font-brand text-xl font-black italic">Pipo Admin</h1>
             </div>
             <div className="flex items-center gap-2">
+              <Button variant="ghost" size="sm" onClick={() => navigate("/admin-analytics")}>
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Analytics
+              </Button>
               <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Vedi Sito
