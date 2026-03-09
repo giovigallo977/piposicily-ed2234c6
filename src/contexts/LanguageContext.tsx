@@ -80,6 +80,14 @@ export const translations = {
 
     // Scroll
     scrollDown: "Scorri",
+
+    // Auth
+    login: "Login",
+    logoutLabel: "Logout",
+    loggedOut: "Sei uscito",
+
+    // Free spots
+    noFreeSpots: "Nessun free spot ancora.",
   },
   en: {
     // Navigation
@@ -151,6 +159,14 @@ export const translations = {
 
     // Scroll
     scrollDown: "Scroll",
+
+    // Auth
+    login: "Login",
+    logoutLabel: "Logout",
+    loggedOut: "Logged out",
+
+    // Free spots
+    noFreeSpots: "No free spots yet.",
   },
 } as const;
 

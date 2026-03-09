@@ -10,7 +10,7 @@ interface MinimalHeaderProps {
 }
 
 const MinimalHeader = ({ bgColor }: MinimalHeaderProps) => {
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
   const { user, signOut } = useAuth();
   const [loginModalOpen, setLoginModalOpen] = useState(false);
 
@@ -60,11 +60,11 @@ const MinimalHeader = ({ bgColor }: MinimalHeaderProps) => {
             {/* Login/Logout - Right */}
             {!user ? (
               <button onClick={() => setLoginModalOpen(true)} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
-                Login
+                {t("login")}
               </button>
             ) : (
-              <button onClick={async () => { await signOut(); toast({ title: language === "it" ? "Sei uscito" : "Logged out" }); }} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
-                Logout
+              <button onClick={async () => { await signOut(); toast({ title: t("loggedOut") }); }} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
+                {t("logoutLabel")}
               </button>
             )}
           </div>

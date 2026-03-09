@@ -25,8 +25,8 @@ export default {
   				'system-ui',
   				'sans-serif'
   			],
-  			heading: [
-  				'Rubik Bubbles"',
+  		heading: [
+  				'"Rubik Bubbles"',
   				'system-ui',
   				'sans-serif'
   			],
@@ -41,8 +41,8 @@ export default {
   				'ui-monospace',
   				'monospace'
   			],
-  			bubbles: [
-  				'Rubik Bubbles"',
+  		bubbles: [
+  				'"Rubik Bubbles"',
   				'cursive'
   			]
   		},
