@@ -62,11 +62,6 @@ const Admin = () => {
   const { data: catImgBorghiContent } = useSiteContent("cat_image_borghi");
   const { data: catImgArteContent } = useSiteContent("cat_image_arte_cultura");
   const { data: catImgCollezioniContent } = useSiteContent("cat_image_collezioni");
-  // Decorative graphics
-  const { data: decoHeroLTContent } = useSiteContent("deco_hero_left_top");
-  const { data: decoHeroLBContent } = useSiteContent("deco_hero_left_bottom");
-  const { data: decoHeroRTContent } = useSiteContent("deco_hero_right_top");
-  const { data: decoHeroRBContent } = useSiteContent("deco_hero_right_bottom");
   // Free Spots card labels
   const { data: freeSpotsLabelContent } = useSiteContent("cat_label_free_spots");
   const { data: freeSpotsSubLabelContent } = useSiteContent("cat_sublabel_free_spots");
