@@ -224,12 +224,6 @@ const Admin = () => {
     }
   };
 
-  const handleSaveDecoGraphics = async () => {
-    if (decoHeroLT) await updateSiteContent.mutateAsync({ key: "deco_hero_left_top", content: decoHeroLT });
-    if (decoHeroLB) await updateSiteContent.mutateAsync({ key: "deco_hero_left_bottom", content: decoHeroLB });
-    if (decoHeroRT) await updateSiteContent.mutateAsync({ key: "deco_hero_right_top", content: decoHeroRT });
-    if (decoHeroRB) await updateSiteContent.mutateAsync({ key: "deco_hero_right_bottom", content: decoHeroRB });
-  };
 
 
   const handleSaveCategoryImages = async () => {
