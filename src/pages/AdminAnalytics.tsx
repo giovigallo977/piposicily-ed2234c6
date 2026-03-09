@@ -27,17 +27,15 @@ const AdminAnalytics = () => {
   useEffect(() => {
     if (!user) return;
     const fetchCounts = async () => {
-      const { data, error } = await supabase
-        .from("analytics_events")
-        .select("event_type");
+      const { data, error } = await supabase.rpc("get_analytics_counts");
       if (error || !data) {
         setLoading(false);
         return;
       }
       const result: Counts = { page_view: 0, hotspot_view: 0, payment_click: 0 };
-      data.forEach((row: { event_type: string }) => {
+      (data as { event_type: string; count: number }[]).forEach((row) => {
         if (row.event_type in result) {
-          result[row.event_type as keyof Counts]++;
+          result[row.event_type as keyof Counts] = Number(row.count);
         }
       });
       setCounts(result);
