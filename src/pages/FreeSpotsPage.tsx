@@ -55,7 +55,7 @@ const FreeSpotsPage = () => {
 
           {!isLoading && (!freeSpots || freeSpots.length === 0) && (
             <p className="text-center py-12 text-muted-foreground font-sans italic">
-              Nessun free spot ancora.
+              {t("noFreeSpots")}
             </p>
           )}
         </div>
