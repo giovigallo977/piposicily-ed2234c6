@@ -451,7 +451,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_analytics_counts: {
+        Args: never
+        Returns: {
+          count: number
+          event_type: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
