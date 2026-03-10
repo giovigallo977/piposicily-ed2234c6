@@ -9,12 +9,28 @@ export const usePremiumStatus = () => {
     queryKey: ["premium-status", user?.id],
     queryFn: async () => {
       if (!user) return false;
-      const { data } = await supabase
+
+      // Check profiles table
+      const { data: profileData } = await supabase
         .from("profiles")
         .select("is_premium")
         .eq("user_id", user.id)
         .single();
-      return data?.is_premium ?? false;
+
+      if (profileData?.is_premium) return true;
+
+      // Check granted_emails table
+      if (user.email) {
+        const { data: grantedData } = await supabase
+          .from("granted_emails")
+          .select("id")
+          .eq("email", user.email)
+          .maybeSingle();
+
+        if (grantedData) return true;
+      }
+
+      return false;
     },
     enabled: !!user,
     staleTime: 30_000,
