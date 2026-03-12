@@ -184,61 +184,107 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
         <div className="max-w-4xl mx-auto w-full md:flex md:flex-col md:items-center">
           {/* 2x2 Category Grid */}
           <div className="grid grid-cols-2 gap-3 w-full max-w-lg md:mx-auto">
-            {CATEGORIES.map((cat) => {
+            {/* 1. Luoghi Fantasma */}
+            {(() => {
+              const cat = CATEGORIES[0];
               const img = getCategoryImage(cat.dbValue);
               return (
                 <button
-                  key={cat.dbValue}
                   onClick={() => handleCategoryClick(cat.dbValue)}
                   className="relative aspect-square rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
                 >
                   {img ? (
-                    <img
-                      src={img}
-                      alt={t(cat.key)}
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
+                    <img src={img} alt={t(cat.key)} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
                   ) : (
                     <div className="w-full h-full bg-muted" />
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                  <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-sm md:text-base font-bold text-left leading-tight drop-shadow-lg">
-                    {t(cat.key)}
-                  </span>
+                  <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-sm md:text-base font-bold text-left leading-tight drop-shadow-lg">{t(cat.key)}</span>
                 </button>
               );
-            })}
-            {/* Collezioni Card */}
+            })()}
+
+            {/* 2. Collezioni */}
             <button
               onClick={() => navigate("/collezioni")}
               className="relative aspect-square rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
             >
               {collezioniImage ? (
-                <img
-                  src={collezioniImage}
-                  alt={t("collections")}
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                />
+                <img src={collezioniImage} alt={t("collections")} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
               ) : (
                 <div className="w-full h-full bg-muted" />
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-              <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-sm md:text-base font-bold text-left leading-tight drop-shadow-lg">
-                {t("collections")}
-              </span>
+              <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-sm md:text-base font-bold text-left leading-tight drop-shadow-lg">{t("collections")}</span>
             </button>
 
-            {/* Free Spots Card */}
+            {/* 3. Natura */}
+            {(() => {
+              const cat = CATEGORIES[1];
+              const img = getCategoryImage(cat.dbValue);
+              return (
+                <button
+                  onClick={() => handleCategoryClick(cat.dbValue)}
+                  className="relative aspect-square rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
+                >
+                  {img ? (
+                    <img src={img} alt={t(cat.key)} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                  ) : (
+                    <div className="w-full h-full bg-muted" />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                  <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-sm md:text-base font-bold text-left leading-tight drop-shadow-lg">{t(cat.key)}</span>
+                </button>
+              );
+            })()}
+
+            {/* 4. Borghi */}
+            {(() => {
+              const cat = CATEGORIES[2];
+              const img = getCategoryImage(cat.dbValue);
+              return (
+                <button
+                  onClick={() => handleCategoryClick(cat.dbValue)}
+                  className="relative aspect-square rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
+                >
+                  {img ? (
+                    <img src={img} alt={t(cat.key)} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                  ) : (
+                    <div className="w-full h-full bg-muted" />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                  <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-sm md:text-base font-bold text-left leading-tight drop-shadow-lg">{t(cat.key)}</span>
+                </button>
+              );
+            })()}
+
+            {/* 5. Arte e Cultura */}
+            {(() => {
+              const cat = CATEGORIES[3];
+              const img = getCategoryImage(cat.dbValue);
+              return (
+                <button
+                  onClick={() => handleCategoryClick(cat.dbValue)}
+                  className="relative aspect-square rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
+                >
+                  {img ? (
+                    <img src={img} alt={t(cat.key)} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                  ) : (
+                    <div className="w-full h-full bg-muted" />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                  <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-sm md:text-base font-bold text-left leading-tight drop-shadow-lg">{t(cat.key)}</span>
+                </button>
+              );
+            })()}
+
+            {/* 6. Free Spots */}
             <button
               onClick={() => navigate("/free-spots")}
               className="relative aspect-square rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
             >
               {catImgFreeSpots?.content ? (
-                <img
-                  src={catImgFreeSpots.content}
-                  alt="Lavorare, Studiare & Eat"
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                />
+                <img src={catImgFreeSpots.content} alt="Free Spots" className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
               ) : (
                 <div className="w-full h-full bg-muted" />
               )}
