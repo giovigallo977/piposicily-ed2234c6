@@ -170,6 +170,35 @@ export const useSyncHotspotCollections = () => {
     onError: (error) => toast.error("Errore: " + error.message),
   });
 };
+export const useSyncCollectionHotspots = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ collectionId, hotspotIds }: { collectionId: string; hotspotIds: string[] }) => {
+      const { error: deleteError } = await supabase
+        .from("collection_hotspots")
+        .delete()
+        .eq("collection_id", collectionId);
+      if (deleteError) throw deleteError;
+
+      if (hotspotIds.length > 0) {
+        const rows = hotspotIds.map((hotspot_id, index) => ({
+          collection_id: collectionId,
+          hotspot_id,
+          ordine: index,
+        }));
+        const { error: insertError } = await supabase
+          .from("collection_hotspots")
+          .insert(rows);
+        if (insertError) throw insertError;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["collection_hotspots"] });
+      toast.success("Hotspot della collezione aggiornati!");
+    },
+    onError: (error) => toast.error("Errore: " + error.message),
+  });
+};
 
 export const useReorderCollectionHotspots = () => {
   const queryClient = useQueryClient();
