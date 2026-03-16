@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useEffect } from "react";
 
 export interface Collection {
   id: string;
@@ -169,19 +170,16 @@ export const useSyncHotspotCollections = () => {
     onError: (error) => toast.error("Errore: " + error.message),
   });
 };
-
 export const useSyncCollectionHotspots = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ collectionId, hotspotIds }: { collectionId: string; hotspotIds: string[] }) => {
-      // Delete existing
       const { error: deleteError } = await supabase
         .from("collection_hotspots")
         .delete()
         .eq("collection_id", collectionId);
       if (deleteError) throw deleteError;
 
-      // Insert new
       if (hotspotIds.length > 0) {
         const rows = hotspotIds.map((hotspot_id, index) => ({
           collection_id: collectionId,
@@ -200,4 +198,47 @@ export const useSyncCollectionHotspots = () => {
     },
     onError: (error) => toast.error("Errore: " + error.message),
   });
+};
+
+export const useReorderCollectionHotspots = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (updates: { id: string; ordine: number }[]) => {
+      for (const u of updates) {
+        const { error } = await supabase
+          .from("collection_hotspots")
+          .update({ ordine: u.ordine })
+          .eq("id", u.id);
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["collection_hotspots"] });
+    },
+    onError: (error) => {
+      toast.error("Errore nel riordino: " + error.message);
+    },
+  });
+};
+
+// Realtime subscription for collections & collection_hotspots
+export const useCollectionsRealtime = () => {
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const channel = supabase
+      .channel("collections-realtime")
+      .on("postgres_changes", { event: "*", schema: "public", table: "collections" }, () => {
+        queryClient.invalidateQueries({ queryKey: ["collections"] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "collection_hotspots" }, () => {
+        queryClient.invalidateQueries({ queryKey: ["collection_hotspots"] });
+        queryClient.invalidateQueries({ queryKey: ["hotspot_collections"] });
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
 };

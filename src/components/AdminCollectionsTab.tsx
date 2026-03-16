@@ -6,8 +6,11 @@ import {
   useDeleteCollection,
   useCollectionHotspots,
   useSyncCollectionHotspots,
+  useReorderCollectionHotspots,
+  useCollectionsRealtime,
   Collection,
   CollectionInsert,
+  CollectionHotspot,
 } from "@/hooks/useCollections";
 import { useHotspots } from "@/hooks/useHotspots";
 import { ImageUpload } from "@/components/ImageUpload";
@@ -19,7 +22,7 @@ import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Loader2, Plus, Pencil, Trash2 } from "lucide-react";
+import { Loader2, Plus, Pencil, Trash2, ArrowUp, ArrowDown } from "lucide-react";
 
 const emptyCollection: CollectionInsert = {
   nome: "",
@@ -29,12 +32,16 @@ const emptyCollection: CollectionInsert = {
 };
 
 const AdminCollectionsTab = () => {
+  // Enable realtime sync
+  useCollectionsRealtime();
+
   const { data: collections, isLoading } = useCollections();
   const { data: hotspots } = useHotspots();
   const createMutation = useCreateCollection();
   const updateMutation = useUpdateCollection();
   const deleteMutation = useDeleteCollection();
   const syncHotspots = useSyncCollectionHotspots();
+  const reorderMutation = useReorderCollectionHotspots();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editing, setEditing] = useState<Collection | null>(null);
@@ -103,6 +110,23 @@ const AdminCollectionsTab = () => {
         : [...prev, hotspotId]
     );
   };
+
+  // Reorder handler for collection hotspots (swap two items)
+  const handleReorderSwap = (items: CollectionHotspot[], idx: number, direction: "up" | "down") => {
+    const targetIdx = direction === "up" ? idx - 1 : idx + 1;
+    if (targetIdx < 0 || targetIdx >= items.length) return;
+    const a = items[idx];
+    const b = items[targetIdx];
+    reorderMutation.mutate([
+      { id: a.id, ordine: b.ordine ?? 0 },
+      { id: b.id, ordine: a.ordine ?? 0 },
+    ]);
+  };
+
+  // Get sorted hotspot details for the current collection
+  const sortedCollectionHotspots = currentHotspots
+    ? [...currentHotspots].sort((a, b) => (a.ordine ?? 0) - (b.ordine ?? 0))
+    : [];
 
   return (
     <div className="space-y-6">
@@ -186,6 +210,52 @@ const AdminCollectionsTab = () => {
                   )}
                 </div>
               </div>
+
+              {/* Reorder hotspots in collection (only when editing) */}
+              {editing && sortedCollectionHotspots.length > 0 && (
+                <div className="space-y-2">
+                  <Label>Ordina hotspot nella collezione (frecce = salvataggio immediato)</Label>
+                  <div className="border rounded-md p-3 space-y-1">
+                    {sortedCollectionHotspots.map((ch, idx) => {
+                      const hotspot = hotspots?.find(h => h.id === ch.hotspot_id);
+                      if (!hotspot) return null;
+                      return (
+                        <div key={ch.id} className="flex items-center gap-3 p-1.5 rounded hover:bg-muted/50">
+                          <div className="flex flex-col gap-0.5 flex-shrink-0">
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="h-6 w-6"
+                              disabled={idx === 0 || reorderMutation.isPending}
+                              onClick={() => handleReorderSwap(sortedCollectionHotspots, idx, "up")}
+                            >
+                              <ArrowUp className="h-3 w-3" />
+                            </Button>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="h-6 w-6"
+                              disabled={idx === sortedCollectionHotspots.length - 1 || reorderMutation.isPending}
+                              onClick={() => handleReorderSwap(sortedCollectionHotspots, idx, "down")}
+                            >
+                              <ArrowDown className="h-3 w-3" />
+                            </Button>
+                          </div>
+                          <div className="flex items-center gap-2 min-w-0">
+                            {hotspot.foto_principale && (
+                              <img src={hotspot.foto_principale} alt="" className="w-8 h-8 rounded object-cover flex-shrink-0" />
+                            )}
+                            <span className="text-sm truncate">{hotspot.titolo}</span>
+                            <span className="text-xs text-muted-foreground ml-auto flex-shrink-0">#{ch.ordine}</span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
               <div className="flex justify-end gap-2 pt-4">
                 <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
