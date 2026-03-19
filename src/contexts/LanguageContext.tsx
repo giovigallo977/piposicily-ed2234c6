@@ -131,8 +131,8 @@ export const translations = {
     languageEn: "English",
     
     // Hero section
-    heroHeadline: "Alien Explorations in Sicily",
-    heroSubheadline: "I show you ultra-selected places, far from mass tourism. You choose, I take you off the radar in 30 seconds.",
+    heroHeadline: "",
+    heroSubheadline: "",
     
     // Category grid
     exploreCta: "Explore Pipo's itineraries",
