@@ -52,8 +52,8 @@ export const translations = {
     languageEn: "English",
     
     // Hero section
-    heroHeadline: "Esplorazioni aliene in Sicilia",
-    heroSubheadline: "Ti mostro posti iper selezionati, lontani dal turismo di massa. Tu scegli, io ti porto fuori dai radar in 30 secondi.",
+    heroHeadline: "",
+    heroSubheadline: "",
     
     // Category grid
     exploreCta: "Esplora gli itinerari di Pipo",
