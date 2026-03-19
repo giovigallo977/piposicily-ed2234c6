@@ -68,8 +68,8 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
   const freeSpotsLabel = translatedFreeSpotsLabel || "Free Spots";
   const freeSpotsSubLabel = translatedFreeSpotsSubLabel || "Work, Study & Eat&Drink";
 
-  const headline = translatedHeadline || t("heroHeadline");
-  const subtitle = translatedSubtitle || t("heroSubheadline");
+  const headline = isLoadingHeadline ? "" : (translatedHeadline || t("heroHeadline"));
+  const subtitle = isLoadingHeadline ? "" : (translatedSubtitle || t("heroSubheadline"));
   const exploreCta = translatedExploreCta || t("exploreCta");
 
   // DB category images map
