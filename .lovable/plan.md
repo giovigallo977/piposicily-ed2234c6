@@ -1,13 +1,22 @@
 
 
-## Piano: Sostituire immagine categoria Borghi
+## Problema
 
-### Cosa fare
-1. Copiare la foto caricata nella cartella `public/images/` del progetto
-2. Aggiornare il record `cat_image_borghi` nella tabella `site_content` del database con il nuovo percorso dell'immagine
+Il testo "Esplorazioni aliene in Sicilia" appare brevemente al caricamento perché è il fallback hardcoded in `LanguageContext.tsx` (riga 55). Viene mostrato finché la query al database (`site_content` con key `hero_headline`) non è completata.
 
-### Dettaglio
-- La foto verrà salvata come `public/images/cat-borghi.jpg`
-- Il valore nel database per la chiave `cat_image_borghi` verrà aggiornato a `/images/cat-borghi.jpg`
-- Nessuna modifica al codice: `HeroSection.tsx` già legge l'immagine da `useSiteContent("cat_image_borghi")`
+## Soluzione
+
+Due modifiche semplici:
+
+### 1. Non mostrare il fallback durante il caricamento
+In `src/components/HeroSection.tsx`, controllare lo stato di loading della query `useSiteContent("hero_headline")`. Finché è in caricamento, mostrare il testo vuoto o uno skeleton/placeholder invece del fallback vecchio.
+
+### 2. Aggiornare i fallback in `LanguageContext.tsx`
+Cambiare i testi hardcoded nella sezione Hero con valori neutri o vuoti, così anche se appaiono per un istante non mostrano contenuto obsoleto:
+- `heroHeadline`: da "Esplorazioni aliene in Sicilia" → stringa vuota `""`
+- `heroSubheadline`: aggiornare di conseguenza
+
+### File coinvolti
+- `src/components/HeroSection.tsx` — evitare flash del fallback durante loading
+- `src/contexts/LanguageContext.tsx` — aggiornare/svuotare i fallback hardcoded della Hero
 
