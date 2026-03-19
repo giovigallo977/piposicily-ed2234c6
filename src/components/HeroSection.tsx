@@ -27,7 +27,7 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
   const [premiumOpen, setPremiumOpen] = useState(false);
   const { data: hotspots } = useHotspots();
 
-  const { data: heroHeadlineContent } = useSiteContent("hero_headline");
+  const { data: heroHeadlineContent, isLoading: isLoadingHeadline } = useSiteContent("hero_headline");
   const { data: heroBgImageContent } = useSiteContent("hero_bg_image");
   const { data: heroSubtitleContent } = useSiteContent("hero_subtitle");
   const { data: exploreCtaContent } = useSiteContent("explore_cta_text");
