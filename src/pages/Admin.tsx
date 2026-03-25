@@ -286,7 +286,7 @@ const Admin = () => {
               </TabsTrigger>
               <TabsTrigger value="collezioni" className="flex items-center gap-2">
                 <FolderOpen className="h-4 w-4" />
-                Collezioni
+                Day Trip e Day Walk
               </TabsTrigger>
               <TabsTrigger value="free-spots" className="flex items-center gap-2">
                 <Coffee className="h-4 w-4" />
@@ -461,7 +461,7 @@ const Admin = () => {
                       {/* Collezioni */}
                       {allCollections && allCollections.length > 0 && (
                         <div className="space-y-2">
-                          <Label>Collezioni</Label>
+                          <Label>Day Trip e Day Walk</Label>
                           <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto border rounded-md p-3">
                             {allCollections.map((col) => (
                               <label key={col.id} className="flex items-center gap-2 text-sm cursor-pointer">
@@ -655,7 +655,7 @@ const Admin = () => {
               </div>
             </TabsContent>
 
-            {/* Tab Collezioni */}
+            {/* Tab Day Trip e Day Walk */}
             <TabsContent value="collezioni" className="space-y-6">
               <AdminCollectionsTab />
             </TabsContent>
@@ -773,7 +773,7 @@ const Admin = () => {
                     Foto Categorie Homepage
                   </CardTitle>
                   <CardDescription>
-                    Le immagini delle 5 schede nella homepage (Luoghi Fantasma, Natura, Borghi, Arte e Cultura, Collezioni) e il testo CTA "Esplora".
+                    Le immagini delle 5 schede nella homepage (Luoghi Fantasma, Natura, Borghi, Arte e Cultura, Day Trip e Day Walk) e il testo CTA "Esplora".
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -816,7 +816,7 @@ const Admin = () => {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label>Collezioni</Label>
+                    <Label>Day Trip e Day Walk</Label>
                     <ImageUpload
                       value={catImgCollezioni}
                       onChange={(url) => setCatImgCollezioni(url)}
