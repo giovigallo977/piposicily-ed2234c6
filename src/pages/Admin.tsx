@@ -461,7 +461,7 @@ const Admin = () => {
                       {/* Collezioni */}
                       {allCollections && allCollections.length > 0 && (
                         <div className="space-y-2">
-                          <Label>Collezioni</Label>
+                          <Label>Day Trip e Day Walk</Label>
                           <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto border rounded-md p-3">
                             {allCollections.map((col) => (
                               <label key={col.id} className="flex items-center gap-2 text-sm cursor-pointer">
