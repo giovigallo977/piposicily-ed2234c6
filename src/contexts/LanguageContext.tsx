@@ -149,10 +149,10 @@ export const translations = {
     cardsAvailable: "cards available",
 
     // Collections
-    collections: "Collections",
-    collection: "Collection",
-    noCollections: "No collections available.",
-    noHotspotsCollection: "No hotspots in this collection.",
+    collections: "Day Trip & Day Walk",
+    collection: "Day Trip / Day Walk",
+    noCollections: "No day trips or day walks available.",
+    noHotspotsCollection: "No hotspots in this itinerary.",
 
     // Zone
     zone: "zone",
