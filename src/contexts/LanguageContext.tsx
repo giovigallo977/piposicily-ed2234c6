@@ -70,10 +70,10 @@ export const translations = {
     cardsAvailable: "schede disponibili",
 
     // Collections
-    collections: "Collezioni",
-    collection: "Collezione",
-    noCollections: "Nessuna collezione disponibile.",
-    noHotspotsCollection: "Nessun hotspot in questa collezione.",
+    collections: "Day Trip e Day Walk",
+    collection: "Day Trip / Day Walk",
+    noCollections: "Nessun day trip o day walk disponibile.",
+    noHotspotsCollection: "Nessun hotspot in questo itinerario.",
 
     // Zone
     zone: "zona",
