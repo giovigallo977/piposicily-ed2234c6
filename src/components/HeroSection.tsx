@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Instagram } from "lucide-react";
 
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useHotspots } from "@/hooks/useHotspots";
