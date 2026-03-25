@@ -88,6 +88,10 @@ export const translations = {
 
     // Free spots
     noFreeSpots: "Nessun free spot ancora.",
+
+    // Contact CTA
+    contactCta: "Per info e consigli non esitare a contattarci",
+    igHandle: "IG: pipo.fuoriradar",
   },
   en: {
     // Navigation
