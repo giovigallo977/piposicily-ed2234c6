@@ -70,7 +70,7 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
 
   const headline = isLoadingHeadline ? "" : (translatedHeadline || t("heroHeadline"));
   const subtitle = isLoadingHeadline ? "" : (translatedSubtitle || t("heroSubheadline"));
-  const exploreCta = translatedExploreCta || t("exploreCta");
+  const exploreCta = isLoadingHeadline ? "" : (translatedExploreCta || t("exploreCta"));
 
   // DB category images map
   const dbCategoryImages: Record<string, string | undefined> = {
