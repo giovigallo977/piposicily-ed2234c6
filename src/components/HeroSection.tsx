@@ -296,6 +296,21 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
             </button>
           </div>
 
+          {/* Contact CTA */}
+          <div className="mt-6 text-center">
+            <p className="text-sm text-muted-foreground">
+              {t("contactCta")}
+            </p>
+            <a
+              href="https://instagram.com/pipo.fuoriradar"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm font-medium text-muted-foreground hover:underline"
+            >
+              {t("igHandle")}
+            </a>
+          </div>
+
           {/* Mission Content from DB */}
           <MissionSection
             missionContent={missionContent?.content}
