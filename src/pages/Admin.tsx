@@ -773,7 +773,7 @@ const Admin = () => {
                     Foto Categorie Homepage
                   </CardTitle>
                   <CardDescription>
-                    Le immagini delle 5 schede nella homepage (Luoghi Fantasma, Natura, Borghi, Arte e Cultura, Collezioni) e il testo CTA "Esplora".
+                    Le immagini delle 5 schede nella homepage (Luoghi Fantasma, Natura, Borghi, Arte e Cultura, Day Trip e Day Walk) e il testo CTA "Esplora".
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
