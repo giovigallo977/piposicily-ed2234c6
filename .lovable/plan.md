@@ -2,23 +2,18 @@
 
 ## Obiettivo
 
-Rinominare "Collezioni" in "Day Trip e Day Walk" ovunque sia visibile all'utente.
+Aggiungere una CTA sobria sotto la griglia categorie (dopo "Arte e Cultura" e "Free Spots") con testo per contattarvi su Instagram.
 
 ## Modifiche
 
-### 1. `src/contexts/LanguageContext.tsx`
-- IT: `collections: "Collezioni"` → `"Day Trip e Day Walk"`
-- EN: `collections: "Collections"` → `"Day Trip & Day Walk"`
-- Aggiornare anche i testi correlati (`noCollections`, `collection`) per coerenza
+### `src/contexts/LanguageContext.tsx`
+Aggiungere nuove chiavi di traduzione:
+- IT: `contactCta: "Per info e consigli non esitare a contattarci"`, `igHandle: "IG: pipo.fuoriradar"`
+- EN: `contactCta: "For info and tips don't hesitate to contact us"`, `igHandle: "IG: pipo.fuoriradar"`
 
-### 2. `src/components/HeroSection.tsx`
-- La card "Collezioni" nella griglia usa `t("collections")` — prenderà automaticamente il nuovo nome
-
-### 3. `src/pages/CollectionsPage.tsx`
-- Il titolo header usa `t("collections")` — prenderà automaticamente il nuovo nome
-
-### 4. `src/pages/Admin.tsx` (solo label interne admin)
-- Aggiornare i testi hardcoded come `"Collezioni"` nelle label dell'admin panel per coerenza
-
-Nessuna modifica al database o alle rotte (gli URL restano `/collezioni/...`).
+### `src/components/HeroSection.tsx`
+Dopo la chiusura del `</div>` della griglia categorie (il `grid grid-cols-2`), aggiungere un blocco testuale centrato e sobrio:
+- Testo tradotto `t("contactCta")` in stile `text-sm text-muted-foreground`
+- Link cliccabile a `https://instagram.com/pipo.fuoriradar` con il testo `t("igHandle")` in stile `font-medium` con hover underline
+- Padding `mt-6`, tutto centrato
 
