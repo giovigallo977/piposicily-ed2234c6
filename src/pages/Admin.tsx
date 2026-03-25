@@ -286,7 +286,7 @@ const Admin = () => {
               </TabsTrigger>
               <TabsTrigger value="collezioni" className="flex items-center gap-2">
                 <FolderOpen className="h-4 w-4" />
-                Collezioni
+                Day Trip e Day Walk
               </TabsTrigger>
               <TabsTrigger value="free-spots" className="flex items-center gap-2">
                 <Coffee className="h-4 w-4" />
