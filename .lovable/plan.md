@@ -2,21 +2,28 @@
 
 ## Problema
 
-Il testo "Esplorazioni aliene in Sicilia" appare brevemente al caricamento perché è il fallback hardcoded in `LanguageContext.tsx` (riga 55). Viene mostrato finché la query al database (`site_content` con key `hero_headline`) non è completata.
+Quando apri la PWA, per qualche secondo vedi il testo di fallback **"Esplora gli itinerari di Pipo"** prima che arrivi il contenuto dal database (**"Una piattaforma per perdersi senza perdere la giornata"**).
+
+Questo succede perché nel codice della Hero Section, il titolo e il sottotitolo hanno un controllo `isLoadingHeadline` che mostra stringa vuota durante il caricamento, ma il testo CTA (`exploreCta`) **non ha questo controllo** e mostra subito il fallback statico.
 
 ## Soluzione
 
-Due modifiche semplici:
+Applicare la stessa logica di loading a **tutti i testi della Hero** (headline, subtitle, CTA): mostrare stringa vuota finche i dati dal database non sono pronti, evitando il flash del testo di fallback.
 
-### 1. Non mostrare il fallback durante il caricamento
-In `src/components/HeroSection.tsx`, controllare lo stato di loading della query `useSiteContent("hero_headline")`. Finché è in caricamento, mostrare il testo vuoto o uno skeleton/placeholder invece del fallback vecchio.
+### File da modificare
 
-### 2. Aggiornare i fallback in `LanguageContext.tsx`
-Cambiare i testi hardcoded nella sezione Hero con valori neutri o vuoti, così anche se appaiono per un istante non mostrano contenuto obsoleto:
-- `heroHeadline`: da "Esplorazioni aliene in Sicilia" → stringa vuota `""`
-- `heroSubheadline`: aggiornare di conseguenza
+**`src/components/HeroSection.tsx`** -- aggiungere check `isLoading` anche per subtitle e CTA:
+- Usare `isLoadingHeadline` (o i rispettivi `isLoading` di ogni query) per tutti e tre i testi
+- Se ancora in caricamento, mostrare stringa vuota invece del fallback `t("exploreCta")`
 
-### File coinvolti
-- `src/components/HeroSection.tsx` — evitare flash del fallback durante loading
-- `src/contexts/LanguageContext.tsx` — aggiornare/svuotare i fallback hardcoded della Hero
+Modifica minima, una riga:
+```
+// Da:
+const exploreCta = translatedExploreCta || t("exploreCta");
+
+// A:
+const exploreCta = isLoadingHeadline ? "" : (translatedExploreCta || t("exploreCta"));
+```
+
+Stesso pattern gia usato per `headline` e `subtitle`. Nessuna modifica al database.
 
