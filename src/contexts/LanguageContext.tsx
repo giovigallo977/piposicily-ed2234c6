@@ -171,6 +171,10 @@ export const translations = {
 
     // Free spots
     noFreeSpots: "No free spots yet.",
+
+    // Contact CTA
+    contactCta: "For info and tips don't hesitate to contact us",
+    igHandle: "IG: pipo.fuoriradar",
   },
 } as const;
 
