@@ -90,8 +90,8 @@ export const translations = {
     noFreeSpots: "Nessun free spot ancora.",
 
     // Contact CTA
-    contactCta: "Per info e consigli non esitare a contattarci",
-    igHandle: "IG: pipo.fuoriradar",
+    contactCta: "Non hai trovato il tuo posto?\nScrivimi. Forse non sei pronto… o forse sì!",
+    igHandle: "ig: pipo.fuoriradar !",
   },
   en: {
     // Navigation
