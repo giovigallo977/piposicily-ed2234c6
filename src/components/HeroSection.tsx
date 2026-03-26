@@ -299,7 +299,7 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
           {/* Contact CTA */}
           <div className="mt-6 text-center">
             <p
-              className={`font-sans text-base md:text-xl font-bold ${!heroFontColor ? (hasHeroBg ? "text-white" : "text-foreground") : ""}`}
+              className={`font-sans text-base md:text-xl font-bold whitespace-pre-line ${!heroFontColor ? (hasHeroBg ? "text-white" : "text-foreground") : ""}`}
               style={heroFontColor ? { color: heroFontColor } : undefined}
             >
               {t("contactCta")}

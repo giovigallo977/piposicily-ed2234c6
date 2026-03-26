@@ -90,8 +90,8 @@ export const translations = {
     noFreeSpots: "Nessun free spot ancora.",
 
     // Contact CTA
-    contactCta: "Per info e consigli non esitare a contattarci",
-    igHandle: "IG: pipo.fuoriradar",
+    contactCta: "Non hai trovato il tuo posto?\nScrivimi. Forse non sei pronto… o forse sì!",
+    igHandle: "ig: pipo.fuoriradar !",
   },
   en: {
     // Navigation
@@ -173,8 +173,8 @@ export const translations = {
     noFreeSpots: "No free spots yet.",
 
     // Contact CTA
-    contactCta: "For info and tips don't hesitate to contact us",
-    igHandle: "IG: pipo.fuoriradar",
+    contactCta: "Haven't found your spot?\nWrite me. Maybe you're not ready… or maybe you are!",
+    igHandle: "ig: pipo.fuoriradar !",
   },
 } as const;
 
