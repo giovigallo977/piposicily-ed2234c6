@@ -229,6 +229,7 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
                 <Button
                   size="sm"
                   className="mt-auto w-full font-bold text-xs"
+                  style={{ backgroundColor: 'hsl(var(--cta-yellow))', color: 'hsl(var(--cta-yellow-foreground))' }}
                   onClick={() => {
                     trackEvent("cta_experience");
                     setWaitlistOpen(true);
