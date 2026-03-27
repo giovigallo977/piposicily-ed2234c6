@@ -58,7 +58,7 @@ const ExperienceWaitlistModal = ({ open, onOpenChange }: ExperienceWaitlistModal
             required
             maxLength={255}
           />
-          <Button type="submit" disabled={loading} className="w-full font-bold">
+          <Button type="submit" disabled={loading} className="w-full font-bold" style={{ backgroundColor: 'hsl(var(--cta-yellow))', color: 'hsl(var(--cta-yellow-foreground))' }}>
             {t("experienceFakeDoorCta")}
           </Button>
         </form>
