@@ -41,7 +41,7 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
   const { data: catImgNatura } = useSiteContent("cat_image_natura");
   const { data: catImgBorghi } = useSiteContent("cat_image_borghi");
   const { data: catImgArte } = useSiteContent("cat_image_arte_cultura");
-  const { data: catImgCollezioni } = useSiteContent("cat_image_collezioni");
+  
   const { data: catImgFreeSpots } = useSiteContent("cat_image_free_spots");
   // Free Spots card labels
   const { data: freeSpotsLabelContent } = useSiteContent("cat_label_free_spots");
@@ -96,13 +96,6 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
     return map;
   }, [hotspots]);
 
-  // Collezioni: DB image or fallback to first hotspot with photo
-  const collezioniImage = useMemo(() => {
-    if (catImgCollezioni?.content) return catImgCollezioni.content;
-    if (!hotspots) return null;
-    const withPhoto = hotspots.filter(h => h.foto_principale);
-    return withPhoto.length > 0 ? withPhoto[0].foto_principale : null;
-  }, [hotspots, catImgCollezioni]);
 
   const getCategoryImage = (dbValue: string) => {
     return dbCategoryImages[dbValue] || hotspotCategoryImages[dbValue];
@@ -251,18 +244,6 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
             </h2>
             <div className="grid grid-cols-2 gap-3 w-full">
               <CategoryCard cat={CATEGORIES[0]} />
-              <button
-                onClick={() => navigate("/collezioni")}
-                className="relative aspect-square rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
-              >
-                {collezioniImage ? (
-                  <img src={collezioniImage} alt={t("collections")} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
-                ) : (
-                  <div className="w-full h-full bg-muted" />
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-sm md:text-base font-bold text-left leading-tight drop-shadow-lg">{t("collections")}</span>
-              </button>
               <CategoryCard cat={CATEGORIES[1]} />
               <CategoryCard cat={CATEGORIES[2]} />
               <CategoryCard cat={CATEGORIES[3]} />
