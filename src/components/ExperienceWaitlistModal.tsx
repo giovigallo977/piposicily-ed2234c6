@@ -35,6 +35,7 @@ const ExperienceWaitlistModal = ({ open, onOpenChange }: ExperienceWaitlistModal
       return;
     }
 
+    gtag('event', 'email_submit', { label: 'experience_waitlist' });
     toast({ title: t("experienceFakeDoorSuccess") });
     setEmail("");
     onOpenChange(false);
