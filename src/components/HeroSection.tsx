@@ -41,7 +41,7 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
   const { data: catImgNatura } = useSiteContent("cat_image_natura");
   const { data: catImgBorghi } = useSiteContent("cat_image_borghi");
   const { data: catImgArte } = useSiteContent("cat_image_arte_cultura");
-  const { data: catImgCollezioni } = useSiteContent("cat_image_collezioni");
+  
   const { data: catImgFreeSpots } = useSiteContent("cat_image_free_spots");
   // Free Spots card labels
   const { data: freeSpotsLabelContent } = useSiteContent("cat_label_free_spots");
