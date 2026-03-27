@@ -70,6 +70,7 @@ const HotspotCard = ({ hotspot, index = 0, onBeforeExpand }: HotspotCardProps) =
     if (!isExpanded) {
       if (onBeforeExpand && !onBeforeExpand()) return;
       trackEvent("hotspot_view");
+      gtag('event', 'hotspot_click', { label: hotspot.categoria || hotspot.titolo });
     }
     setIsExpanded(!isExpanded);
   };

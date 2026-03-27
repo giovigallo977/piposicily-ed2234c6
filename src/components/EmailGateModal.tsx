@@ -27,6 +27,7 @@ const EmailGateModal = ({ open, onOpenChange }: EmailGateModalProps) => {
         options: { shouldCreateUser: true },
       });
       if (error) throw error;
+      gtag('event', 'email_submit', { label: 'gate_modal' });
       setSent(true);
     } catch (err: any) {
       toast({ title: err.message || "Error", variant: "destructive" });
