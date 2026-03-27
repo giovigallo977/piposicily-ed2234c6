@@ -94,7 +94,7 @@ export const translations = {
     igHandle: "ig: pipo.fuoriradar !",
 
     // Decision section
-    chooseDayTitle: "Scegli come vuoi vivere la giornata",
+    chooseDayTitle: "Scegli come vivere la tua giornata",
     selfTripTitle: "Fai da solo\n(ma senza sbagliare)",
     selfTripCta: "Vedi gli itinerari pronti",
     experienceTitle: "Non vuoi\norganizzare nulla",
