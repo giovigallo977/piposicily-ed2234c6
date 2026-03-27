@@ -98,14 +98,14 @@ export const translations = {
     chooseDayTitle: "Scegli come vivere la tua giornata",
     selfTripTitle: "Fai da solo\n(ma senza sbagliare)",
     selfTripCta: "Vedi gli itinerari pronti",
-    experienceTitle: "Non vuoi\norganizzare nulla",
-    experienceCta: "Unisciti a un'esperienza",
+    experienceTitle: "Experience Pipo\nstanno per partire",
+    experienceCta: "Scopri di più",
     browseTitle: "Vuoi solo curiosare?",
 
-    // Experience fake door
-    experienceFakeDoorTitle: "Le Experience Pipo stanno arrivando!",
-    experienceFakeDoorDesc: "Stiamo lanciando le prime experience in piccoli gruppi.\nLascia la tua email: ti scriviamo appena apriamo le date.",
-    experienceFakeDoorCta: "Voglio essere avvisato",
+    // Experience waitlist modal
+    experienceFakeDoorTitle: "Experience Pipo stanno per partire 🔥",
+    experienceFakeDoorDesc: "Piccoli gruppi, luoghi autentici, zero turismo di massa.\nTi portiamo nei posti giusti senza che tu debba organizzare nulla.\n\nStiamo selezionando le prime experience in Sicilia.\nSe vuoi partecipare, lasciaci la tua email: ti avvisiamo appena apriamo le date.",
+    experienceFakeDoorCta: "Avvisami quando apre",
     experienceFakeDoorSuccess: "Perfetto! Ti avviseremo presto.",
     experienceFakeDoorEmail: "La tua email",
   },
