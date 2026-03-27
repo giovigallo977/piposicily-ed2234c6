@@ -244,18 +244,6 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
             </h2>
             <div className="grid grid-cols-2 gap-3 w-full">
               <CategoryCard cat={CATEGORIES[0]} />
-              <button
-                onClick={() => navigate("/collezioni")}
-                className="relative aspect-square rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
-              >
-                {collezioniImage ? (
-                  <img src={collezioniImage} alt={t("collections")} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
-                ) : (
-                  <div className="w-full h-full bg-muted" />
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-sm md:text-base font-bold text-left leading-tight drop-shadow-lg">{t("collections")}</span>
-              </button>
               <CategoryCard cat={CATEGORIES[1]} />
               <CategoryCard cat={CATEGORIES[2]} />
               <CategoryCard cat={CATEGORIES[3]} />
