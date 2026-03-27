@@ -8,7 +8,9 @@ import { useSiteContent } from "@/hooks/useSiteContent";
 import { useTranslatedContent } from "@/hooks/useTranslation";
 import MissionSection from "@/components/MissionSection";
 import PremiumModal from "@/components/PremiumModal";
-
+import ExperienceWaitlistModal from "@/components/ExperienceWaitlistModal";
+import { Button } from "@/components/ui/button";
+import { trackEvent } from "@/lib/trackEvent";
 
 interface HeroSectionProps {
   bgColor?: string;
@@ -25,6 +27,7 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const [premiumOpen, setPremiumOpen] = useState(false);
+  const [waitlistOpen, setWaitlistOpen] = useState(false);
   const { data: hotspots } = useHotspots();
 
   const { data: heroHeadlineContent, isLoading: isLoadingHeadline } = useSiteContent("hero_headline");
@@ -109,6 +112,24 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
     navigate(`/esplora?categoria=${encodeURIComponent(category)}`);
   };
 
+  const CategoryCard = ({ cat }: { cat: typeof CATEGORIES[number] }) => {
+    const img = getCategoryImage(cat.dbValue);
+    return (
+      <button
+        onClick={() => handleCategoryClick(cat.dbValue)}
+        className="relative aspect-square rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
+      >
+        {img ? (
+          <img src={img} alt={t(cat.key)} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+        ) : (
+          <div className="w-full h-full bg-muted" />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+        <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-sm md:text-base font-bold text-left leading-tight drop-shadow-lg">{t(cat.key)}</span>
+      </button>
+    );
+  };
+
   return (
     <section
       className="relative flex flex-col overflow-hidden"
@@ -116,15 +137,11 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
     >
       {/* Fullscreen hero text area */}
       <div className="relative min-h-[100dvh] flex flex-col items-center justify-center px-6">
-        {/* Background image */}
         {hasHeroBg && (
-          <>
-            <img src={heroBgImage} alt="" className="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none select-none" />
-            
-          </>
+          <img src={heroBgImage} alt="" className="absolute inset-0 w-full h-full object-cover z-0 pointer-events-none select-none" />
         )}
 
-        {/* Decorative graphics - hero laterals (desktop only) */}
+        {/* Decorative graphics */}
         {decoHeroLT?.content && (
           <img src={decoHeroLT.content} alt="" className="absolute left-2 top-16 w-20 lg:w-28 hidden md:block pointer-events-none select-none opacity-80 z-[1]" />
         )}
@@ -139,31 +156,24 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
         )}
 
         <div className="max-w-4xl mx-auto w-full flex flex-col items-center relative z-10 -mt-12">
-          {/* Headline */}
           <h1
             className={`font-sans text-[32px] md:text-[48px] font-bold leading-[1.1] text-center ${!heroFontColor ? (hasHeroBg ? "text-white" : "text-foreground") : ""}`}
             style={heroFontColor ? { color: heroFontColor } : undefined}
           >
             {headline}
           </h1>
-
-          {/* Subtitle */}
           <p
             className={`font-sans text-xl md:text-2xl font-bold text-center mt-8 max-w-md mx-auto ${!heroFontColor ? (hasHeroBg ? "text-white/90" : "text-foreground") : ""}`}
             style={heroFontColor ? { color: heroFontColor } : undefined}
           >
             {subtitle}
           </p>
-
-          {/* CTA Text */}
           <p
             className={`font-sans text-base md:text-xl font-bold text-center mt-6 ${!heroFontColor ? (hasHeroBg ? "text-white" : "text-foreground") : ""}`}
             style={heroFontColor ? { color: heroFontColor } : undefined}
           >
             {exploreCta}
           </p>
-
-          {/* Scroll indicator */}
           <div className="mt-8 flex flex-col items-center gap-1">
             <span
               className={`text-xs font-medium ${!heroFontColor ? "text-white/70" : ""}`}
@@ -179,121 +189,97 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
         </div>
       </div>
 
-      {/* Categories + Mission (visible on scroll) */}
+      {/* Content below hero */}
       <div className="px-6 py-12">
         <div className="max-w-4xl mx-auto w-full md:flex md:flex-col md:items-center">
-          {/* 2x2 Category Grid */}
-          <div className="grid grid-cols-2 gap-3 w-full max-w-lg md:mx-auto">
-            {/* 1. Luoghi Fantasma */}
-            {(() => {
-              const cat = CATEGORIES[0];
-              const img = getCategoryImage(cat.dbValue);
-              return (
-                <button
-                  onClick={() => handleCategoryClick(cat.dbValue)}
-                  className="relative aspect-square rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
-                >
-                  {img ? (
-                    <img src={img} alt={t(cat.key)} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
-                  ) : (
-                    <div className="w-full h-full bg-muted" />
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                  <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-sm md:text-base font-bold text-left leading-tight drop-shadow-lg">{t(cat.key)}</span>
-                </button>
-              );
-            })()}
 
-            {/* 2. Collezioni */}
-            <button
-              onClick={() => navigate("/collezioni")}
-              className="relative aspect-square rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
+          {/* SECTION 1: Decision cards */}
+          <div className="w-full max-w-lg md:mx-auto mb-16">
+            <h2
+              className={`font-sans text-xl md:text-2xl font-bold text-center mb-8 ${!heroFontColor ? (hasHeroBg ? "text-white" : "text-foreground") : ""}`}
+              style={heroFontColor ? { color: heroFontColor } : undefined}
             >
-              {collezioniImage ? (
-                <img src={collezioniImage} alt={t("collections")} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
-              ) : (
-                <div className="w-full h-full bg-muted" />
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-              <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-sm md:text-base font-bold text-left leading-tight drop-shadow-lg">{t("collections")}</span>
-            </button>
-
-            {/* 3. Natura */}
-            {(() => {
-              const cat = CATEGORIES[1];
-              const img = getCategoryImage(cat.dbValue);
-              return (
-                <button
-                  onClick={() => handleCategoryClick(cat.dbValue)}
-                  className="relative aspect-square rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
+              {t("chooseDayTitle")}
+            </h2>
+            <div className="grid grid-cols-2 gap-3">
+              {/* Card 1: Self trip */}
+              <div className="flex flex-col items-center rounded-2xl border border-border bg-card p-5 text-center gap-3">
+                <span className="text-3xl">🚗</span>
+                <p className="font-sans text-sm md:text-base font-bold text-card-foreground whitespace-pre-line leading-tight">
+                  {t("selfTripTitle")}
+                </p>
+                <Button
+                  size="sm"
+                  className="mt-auto w-full font-bold text-xs"
+                  onClick={() => {
+                    trackEvent("cta_self_trip");
+                    navigate("/collezioni");
+                  }}
                 >
-                  {img ? (
-                    <img src={img} alt={t(cat.key)} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
-                  ) : (
-                    <div className="w-full h-full bg-muted" />
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                  <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-sm md:text-base font-bold text-left leading-tight drop-shadow-lg">{t(cat.key)}</span>
-                </button>
-              );
-            })()}
-
-            {/* 4. Borghi */}
-            {(() => {
-              const cat = CATEGORIES[2];
-              const img = getCategoryImage(cat.dbValue);
-              return (
-                <button
-                  onClick={() => handleCategoryClick(cat.dbValue)}
-                  className="relative aspect-square rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
+                  {t("selfTripCta")}
+                </Button>
+              </div>
+              {/* Card 2: Experience */}
+              <div className="flex flex-col items-center rounded-2xl border border-border bg-card p-5 text-center gap-3">
+                <span className="text-3xl">🚐</span>
+                <p className="font-sans text-sm md:text-base font-bold text-card-foreground whitespace-pre-line leading-tight">
+                  {t("experienceTitle")}
+                </p>
+                <Button
+                  size="sm"
+                  className="mt-auto w-full font-bold text-xs"
+                  onClick={() => {
+                    trackEvent("cta_experience");
+                    setWaitlistOpen(true);
+                  }}
                 >
-                  {img ? (
-                    <img src={img} alt={t(cat.key)} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
-                  ) : (
-                    <div className="w-full h-full bg-muted" />
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                  <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-sm md:text-base font-bold text-left leading-tight drop-shadow-lg">{t(cat.key)}</span>
-                </button>
-              );
-            })()}
+                  {t("experienceCta")}
+                </Button>
+              </div>
+            </div>
+          </div>
 
-            {/* 5. Arte e Cultura */}
-            {(() => {
-              const cat = CATEGORIES[3];
-              const img = getCategoryImage(cat.dbValue);
-              return (
-                <button
-                  onClick={() => handleCategoryClick(cat.dbValue)}
-                  className="relative aspect-square rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
-                >
-                  {img ? (
-                    <img src={img} alt={t(cat.key)} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
-                  ) : (
-                    <div className="w-full h-full bg-muted" />
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                  <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-sm md:text-base font-bold text-left leading-tight drop-shadow-lg">{t(cat.key)}</span>
-                </button>
-              );
-            })()}
-
-            {/* 6. Free Spots */}
-            <button
-              onClick={() => navigate("/free-spots")}
-              className="relative aspect-square rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
+          {/* SECTION 2: Browse / Curiosare */}
+          <div className="w-full max-w-lg md:mx-auto">
+            <h2
+              className={`font-sans text-xl md:text-2xl font-bold text-center mb-8 ${!heroFontColor ? (hasHeroBg ? "text-white" : "text-foreground") : ""}`}
+              style={heroFontColor ? { color: heroFontColor } : undefined}
             >
-              {catImgFreeSpots?.content ? (
-                <img src={catImgFreeSpots.content} alt="Free Spots" className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
-              ) : (
-                <div className="w-full h-full bg-muted" />
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-              <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-left leading-tight drop-shadow-lg flex flex-col">
-                <span className="text-sm md:text-base font-bold">{freeSpotsLabel}</span>
-                <span className="text-xs md:text-sm font-medium opacity-90">{freeSpotsSubLabel}</span>
-              </span>
-            </button>
+              {t("browseTitle")}
+            </h2>
+            <div className="grid grid-cols-2 gap-3 w-full">
+              <CategoryCard cat={CATEGORIES[0]} />
+              <button
+                onClick={() => navigate("/collezioni")}
+                className="relative aspect-square rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                {collezioniImage ? (
+                  <img src={collezioniImage} alt={t("collections")} className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                ) : (
+                  <div className="w-full h-full bg-muted" />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-sm md:text-base font-bold text-left leading-tight drop-shadow-lg">{t("collections")}</span>
+              </button>
+              <CategoryCard cat={CATEGORIES[1]} />
+              <CategoryCard cat={CATEGORIES[2]} />
+              <CategoryCard cat={CATEGORIES[3]} />
+              <button
+                onClick={() => navigate("/free-spots")}
+                className="relative aspect-square rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                {catImgFreeSpots?.content ? (
+                  <img src={catImgFreeSpots.content} alt="Free Spots" className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                ) : (
+                  <div className="w-full h-full bg-muted" />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-left leading-tight drop-shadow-lg flex flex-col">
+                  <span className="text-sm md:text-base font-bold">{freeSpotsLabel}</span>
+                  <span className="text-xs md:text-sm font-medium opacity-90">{freeSpotsSubLabel}</span>
+                </span>
+              </button>
+            </div>
           </div>
 
           {/* Contact CTA */}
@@ -317,12 +303,12 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
           </div>
 
           {/* Mission Content from DB */}
-          <MissionSection
-            missionContent={missionContent?.content}
-          />
+          <MissionSection missionContent={missionContent?.content} />
         </div>
       </div>
+
       <PremiumModal open={premiumOpen} onOpenChange={setPremiumOpen} />
+      <ExperienceWaitlistModal open={waitlistOpen} onOpenChange={setWaitlistOpen} />
     </section>
   );
 };
