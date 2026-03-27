@@ -190,6 +190,21 @@ export const translations = {
     // Contact CTA
     contactCta: "Haven't found your spot?\nWrite me. Maybe you're not ready… or maybe you are!",
     igHandle: "ig: pipo.fuoriradar !",
+
+    // Decision section
+    chooseDayTitle: "Choose how you want to spend your day",
+    selfTripTitle: "Do it yourself\n(without mistakes)",
+    selfTripCta: "See ready itineraries",
+    experienceTitle: "Don't want to\norganize anything",
+    experienceCta: "Join an experience",
+    browseTitle: "Just want to browse?",
+
+    // Experience fake door
+    experienceFakeDoorTitle: "Pipo Experiences are coming!",
+    experienceFakeDoorDesc: "We're launching the first small-group experiences.\nLeave your email: we'll write you when dates open.",
+    experienceFakeDoorCta: "Notify me",
+    experienceFakeDoorSuccess: "Great! We'll notify you soon.",
+    experienceFakeDoorEmail: "Your email",
   },
 } as const;
 
