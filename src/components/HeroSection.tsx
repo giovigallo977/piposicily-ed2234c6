@@ -7,7 +7,7 @@ import { useHotspots } from "@/hooks/useHotspots";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { useTranslatedContent } from "@/hooks/useTranslation";
 import MissionSection from "@/components/MissionSection";
-import PremiumModal from "@/components/PremiumModal";
+
 import ExperienceWaitlistModal from "@/components/ExperienceWaitlistModal";
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/trackEvent";
