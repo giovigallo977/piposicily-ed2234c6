@@ -14,7 +14,7 @@ import CollectionsPage from "./pages/CollectionsPage";
 import CollectionDetailPage from "./pages/CollectionDetailPage";
 import FreeSpotsPage from "./pages/FreeSpotsPage";
 import NotFound from "./pages/NotFound";
-import PaymentSuccess from "./pages/PaymentSuccess";
+
 import AdminAnalytics from "./pages/AdminAnalytics";
 
 const queryClient = new QueryClient();
