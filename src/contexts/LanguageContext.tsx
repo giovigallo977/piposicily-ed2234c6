@@ -98,14 +98,14 @@ export const translations = {
     chooseDayTitle: "Scegli come vivere la tua giornata",
     selfTripTitle: "Fai da solo\n(ma senza sbagliare)",
     selfTripCta: "Vedi gli itinerari pronti",
-    experienceTitle: "Non vuoi\norganizzare nulla",
-    experienceCta: "Unisciti a un'esperienza",
+    experienceTitle: "Experience Pipo\nstanno per partire",
+    experienceCta: "Scopri di più",
     browseTitle: "Vuoi solo curiosare?",
 
-    // Experience fake door
-    experienceFakeDoorTitle: "Le Experience Pipo stanno arrivando!",
-    experienceFakeDoorDesc: "Stiamo lanciando le prime experience in piccoli gruppi.\nLascia la tua email: ti scriviamo appena apriamo le date.",
-    experienceFakeDoorCta: "Voglio essere avvisato",
+    // Experience waitlist modal
+    experienceFakeDoorTitle: "Experience Pipo stanno per partire 🔥",
+    experienceFakeDoorDesc: "Piccoli gruppi, luoghi autentici, zero turismo di massa.\nTi portiamo nei posti giusti senza che tu debba organizzare nulla.\n\nStiamo selezionando le prime experience in Sicilia.\nSe vuoi partecipare, lasciaci la tua email: ti avvisiamo appena apriamo le date.",
+    experienceFakeDoorCta: "Avvisami quando apre",
     experienceFakeDoorSuccess: "Perfetto! Ti avviseremo presto.",
     experienceFakeDoorEmail: "La tua email",
   },
@@ -197,14 +197,14 @@ export const translations = {
     chooseDayTitle: "Choose how you want to spend your day",
     selfTripTitle: "Do it yourself\n(without mistakes)",
     selfTripCta: "See ready itineraries",
-    experienceTitle: "Don't want to\norganize anything",
-    experienceCta: "Join an experience",
+    experienceTitle: "Pipo Experiences\nare launching soon",
+    experienceCta: "Learn more",
     browseTitle: "Just want to browse?",
 
-    // Experience fake door
-    experienceFakeDoorTitle: "Pipo Experiences are coming!",
-    experienceFakeDoorDesc: "We're launching the first small-group experiences.\nLeave your email: we'll write you when dates open.",
-    experienceFakeDoorCta: "Notify me",
+    // Experience waitlist modal
+    experienceFakeDoorTitle: "Pipo Experiences are launching soon 🔥",
+    experienceFakeDoorDesc: "Small groups, authentic places, zero mass tourism.\nWe take you to the right spots without you having to organize a thing.\n\nWe're selecting the first experiences in Sicily.\nLeave your email and we'll let you know when dates open.",
+    experienceFakeDoorCta: "Notify me when it opens",
     experienceFakeDoorSuccess: "Great! We'll notify you soon.",
     experienceFakeDoorEmail: "Your email",
   },
