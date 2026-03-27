@@ -289,7 +289,6 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
         </div>
       </div>
 
-      <PremiumModal open={premiumOpen} onOpenChange={setPremiumOpen} />
       <ExperienceWaitlistModal open={waitlistOpen} onOpenChange={setWaitlistOpen} />
     </section>
   );

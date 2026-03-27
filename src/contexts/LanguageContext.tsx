@@ -161,12 +161,13 @@ export const translations = {
     catBorghi: "Villages",
     catArteECultura: "Art & Culture",
 
-    // Premium
-    premiumBadge: "PREMIUM",
-    freeBadge: "FREE",
-    premiumMember: "Premium Member",
-    unlockAll: "Unlock all!",
-    cardsAvailable: "cards available",
+    // Email gate
+    gateTitle: "Enjoying Pipo? 😎",
+    gateDesc: "Leave your email to keep exploring for free.\nNo payment, no spam.",
+    gateEmailPlaceholder: "Your email",
+    gateCta: "Continue",
+    gateSentTitle: "Check your email!",
+    gateSentDesc: "We sent you a magic link. Click it to keep exploring.",
 
     // Collections
     collections: "Day Trip & Day Walk",
