@@ -26,7 +26,6 @@ const CATEGORIES = [
 const HeroSection = ({ bgColor }: HeroSectionProps) => {
   const { t } = useLanguage();
   const navigate = useNavigate();
-  const [premiumOpen, setPremiumOpen] = useState(false);
   const [waitlistOpen, setWaitlistOpen] = useState(false);
   const { data: hotspots } = useHotspots();
 
