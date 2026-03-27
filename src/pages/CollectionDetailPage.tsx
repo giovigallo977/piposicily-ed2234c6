@@ -63,8 +63,6 @@ const CollectionDetailPage = () => {
                 key={hotspot.id}
                 hotspot={hotspot}
                 index={index}
-                locked={false}
-                isFree={false}
               />
             ))}
           </div>
