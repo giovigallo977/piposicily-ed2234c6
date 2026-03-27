@@ -48,7 +48,6 @@ const FreeSpotsPage = () => {
                 key={spot.id}
                 hotspot={spot as unknown as Hotspot}
                 index={index}
-                locked={false}
               />
             ))}
           </div>

@@ -14,7 +14,7 @@ import CollectionsPage from "./pages/CollectionsPage";
 import CollectionDetailPage from "./pages/CollectionDetailPage";
 import FreeSpotsPage from "./pages/FreeSpotsPage";
 import NotFound from "./pages/NotFound";
-import PaymentSuccess from "./pages/PaymentSuccess";
+
 import AdminAnalytics from "./pages/AdminAnalytics";
 
 const queryClient = new QueryClient();
@@ -36,7 +36,7 @@ const App = () => (
               
               <Route path="/auth" element={<Auth />} />
               <Route path="/admin" element={<Admin />} />
-              <Route path="/payment-success" element={<PaymentSuccess />} />
+              
               <Route path="/admin-analytics" element={<AdminAnalytics />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />

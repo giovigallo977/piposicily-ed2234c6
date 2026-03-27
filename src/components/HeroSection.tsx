@@ -7,7 +7,7 @@ import { useHotspots } from "@/hooks/useHotspots";
 import { useSiteContent } from "@/hooks/useSiteContent";
 import { useTranslatedContent } from "@/hooks/useTranslation";
 import MissionSection from "@/components/MissionSection";
-import PremiumModal from "@/components/PremiumModal";
+
 import ExperienceWaitlistModal from "@/components/ExperienceWaitlistModal";
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/trackEvent";
@@ -26,7 +26,6 @@ const CATEGORIES = [
 const HeroSection = ({ bgColor }: HeroSectionProps) => {
   const { t } = useLanguage();
   const navigate = useNavigate();
-  const [premiumOpen, setPremiumOpen] = useState(false);
   const [waitlistOpen, setWaitlistOpen] = useState(false);
   const { data: hotspots } = useHotspots();
 
@@ -290,7 +289,6 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
         </div>
       </div>
 
-      <PremiumModal open={premiumOpen} onOpenChange={setPremiumOpen} />
       <ExperienceWaitlistModal open={waitlistOpen} onOpenChange={setWaitlistOpen} />
     </section>
   );

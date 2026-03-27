@@ -62,12 +62,13 @@ export const translations = {
     catBorghi: "Borghi",
     catArteECultura: "Arte e Cultura",
 
-    // Premium
-    premiumBadge: "PREMIUM",
-    freeBadge: "GRATUITO",
-    premiumMember: "Membro Premium",
-    unlockAll: "Sblocca tutto!",
-    cardsAvailable: "schede disponibili",
+    // Email gate
+    gateTitle: "Ti piace Pipo? 😎",
+    gateDesc: "Lascia la tua email per continuare a esplorare gratis.\nNessun pagamento, nessun spam.",
+    gateEmailPlaceholder: "La tua email",
+    gateCta: "Continua",
+    gateSentTitle: "Controlla la tua email!",
+    gateSentDesc: "Ti abbiamo inviato un link magico. Cliccaci sopra per continuare a esplorare.",
 
     // Collections
     collections: "Day Trip e Day Walk",
@@ -160,12 +161,13 @@ export const translations = {
     catBorghi: "Villages",
     catArteECultura: "Art & Culture",
 
-    // Premium
-    premiumBadge: "PREMIUM",
-    freeBadge: "FREE",
-    premiumMember: "Premium Member",
-    unlockAll: "Unlock all!",
-    cardsAvailable: "cards available",
+    // Email gate
+    gateTitle: "Enjoying Pipo? 😎",
+    gateDesc: "Leave your email to keep exploring for free.\nNo payment, no spam.",
+    gateEmailPlaceholder: "Your email",
+    gateCta: "Continue",
+    gateSentTitle: "Check your email!",
+    gateSentDesc: "We sent you a magic link. Click it to keep exploring.",
 
     // Collections
     collections: "Day Trip & Day Walk",
