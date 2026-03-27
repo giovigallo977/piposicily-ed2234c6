@@ -101,6 +101,24 @@ export type Database = {
         }
         Relationships: []
       }
+      experience_waitlist: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+        }
+        Relationships: []
+      }
       free_spot_categories: {
         Row: {
           created_at: string
