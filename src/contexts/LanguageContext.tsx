@@ -92,6 +92,21 @@ export const translations = {
     // Contact CTA
     contactCta: "Non hai trovato il tuo posto?\nScrivimi. Forse non sei pronto… o forse sì!",
     igHandle: "ig: pipo.fuoriradar !",
+
+    // Decision section
+    chooseDayTitle: "Scegli come vuoi vivere la giornata",
+    selfTripTitle: "Fai da solo\n(ma senza sbagliare)",
+    selfTripCta: "Vedi gli itinerari pronti",
+    experienceTitle: "Non vuoi\norganizzare nulla",
+    experienceCta: "Unisciti a un'esperienza",
+    browseTitle: "Vuoi solo curiosare?",
+
+    // Experience fake door
+    experienceFakeDoorTitle: "Le Experience Pipo stanno arrivando!",
+    experienceFakeDoorDesc: "Stiamo lanciando le prime experience in piccoli gruppi.\nLascia la tua email: ti scriviamo appena apriamo le date.",
+    experienceFakeDoorCta: "Voglio essere avvisato",
+    experienceFakeDoorSuccess: "Perfetto! Ti avviseremo presto.",
+    experienceFakeDoorEmail: "La tua email",
   },
   en: {
     // Navigation
@@ -175,6 +190,21 @@ export const translations = {
     // Contact CTA
     contactCta: "Haven't found your spot?\nWrite me. Maybe you're not ready… or maybe you are!",
     igHandle: "ig: pipo.fuoriradar !",
+
+    // Decision section
+    chooseDayTitle: "Choose how you want to spend your day",
+    selfTripTitle: "Do it yourself\n(without mistakes)",
+    selfTripCta: "See ready itineraries",
+    experienceTitle: "Don't want to\norganize anything",
+    experienceCta: "Join an experience",
+    browseTitle: "Just want to browse?",
+
+    // Experience fake door
+    experienceFakeDoorTitle: "Pipo Experiences are coming!",
+    experienceFakeDoorDesc: "We're launching the first small-group experiences.\nLeave your email: we'll write you when dates open.",
+    experienceFakeDoorCta: "Notify me",
+    experienceFakeDoorSuccess: "Great! We'll notify you soon.",
+    experienceFakeDoorEmail: "Your email",
   },
 } as const;
 
