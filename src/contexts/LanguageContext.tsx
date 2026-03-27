@@ -197,14 +197,14 @@ export const translations = {
     chooseDayTitle: "Choose how you want to spend your day",
     selfTripTitle: "Do it yourself\n(without mistakes)",
     selfTripCta: "See ready itineraries",
-    experienceTitle: "Don't want to\norganize anything",
-    experienceCta: "Join an experience",
+    experienceTitle: "Pipo Experiences\nare launching soon",
+    experienceCta: "Learn more",
     browseTitle: "Just want to browse?",
 
-    // Experience fake door
-    experienceFakeDoorTitle: "Pipo Experiences are coming!",
-    experienceFakeDoorDesc: "We're launching the first small-group experiences.\nLeave your email: we'll write you when dates open.",
-    experienceFakeDoorCta: "Notify me",
+    // Experience waitlist modal
+    experienceFakeDoorTitle: "Pipo Experiences are launching soon 🔥",
+    experienceFakeDoorDesc: "Small groups, authentic places, zero mass tourism.\nWe take you to the right spots without you having to organize a thing.\n\nWe're selecting the first experiences in Sicily.\nLeave your email and we'll let you know when dates open.",
+    experienceFakeDoorCta: "Notify me when it opens",
     experienceFakeDoorSuccess: "Great! We'll notify you soon.",
     experienceFakeDoorEmail: "Your email",
   },
