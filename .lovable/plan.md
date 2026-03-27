@@ -1,20 +1,61 @@
 
 
-## Obiettivo
+## Rimozione paywall → gate email dopo 3 card
 
-Rimuovere la card "Day Trip e Day Walk" dalla griglia categorie nella sezione "Vuoi solo curiosare?", dato che gli itinerari sono già raggiungibili dalla CTA "Fai da solo → Vedi gli itinerari pronti". La griglia passa da 6 card (3 righe) a 5 card (pattern 2+2+1 o 2+2+2 con Free Spots che sale).
+### Concetto
+Tutto il contenuto è visibile senza blur/lock. Dopo che l'utente espande 3 card (click su "+"), appare un modal: "Ti piace Pipo? Lascia la tua email per continuare a esplorare." con campo email e magic link. Una volta loggato, nessun limite.
 
-Nessuna modifica al backend: la pagina `/collezioni` e la gestione Day Trip e Day Walk nell'admin restano invariate. Cambia solo la homepage.
+### Modifiche
 
-## Modifiche
+#### 1. Nuovo hook `src/hooks/useCardGate.ts`
+- Conta quante card l'utente ha espanso (stato locale, persistito in `localStorage`)
+- Se l'utente è loggato (`useAuth`), nessun limite
+- Espone: `{ shouldGate: boolean, onCardExpand: () => void, gateModalOpen, setGateModalOpen }`
+- Dopo 3 espansioni → `gateModalOpen = true`
 
-### `src/components/HeroSection.tsx`
-- Rimuovere il blocco button che renderizza la card "Collezioni" (righe 254-265) dalla griglia categorie
-- Rimuovere le variabili inutilizzate: `catImgCollezioni`, `collezioniImage` e relativo `useMemo`
-- La griglia diventa: Luoghi Fantasma, Natura, Borghi, Arte e Cultura, Free Spots (5 card, 2+2+1)
+#### 2. Nuovo componente `src/components/EmailGateModal.tsx`
+Modal con tono amichevole:
+- IT: "Ti piace Pipo? 😎" / "Lascia la tua email per continuare a esplorare gratis. Nessun pagamento, nessun spam."
+- EN: "Enjoying Pipo? 😎" / "Leave your email to keep exploring for free. No payment, no spam."
+- Campo email + bottone "Continua" → invia magic link
+- Stato "link inviato" con conferma
+- Traduzioni aggiunte in `LanguageContext`
 
-### Cleanup
-- Rimuovere l'import/fetch di `catImgCollezioni` da `useSiteContent("cat_image_collezioni")` dato che non serve più
+#### 3. `src/pages/ExplorePage.tsx` — Riscrittura
+- Rimuovere: `usePremiumStatus`, `PremiumModal`, `firstPerCategory`, banner premium, logica `locked/isFree`
+- Aggiungere: `useCardGate` hook + `EmailGateModal`
+- Tutte le card renderizzate senza blur/lock
+- Passare `onCardExpand` a `HotspotCard` (chiamato quando l'utente espande)
+- Se `shouldGate` è true e utente non loggato, intercettare l'espansione e aprire il modal
 
-Nessuna modifica al database, alle rotte, o al pannello admin.
+#### 4. `src/components/HotspotCard.tsx` — Cleanup
+- Rimuovere le prop `locked`, `isFree`, `onLockedClick`
+- Rimuovere overlay Lock, badge FREE, blur
+- Aggiungere prop opzionale `onBeforeExpand?: () => boolean` — se ritorna `false`, blocca l'espansione (usato dal gate)
+
+#### 5. `src/components/HeroSection.tsx` — Cleanup
+- Rimuovere import e uso di `PremiumModal`
+- Rimuovere stato `premiumOpen`
+
+#### 6. File da eliminare
+- `src/components/PremiumModal.tsx`
+- `src/hooks/usePremiumStatus.ts`
+- `src/pages/PaymentSuccess.tsx`
+- `supabase/functions/create-payment/index.ts`
+- `supabase/functions/complete-purchase/index.ts`
+- `supabase/functions/verify-payment/index.ts`
+
+#### 7. `src/App.tsx`
+- Rimuovere rotta `/payment-success`
+
+#### 8. Traduzioni (`src/contexts/LanguageContext.tsx`)
+- Aggiungere chiavi per EmailGateModal
+- Rimuovere chiavi premium/payment non più usate (premiumMember, unlockAll, cardsAvailable, freeBadge, premiumBadge)
+
+### Cosa NON cambia
+- Login/logout header in ExplorePage resta (utile per chi si è già registrato)
+- LoginModal resta disponibile per accesso diretto
+- Database: le tabelle `profiles`, `granted_emails` restano (servono per l'auth)
+- Le colonne `is_premium` nel DB restano (non servono migrazioni)
+- Admin, collezioni, free spots invariati
 
