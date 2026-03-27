@@ -92,6 +92,21 @@ export const translations = {
     // Contact CTA
     contactCta: "Non hai trovato il tuo posto?\nScrivimi. Forse non sei pronto… o forse sì!",
     igHandle: "ig: pipo.fuoriradar !",
+
+    // Decision section
+    chooseDayTitle: "Scegli come vuoi vivere la giornata",
+    selfTripTitle: "Fai da solo\n(ma senza sbagliare)",
+    selfTripCta: "Vedi gli itinerari pronti",
+    experienceTitle: "Non vuoi\norganizzare nulla",
+    experienceCta: "Unisciti a un'esperienza",
+    browseTitle: "Vuoi solo curiosare?",
+
+    // Experience fake door
+    experienceFakeDoorTitle: "Le Experience Pipo stanno arrivando!",
+    experienceFakeDoorDesc: "Stiamo lanciando le prime experience in piccoli gruppi.\nLascia la tua email: ti scriviamo appena apriamo le date.",
+    experienceFakeDoorCta: "Voglio essere avvisato",
+    experienceFakeDoorSuccess: "Perfetto! Ti avviseremo presto.",
+    experienceFakeDoorEmail: "La tua email",
   },
   en: {
     // Navigation
