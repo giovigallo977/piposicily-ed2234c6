@@ -256,9 +256,8 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
                   <div className="w-full h-full bg-muted" />
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-left leading-tight drop-shadow-lg flex flex-col">
-                  <span className="text-sm md:text-base font-bold">{freeSpotsLabel}</span>
-                  <span className="text-xs md:text-sm font-medium opacity-90">{freeSpotsSubLabel}</span>
+                <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-left leading-tight drop-shadow-lg">
+                  <span className="text-sm md:text-base font-bold">{freeSpotsSubLabel}</span>
                 </span>
               </button>
             </div>
