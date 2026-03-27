@@ -1,26 +1,34 @@
 
 
-## Inserire Google Analytics (gtag.js)
+## Tracking Google Analytics: hotspot click + email submit
 
-### Cosa fare
-Aggiungere il tag Google Analytics `G-GGT28V4PNP` nel file `index.html`, subito dopo l'apertura del tag `<head>`.
+### Cosa cambia
+Aggiungere chiamate `gtag()` native per inviare eventi a Google Analytics, oltre al tracking interno già esistente.
 
-### Modifica
-**File: `index.html`** — Inserire lo snippet gtag.js dopo `<head>`:
+### 1. Dichiarazione TypeScript per `gtag`
+**File: `src/vite-env.d.ts`** — Aggiungere la dichiarazione globale di `gtag` per evitare errori TypeScript.
 
-```html
-<head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-GGT28V4PNP"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-GGT28V4PNP');
-    </script>
-    <meta charset="UTF-8" />
-    ...
+### 2. Hotspot click → `gtag('event', 'hotspot_click', { label })`
+**File: `src/components/HotspotCard.tsx`** — In `handleToggleExpand`, quando la card si espande, inviare:
+```js
+gtag('event', 'hotspot_click', { label: hotspot.categoria || hotspot.titolo });
+```
+Così ogni hotspot avrà una label diversa basata sulla categoria (es. "Luoghi Fantasma", "Natura", "Borghi").
+
+### 3. Email gate submit → `gtag('event', 'email_submit')`
+**File: `src/components/EmailGateModal.tsx`** — Dopo il successo di `signInWithOtp`, inviare:
+```js
+gtag('event', 'email_submit', { label: 'gate_modal' });
 ```
 
-Essendo una SPA (Single Page App), il tag si carica una sola volta e Google Analytics traccerà automaticamente le pageview. Nessun altro file da modificare.
+### 4. Experience waitlist submit → `gtag('event', 'email_submit')`
+**File: `src/components/ExperienceWaitlistModal.tsx`** — Dopo l'insert riuscito, inviare:
+```js
+gtag('event', 'email_submit', { label: 'experience_waitlist' });
+```
+
+### Risultato
+In Google Analytics → Realtime vedrai:
+- **hotspot_click** con label per categoria
+- **email_submit** con label per distinguere gate vs waitlist
 
