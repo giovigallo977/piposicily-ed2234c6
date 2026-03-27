@@ -96,13 +96,6 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
     return map;
   }, [hotspots]);
 
-  // Collezioni: DB image or fallback to first hotspot with photo
-  const collezioniImage = useMemo(() => {
-    if (catImgCollezioni?.content) return catImgCollezioni.content;
-    if (!hotspots) return null;
-    const withPhoto = hotspots.filter(h => h.foto_principale);
-    return withPhoto.length > 0 ? withPhoto[0].foto_principale : null;
-  }, [hotspots, catImgCollezioni]);
 
   const getCategoryImage = (dbValue: string) => {
     return dbCategoryImages[dbValue] || hotspotCategoryImages[dbValue];
