@@ -4,15 +4,24 @@ import { ChevronsLeft, Loader2 } from "lucide-react";
 import { useCollections } from "@/hooks/useCollections";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
+import { useCardGate } from "@/hooks/useCardGate";
 import { toast } from "@/hooks/use-toast";
 import LoginModal from "@/components/LoginModal";
+import EmailGateModal from "@/components/EmailGateModal";
 
 const CollectionsPage = () => {
   const navigate = useNavigate();
   const { data: collections, isLoading } = useCollections();
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const { user, signOut } = useAuth();
   const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const { onBeforeCollectionView, gateModalOpen, setGateModalOpen, onEmailProvided } = useCardGate();
+
+  const handleCollectionClick = (collectionId: string) => {
+    if (onBeforeCollectionView()) {
+      navigate(`/collezioni/${collectionId}`);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -44,7 +53,7 @@ const CollectionsPage = () => {
             {collections?.map((collection) => (
               <button
                 key={collection.id}
-                onClick={() => navigate(`/collezioni/${collection.id}`)}
+                onClick={() => handleCollectionClick(collection.id)}
                 className="relative aspect-square rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
               >
                 {collection.immagine ? (
@@ -72,6 +81,7 @@ const CollectionsPage = () => {
         </div>
       </main>
       <LoginModal open={loginModalOpen} onOpenChange={setLoginModalOpen} />
+      <EmailGateModal open={gateModalOpen} onOpenChange={setGateModalOpen} onEmailProvided={onEmailProvided} />
     </div>
   );
 };

@@ -5,9 +5,12 @@ import { useCollectionById, useCollectionHotspots } from "@/hooks/useCollections
 import { useHotspots } from "@/hooks/useHotspots";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useAuth } from "@/hooks/useAuth";
+import { useCardGate } from "@/hooks/useCardGate";
 import { toast } from "@/hooks/use-toast";
 import HotspotCard from "@/components/HotspotCard";
 import LoginModal from "@/components/LoginModal";
+import EmailGateModal from "@/components/EmailGateModal";
+import CollectionInlineBlock from "@/components/CollectionInlineBlock";
 
 const CollectionDetailPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -18,6 +21,13 @@ const CollectionDetailPage = () => {
   const { data: collectionHotspots, isLoading: chLoading } = useCollectionHotspots(id);
   const { data: allHotspots, isLoading: hLoading } = useHotspots();
   const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const {
+    shouldShowCollectionBlock,
+    onBeforeExpand,
+    gateModalOpen,
+    setGateModalOpen,
+    onEmailProvided,
+  } = useCardGate();
 
   const hotspots = useMemo(() => {
     if (!collectionHotspots || !allHotspots) return [];
@@ -28,6 +38,13 @@ const CollectionDetailPage = () => {
   }, [collectionHotspots, allHotspots]);
 
   const isLoading = collLoading || chLoading || hLoading;
+
+  // For gated collections, show ~25% of hotspots then inline block
+  const visibleCount = shouldShowCollectionBlock
+    ? Math.max(1, Math.ceil(hotspots.length * 0.25))
+    : hotspots.length;
+
+  const visibleHotspots = hotspots.slice(0, visibleCount);
 
   return (
     <div className="min-h-screen bg-background">
@@ -58,13 +75,18 @@ const CollectionDetailPage = () => {
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {hotspots.map((hotspot, index) => (
+            {visibleHotspots.map((hotspot, index) => (
               <HotspotCard
                 key={hotspot.id}
                 hotspot={hotspot}
                 index={index}
+                onBeforeExpand={onBeforeExpand}
               />
             ))}
+
+            {shouldShowCollectionBlock && hotspots.length > visibleCount && (
+              <CollectionInlineBlock onContinue={() => setGateModalOpen(true)} />
+            )}
           </div>
 
           {!isLoading && hotspots.length === 0 && (
@@ -76,6 +98,7 @@ const CollectionDetailPage = () => {
       </main>
 
       <LoginModal open={loginModalOpen} onOpenChange={setLoginModalOpen} />
+      <EmailGateModal open={gateModalOpen} onOpenChange={setGateModalOpen} onEmailProvided={onEmailProvided} />
     </div>
   );
 };

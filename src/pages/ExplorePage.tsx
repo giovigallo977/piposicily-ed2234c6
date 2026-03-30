@@ -16,7 +16,7 @@ const ExplorePage = () => {
   const { data: hotspots, isLoading, error } = useHotspots();
   const { t } = useLanguage();
   const { user, signOut } = useAuth();
-  const { onBeforeExpand, gateModalOpen, setGateModalOpen } = useCardGate();
+  const { onBeforeExpand, gateModalOpen, setGateModalOpen, onEmailProvided } = useCardGate();
 
   const [loginModalOpen, setLoginModalOpen] = useState(false);
 
@@ -34,7 +34,6 @@ const ExplorePage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <header className="sticky top-0 z-50 bg-background py-4 px-6 flex items-center justify-between">
         <button onClick={handleBack} className="p-2 transition-all duration-200 hover:scale-110" aria-label={t("backLabel")}>
           <ChevronsLeft className="w-8 h-8 text-foreground" strokeWidth={2.5} />
@@ -54,7 +53,6 @@ const ExplorePage = () => {
         )}
       </header>
 
-      {/* Content */}
       <main className="container mx-auto px-4 py-6 pb-24">
         <div className="max-w-6xl mx-auto">
           {isLoading && (
@@ -94,7 +92,7 @@ const ExplorePage = () => {
         </div>
       </main>
 
-      <EmailGateModal open={gateModalOpen} onOpenChange={setGateModalOpen} />
+      <EmailGateModal open={gateModalOpen} onOpenChange={setGateModalOpen} onEmailProvided={onEmailProvided} />
       <LoginModal open={loginModalOpen} onOpenChange={setLoginModalOpen} />
     </div>
   );
