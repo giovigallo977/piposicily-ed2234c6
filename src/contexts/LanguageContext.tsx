@@ -97,7 +97,7 @@ export const translations = {
     // Decision section
     chooseDayTitle: "Scegli come vivere la tua giornata",
     selfTripTitle: "Esplora senza sbagliare\nItinerari già pronti, zero tempo perso",
-    selfTripCta: "Vedi dove puoi andare!",
+    selfTripCta: "Guarda dove ti porta Pipo!",
     experienceTitle: "Experience Pipo\nstanno per partire",
     experienceCta: "Scopri di più",
     browseTitle: "Vuoi solo curiosare?",
