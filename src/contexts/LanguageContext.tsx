@@ -204,7 +204,7 @@ export const translations = {
     // Decision section
     chooseDayTitle: "Choose how you want to spend your day",
     selfTripTitle: "Explore without mistakes\nReady itineraries, zero wasted time",
-    selfTripCta: "See where Pipo takes you!",
+    selfTripCta: "See ready itineraries",
     experienceTitle: "Don't want to plan anything?\nWe'll take you, in small groups",
     experienceCta: "Learn more",
     browseTitle: "Just want to browse?",
