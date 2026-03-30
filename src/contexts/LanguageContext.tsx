@@ -63,12 +63,16 @@ export const translations = {
     catArteECultura: "Arte e Cultura",
 
     // Email gate
-    gateTitle: "Ti piace Pipo? 😎",
-    gateDesc: "Lascia la tua email per continuare a esplorare gratis.\nNessun pagamento, nessun spam.",
+    gateTitle: "Ti stai muovendo bene.",
+    gateDesc: "Hai già scoperto alcuni luoghi fuori radar.\nVuoi continuare a esplorare con Pipo?",
     gateEmailPlaceholder: "La tua email",
-    gateCta: "Continua",
+    gateCta: "Continua con Pipo",
     gateSentTitle: "Controlla la tua email!",
     gateSentDesc: "Ti abbiamo inviato un link magico. Cliccaci sopra per continuare a esplorare.",
+    gateLocationTitle: "Da dove stai esplorando?",
+    gateLocationOther: "Altro",
+    gateSkip: "Salta",
+    inlineBlockTitle: "Vuoi continuare a esplorare?",
 
     // Collections
     collections: "Day Trip e Day Walk",
