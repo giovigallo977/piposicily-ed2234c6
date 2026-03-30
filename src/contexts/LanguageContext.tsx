@@ -98,7 +98,7 @@ export const translations = {
     chooseDayTitle: "Scegli come vivere la tua giornata",
     selfTripTitle: "Esplora senza sbagliare\nItinerari già pronti, zero tempo perso",
     selfTripCta: "Guarda dove ti porta Pipo!",
-    experienceTitle: "Experience Pipo\nstanno per partire",
+    experienceTitle: "Non vuoi organizzare nulla?\nTi portiamo noi, in piccoli gruppi",
     experienceCta: "Scopri di più",
     browseTitle: "Vuoi solo curiosare?",
 
@@ -197,7 +197,7 @@ export const translations = {
     chooseDayTitle: "Choose how you want to spend your day",
     selfTripTitle: "Explore without mistakes\nReady itineraries, zero wasted time",
     selfTripCta: "See where Pipo takes you!",
-    experienceTitle: "Pipo Experiences\nare launching soon",
+    experienceTitle: "Don't want to plan anything?\nWe'll take you, in small groups",
     experienceCta: "Learn more",
     browseTitle: "Just want to browse?",
 
