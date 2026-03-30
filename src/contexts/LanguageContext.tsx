@@ -84,7 +84,7 @@ export const translations = {
     zone: "zona",
 
     // Scroll
-    scrollDown: "Scorri",
+    scrollDown: "Inizia da qui",
 
     // Auth
     login: "Login",
