@@ -109,8 +109,9 @@ export const translations = {
 
     // Experience waitlist modal
     experienceFakeDoorTitle: "Experience Pipo stanno per partire 🔥",
-    experienceFakeDoorDesc: "Piccoli gruppi, luoghi autentici, zero turismo di massa.\nTi portiamo nei posti giusti senza che tu debba organizzare nulla.\n\nStiamo selezionando le prime experience in Sicilia.\nSe vuoi partecipare, lasciaci la tua email: ti avvisiamo appena apriamo le date.",
-    experienceFakeDoorCta: "Avvisami quando apre",
+    experienceFakeDoorSubtitle: "Piccoli gruppi, luoghi autentici, zero turismo di massa.\nTu arrivi, noi pensiamo al resto.",
+    experienceFakeDoorDesc: "Stiamo selezionando le prime experience in Sicilia: giornate fuori radar tra natura, borghi, cibo e luoghi fantasma.\n\nVuoi essere tra i primi a saperlo?\nLascia la tua email e ti avvisiamo appena apriamo le prime date.",
+    experienceFakeDoorCta: "Avvisami quando aprono le date",
     experienceFakeDoorSuccess: "Perfetto! Ti avviseremo presto.",
     experienceFakeDoorEmail: "La tua email",
   },
@@ -213,8 +214,9 @@ export const translations = {
 
     // Experience waitlist modal
     experienceFakeDoorTitle: "Pipo Experiences are launching soon 🔥",
-    experienceFakeDoorDesc: "Small groups, authentic places, zero mass tourism.\nWe take you to the right spots without you having to organize a thing.\n\nWe're selecting the first experiences in Sicily.\nLeave your email and we'll let you know when dates open.",
-    experienceFakeDoorCta: "Notify me when it opens",
+    experienceFakeDoorSubtitle: "Small groups, authentic places, zero mass tourism.\nYou show up, we handle the rest.",
+    experienceFakeDoorDesc: "We're selecting the first experiences in Sicily: off-radar days through nature, villages, food and ghost places.\n\nWant to be among the first to know?\nLeave your email and we'll notify you as soon as we open the first dates.",
+    experienceFakeDoorCta: "Notify me when dates open",
     experienceFakeDoorSuccess: "Great! We'll notify you soon.",
     experienceFakeDoorEmail: "Your email",
   },

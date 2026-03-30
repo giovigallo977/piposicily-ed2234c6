@@ -46,7 +46,10 @@ const ExperienceWaitlistModal = ({ open, onOpenChange }: ExperienceWaitlistModal
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">{t("experienceFakeDoorTitle")}</DialogTitle>
-          <DialogDescription className="whitespace-pre-line text-base mt-2">
+          <p className="text-base font-medium text-foreground whitespace-pre-line mt-1">
+            {t("experienceFakeDoorSubtitle")}
+          </p>
+          <DialogDescription className="whitespace-pre-line text-base mt-3">
             {t("experienceFakeDoorDesc")}
           </DialogDescription>
         </DialogHeader>
