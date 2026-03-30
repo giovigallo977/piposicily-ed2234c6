@@ -187,7 +187,7 @@ export const translations = {
     zone: "zone",
 
     // Scroll
-    scrollDown: "Scroll",
+    scrollDown: "Start here",
 
     // Auth
     login: "Login",
