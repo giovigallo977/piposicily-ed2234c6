@@ -1,34 +1,21 @@
 
 
-## Tracking Google Analytics: hotspot click + email submit
+## Aggiornare copy della card "Fai da solo"
 
 ### Cosa cambia
-Aggiungere chiamate `gtag()` native per inviare eventi a Google Analytics, oltre al tracking interno già esistente.
+Aggiornare titolo, sottotitolo e CTA della card "Fai da solo" nella sezione decisionale della homepage.
 
-### 1. Dichiarazione TypeScript per `gtag`
-**File: `src/vite-env.d.ts`** — Aggiungere la dichiarazione globale di `gtag` per evitare errori TypeScript.
+### Modifiche
 
-### 2. Hotspot click → `gtag('event', 'hotspot_click', { label })`
-**File: `src/components/HotspotCard.tsx`** — In `handleToggleExpand`, quando la card si espande, inviare:
-```js
-gtag('event', 'hotspot_click', { label: hotspot.categoria || hotspot.titolo });
-```
-Così ogni hotspot avrà una label diversa basata sulla categoria (es. "Luoghi Fantasma", "Natura", "Borghi").
+**File: `src/contexts/LanguageContext.tsx`**
 
-### 3. Email gate submit → `gtag('event', 'email_submit')`
-**File: `src/components/EmailGateModal.tsx`** — Dopo il successo di `signInWithOtp`, inviare:
-```js
-gtag('event', 'email_submit', { label: 'gate_modal' });
-```
+Italiano (riga 99-100):
+- `selfTripTitle`: `"Fai da solo\n(ma senza sbagliare)"` → `"Esplora senza sbagliare\nItinerari già pronti, zero tempo perso"`
+- `selfTripCta`: `"Vedi gli itinerari pronti"` → `"Vedi dove puoi andare!"`
 
-### 4. Experience waitlist submit → `gtag('event', 'email_submit')`
-**File: `src/components/ExperienceWaitlistModal.tsx`** — Dopo l'insert riuscito, inviare:
-```js
-gtag('event', 'email_submit', { label: 'experience_waitlist' });
-```
+English (riga 198-199):
+- `selfTripTitle`: `"Do it yourself\n(without mistakes)"` → `"Explore without mistakes\nReady itineraries, zero wasted time"`
+- `selfTripCta`: `"See ready itineraries"` → `"See where you can go!"`
 
-### Risultato
-In Google Analytics → Realtime vedrai:
-- **hotspot_click** con label per categoria
-- **email_submit** con label per distinguere gate vs waitlist
+**File: `src/components/HeroSection.tsx`** — Rimuovere l'emoji 🚗 e sostituire con nulla (o mantenerla se preferisci). Nessuna altra modifica strutturale necessaria.
 
