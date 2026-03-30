@@ -109,8 +109,9 @@ export const translations = {
 
     // Experience waitlist modal
     experienceFakeDoorTitle: "Experience Pipo stanno per partire 🔥",
-    experienceFakeDoorDesc: "Piccoli gruppi, luoghi autentici, zero turismo di massa.\nTi portiamo nei posti giusti senza che tu debba organizzare nulla.\n\nStiamo selezionando le prime experience in Sicilia.\nSe vuoi partecipare, lasciaci la tua email: ti avvisiamo appena apriamo le date.",
-    experienceFakeDoorCta: "Avvisami quando apre",
+    experienceFakeDoorSubtitle: "Piccoli gruppi, luoghi autentici, zero turismo di massa.\nTu arrivi, noi pensiamo al resto.",
+    experienceFakeDoorDesc: "Stiamo selezionando le prime experience in Sicilia: giornate fuori radar tra natura, borghi, cibo e luoghi fantasma.\n\nVuoi essere tra i primi a saperlo?\nLascia la tua email e ti avvisiamo appena apriamo le prime date.",
+    experienceFakeDoorCta: "Avvisami quando aprono le date",
     experienceFakeDoorSuccess: "Perfetto! Ti avviseremo presto.",
     experienceFakeDoorEmail: "La tua email",
   },
