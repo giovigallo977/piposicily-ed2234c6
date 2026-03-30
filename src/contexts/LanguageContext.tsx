@@ -103,7 +103,7 @@ export const translations = {
     selfTripTitle: "Esplora senza sbagliare\nItinerari già pronti, zero tempo perso",
     selfTripCta: "Vedi gli itinerari pronti",
     experienceTitle: "Non vuoi organizzare nulla?\nTi portiamo noi, in piccoli gruppi",
-    experienceCta: "Scopri di più",
+    experienceCta: "Unisciti alle prossime esperienze",
     browseTitle: "Vuoi solo curiosare?",
 
     // Experience waitlist modal
@@ -206,7 +206,7 @@ export const translations = {
     selfTripTitle: "Explore without mistakes\nReady itineraries, zero wasted time",
     selfTripCta: "See ready itineraries",
     experienceTitle: "Don't want to plan anything?\nWe'll take you, in small groups",
-    experienceCta: "Learn more",
+    experienceCta: "Join the next experiences",
     browseTitle: "Just want to browse?",
 
     // Experience waitlist modal
