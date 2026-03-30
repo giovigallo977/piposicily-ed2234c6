@@ -105,6 +105,7 @@ export const translations = {
     experienceTitle: "Non vuoi organizzare nulla?\nTi portiamo noi, in piccoli gruppi",
     experienceCta: "Unisciti alle prossime esperienze",
     browseTitle: "Vuoi solo curiosare?",
+    browseSubtitle: "Esplora gli spot gratuiti di Pipo per farti un'idea dei luoghi.",
 
     // Experience waitlist modal
     experienceFakeDoorTitle: "Experience Pipo stanno per partire 🔥",
@@ -208,6 +209,7 @@ export const translations = {
     experienceTitle: "Don't want to plan anything?\nWe'll take you, in small groups",
     experienceCta: "Join the next experiences",
     browseTitle: "Just want to browse?",
+    browseSubtitle: "Explore Pipo's free spots to get a feel for the places.",
 
     // Experience waitlist modal
     experienceFakeDoorTitle: "Pipo Experiences are launching soon 🔥",
