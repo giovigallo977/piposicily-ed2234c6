@@ -236,11 +236,17 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
           {/* SECTION 2: Browse / Curiosare */}
           <div className="w-full max-w-lg md:mx-auto">
             <h2
-              className={`font-sans text-xl md:text-2xl font-bold text-center mb-8 ${!heroFontColor ? (hasHeroBg ? "text-white" : "text-foreground") : ""}`}
+              className={`font-sans text-xl md:text-2xl font-bold text-center mb-2 ${!heroFontColor ? (hasHeroBg ? "text-white" : "text-foreground") : ""}`}
               style={heroFontColor ? { color: heroFontColor } : undefined}
             >
               {t("browseTitle")}
             </h2>
+            <p
+              className={`font-sans text-sm md:text-base text-center mb-8 ${!heroFontColor ? (hasHeroBg ? "text-white/70" : "text-muted-foreground") : ""}`}
+              style={heroFontColor ? { color: heroFontColor, opacity: 0.7 } : undefined}
+            >
+              {t("browseSubtitle")}
+            </p>
             <div className="grid grid-cols-2 gap-3 w-full">
               <CategoryCard cat={CATEGORIES[0]} />
               <CategoryCard cat={CATEGORIES[1]} />
