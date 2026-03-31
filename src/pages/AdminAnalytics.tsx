@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 interface Counts {
   page_view: number;
   hotspot_view: number;
-  payment_click: number;
 }
 
 const AdminAnalytics = () => {
