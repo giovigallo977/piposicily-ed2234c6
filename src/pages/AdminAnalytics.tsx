@@ -54,7 +54,6 @@ const AdminAnalytics = () => {
   const cards = [
     { label: "Page Views", value: counts.page_view, icon: Eye, color: "text-blue-500" },
     { label: "Hotspot Views", value: counts.hotspot_view, icon: MousePointerClick, color: "text-emerald-500" },
-    { label: "Payment Clicks", value: counts.payment_click, icon: CreditCard, color: "text-amber-500" },
   ];
 
   return (

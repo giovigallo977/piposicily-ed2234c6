@@ -1,24 +1,18 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ChevronsLeft, Loader2 } from "lucide-react";
 import HotspotCard from "@/components/HotspotCard";
 import EmailGateModal from "@/components/EmailGateModal";
-import LoginModal from "@/components/LoginModal";
 import { useHotspots } from "@/hooks/useHotspots";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCardGate } from "@/hooks/useCardGate";
-import { useAuth } from "@/hooks/useAuth";
-import { toast } from "@/hooks/use-toast";
 
 const ExplorePage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { data: hotspots, isLoading, error } = useHotspots();
   const { t } = useLanguage();
-  const { user, signOut } = useAuth();
   const { onBeforeExpand, gateModalOpen, setGateModalOpen, onEmailProvided } = useCardGate();
-
-  const [loginModalOpen, setLoginModalOpen] = useState(false);
 
   const categoriaParam = searchParams.get("categoria");
 
@@ -42,15 +36,7 @@ const ExplorePage = () => {
         <div className="flex items-center gap-2">
           <img alt="Pipo" className="h-10 w-10 object-contain" draggable={false} src="/lovable-uploads/c09259c8-f4e2-4940-b26d-61c1f4a134ae.png" />
         </div>
-        {!user ? (
-          <button onClick={() => setLoginModalOpen(true)} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
-            {t("login")}
-          </button>
-        ) : (
-          <button onClick={async () => { await signOut(); toast({ title: t("loggedOut") }); }} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
-            {t("logoutLabel")}
-          </button>
-        )}
+        <div className="w-10" />
       </header>
 
       <main className="container mx-auto px-4 py-6 pb-24">
@@ -93,7 +79,6 @@ const ExplorePage = () => {
       </main>
 
       <EmailGateModal open={gateModalOpen} onOpenChange={setGateModalOpen} onEmailProvided={onEmailProvided} />
-      <LoginModal open={loginModalOpen} onOpenChange={setLoginModalOpen} />
     </div>
   );
 };

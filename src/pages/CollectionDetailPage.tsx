@@ -1,14 +1,11 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { ChevronsLeft, Loader2 } from "lucide-react";
 import { useCollectionById, useCollectionHotspots } from "@/hooks/useCollections";
 import { useHotspots } from "@/hooks/useHotspots";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useAuth } from "@/hooks/useAuth";
 import { useCardGate } from "@/hooks/useCardGate";
-import { toast } from "@/hooks/use-toast";
 import HotspotCard from "@/components/HotspotCard";
-import LoginModal from "@/components/LoginModal";
 import EmailGateModal from "@/components/EmailGateModal";
 import CollectionInlineBlock from "@/components/CollectionInlineBlock";
 
@@ -16,11 +13,9 @@ const CollectionDetailPage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { t } = useLanguage();
-  const { user, signOut } = useAuth();
   const { data: collection, isLoading: collLoading } = useCollectionById(id);
   const { data: collectionHotspots, isLoading: chLoading } = useCollectionHotspots(id);
   const { data: allHotspots, isLoading: hLoading } = useHotspots();
-  const [loginModalOpen, setLoginModalOpen] = useState(false);
   const {
     shouldShowCollectionBlock,
     onBeforeExpand,
@@ -39,7 +34,6 @@ const CollectionDetailPage = () => {
 
   const isLoading = collLoading || chLoading || hLoading;
 
-  // For gated collections, show ~25% of hotspots then inline block
   const visibleCount = shouldShowCollectionBlock
     ? Math.max(1, Math.ceil(hotspots.length * 0.25))
     : hotspots.length;
@@ -55,15 +49,7 @@ const CollectionDetailPage = () => {
         <h1 className="font-sans text-xl font-bold text-foreground truncate max-w-[60%]">
           {collection?.nome || t("collection")}
         </h1>
-        {!user ? (
-          <button onClick={() => setLoginModalOpen(true)} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
-            {t("login")}
-          </button>
-        ) : (
-          <button onClick={async () => { await signOut(); toast({ title: t("loggedOut") }); }} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
-            {t("logoutLabel")}
-          </button>
-        )}
+        <div className="w-10" />
       </header>
 
       <main className="container mx-auto px-4 py-6 pb-24">
@@ -97,7 +83,6 @@ const CollectionDetailPage = () => {
         </div>
       </main>
 
-      <LoginModal open={loginModalOpen} onOpenChange={setLoginModalOpen} />
       <EmailGateModal open={gateModalOpen} onOpenChange={setGateModalOpen} onEmailProvided={onEmailProvided} />
     </div>
   );
