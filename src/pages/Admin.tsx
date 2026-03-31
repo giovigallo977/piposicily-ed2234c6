@@ -297,8 +297,8 @@ const Admin = () => {
                 Contenuti
               </TabsTrigger>
               <TabsTrigger value="utenti" className="flex items-center gap-2">
-                <Users className="h-4 w-4" />
-                Utenti
+                <Mail className="h-4 w-4" />
+                Email
               </TabsTrigger>
             </TabsList>
 
