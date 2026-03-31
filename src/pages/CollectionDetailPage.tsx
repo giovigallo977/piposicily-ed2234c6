@@ -22,6 +22,7 @@ const CollectionDetailPage = () => {
     gateModalOpen,
     setGateModalOpen,
     onEmailProvided,
+    gateSource,
   } = useCardGate();
 
   const hotspots = useMemo(() => {
