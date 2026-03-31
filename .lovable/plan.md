@@ -1,22 +1,59 @@
 
 
-## Migliorare il layout delle card decisionali su mobile
+## Remove Auth & Payment — MVP Solo Esplorazione + Email
 
-### Problema
-Le due card ("Esplora senza sbagliare..." e "Non vuoi organizzare nulla?...") usano una griglia 2 colonne fissa. Su schermi piccoli il testo lungo si comprime troppo, i bottoni CTA si stringono e il layout risulta sbilanciato.
-
-### Soluzione
-Passare da `grid-cols-2` fisso a **una colonna su mobile, due colonne su tablet/desktop**. Ridurre il padding interno su mobile e migliorare la leggibilità.
+### Obiettivo
+Eliminare ogni riferimento a login, account e pagamenti. L'app diventa completamente pubblica. L'unico input richiesto e' l'email (mail wall + waitlist experience).
 
 ### Modifiche
 
-**File: `src/components/HeroSection.tsx`** (sezione Decision cards, ~riga 196)
+**1. `src/App.tsx`**
+- Rimuovere `AuthProvider` wrapper globale
+- Wrappare SOLO le route admin (`/auth`, `/admin`, `/admin-analytics`) in un `AuthProvider` locale
+- Rimuovere import di `Auth` dalla route pubblica (la route `/auth` resta ma solo per admin)
 
-- Griglia: `grid grid-cols-2 gap-3` → `grid grid-cols-1 sm:grid-cols-2 gap-3`
-- Padding card: `p-5` → `p-4 sm:p-5`
-- Emoji: ridurre da `text-3xl` a `text-2xl` su mobile
-- Testo titolo card: aggiungere `text-xs sm:text-sm md:text-base` per scalare meglio
-- Bottone CTA: mantenere `w-full`, verificare che `text-xs` sia leggibile
+**2. `src/hooks/useCardGate.ts`**
+- Rimuovere import e uso di `useAuth`
+- Cambiare `isUnlocked` da `!!user || emailDone` a solo `emailDone`
 
-Risultato: su mobile le due card si impilano in verticale, occupano tutta la larghezza e il testo ha spazio sufficiente. Su schermi >= 640px tornano affiancate.
+**3. `src/components/MinimalHeader.tsx`**
+- Rimuovere `useAuth`, `LoginModal`, login/logout button
+- Lo slot destro dell'header diventa vuoto (solo language selector + logo)
+
+**4. `src/pages/ExplorePage.tsx`**
+- Rimuovere `useAuth`, `LoginModal`, `loginModalOpen` state, login/logout button dall'header
+- Mantenere `EmailGateModal` e `useCardGate`
+
+**5. `src/pages/CollectionsPage.tsx`**
+- Stesso: rimuovere auth + LoginModal, mantenere EmailGateModal
+
+**6. `src/pages/CollectionDetailPage.tsx`**
+- Stesso: rimuovere auth + LoginModal, mantenere EmailGateModal + inline block
+
+**7. `src/pages/FreeSpotsPage.tsx`**
+- Rimuovere auth + LoginModal + login/logout button
+
+**8. `src/components/LoginModal.tsx`** — Eliminare il file
+
+**9. `src/lib/trackEvent.ts`**
+- Rimuovere `"payment_click"` dal type union
+
+**10. `src/pages/AdminAnalytics.tsx`**
+- Rimuovere la card "Payment Clicks", aggiornare il type `Counts`
+
+**11. `supabase/functions/get-session-email/`** — Eliminare la edge function Stripe
+
+### Migrazione DB
+Aggiungere policy RLS per permettere a utenti anonimi di inserire in `granted_emails`:
+```sql
+CREATE POLICY "Anon can insert granted_emails"
+ON public.granted_emails FOR INSERT TO anon
+WITH CHECK (true);
+```
+
+### File NON toccati
+- `useAuth.tsx`, `Auth.tsx`, `Admin.tsx`, `AdminAnalytics.tsx` (admin flow) — restano per l'accesso admin
+- `EmailGateModal.tsx` — resta identico
+- `ExperienceWaitlistModal.tsx` — resta identico
+- `HeroSection.tsx` — nessun auth presente
 
