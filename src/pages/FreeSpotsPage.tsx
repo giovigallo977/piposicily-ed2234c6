@@ -2,19 +2,13 @@ import { useNavigate } from "react-router-dom";
 import { ChevronsLeft, Loader2 } from "lucide-react";
 import { useFreeSpots } from "@/hooks/useFreeSpots";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useAuth } from "@/hooks/useAuth";
-import { toast } from "@/hooks/use-toast";
-import { useState } from "react";
-import LoginModal from "@/components/LoginModal";
 import HotspotCard from "@/components/HotspotCard";
 import type { Hotspot } from "@/hooks/useHotspots";
 
 const FreeSpotsPage = () => {
   const navigate = useNavigate();
   const { data: freeSpots, isLoading } = useFreeSpots();
-  const { t, language } = useLanguage();
-  const { user, signOut } = useAuth();
-  const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const { t } = useLanguage();
 
   return (
     <div className="min-h-screen bg-background">
@@ -23,15 +17,7 @@ const FreeSpotsPage = () => {
           <ChevronsLeft className="w-8 h-8 text-foreground" strokeWidth={2.5} />
         </button>
         <h1 className="font-sans text-xl font-bold text-foreground">Free Spots</h1>
-        {!user ? (
-          <button onClick={() => setLoginModalOpen(true)} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
-            {t("login")}
-          </button>
-        ) : (
-          <button onClick={async () => { await signOut(); toast({ title: t("loggedOut") }); }} className="text-sm font-medium text-foreground hover:opacity-70 transition-opacity">
-            {t("logoutLabel")}
-          </button>
-        )}
+        <div className="w-10" />
       </header>
 
       <main className="container mx-auto px-4 py-6 pb-24">
@@ -59,7 +45,6 @@ const FreeSpotsPage = () => {
           )}
         </div>
       </main>
-      <LoginModal open={loginModalOpen} onOpenChange={setLoginModalOpen} />
     </div>
   );
 };

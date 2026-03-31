@@ -2,20 +2,19 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Eye, MousePointerClick, CreditCard, ArrowLeft, Loader2 } from "lucide-react";
+import { Eye, MousePointerClick, ArrowLeft, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 interface Counts {
   page_view: number;
   hotspot_view: number;
-  payment_click: number;
 }
 
 const AdminAnalytics = () => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const [counts, setCounts] = useState<Counts>({ page_view: 0, hotspot_view: 0, payment_click: 0 });
+  const [counts, setCounts] = useState<Counts>({ page_view: 0, hotspot_view: 0 });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -32,7 +31,7 @@ const AdminAnalytics = () => {
         setLoading(false);
         return;
       }
-      const result: Counts = { page_view: 0, hotspot_view: 0, payment_click: 0 };
+      const result: Counts = { page_view: 0, hotspot_view: 0 };
       (data as { event_type: string; count: number }[]).forEach((row) => {
         if (row.event_type in result) {
           result[row.event_type as keyof Counts] = Number(row.count);
@@ -55,7 +54,6 @@ const AdminAnalytics = () => {
   const cards = [
     { label: "Page Views", value: counts.page_view, icon: Eye, color: "text-blue-500" },
     { label: "Hotspot Views", value: counts.hotspot_view, icon: MousePointerClick, color: "text-emerald-500" },
-    { label: "Payment Clicks", value: counts.payment_click, icon: CreditCard, color: "text-amber-500" },
   ];
 
   return (

@@ -21,30 +21,27 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <LanguageProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/esplora" element={<ExplorePage />} />
-              <Route path="/collezioni" element={<CollectionsPage />} />
-              <Route path="/collezioni/:id" element={<CollectionDetailPage />} />
-              <Route path="/free-spots" element={<FreeSpotsPage />} />
-              
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/admin" element={<Admin />} />
-              
-              <Route path="/admin-analytics" element={<AdminAnalytics />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </LanguageProvider>
-    </AuthProvider>
+    <LanguageProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/esplora" element={<ExplorePage />} />
+            <Route path="/collezioni" element={<CollectionsPage />} />
+            <Route path="/collezioni/:id" element={<CollectionDetailPage />} />
+            <Route path="/free-spots" element={<FreeSpotsPage />} />
+            
+            <Route path="/auth" element={<AuthProvider><Auth /></AuthProvider>} />
+            <Route path="/admin" element={<AuthProvider><Admin /></AuthProvider>} />
+            <Route path="/admin-analytics" element={<AuthProvider><AdminAnalytics /></AuthProvider>} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </LanguageProvider>
   </QueryClientProvider>
 );
 

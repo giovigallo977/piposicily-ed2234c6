@@ -1,5 +1,4 @@
 import { useState, useCallback, useEffect } from "react";
-import { useAuth } from "@/hooks/useAuth";
 import { trackEvent } from "@/lib/trackEvent";
 
 const HOTSPOT_KEY = "pipo-hotspot-expansions";
@@ -28,8 +27,6 @@ export const markEmailProvided = () => {
 };
 
 export const useCardGate = () => {
-  const { user } = useAuth();
-
   const [hotspotCount, setHotspotCount] = useState<number>(() => readCount(HOTSPOT_KEY));
   const [collectionCount, setCollectionCount] = useState<number>(() => readCount(COLLECTION_KEY));
   const [emailDone, setEmailDone] = useState<boolean>(() => isEmailProvided());
@@ -38,7 +35,7 @@ export const useCardGate = () => {
   useEffect(() => { writeCount(HOTSPOT_KEY, hotspotCount); }, [hotspotCount]);
   useEffect(() => { writeCount(COLLECTION_KEY, collectionCount); }, [collectionCount]);
 
-  const isUnlocked = !!user || emailDone;
+  const isUnlocked = emailDone;
 
   /** Call before expanding a hotspot card. Returns true if allowed. */
   const onBeforeExpand = useCallback((): boolean => {
