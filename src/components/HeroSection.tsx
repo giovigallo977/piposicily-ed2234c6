@@ -193,11 +193,11 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
             >
               {t("chooseDayTitle")}
             </h2>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {/* Card 1: Self trip */}
-              <div className="flex flex-col items-center rounded-2xl border border-border bg-card p-5 text-center gap-3">
-                <span className="text-3xl">🚗</span>
-                <p className="font-sans text-sm md:text-base font-bold text-card-foreground whitespace-pre-line leading-tight">
+              <div className="flex flex-col items-center rounded-2xl border border-border bg-card p-4 sm:p-5 text-center gap-3">
+                <span className="text-2xl sm:text-3xl">🚗</span>
+                <p className="font-sans text-xs sm:text-sm md:text-base font-bold text-card-foreground whitespace-pre-line leading-tight">
                   {t("selfTripTitle")}
                 </p>
                 <Button
@@ -213,9 +213,9 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
                 </Button>
               </div>
               {/* Card 2: Experience */}
-              <div className="flex flex-col items-center rounded-2xl border border-border bg-card p-5 text-center gap-3">
-                <span className="text-3xl">🚐</span>
-                <p className="font-sans text-sm md:text-base font-bold text-card-foreground whitespace-pre-line leading-tight">
+              <div className="flex flex-col items-center rounded-2xl border border-border bg-card p-4 sm:p-5 text-center gap-3">
+                <span className="text-2xl sm:text-3xl">🚐</span>
+                <p className="font-sans text-xs sm:text-sm md:text-base font-bold text-card-foreground whitespace-pre-line leading-tight">
                   {t("experienceTitle")}
                 </p>
                 <Button
