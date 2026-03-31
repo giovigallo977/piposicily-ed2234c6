@@ -197,7 +197,7 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
               {/* Card 1: Self trip */}
               <div className="min-w-0 flex flex-col items-center rounded-2xl border border-border bg-card p-4 sm:p-5 text-center gap-3">
                 <span className="text-2xl sm:text-3xl">🚗</span>
-                <p className="min-w-0 w-full break-words font-sans text-xs sm:text-sm md:text-base font-bold text-card-foreground whitespace-pre-line leading-tight">
+                <p className="min-w-0 w-full break-words font-sans text-lg sm:text-xl md:text-2xl font-bold text-card-foreground whitespace-pre-line leading-tight">
                   {t("selfTripTitle")}
                 </p>
                 <Button
@@ -215,7 +215,7 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
               {/* Card 2: Experience */}
               <div className="min-w-0 flex flex-col items-center rounded-2xl border border-border bg-card p-4 sm:p-5 text-center gap-3">
                 <span className="text-2xl sm:text-3xl">🚐</span>
-                <p className="min-w-0 w-full break-words font-sans text-xs sm:text-sm md:text-base font-bold text-card-foreground whitespace-pre-line leading-tight">
+                <p className="min-w-0 w-full break-words font-sans text-lg sm:text-xl md:text-2xl font-bold text-card-foreground whitespace-pre-line leading-tight">
                   {t("experienceTitle")}
                 </p>
                 <Button
