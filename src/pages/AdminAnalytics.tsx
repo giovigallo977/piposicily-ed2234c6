@@ -14,7 +14,7 @@ interface Counts {
 const AdminAnalytics = () => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const [counts, setCounts] = useState<Counts>({ page_view: 0, hotspot_view: 0, payment_click: 0 });
+  const [counts, setCounts] = useState<Counts>({ page_view: 0, hotspot_view: 0 });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
