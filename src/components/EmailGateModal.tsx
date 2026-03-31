@@ -17,7 +17,7 @@ interface EmailGateModalProps {
   source?: string;
 }
 
-const EmailGateModal = ({ open, onOpenChange, onEmailProvided }: EmailGateModalProps) => {
+const EmailGateModal = ({ open, onOpenChange, onEmailProvided, source = "gate_modal" }: EmailGateModalProps) => {
   const { t } = useLanguage();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
