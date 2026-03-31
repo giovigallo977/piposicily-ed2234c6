@@ -213,14 +213,14 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
                 </Button>
               </div>
               {/* Card 2: Experience */}
-              <div className="flex flex-col items-center rounded-2xl border border-border bg-card p-4 sm:p-5 text-center gap-3">
+              <div className="min-w-0 flex flex-col items-center rounded-2xl border border-border bg-card p-4 sm:p-5 text-center gap-3">
                 <span className="text-2xl sm:text-3xl">🚐</span>
-                <p className="font-sans text-xs sm:text-sm md:text-base font-bold text-card-foreground whitespace-pre-line leading-tight">
+                <p className="min-w-0 w-full break-words font-sans text-xs sm:text-sm md:text-base font-bold text-card-foreground whitespace-pre-line leading-tight">
                   {t("experienceTitle")}
                 </p>
                 <Button
                   size="sm"
-                  className="mt-auto w-full font-bold text-xs"
+                  className="mt-auto w-full min-w-0 whitespace-normal break-words font-bold text-xs leading-tight"
                   style={{ backgroundColor: 'hsl(var(--cta-yellow))', color: 'hsl(var(--cta-yellow-foreground))' }}
                   onClick={() => {
                     trackEvent("cta_experience");
