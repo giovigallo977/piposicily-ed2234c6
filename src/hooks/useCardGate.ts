@@ -1,6 +1,8 @@
 import { useState, useCallback, useEffect } from "react";
 import { trackEvent } from "@/lib/trackEvent";
 
+export type GateSource = "hotspot_gate" | "collection_gate";
+
 const HOTSPOT_KEY = "pipo-hotspot-expansions";
 const COLLECTION_KEY = "pipo-collection-views";
 const EMAIL_PROVIDED_KEY = "pipo-email-provided";
