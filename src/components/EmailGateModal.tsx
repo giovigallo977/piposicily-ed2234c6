@@ -14,9 +14,10 @@ interface EmailGateModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onEmailProvided?: () => void;
+  source?: string;
 }
 
-const EmailGateModal = ({ open, onOpenChange, onEmailProvided }: EmailGateModalProps) => {
+const EmailGateModal = ({ open, onOpenChange, onEmailProvided, source = "gate_modal" }: EmailGateModalProps) => {
   const { t } = useLanguage();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
@@ -30,7 +31,7 @@ const EmailGateModal = ({ open, onOpenChange, onEmailProvided }: EmailGateModalP
     setLoading(true);
     try {
       // Save email to granted_emails
-      await supabase.from("granted_emails").insert({ email: parsed.data });
+      await supabase.from("granted_emails").insert({ email: parsed.data, source });
       gtag("event", "email_submit", { label: "gate_modal" });
       trackEvent("email_inserita");
       setStep("location");

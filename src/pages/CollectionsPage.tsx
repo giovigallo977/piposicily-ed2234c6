@@ -9,7 +9,7 @@ const CollectionsPage = () => {
   const navigate = useNavigate();
   const { data: collections, isLoading } = useCollections();
   const { t } = useLanguage();
-  const { onBeforeCollectionView, gateModalOpen, setGateModalOpen, onEmailProvided } = useCardGate();
+  const { onBeforeCollectionView, gateModalOpen, setGateModalOpen, onEmailProvided, gateSource } = useCardGate();
 
   const handleCollectionClick = (collectionId: string) => {
     if (onBeforeCollectionView()) {
@@ -66,7 +66,7 @@ const CollectionsPage = () => {
           )}
         </div>
       </main>
-      <EmailGateModal open={gateModalOpen} onOpenChange={setGateModalOpen} onEmailProvided={onEmailProvided} />
+      <EmailGateModal open={gateModalOpen} onOpenChange={setGateModalOpen} onEmailProvided={onEmailProvided} source={gateSource} />
     </div>
   );
 };

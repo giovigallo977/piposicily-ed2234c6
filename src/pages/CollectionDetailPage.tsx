@@ -22,6 +22,7 @@ const CollectionDetailPage = () => {
     gateModalOpen,
     setGateModalOpen,
     onEmailProvided,
+    gateSource,
   } = useCardGate();
 
   const hotspots = useMemo(() => {
@@ -83,7 +84,7 @@ const CollectionDetailPage = () => {
         </div>
       </main>
 
-      <EmailGateModal open={gateModalOpen} onOpenChange={setGateModalOpen} onEmailProvided={onEmailProvided} />
+      <EmailGateModal open={gateModalOpen} onOpenChange={setGateModalOpen} onEmailProvided={onEmailProvided} source={gateSource} />
     </div>
   );
 };

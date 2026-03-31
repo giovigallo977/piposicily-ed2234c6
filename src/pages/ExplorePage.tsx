@@ -12,7 +12,7 @@ const ExplorePage = () => {
   const [searchParams] = useSearchParams();
   const { data: hotspots, isLoading, error } = useHotspots();
   const { t } = useLanguage();
-  const { onBeforeExpand, gateModalOpen, setGateModalOpen, onEmailProvided } = useCardGate();
+  const { onBeforeExpand, gateModalOpen, setGateModalOpen, onEmailProvided, gateSource } = useCardGate();
 
   const categoriaParam = searchParams.get("categoria");
 
@@ -78,7 +78,7 @@ const ExplorePage = () => {
         </div>
       </main>
 
-      <EmailGateModal open={gateModalOpen} onOpenChange={setGateModalOpen} onEmailProvided={onEmailProvided} />
+      <EmailGateModal open={gateModalOpen} onOpenChange={setGateModalOpen} onEmailProvided={onEmailProvided} source={gateSource} />
     </div>
   );
 };

@@ -1,0 +1,1 @@
+ALTER TABLE public.granted_emails ADD COLUMN source text DEFAULT 'gate_modal';
