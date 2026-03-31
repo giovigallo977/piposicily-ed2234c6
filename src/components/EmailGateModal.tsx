@@ -31,7 +31,7 @@ const EmailGateModal = ({ open, onOpenChange, onEmailProvided, source = "gate_mo
     setLoading(true);
     try {
       // Save email to granted_emails
-      await supabase.from("granted_emails").insert({ email: parsed.data });
+      await supabase.from("granted_emails").insert({ email: parsed.data, source });
       gtag("event", "email_submit", { label: "gate_modal" });
       trackEvent("email_inserita");
       setStep("location");
