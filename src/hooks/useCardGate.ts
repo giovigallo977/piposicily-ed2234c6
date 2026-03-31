@@ -33,6 +33,7 @@ export const useCardGate = () => {
   const [collectionCount, setCollectionCount] = useState<number>(() => readCount(COLLECTION_KEY));
   const [emailDone, setEmailDone] = useState<boolean>(() => isEmailProvided());
   const [gateModalOpen, setGateModalOpen] = useState(false);
+  const [gateSource, setGateSource] = useState<GateSource>("hotspot_gate");
 
   useEffect(() => { writeCount(HOTSPOT_KEY, hotspotCount); }, [hotspotCount]);
   useEffect(() => { writeCount(COLLECTION_KEY, collectionCount); }, [collectionCount]);
@@ -44,6 +45,7 @@ export const useCardGate = () => {
     if (isUnlocked) return true;
     if (hotspotCount >= HOTSPOT_THRESHOLD) {
       trackEvent("mail_wall_mostrato");
+      setGateSource("hotspot_gate");
       setGateModalOpen(true);
       return false;
     }
@@ -58,6 +60,7 @@ export const useCardGate = () => {
     trackEvent("itinerari_cliccati");
     if (collectionCount >= COLLECTION_THRESHOLD) {
       trackEvent("mail_wall_mostrato");
+      setGateSource("collection_gate");
       setGateModalOpen(true);
       return false;
     }
@@ -81,6 +84,7 @@ export const useCardGate = () => {
     shouldShowCollectionBlock,
     gateModalOpen,
     setGateModalOpen,
+    gateSource,
     onEmailProvided,
   };
 };
