@@ -14,6 +14,7 @@ interface EmailGateModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onEmailProvided?: () => void;
+  source?: string;
 }
 
 const EmailGateModal = ({ open, onOpenChange, onEmailProvided }: EmailGateModalProps) => {
