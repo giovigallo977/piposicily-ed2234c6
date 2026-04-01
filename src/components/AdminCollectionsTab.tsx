@@ -29,6 +29,13 @@ const emptyCollection: CollectionInsert = {
   descrizione: "",
   immagine: "",
   ordine: 0,
+  rating_turistico: 0,
+  rating_relax: 0,
+  rating_natura: 0,
+  rating_sforzo: 0,
+  rating_tipo: 0,
+  mappa_immagine: "",
+  mappa_link: "",
 };
 
 const AdminCollectionsTab = () => {
