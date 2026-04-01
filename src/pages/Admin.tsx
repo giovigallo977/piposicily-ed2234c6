@@ -31,6 +31,7 @@ const emptyHotspot: HotspotInsert = {
   foto_principale: "",
   foto_gallery: [],
   link_google_maps: "",
+  link_prenotazione: "",
   categoria: "",
   zona: "",
   tags: [],
