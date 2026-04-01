@@ -242,12 +242,13 @@ const AdminCollectionsTab = () => {
               </div>
 
               <div className="space-y-2">
-                <Label>Immagine Copertina</Label>
-                <ImageUpload
-                  value={formData.immagine}
-                  onChange={(url) => setFormData({ ...formData, immagine: url })}
-                  onRemove={() => setFormData({ ...formData, immagine: "" })}
-                  folder="collections"
+                <Label htmlFor="info_prenotazioni">Prenota per visite e cibo</Label>
+                <Textarea
+                  id="info_prenotazioni"
+                  value={formData.info_prenotazioni || ""}
+                  onChange={(e) => setFormData({ ...formData, info_prenotazioni: e.target.value })}
+                  placeholder="Inserisci info su prenotazioni, visite, ristoranti..."
+                  rows={4}
                 />
               </div>
 
