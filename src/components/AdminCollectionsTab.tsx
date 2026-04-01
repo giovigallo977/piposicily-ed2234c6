@@ -56,6 +56,9 @@ const AdminCollectionsTab = () => {
   const [editing, setEditing] = useState<Collection | null>(null);
   const [formData, setFormData] = useState<CollectionInsert>(emptyCollection);
   const [selectedHotspotIds, setSelectedHotspotIds] = useState<string[]>([]);
+  const [showNewHotspot, setShowNewHotspot] = useState(false);
+  const [newHotspotName, setNewHotspotName] = useState("");
+  const createHotspotMutation = useCreateHotspot();
 
   // Load hotspot associations when editing
   const { data: currentHotspots } = useCollectionHotspots(editing?.id);
