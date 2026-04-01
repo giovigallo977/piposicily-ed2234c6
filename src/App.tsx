@@ -16,6 +16,8 @@ import FreeSpotsPage from "./pages/FreeSpotsPage";
 import NotFound from "./pages/NotFound";
 
 import AdminAnalytics from "./pages/AdminAnalytics";
+import SelfGuidedLanding from "./pages/SelfGuidedLanding";
+import ExperienceLanding from "./pages/ExperienceLanding";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +30,8 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/self-guided" element={<SelfGuidedLanding />} />
+            <Route path="/experience" element={<ExperienceLanding />} />
             <Route path="/esplora" element={<ExplorePage />} />
             <Route path="/collezioni" element={<CollectionsPage />} />
             <Route path="/collezioni/:id" element={<CollectionDetailPage />} />
