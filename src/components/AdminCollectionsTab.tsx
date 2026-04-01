@@ -14,6 +14,7 @@ import {
 } from "@/hooks/useCollections";
 import { useHotspots } from "@/hooks/useHotspots";
 import { ImageUpload } from "@/components/ImageUpload";
+import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
