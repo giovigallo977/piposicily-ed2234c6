@@ -1,75 +1,72 @@
 
 
-## Trasformare la pagina itinerario in stile WeRoad (tappe numerate)
+## Redesign CollectionDetailPage — Collage, Ratings, Map, Prenota
 
-### Problema attuale
-Entrando in un Day Trip/Walk, gli hotspot vengono mostrati come griglia di card indipendenti. L'utente vuole invece un layout a **itinerario sequenziale con tappe numerate**, ispirato a WeRoad.
+### Cosa cambia
 
-### Nuovo layout della CollectionDetailPage
+**1. Collage foto hero**
+Sostituire l'immagine singola con un collage di 4-5 foto prese automaticamente dalle `foto_principale` degli hotspot della collezione. Layout: 1 foto grande a sinistra + 3-4 piccole a destra (stile Airbnb/WeRoad).
 
-```text
-┌─────────────────────────────────┐
-│  ← Back         Titolo Itinerario │
-├─────────────────────────────────┤
-│  [Galleria foto hero - collection │
-│   immagine + foto dei primi       │
-│   hotspot in griglia/carousel]    │
-├─────────────────────────────────┤
-│  Descrizione collezione           │
-├─────────────────────────────────┤
-│  TAPPA 1                          │
-│  ┌──────┐  Titolo hotspot         │
-│  │ foto │  Zona · Categoria       │
-│  └──────┘  ▼ (espandi)            │
-│───────────────────────────────────│
-│  TAPPA 2                          │
-│  ┌──────┐  Titolo hotspot         │
-│  │ foto │  Zona · Categoria       │
-│  └──────┘  ▼ (espandi)            │
-│───────────────────────────────────│
-│  ...                              │
-│───────────────────────────────────│
-│  TAPPA N                          │
-│  ┌──────┐  Titolo hotspot         │
-│  │ foto │  Zona · Categoria       │
-│  └──────┘  ▼ (espandi)            │
-└─────────────────────────────────┘
+**2. Sezione "Questo itinerario fa per me"**
+Sotto il collage, aggiungere una sezione con parametri a stelle (1-5):
+- Itinerario turistico
+- Relax
+- Natura e avventura
+- Sforzo fisico
+- Tipo di itinerario
+
+Questi valori devono essere editabili dall'admin, quindi servono nuove colonne nel database sulla tabella `collections`.
+
+**3. Layout a due colonne (desktop)**
+- **Sinistra**: lista tappe (itinerario)
+- **Destra**: immagine mappa dell'itinerario (screenshot Google Maps), cliccabile verso un link. Serve una nuova colonna `mappa_immagine` e `mappa_link` nella tabella `collections`.
+
+Su mobile: colonna singola, mappa sopra le tappe.
+
+**4. Bottone "Prenota la tua visita" nella tappa espansa**
+Dentro `ItineraryStageCard`, nel contenuto espanso, aggiungere un bottone "Prenota la tua visita" accanto al bottone NAVIGA. Serve un nuovo campo `link_prenotazione` nella tabella `hotspots`.
+
+**5. Descrizione itinerario**
+Sotto il collage e i parametri, mostrare la descrizione della collezione (gia presente).
+
+### Migrazione DB
+
+```sql
+-- Nuove colonne su collections per ratings e mappa
+ALTER TABLE public.collections
+  ADD COLUMN rating_turistico integer DEFAULT 0,
+  ADD COLUMN rating_relax integer DEFAULT 0,
+  ADD COLUMN rating_natura integer DEFAULT 0,
+  ADD COLUMN rating_sforzo integer DEFAULT 0,
+  ADD COLUMN rating_tipo integer DEFAULT 0,
+  ADD COLUMN mappa_immagine text DEFAULT '',
+  ADD COLUMN mappa_link text DEFAULT '';
+
+-- Nuovo campo prenotazione su hotspots
+ALTER TABLE public.hotspots
+  ADD COLUMN link_prenotazione text DEFAULT '';
 ```
 
-Ogni tappa espansa mostra:
-- Descrizione completa (con link cliccabili)
-- Galleria foto
-- Bottone NAVIGA (Google Maps)
+### File modificati
 
-### Modifiche
+**`src/pages/CollectionDetailPage.tsx`**
+- Hero: collage da `hotspots[0..4].foto_principale`
+- Sezione rating con stelle (componente inline)
+- Layout 2 colonne: tappe a sinistra, mappa a destra
+- Descrizione sotto i rating
 
-**1. Nuovo componente `src/components/ItineraryStageCard.tsx`**
-- Layout orizzontale: thumbnail (150x100 circa) a sinistra, contenuto a destra
-- Label "TAPPA {n}" sopra il titolo
-- Titolo hotspot in bold
-- Sottotitolo con zona
-- Chevron per espandere/collassare (accordion)
-- Contenuto espanso: descrizione completa, gallery, bottone NAVIGA
-- Separatore tra tappe (linea orizzontale, come WeRoad)
+**`src/components/ItineraryStageCard.tsx`**
+- Aggiungere bottone "Prenota la tua visita" nel contenuto espanso (visibile solo se `link_prenotazione` e presente)
 
-**2. Riscrivere `src/pages/CollectionDetailPage.tsx`**
-- Rimuovere la griglia di HotspotCard
-- Aggiungere sezione hero con immagine della collezione
-- Aggiungere descrizione collezione sotto l'hero
-- Lista verticale di `ItineraryStageCard` numerate (TAPPA 1, 2, 3...)
-- Mantenere email gate: dopo N tappe visibili, mostrare il `CollectionInlineBlock`
-- Mantenere `EmailGateModal`
+**`src/hooks/useCollections.ts`**
+- Aggiornare interfaccia `Collection` con i nuovi campi
 
-**3. Nessuna modifica al database**
-- I dati esistenti (hotspots, collection_hotspots con ordine) sono sufficienti
-- L'ordine delle tappe corrisponde al campo `ordine` in `collection_hotspots`
+**`src/hooks/useHotspots.tsx`**
+- Aggiungere `link_prenotazione` all'interfaccia `Hotspot` e alla query select
 
-### Dettaglio tecnico
+**Admin (pannello)**
+- Aggiungere campi per i rating (slider 1-5), immagine mappa, link mappa nella gestione collezioni
+- Aggiungere campo link prenotazione nella gestione hotspot
 
-- Il componente `ItineraryStageCard` riceve `hotspot`, `stageNumber`, `onBeforeExpand`
-- Usa `useTranslatedHotspot` per le traduzioni
-- Tracking: `trackEvent("hotspot_view")` all'espansione della tappa
-- Layout responsive: su mobile la thumbnail diventa piu piccola (100x75), su desktop resta 150x100
-- Accordion nativo con stato `isExpanded` locale
-- Il gate email continua a funzionare: le tappe oltre `visibleCount` sono nascoste dietro il blocco email
+### Nessun file eliminato
 
