@@ -84,9 +84,10 @@ const AdminCollectionsTab = () => {
       rating_relax: collection.rating_relax ?? 0,
       rating_natura: collection.rating_natura ?? 0,
       rating_sforzo: collection.rating_sforzo ?? 0,
-      rating_tipo: collection.rating_tipo ?? 0,
+      rating_cultura: collection.rating_cultura ?? 0,
       mappa_immagine: collection.mappa_immagine ?? "",
       mappa_link: collection.mappa_link ?? "",
+      info_prenotazioni: collection.info_prenotazioni ?? "",
     });
     setIsDialogOpen(true);
   };
