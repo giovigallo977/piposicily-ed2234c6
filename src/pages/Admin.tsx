@@ -494,6 +494,16 @@ const Admin = () => {
                         />
                       </div>
 
+                      <div className="space-y-2">
+                        <Label htmlFor="link_prenotazione">Link Prenotazione</Label>
+                        <Input
+                          id="link_prenotazione"
+                          value={formData.link_prenotazione || ""}
+                          onChange={(e) => setFormData({ ...formData, link_prenotazione: e.target.value })}
+                          placeholder="https://..."
+                        />
+                      </div>
+
                       <div className="flex justify-end gap-2 pt-4">
                         <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
                           Annulla

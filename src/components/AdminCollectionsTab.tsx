@@ -192,6 +192,53 @@ const AdminCollectionsTab = () => {
                 />
               </div>
 
+              {/* Ratings */}
+              <div className="space-y-4 border rounded-md p-4">
+                <Label className="text-base font-semibold">Parametri Itinerario (1-5)</Label>
+                {([
+                  { key: "rating_turistico", label: "Itinerario Turistico" },
+                  { key: "rating_relax", label: "Relax" },
+                  { key: "rating_natura", label: "Natura e Avventura" },
+                  { key: "rating_sforzo", label: "Sforzo Fisico" },
+                  { key: "rating_tipo", label: "Tipo di Itinerario" },
+                ] as const).map(({ key, label }) => (
+                  <div key={key} className="space-y-1">
+                    <div className="flex justify-between">
+                      <Label className="text-sm">{label}</Label>
+                      <span className="text-sm font-bold">{formData[key] || 0}/5</span>
+                    </div>
+                    <Slider
+                      min={0}
+                      max={5}
+                      step={1}
+                      value={[formData[key] || 0]}
+                      onValueChange={([v]) => setFormData({ ...formData, [key]: v })}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Mappa */}
+              <div className="space-y-2">
+                <Label>Immagine Mappa Itinerario</Label>
+                <ImageUpload
+                  value={formData.mappa_immagine || ""}
+                  onChange={(url) => setFormData({ ...formData, mappa_immagine: url })}
+                  onRemove={() => setFormData({ ...formData, mappa_immagine: "" })}
+                  folder="collections"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="mappa_link">Link Mappa (Google Maps itinerario)</Label>
+                <Input
+                  id="mappa_link"
+                  value={formData.mappa_link || ""}
+                  onChange={(e) => setFormData({ ...formData, mappa_link: e.target.value })}
+                  placeholder="https://maps.google.com/..."
+                />
+              </div>
+
               <div className="space-y-2">
                 <Label>Immagine Copertina</Label>
                 <ImageUpload
