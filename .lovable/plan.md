@@ -1,50 +1,74 @@
 
 
-## Modifiche alla pagina itinerario e admin collezioni
+## Cambio di rotta: 2 Landing Page MVP per validazione email
 
-### Cosa cambia
+### Cosa si fa
 
-**1. Rinominare "Tipo di Itinerario" → "Cultura"**
-- Nel DB: rinominare `rating_tipo` in `rating_cultura` (migrazione)
-- Aggiornare `Collection` interface, admin form, e CollectionDetailPage
+Creare 2 nuove pagine landing minimal, mobile-first, con unico obiettivo: raccolta email. La homepage (`/`) diventa un selettore tra le due landing, oppure possiamo usare rotte dedicate.
 
-**2. Aggiungere "?" al titolo rating**
-- "Questo itinerario fa per me" → "Questo itinerario fa per me?"
+### Struttura routing
 
-**3. Mappa itinerario più grande nella pagina pubblica**
-- Sidebar mappa: da `lg:w-[300px]` a `lg:w-[380px]` e altezza minima più generosa
+- `/` — Homepage con 2 card che portano alle due landing
+- `/self-guided` — Landing 1 (itinerari in autonomia)
+- `/experience` — Landing 2 (experience guidate)
+- Le rotte admin/auth restano invariate
+- Le rotte esistenti (`/esplora`, `/collezioni`, ecc.) restano ma non sono linkate dalle landing
 
-**4. Nuova sezione "Prenota per visite e cibo"**
-- Nuova colonna DB `info_prenotazioni` (text) sulla tabella `collections`
-- Nella CollectionDetailPage, sotto la descrizione, mostrare una sezione con titolo "Prenota per visite e cibo" e il testo di `info_prenotazioni`
-- Nell'admin, aggiungere un Textarea per compilare questo campo
+### Landing 1 — Self Guided (`/self-guided`)
 
-**5. Rimuovere campo "Immagine Copertina" dall'admin**
-- Il collage viene generato automaticamente dalle foto degli hotspot, quindi il campo singolo `immagine` non serve più nell'editor (resta nel DB per retrocompatibilità)
+**Hero**: Titolo + sottotitolo su sfondo pulito
+**Esempi**: 3 card minimal (Palermo Liberty, Palermo Graffiti, Palermo Araba) con solo nome + 1 riga
+**Value prop**: Testo breve
+**CTA Email**: Campo email + bottone "Avvisami" + microcopy anti-spam
+**CTA ripetuta** in fondo alla pagina
+
+Email salvata nella tabella `experience_waitlist` con un campo `source` per distinguere. Serve una migrazione per aggiungere `source` a `experience_waitlist`.
+
+### Landing 2 — Experience (`/experience`)
+
+**Hero**: Titolo + sottotitolo
+**Esempi**: 3 card (Valle del Belice, Bosco della Ficuzza, Piano Battaglia)
+**Value prop**: Testo breve
+**CTA Email**: Campo email + bottone "Avvisami quando aprono" + microcopy
+**CTA ripetuta** in fondo
+
+Email salvata nella stessa tabella con `source = 'experience'`.
 
 ### Migrazione DB
 
 ```sql
-ALTER TABLE public.collections
-  RENAME COLUMN rating_tipo TO rating_cultura;
-
-ALTER TABLE public.collections
-  ADD COLUMN info_prenotazioni text DEFAULT '';
+ALTER TABLE public.experience_waitlist
+  ADD COLUMN source text DEFAULT 'experience';
 ```
+
+### Tracking
+
+Ogni landing traccia:
+- `page_view` (con parametro per distinguere quale landing)
+- `email_submit` su invio email
+- Google Analytics `gtag` event su submit
+
+### File nuovi
+
+- `src/pages/SelfGuidedLanding.tsx` — Landing completa self-guided
+- `src/pages/ExperienceLanding.tsx` — Landing completa experience guidate
+- `src/components/EmailCaptureForm.tsx` — Componente riutilizzabile per il form email (usato da entrambe le landing)
 
 ### File modificati
 
-**`src/hooks/useCollections.ts`**
-- Rinominare `rating_tipo` → `rating_cultura` nell'interface Collection e CollectionInsert
+- `src/App.tsx` — Aggiungere rotte `/self-guided` e `/experience`
+- `src/pages/Index.tsx` — Ridisegnare come selettore minimal con 2 card che portano alle landing
+- `src/lib/trackEvent.ts` — Aggiungere event type per le landing
 
-**`src/pages/CollectionDetailPage.tsx`**
-- Titolo: "Questo itinerario fa per me?"
-- Rating "Tipo di itinerario" → "Cultura"
-- Mappa sidebar più larga
-- Nuova sezione "Prenota per visite e cibo" sotto la descrizione
+### Design
 
-**`src/components/AdminCollectionsTab.tsx`**
-- Slider "Tipo di Itinerario" → "Cultura" (key: `rating_cultura`)
-- Aggiungere Textarea "Prenota per visite e cibo" (`info_prenotazioni`)
-- Rimuovere campo "Immagine Copertina"
+- Mobile first, nessun menu complesso
+- Font Inter/Nunito già disponibili
+- Colori: sfondo bianco, testo scuro, CTA giallo (`--cta-yellow` già nel design system)
+- Nessuna distrazione: no header complesso, no footer, solo logo Pipo minimal in alto
+- Scroll fluido, sezioni ben spaziate
+
+### Admin
+
+Nella tab Email dell'admin, le email saranno visibili con la source (`self_guided` o `experience`) per capire da dove arrivano.
 
