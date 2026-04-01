@@ -71,7 +71,7 @@ const CollectionDetailPage = () => {
     (collection.rating_relax ?? 0) > 0 ||
     (collection.rating_natura ?? 0) > 0 ||
     (collection.rating_sforzo ?? 0) > 0 ||
-    (collection.rating_tipo ?? 0) > 0
+    (collection.rating_cultura ?? 0) > 0
   );
 
   return (
