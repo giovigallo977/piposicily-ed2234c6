@@ -5,7 +5,8 @@ import { useCollectionById, useCollectionHotspots } from "@/hooks/useCollections
 import { useHotspots } from "@/hooks/useHotspots";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCardGate } from "@/hooks/useCardGate";
-import HotspotCard from "@/components/HotspotCard";
+import { useTranslatedContent } from "@/hooks/useTranslation";
+import ItineraryStageCard from "@/components/ItineraryStageCard";
 import EmailGateModal from "@/components/EmailGateModal";
 import CollectionInlineBlock from "@/components/CollectionInlineBlock";
 
@@ -25,6 +26,8 @@ const CollectionDetailPage = () => {
     gateSource,
   } = useCardGate();
 
+  const { translatedText: translatedDesc } = useTranslatedContent(collection?.descrizione);
+
   const hotspots = useMemo(() => {
     if (!collectionHotspots || !allHotspots) return [];
     const idOrder = collectionHotspots.map(ch => ch.hotspot_id);
@@ -43,7 +46,8 @@ const CollectionDetailPage = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-50 bg-background py-4 px-6 flex items-center justify-between">
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-background py-4 px-6 flex items-center justify-between border-b border-border">
         <button onClick={() => navigate("/collezioni")} className="p-2 transition-all duration-200 hover:scale-110" aria-label={t("backLabel")}>
           <ChevronsLeft className="w-8 h-8 text-foreground" strokeWidth={2.5} />
         </button>
@@ -53,28 +57,49 @@ const CollectionDetailPage = () => {
         <div className="w-10" />
       </header>
 
-      <main className="container mx-auto px-4 py-6 pb-24">
-        <div className="max-w-6xl mx-auto">
+      <main className="container mx-auto px-4 py-0 pb-24">
+        <div className="max-w-2xl mx-auto">
           {isLoading && (
             <div className="flex justify-center py-12">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {visibleHotspots.map((hotspot, index) => (
-              <HotspotCard
-                key={hotspot.id}
-                hotspot={hotspot}
-                index={index}
-                onBeforeExpand={onBeforeExpand}
+          {/* Hero image */}
+          {!isLoading && collection?.immagine && (
+            <div className="w-full aspect-[16/9] overflow-hidden">
+              <img
+                src={collection.immagine}
+                alt={collection.nome}
+                className="w-full h-full object-cover"
               />
-            ))}
+            </div>
+          )}
 
-            {shouldShowCollectionBlock && hotspots.length > visibleCount && (
-              <CollectionInlineBlock onContinue={() => setGateModalOpen(true)} />
-            )}
-          </div>
+          {/* Description */}
+          {!isLoading && translatedDesc && (
+            <div className="px-2 py-5 border-b border-border">
+              <p className="text-sm text-foreground leading-relaxed">{translatedDesc}</p>
+            </div>
+          )}
+
+          {/* Stages */}
+          {!isLoading && hotspots.length > 0 && (
+            <div className="mt-2">
+              {visibleHotspots.map((hotspot, index) => (
+                <ItineraryStageCard
+                  key={hotspot.id}
+                  hotspot={hotspot}
+                  stageNumber={index + 1}
+                  onBeforeExpand={onBeforeExpand}
+                />
+              ))}
+
+              {shouldShowCollectionBlock && hotspots.length > visibleCount && (
+                <CollectionInlineBlock onContinue={() => setGateModalOpen(true)} />
+              )}
+            </div>
+          )}
 
           {!isLoading && hotspots.length === 0 && (
             <div className="text-center py-12 text-muted-foreground font-sans italic">
