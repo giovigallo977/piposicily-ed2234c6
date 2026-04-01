@@ -34,9 +34,10 @@ const emptyCollection: CollectionInsert = {
   rating_relax: 0,
   rating_natura: 0,
   rating_sforzo: 0,
-  rating_tipo: 0,
+  rating_cultura: 0,
   mappa_immagine: "",
   mappa_link: "",
+  info_prenotazioni: "",
 };
 
 const AdminCollectionsTab = () => {
