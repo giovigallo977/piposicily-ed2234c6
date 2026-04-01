@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 import { trackEvent } from "@/lib/trackEvent";
 import EmailCaptureForm from "@/components/EmailCaptureForm";
 
@@ -13,9 +14,12 @@ const SelfGuidedLanding = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Minimal logo */}
+      {/* Minimal logo + back */}
       <div className="px-6 pt-6">
-        <span className="font-heading text-2xl">Pipo</span>
+        <Link to="/" className="font-heading text-2xl hover:opacity-70 transition-opacity">Pipo</Link>
+        <div className="mt-1">
+          <Link to="/" className="text-sm text-muted-foreground hover:text-foreground transition-colors">← Torna alla scelta</Link>
+        </div>
       </div>
 
       {/* Hero */}
