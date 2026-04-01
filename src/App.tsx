@@ -30,6 +30,8 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/self-guided" element={<SelfGuidedLanding />} />
+            <Route path="/experience" element={<ExperienceLanding />} />
             <Route path="/esplora" element={<ExplorePage />} />
             <Route path="/collezioni" element={<CollectionsPage />} />
             <Route path="/collezioni/:id" element={<CollectionDetailPage />} />
