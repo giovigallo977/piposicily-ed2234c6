@@ -146,6 +146,7 @@ const Admin = () => {
       foto_principale: hotspot.foto_principale,
       foto_gallery: hotspot.foto_gallery || [],
       link_google_maps: hotspot.link_google_maps,
+      link_prenotazione: hotspot.link_prenotazione || "",
       categoria: hotspot.categoria,
       zona: hotspot.zona || "",
       tags: hotspot.tags || [],

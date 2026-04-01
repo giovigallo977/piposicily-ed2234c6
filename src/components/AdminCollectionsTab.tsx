@@ -78,6 +78,13 @@ const AdminCollectionsTab = () => {
       descrizione: collection.descrizione,
       immagine: collection.immagine,
       ordine: collection.ordine,
+      rating_turistico: collection.rating_turistico ?? 0,
+      rating_relax: collection.rating_relax ?? 0,
+      rating_natura: collection.rating_natura ?? 0,
+      rating_sforzo: collection.rating_sforzo ?? 0,
+      rating_tipo: collection.rating_tipo ?? 0,
+      mappa_immagine: collection.mappa_immagine ?? "",
+      mappa_link: collection.mappa_link ?? "",
     });
     setIsDialogOpen(true);
   };
