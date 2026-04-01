@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 import { trackEvent } from "@/lib/trackEvent";
 import EmailCaptureForm from "@/components/EmailCaptureForm";
 
