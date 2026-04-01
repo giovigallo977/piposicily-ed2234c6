@@ -140,6 +140,16 @@ const CollectionDetailPage = () => {
             </div>
           )}
 
+          {/* Prenota per visite e cibo */}
+          {!isLoading && collection?.info_prenotazioni && (
+            <div className="px-2 py-5 border-b border-border">
+              <h2 className="font-sans font-bold text-base text-foreground mb-3">
+                Prenota per visite e cibo
+              </h2>
+              <p className="text-sm text-foreground leading-relaxed whitespace-pre-line">{collection.info_prenotazioni}</p>
+            </div>
+          )}
+
           {/* Two-column layout: stages + map */}
           {!isLoading && hotspots.length > 0 && (
             <div className="flex flex-col lg:flex-row gap-6 mt-2">
