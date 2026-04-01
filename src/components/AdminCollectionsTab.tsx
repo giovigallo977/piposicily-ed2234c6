@@ -12,7 +12,7 @@ import {
   CollectionInsert,
   CollectionHotspot,
 } from "@/hooks/useCollections";
-import { useHotspots } from "@/hooks/useHotspots";
+import { useHotspots, useCreateHotspot, HotspotInsert } from "@/hooks/useHotspots";
 import { ImageUpload } from "@/components/ImageUpload";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
@@ -56,6 +56,9 @@ const AdminCollectionsTab = () => {
   const [editing, setEditing] = useState<Collection | null>(null);
   const [formData, setFormData] = useState<CollectionInsert>(emptyCollection);
   const [selectedHotspotIds, setSelectedHotspotIds] = useState<string[]>([]);
+  const [showNewHotspot, setShowNewHotspot] = useState(false);
+  const [newHotspotName, setNewHotspotName] = useState("");
+  const createHotspotMutation = useCreateHotspot();
 
   // Load hotspot associations when editing
   const { data: currentHotspots } = useCollectionHotspots(editing?.id);
@@ -254,7 +257,59 @@ const AdminCollectionsTab = () => {
 
               {/* Hotspot selection */}
               <div className="space-y-2">
-                <Label>Hotspot nella collezione</Label>
+                <div className="flex items-center justify-between">
+                  <Label>Hotspot nella collezione</Label>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowNewHotspot(!showNewHotspot)}
+                  >
+                    <Plus className="h-3 w-3 mr-1" />
+                    Nuovo hotspot
+                  </Button>
+                </div>
+
+                {showNewHotspot && (
+                  <div className="flex gap-2 items-end border rounded-md p-3 bg-muted/30">
+                    <div className="flex-1 space-y-1">
+                      <Label className="text-xs">Nome hotspot</Label>
+                      <Input
+                        value={newHotspotName}
+                        onChange={(e) => setNewHotspotName(e.target.value)}
+                        placeholder="Nome del nuovo hotspot..."
+                        className="h-8 text-sm"
+                      />
+                    </div>
+                    <Button
+                      type="button"
+                      size="sm"
+                      disabled={!newHotspotName.trim() || createHotspotMutation.isPending}
+                      onClick={async () => {
+                        const result = await createHotspotMutation.mutateAsync({
+                          titolo: newHotspotName.trim(),
+                          descrizione_breve: "",
+                          descrizione_completa: "",
+                          foto_principale: "",
+                          foto_gallery: [],
+                          link_google_maps: "",
+                          link_prenotazione: "",
+                          categoria: "",
+                          zona: "",
+                          tags: [],
+                          ordine: 0,
+                        });
+                        setSelectedHotspotIds(prev => [...prev, result.id]);
+                        setNewHotspotName("");
+                        setShowNewHotspot(false);
+                      }}
+                    >
+                      {createHotspotMutation.isPending && <Loader2 className="h-3 w-3 animate-spin mr-1" />}
+                      Crea
+                    </Button>
+                  </div>
+                )}
+
                 <div className="max-h-60 overflow-y-auto border rounded-md p-3 space-y-2">
                   {hotspots?.map((h) => (
                     <label key={h.id} className="flex items-center gap-3 cursor-pointer hover:bg-muted/50 rounded p-1.5">
