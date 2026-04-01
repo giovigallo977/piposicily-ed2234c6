@@ -12,7 +12,7 @@ import {
   CollectionInsert,
   CollectionHotspot,
 } from "@/hooks/useCollections";
-import { useHotspots } from "@/hooks/useHotspots";
+import { useHotspots, useCreateHotspot, HotspotInsert } from "@/hooks/useHotspots";
 import { ImageUpload } from "@/components/ImageUpload";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
