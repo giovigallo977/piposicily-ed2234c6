@@ -121,7 +121,7 @@ const CollectionDetailPage = () => {
           {!isLoading && hasRatings && (
             <div className="px-2 py-5 border-b border-border">
               <h2 className="font-sans font-bold text-base text-foreground mb-3">
-                Questo itinerario fa per me
+                Questo itinerario fa per me?
               </h2>
               <div className="space-y-2">
                 <RatingRow label="Itinerario turistico" value={collection!.rating_turistico ?? 0} />
