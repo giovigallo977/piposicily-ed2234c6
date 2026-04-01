@@ -15,6 +15,7 @@ export interface Hotspot {
   zona: string | null;
   tags: string[] | null;
   ordine: number | null;
+  link_prenotazione: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -54,7 +55,7 @@ export const useHotspots = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("hotspots")
-        .select("id, titolo, descrizione_breve, descrizione_completa, foto_principale, foto_gallery, link_google_maps, categoria, zona, tags, ordine, created_at, updated_at")
+        .select("id, titolo, descrizione_breve, descrizione_completa, foto_principale, foto_gallery, link_google_maps, categoria, zona, tags, ordine, link_prenotazione, created_at, updated_at")
         .order("ordine", { ascending: true });
 
       if (error) throw error;

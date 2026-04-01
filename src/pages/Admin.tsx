@@ -31,6 +31,7 @@ const emptyHotspot: HotspotInsert = {
   foto_principale: "",
   foto_gallery: [],
   link_google_maps: "",
+  link_prenotazione: "",
   categoria: "",
   zona: "",
   tags: [],
@@ -145,6 +146,7 @@ const Admin = () => {
       foto_principale: hotspot.foto_principale,
       foto_gallery: hotspot.foto_gallery || [],
       link_google_maps: hotspot.link_google_maps,
+      link_prenotazione: hotspot.link_prenotazione || "",
       categoria: hotspot.categoria,
       zona: hotspot.zona || "",
       tags: hotspot.tags || [],
@@ -489,6 +491,16 @@ const Admin = () => {
                           value={formData.link_google_maps}
                           onChange={(e) => setFormData({ ...formData, link_google_maps: e.target.value })}
                           placeholder="https://maps.google.com/?q=..."
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="link_prenotazione">Link Prenotazione</Label>
+                        <Input
+                          id="link_prenotazione"
+                          value={formData.link_prenotazione || ""}
+                          onChange={(e) => setFormData({ ...formData, link_prenotazione: e.target.value })}
+                          placeholder="https://..."
                         />
                       </div>
 

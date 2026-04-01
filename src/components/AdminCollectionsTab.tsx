@@ -14,6 +14,7 @@ import {
 } from "@/hooks/useCollections";
 import { useHotspots } from "@/hooks/useHotspots";
 import { ImageUpload } from "@/components/ImageUpload";
+import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -29,6 +30,13 @@ const emptyCollection: CollectionInsert = {
   descrizione: "",
   immagine: "",
   ordine: 0,
+  rating_turistico: 0,
+  rating_relax: 0,
+  rating_natura: 0,
+  rating_sforzo: 0,
+  rating_tipo: 0,
+  mappa_immagine: "",
+  mappa_link: "",
 };
 
 const AdminCollectionsTab = () => {
@@ -71,6 +79,13 @@ const AdminCollectionsTab = () => {
       descrizione: collection.descrizione,
       immagine: collection.immagine,
       ordine: collection.ordine,
+      rating_turistico: collection.rating_turistico ?? 0,
+      rating_relax: collection.rating_relax ?? 0,
+      rating_natura: collection.rating_natura ?? 0,
+      rating_sforzo: collection.rating_sforzo ?? 0,
+      rating_tipo: collection.rating_tipo ?? 0,
+      mappa_immagine: collection.mappa_immagine ?? "",
+      mappa_link: collection.mappa_link ?? "",
     });
     setIsDialogOpen(true);
   };
@@ -174,6 +189,53 @@ const AdminCollectionsTab = () => {
                   onChange={(e) => setFormData({ ...formData, descrizione: e.target.value })}
                   placeholder="Descrizione opzionale..."
                   rows={2}
+                />
+              </div>
+
+              {/* Ratings */}
+              <div className="space-y-4 border rounded-md p-4">
+                <Label className="text-base font-semibold">Parametri Itinerario (1-5)</Label>
+                {([
+                  { key: "rating_turistico", label: "Itinerario Turistico" },
+                  { key: "rating_relax", label: "Relax" },
+                  { key: "rating_natura", label: "Natura e Avventura" },
+                  { key: "rating_sforzo", label: "Sforzo Fisico" },
+                  { key: "rating_tipo", label: "Tipo di Itinerario" },
+                ] as const).map(({ key, label }) => (
+                  <div key={key} className="space-y-1">
+                    <div className="flex justify-between">
+                      <Label className="text-sm">{label}</Label>
+                      <span className="text-sm font-bold">{formData[key] || 0}/5</span>
+                    </div>
+                    <Slider
+                      min={0}
+                      max={5}
+                      step={1}
+                      value={[formData[key] || 0]}
+                      onValueChange={([v]) => setFormData({ ...formData, [key]: v })}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Mappa */}
+              <div className="space-y-2">
+                <Label>Immagine Mappa Itinerario</Label>
+                <ImageUpload
+                  value={formData.mappa_immagine || ""}
+                  onChange={(url) => setFormData({ ...formData, mappa_immagine: url })}
+                  onRemove={() => setFormData({ ...formData, mappa_immagine: "" })}
+                  folder="collections"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="mappa_link">Link Mappa (Google Maps itinerario)</Label>
+                <Input
+                  id="mappa_link"
+                  value={formData.mappa_link || ""}
+                  onChange={(e) => setFormData({ ...formData, mappa_link: e.target.value })}
+                  placeholder="https://maps.google.com/..."
                 />
               </div>
 
