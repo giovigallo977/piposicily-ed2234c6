@@ -16,6 +16,8 @@ import FreeSpotsPage from "./pages/FreeSpotsPage";
 import NotFound from "./pages/NotFound";
 
 import AdminAnalytics from "./pages/AdminAnalytics";
+import SelfGuidedLanding from "./pages/SelfGuidedLanding";
+import ExperienceLanding from "./pages/ExperienceLanding";
 
 const queryClient = new QueryClient();
 
