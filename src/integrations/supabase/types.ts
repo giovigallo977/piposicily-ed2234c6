@@ -77,14 +77,15 @@ export type Database = {
           descrizione: string | null
           id: string
           immagine: string | null
+          info_prenotazioni: string | null
           mappa_immagine: string | null
           mappa_link: string | null
           nome: string
           ordine: number | null
+          rating_cultura: number | null
           rating_natura: number | null
           rating_relax: number | null
           rating_sforzo: number | null
-          rating_tipo: number | null
           rating_turistico: number | null
           updated_at: string
         }
@@ -93,14 +94,15 @@ export type Database = {
           descrizione?: string | null
           id?: string
           immagine?: string | null
+          info_prenotazioni?: string | null
           mappa_immagine?: string | null
           mappa_link?: string | null
           nome: string
           ordine?: number | null
+          rating_cultura?: number | null
           rating_natura?: number | null
           rating_relax?: number | null
           rating_sforzo?: number | null
-          rating_tipo?: number | null
           rating_turistico?: number | null
           updated_at?: string
         }
@@ -109,14 +111,15 @@ export type Database = {
           descrizione?: string | null
           id?: string
           immagine?: string | null
+          info_prenotazioni?: string | null
           mappa_immagine?: string | null
           mappa_link?: string | null
           nome?: string
           ordine?: number | null
+          rating_cultura?: number | null
           rating_natura?: number | null
           rating_relax?: number | null
           rating_sforzo?: number | null
-          rating_tipo?: number | null
           rating_turistico?: number | null
           updated_at?: string
         }

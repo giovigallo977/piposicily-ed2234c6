@@ -161,7 +161,7 @@ const CollectionDetailPage = () => {
 
               {/* Right: map sidebar (desktop) */}
               {collection?.mappa_immagine && (
-                <aside className="w-full lg:w-[300px] flex-shrink-0 lg:sticky lg:top-20 lg:self-start">
+                <aside className="w-full lg:w-[380px] flex-shrink-0 lg:sticky lg:top-20 lg:self-start">
                   <div className="rounded-xl overflow-hidden border border-border shadow-sm">
                     {collection.mappa_link ? (
                       <a href={collection.mappa_link} target="_blank" rel="noopener noreferrer">
