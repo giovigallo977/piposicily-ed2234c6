@@ -13,9 +13,10 @@ export interface Collection {
   rating_relax: number;
   rating_natura: number;
   rating_sforzo: number;
-  rating_tipo: number;
+  rating_cultura: number;
   mappa_immagine: string;
   mappa_link: string;
+  info_prenotazioni: string;
   created_at: string;
   updated_at: string;
 }

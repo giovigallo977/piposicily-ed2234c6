@@ -34,9 +34,10 @@ const emptyCollection: CollectionInsert = {
   rating_relax: 0,
   rating_natura: 0,
   rating_sforzo: 0,
-  rating_tipo: 0,
+  rating_cultura: 0,
   mappa_immagine: "",
   mappa_link: "",
+  info_prenotazioni: "",
 };
 
 const AdminCollectionsTab = () => {
@@ -83,9 +84,10 @@ const AdminCollectionsTab = () => {
       rating_relax: collection.rating_relax ?? 0,
       rating_natura: collection.rating_natura ?? 0,
       rating_sforzo: collection.rating_sforzo ?? 0,
-      rating_tipo: collection.rating_tipo ?? 0,
+      rating_cultura: collection.rating_cultura ?? 0,
       mappa_immagine: collection.mappa_immagine ?? "",
       mappa_link: collection.mappa_link ?? "",
+      info_prenotazioni: collection.info_prenotazioni ?? "",
     });
     setIsDialogOpen(true);
   };
@@ -200,7 +202,7 @@ const AdminCollectionsTab = () => {
                   { key: "rating_relax", label: "Relax" },
                   { key: "rating_natura", label: "Natura e Avventura" },
                   { key: "rating_sforzo", label: "Sforzo Fisico" },
-                  { key: "rating_tipo", label: "Tipo di Itinerario" },
+                  { key: "rating_cultura", label: "Cultura" },
                 ] as const).map(({ key, label }) => (
                   <div key={key} className="space-y-1">
                     <div className="flex justify-between">
@@ -240,12 +242,13 @@ const AdminCollectionsTab = () => {
               </div>
 
               <div className="space-y-2">
-                <Label>Immagine Copertina</Label>
-                <ImageUpload
-                  value={formData.immagine}
-                  onChange={(url) => setFormData({ ...formData, immagine: url })}
-                  onRemove={() => setFormData({ ...formData, immagine: "" })}
-                  folder="collections"
+                <Label htmlFor="info_prenotazioni">Prenota per visite e cibo</Label>
+                <Textarea
+                  id="info_prenotazioni"
+                  value={formData.info_prenotazioni || ""}
+                  onChange={(e) => setFormData({ ...formData, info_prenotazioni: e.target.value })}
+                  placeholder="Inserisci info su prenotazioni, visite, ristoranti..."
+                  rows={4}
                 />
               </div>
 

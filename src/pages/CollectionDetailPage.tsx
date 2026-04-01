@@ -71,7 +71,7 @@ const CollectionDetailPage = () => {
     (collection.rating_relax ?? 0) > 0 ||
     (collection.rating_natura ?? 0) > 0 ||
     (collection.rating_sforzo ?? 0) > 0 ||
-    (collection.rating_tipo ?? 0) > 0
+    (collection.rating_cultura ?? 0) > 0
   );
 
   return (
@@ -121,14 +121,14 @@ const CollectionDetailPage = () => {
           {!isLoading && hasRatings && (
             <div className="px-2 py-5 border-b border-border">
               <h2 className="font-sans font-bold text-base text-foreground mb-3">
-                Questo itinerario fa per me
+                Questo itinerario fa per me?
               </h2>
               <div className="space-y-2">
                 <RatingRow label="Itinerario turistico" value={collection!.rating_turistico ?? 0} />
                 <RatingRow label="Relax" value={collection!.rating_relax ?? 0} />
                 <RatingRow label="Natura e avventura" value={collection!.rating_natura ?? 0} />
                 <RatingRow label="Sforzo fisico" value={collection!.rating_sforzo ?? 0} />
-                <RatingRow label="Tipo di itinerario" value={collection!.rating_tipo ?? 0} />
+                <RatingRow label="Cultura" value={collection!.rating_cultura ?? 0} />
               </div>
             </div>
           )}
@@ -137,6 +137,16 @@ const CollectionDetailPage = () => {
           {!isLoading && translatedDesc && (
             <div className="px-2 py-5 border-b border-border">
               <p className="text-sm text-foreground leading-relaxed">{translatedDesc}</p>
+            </div>
+          )}
+
+          {/* Prenota per visite e cibo */}
+          {!isLoading && collection?.info_prenotazioni && (
+            <div className="px-2 py-5 border-b border-border">
+              <h2 className="font-sans font-bold text-base text-foreground mb-3">
+                Prenota per visite e cibo
+              </h2>
+              <p className="text-sm text-foreground leading-relaxed whitespace-pre-line">{collection.info_prenotazioni}</p>
             </div>
           )}
 
@@ -161,7 +171,7 @@ const CollectionDetailPage = () => {
 
               {/* Right: map sidebar (desktop) */}
               {collection?.mappa_immagine && (
-                <aside className="w-full lg:w-[300px] flex-shrink-0 lg:sticky lg:top-20 lg:self-start">
+                <aside className="w-full lg:w-[380px] flex-shrink-0 lg:sticky lg:top-20 lg:self-start">
                   <div className="rounded-xl overflow-hidden border border-border shadow-sm">
                     {collection.mappa_link ? (
                       <a href={collection.mappa_link} target="_blank" rel="noopener noreferrer">
