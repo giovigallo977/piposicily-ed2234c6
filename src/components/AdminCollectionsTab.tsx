@@ -202,7 +202,7 @@ const AdminCollectionsTab = () => {
                   { key: "rating_relax", label: "Relax" },
                   { key: "rating_natura", label: "Natura e Avventura" },
                   { key: "rating_sforzo", label: "Sforzo Fisico" },
-                  { key: "rating_tipo", label: "Tipo di Itinerario" },
+                  { key: "rating_cultura", label: "Cultura" },
                 ] as const).map(({ key, label }) => (
                   <div key={key} className="space-y-1">
                     <div className="flex justify-between">
