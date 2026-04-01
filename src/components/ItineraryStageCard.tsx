@@ -130,18 +130,30 @@ const ItineraryStageCard = ({ hotspot, stageNumber, onBeforeExpand }: ItineraryS
                 <Linkify text={translated.descrizione_completa} />
               </p>
 
-              {/* Navigate button */}
-              {hotspot.link_google_maps && (
-                <a
-                  href={hotspot.link_google_maps}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-sans font-semibold text-sm transition-all duration-300 hover:scale-105 active:scale-95 shadow-md bg-olive text-olive-foreground"
-                >
-                  <Map className="w-5 h-5" />
-                  {t("meetPipo")}
-                </a>
-              )}
+              {/* Action buttons */}
+              <div className="flex flex-wrap gap-3">
+                {hotspot.link_google_maps && (
+                  <a
+                    href={hotspot.link_google_maps}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-sans font-semibold text-sm transition-all duration-300 hover:scale-105 active:scale-95 shadow-md bg-olive text-olive-foreground"
+                  >
+                    <Map className="w-5 h-5" />
+                    {t("meetPipo")}
+                  </a>
+                )}
+                {hotspot.link_prenotazione && (
+                  <a
+                    href={hotspot.link_prenotazione}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-sans font-semibold text-sm transition-all duration-300 hover:scale-105 active:scale-95 shadow-md bg-primary text-primary-foreground"
+                  >
+                    Prenota la tua visita
+                  </a>
+                )}
+              </div>
 
               {/* Gallery */}
               {validGalleryPhotos.length > 0 && (
