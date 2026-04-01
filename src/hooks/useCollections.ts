@@ -9,6 +9,13 @@ export interface Collection {
   descrizione: string;
   immagine: string;
   ordine: number;
+  rating_turistico: number;
+  rating_relax: number;
+  rating_natura: number;
+  rating_sforzo: number;
+  rating_tipo: number;
+  mappa_immagine: string;
+  mappa_link: string;
   created_at: string;
   updated_at: string;
 }
