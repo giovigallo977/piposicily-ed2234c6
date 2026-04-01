@@ -15,6 +15,7 @@ export interface Hotspot {
   zona: string | null;
   tags: string[] | null;
   ordine: number | null;
+  link_prenotazione: string | null;
   created_at: string;
   updated_at: string;
 }
