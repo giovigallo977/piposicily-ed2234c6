@@ -1,0 +1,1 @@
+ALTER TABLE public.experience_waitlist ADD COLUMN source text DEFAULT 'experience';
