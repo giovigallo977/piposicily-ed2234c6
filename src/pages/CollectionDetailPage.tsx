@@ -128,7 +128,7 @@ const CollectionDetailPage = () => {
                 <RatingRow label="Relax" value={collection!.rating_relax ?? 0} />
                 <RatingRow label="Natura e avventura" value={collection!.rating_natura ?? 0} />
                 <RatingRow label="Sforzo fisico" value={collection!.rating_sforzo ?? 0} />
-                <RatingRow label="Tipo di itinerario" value={collection!.rating_tipo ?? 0} />
+                <RatingRow label="Cultura" value={collection!.rating_cultura ?? 0} />
               </div>
             </div>
           )}
