@@ -61,7 +61,6 @@ export const translations = {
     catNatura: "Natura",
     catBorghi: "Borghi",
     catArteECultura: "Arte e Cultura",
-    catMappeInterattive: "Mappe Interattive",
 
     // Email gate
     gateTitle: "Ti stai muovendo bene.",
@@ -167,7 +166,6 @@ export const translations = {
     catNatura: "Nature",
     catBorghi: "Villages",
     catArteECultura: "Art & Culture",
-    catMappeInterattive: "Interactive Maps",
 
     // Email gate
     gateTitle: "You're doing great.",

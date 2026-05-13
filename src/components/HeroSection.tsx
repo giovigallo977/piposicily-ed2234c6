@@ -149,19 +149,19 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
 
         <div className="max-w-4xl mx-auto w-full flex flex-col items-center relative z-10 -mt-12">
           <h1
-            className={`font-editorial text-[40px] md:text-[64px] font-light leading-[1.05] tracking-tight text-center ${!heroFontColor ? (hasHeroBg ? "text-white" : "text-foreground") : ""}`}
+            className={`font-sans text-[32px] md:text-[48px] font-bold leading-[1.1] text-center ${!heroFontColor ? (hasHeroBg ? "text-white" : "text-foreground") : ""}`}
             style={heroFontColor ? { color: heroFontColor } : undefined}
           >
             {headline}
           </h1>
           <p
-            className={`font-sans text-base md:text-lg font-normal text-center mt-8 max-w-md mx-auto leading-relaxed ${!heroFontColor ? (hasHeroBg ? "text-white/90" : "text-muted-foreground") : ""}`}
+            className={`font-sans text-xl md:text-2xl font-bold text-center mt-8 max-w-md mx-auto ${!heroFontColor ? (hasHeroBg ? "text-white/90" : "text-foreground") : ""}`}
             style={heroFontColor ? { color: heroFontColor } : undefined}
           >
             {subtitle}
           </p>
           <p
-            className={`font-editorial italic text-base md:text-lg font-normal text-center mt-6 ${!heroFontColor ? (hasHeroBg ? "text-white" : "text-foreground") : ""}`}
+            className={`font-sans text-base md:text-xl font-bold text-center mt-6 ${!heroFontColor ? (hasHeroBg ? "text-white" : "text-foreground") : ""}`}
             style={heroFontColor ? { color: heroFontColor } : undefined}
           >
             {exploreCta}
@@ -185,41 +185,73 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
       <div className="px-6 py-12">
         <div className="max-w-4xl mx-auto w-full md:flex md:flex-col md:items-center">
 
-          {/* Editorial intro */}
-          <div className="w-full max-w-2xl md:mx-auto mb-10 text-center">
-            <span
-              className={`font-editorial italic text-xs md:text-sm tracking-[0.25em] uppercase ${!heroFontColor ? (hasHeroBg ? "text-white/70" : "text-muted-foreground") : ""}`}
-              style={heroFontColor ? { color: heroFontColor, opacity: 0.7 } : undefined}
+          {/* SECTION 1: Decision cards */}
+          <div className="w-full max-w-lg md:mx-auto mb-16">
+            <h2
+              className={`font-sans text-xl md:text-2xl font-bold text-center mb-8 ${!heroFontColor ? (hasHeroBg ? "text-white" : "text-foreground") : ""}`}
+              style={heroFontColor ? { color: heroFontColor } : undefined}
             >
-              — Le rubriche di Pipo —
-            </span>
-            <div className={`mt-3 mx-auto h-px w-12 ${hasHeroBg ? "bg-white/30" : "bg-border"}`} />
+              {t("chooseDayTitle")}
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Card 1: Self trip */}
+              <div className="min-w-0 flex flex-col items-center rounded-2xl border border-border bg-card p-4 sm:p-5 text-center gap-3">
+                <span className="text-2xl sm:text-3xl">🚗</span>
+                <p className="min-w-0 w-full break-words font-sans text-lg sm:text-xl md:text-2xl font-bold text-card-foreground whitespace-pre-line leading-tight">
+                  {t("selfTripTitle")}
+                </p>
+                <Button
+                  size="sm"
+                  className="mt-auto w-full min-w-0 whitespace-normal break-words font-bold text-xs leading-tight"
+                  style={{ backgroundColor: 'hsl(var(--cta-yellow))', color: 'hsl(var(--cta-yellow-foreground))' }}
+                  onClick={() => {
+                    trackEvent("cta_self_trip");
+                    navigate("/collezioni");
+                  }}
+                >
+                  {t("selfTripCta")}
+                </Button>
+              </div>
+              {/* Card 2: Experience */}
+              <div className="min-w-0 flex flex-col items-center rounded-2xl border border-border bg-card p-4 sm:p-5 text-center gap-3">
+                <span className="text-2xl sm:text-3xl">🚐</span>
+                <p className="min-w-0 w-full break-words font-sans text-lg sm:text-xl md:text-2xl font-bold text-card-foreground whitespace-pre-line leading-tight">
+                  {t("experienceTitle")}
+                </p>
+                <Button
+                  size="sm"
+                  className="mt-auto w-full min-w-0 whitespace-normal break-words font-bold text-xs leading-tight"
+                  style={{ backgroundColor: 'hsl(var(--cta-yellow))', color: 'hsl(var(--cta-yellow-foreground))' }}
+                  onClick={() => {
+                    trackEvent("cta_experience");
+                    setWaitlistOpen(true);
+                  }}
+                >
+                  {t("experienceCta")}
+                </Button>
+              </div>
+            </div>
           </div>
 
-          {/* Categories grid */}
+          {/* SECTION 2: Browse / Curiosare */}
           <div className="w-full max-w-lg md:mx-auto">
+            <h2
+              className={`font-sans text-xl md:text-2xl font-bold text-center mb-2 ${!heroFontColor ? (hasHeroBg ? "text-white" : "text-foreground") : ""}`}
+              style={heroFontColor ? { color: heroFontColor } : undefined}
+            >
+              {t("browseTitle")}
+            </h2>
+            <p
+              className={`font-sans text-sm md:text-base text-center mb-8 ${!heroFontColor ? (hasHeroBg ? "text-white/70" : "text-muted-foreground") : ""}`}
+              style={heroFontColor ? { color: heroFontColor, opacity: 0.7 } : undefined}
+            >
+              {t("browseSubtitle")}
+            </p>
             <div className="grid grid-cols-2 gap-3 w-full">
               <CategoryCard cat={CATEGORIES[0]} />
               <CategoryCard cat={CATEGORIES[1]} />
               <CategoryCard cat={CATEGORIES[2]} />
               <CategoryCard cat={CATEGORIES[3]} />
-              {/* Mappe Interattive */}
-              <button
-                onClick={() => {
-                  trackEvent("cta_self_trip");
-                  navigate("/collezioni");
-                }}
-                className="relative aspect-square rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary bg-secondary"
-              >
-                <div className="absolute inset-0 flex items-center justify-center text-5xl opacity-80 transition-transform duration-300 group-hover:scale-110">
-                  🗺️
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-sm md:text-base font-bold text-left leading-tight drop-shadow-lg">
-                  {t("catMappeInterattive")}
-                </span>
-              </button>
-              {/* Free Spots */}
               <button
                 onClick={() => navigate("/free-spots")}
                 className="relative aspect-square rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
@@ -237,6 +269,7 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
             </div>
           </div>
 
+          {/* Contact CTA */}
           <div className="mt-6 text-center">
             <p
               className={`font-sans text-base md:text-xl font-bold whitespace-pre-line ${!heroFontColor ? (hasHeroBg ? "text-white" : "text-foreground") : ""}`}
