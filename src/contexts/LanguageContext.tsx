@@ -61,6 +61,7 @@ export const translations = {
     catNatura: "Natura",
     catBorghi: "Borghi",
     catArteECultura: "Arte e Cultura",
+    catMappeInterattive: "Mappe Interattive",
 
     // Email gate
     gateTitle: "Ti stai muovendo bene.",
