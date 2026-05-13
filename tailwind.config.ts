@@ -36,8 +36,15 @@ export default {
 				'system-ui',
 				'sans-serif'
 			],
-			editorial: [
-				'Fraunces',
+		editorial: [
+				'"Instrument Serif"',
+				'"PT Serif"',
+				'ui-serif',
+				'Georgia',
+				'serif'
+			],
+		serif: [
+				'"PT Serif"',
 				'ui-serif',
 				'Georgia',
 				'serif'
