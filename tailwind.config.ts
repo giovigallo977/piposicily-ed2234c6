@@ -30,12 +30,18 @@ export default {
   				'system-ui',
   				'sans-serif'
   			],
-  			body: [
-  				'Nunito',
-  				'Inter',
-  				'system-ui',
-  				'sans-serif'
-  			],
+			body: [
+				'Nunito',
+				'Inter',
+				'system-ui',
+				'sans-serif'
+			],
+			editorial: [
+				'Fraunces',
+				'ui-serif',
+				'Georgia',
+				'serif'
+			],
   			mono: [
   				'Roboto Mono',
   				'ui-monospace',
