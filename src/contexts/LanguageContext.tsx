@@ -167,6 +167,7 @@ export const translations = {
     catNatura: "Nature",
     catBorghi: "Villages",
     catArteECultura: "Art & Culture",
+    catMappeInterattive: "Interactive Maps",
 
     // Email gate
     gateTitle: "You're doing great.",
