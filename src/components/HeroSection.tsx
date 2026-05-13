@@ -149,19 +149,19 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
 
         <div className="max-w-4xl mx-auto w-full flex flex-col items-center relative z-10 -mt-12">
           <h1
-            className={`font-sans text-[32px] md:text-[48px] font-bold leading-[1.1] text-center ${!heroFontColor ? (hasHeroBg ? "text-white" : "text-foreground") : ""}`}
+            className={`font-editorial text-[40px] md:text-[64px] font-light leading-[1.05] tracking-tight text-center ${!heroFontColor ? (hasHeroBg ? "text-white" : "text-foreground") : ""}`}
             style={heroFontColor ? { color: heroFontColor } : undefined}
           >
             {headline}
           </h1>
           <p
-            className={`font-sans text-xl md:text-2xl font-bold text-center mt-8 max-w-md mx-auto ${!heroFontColor ? (hasHeroBg ? "text-white/90" : "text-foreground") : ""}`}
+            className={`font-sans text-base md:text-lg font-normal text-center mt-8 max-w-md mx-auto leading-relaxed ${!heroFontColor ? (hasHeroBg ? "text-white/90" : "text-muted-foreground") : ""}`}
             style={heroFontColor ? { color: heroFontColor } : undefined}
           >
             {subtitle}
           </p>
           <p
-            className={`font-sans text-base md:text-xl font-bold text-center mt-6 ${!heroFontColor ? (hasHeroBg ? "text-white" : "text-foreground") : ""}`}
+            className={`font-editorial italic text-base md:text-lg font-normal text-center mt-6 ${!heroFontColor ? (hasHeroBg ? "text-white" : "text-foreground") : ""}`}
             style={heroFontColor ? { color: heroFontColor } : undefined}
           >
             {exploreCta}
