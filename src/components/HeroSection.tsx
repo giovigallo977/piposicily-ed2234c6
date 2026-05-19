@@ -185,55 +185,7 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
       <div className="px-6 py-12">
         <div className="max-w-4xl mx-auto w-full md:flex md:flex-col md:items-center">
 
-          {/* SECTION 1: Decision cards */}
-          <div className="w-full max-w-lg md:mx-auto mb-16">
-            <h2
-              className={`font-sans text-xl md:text-2xl font-bold text-center mb-8 ${!heroFontColor ? (hasHeroBg ? "text-white" : "text-foreground") : ""}`}
-              style={heroFontColor ? { color: heroFontColor } : undefined}
-            >
-              {t("chooseDayTitle")}
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {/* Card 1: Self trip */}
-              <div className="min-w-0 flex flex-col items-center rounded-2xl border border-border bg-card p-4 sm:p-5 text-center gap-3">
-                <span className="text-2xl sm:text-3xl">🚗</span>
-                <p className="min-w-0 w-full break-words font-sans text-lg sm:text-xl md:text-2xl font-bold text-card-foreground whitespace-pre-line leading-tight">
-                  {t("selfTripTitle")}
-                </p>
-                <Button
-                  size="sm"
-                  className="mt-auto w-full min-w-0 whitespace-normal break-words font-bold text-xs leading-tight"
-                  style={{ backgroundColor: 'hsl(var(--cta-yellow))', color: 'hsl(var(--cta-yellow-foreground))' }}
-                  onClick={() => {
-                    trackEvent("cta_self_trip");
-                    navigate("/collezioni");
-                  }}
-                >
-                  {t("selfTripCta")}
-                </Button>
-              </div>
-              {/* Card 2: Experience */}
-              <div className="min-w-0 flex flex-col items-center rounded-2xl border border-border bg-card p-4 sm:p-5 text-center gap-3">
-                <span className="text-2xl sm:text-3xl">🚐</span>
-                <p className="min-w-0 w-full break-words font-sans text-lg sm:text-xl md:text-2xl font-bold text-card-foreground whitespace-pre-line leading-tight">
-                  {t("experienceTitle")}
-                </p>
-                <Button
-                  size="sm"
-                  className="mt-auto w-full min-w-0 whitespace-normal break-words font-bold text-xs leading-tight"
-                  style={{ backgroundColor: 'hsl(var(--cta-yellow))', color: 'hsl(var(--cta-yellow-foreground))' }}
-                  onClick={() => {
-                    trackEvent("cta_experience");
-                    setWaitlistOpen(true);
-                  }}
-                >
-                  {t("experienceCta")}
-                </Button>
-              </div>
-            </div>
-          </div>
-
-          {/* SECTION 2: Browse / Curiosare */}
+          {/* SECTION: Browse / Curiosare */}
           <div className="w-full max-w-lg md:mx-auto">
             <h2
               className={`font-sans text-xl md:text-2xl font-bold text-center mb-2 ${!heroFontColor ? (hasHeroBg ? "text-white" : "text-foreground") : ""}`}
