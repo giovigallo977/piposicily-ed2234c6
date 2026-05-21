@@ -109,6 +109,11 @@ export const translations = {
     exploreFreelyCta: "Esplora in libertà",
     exploreByCategoryCta: "Esplora per categoria",
 
+    // Contacts
+    contactsTitle: "contatti",
+    contactsIg: "IG: pipo.fuoriradar",
+    contactsEmail: "pipoesplora@gmail.com",
+
     // Experience waitlist modal
     experienceFakeDoorTitle: "Experience Pipo stanno per partire 🔥",
     experienceFakeDoorSubtitle: "Piccoli gruppi, luoghi autentici, zero turismo di massa.\nTu arrivi, noi pensiamo al resto.",
@@ -215,6 +220,11 @@ export const translations = {
     browseSubtitle: "",
     exploreFreelyCta: "Explore freely",
     exploreByCategoryCta: "Explore by category",
+
+    // Contacts
+    contactsTitle: "contacts",
+    contactsIg: "IG: pipo.fuoriradar",
+    contactsEmail: "pipoesplora@gmail.com",
 
     // Experience waitlist modal
     experienceFakeDoorTitle: "Pipo Experiences are launching soon 🔥",
