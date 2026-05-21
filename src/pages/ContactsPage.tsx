@@ -1,6 +1,7 @@
 import SiteHeader from "@/components/SiteHeader";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSiteContent } from "@/hooks/useSiteContent";
+import { useTranslatedContent } from "@/hooks/useTranslation";
 
 const ContactsPage = () => {
   const { t } = useLanguage();
@@ -15,6 +16,9 @@ const ContactsPage = () => {
   const igLabel = igLabelContent?.content?.trim() || t("contactsIg");
   const email = emailContent?.content?.trim() || "pipoesplora@gmail.com";
 
+  const { translatedText: translatedBody } = useTranslatedContent(body);
+  const displayBody = translatedBody ?? body;
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SiteHeader />
@@ -23,9 +27,9 @@ const ContactsPage = () => {
           {t("contactsTitle")}
         </h2>
 
-        {body && (
+        {displayBody && (
           <p className="font-sans text-sm md:text-base leading-relaxed text-foreground/80 whitespace-pre-line mb-10">
-            {body}
+            {displayBody}
           </p>
         )}
 
