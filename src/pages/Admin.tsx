@@ -59,7 +59,7 @@ const Admin = () => {
   const { data: catImgNaturaContent } = useSiteContent("cat_image_natura");
   const { data: catImgBorghiContent } = useSiteContent("cat_image_borghi");
   const { data: catImgArteContent } = useSiteContent("cat_image_arte_cultura");
-  const { data: catImgCollezioniContent } = useSiteContent("cat_image_collezioni");
+  
   // Free Spots card labels
   const { data: freeSpotsLabelContent } = useSiteContent("cat_label_free_spots");
   const { data: freeSpotsSubLabelContent } = useSiteContent("cat_sublabel_free_spots");
