@@ -80,7 +80,7 @@ const HotspotCard = ({ hotspot, index = 0, onBeforeExpand }: HotspotCardProps) =
       <div className="relative">
         <article
           className={cn(
-            "rounded-3xl overflow-hidden shadow-lg transition-all duration-300 bg-white hover:shadow-xl hover:-translate-y-1",
+            "overflow-hidden transition-opacity duration-300 bg-transparent",
             isTranslating && "opacity-75"
           )}
         >
@@ -103,47 +103,38 @@ const HotspotCard = ({ hotspot, index = 0, onBeforeExpand }: HotspotCardProps) =
           {/* Content */}
           <div className="p-5">
             <div className="flex items-start justify-between gap-4">
-              <h2 className="leading-tight flex-1 min-w-0 font-sans text-xl font-bold text-foreground">
+              <h2 className="leading-tight flex-1 min-w-0 font-sans uppercase tracking-widest text-sm text-foreground">
                 {translated.titolo}
               </h2>
               <button
                 onClick={handleToggleExpand}
-                className="w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95 flex-shrink-0 bg-muted"
+                className="w-9 h-9 rounded-full flex items-center justify-center transition-colors hover:bg-foreground/5 flex-shrink-0"
                 aria-expanded={isExpanded}
                 aria-label={isExpanded ? t("hideDetails") : t("showDetails")}
               >
                 {isExpanded ? (
-                  <Minus className="w-5 h-5 text-foreground" strokeWidth={1.5} />
+                  <Minus className="w-4 h-4 text-foreground/60" strokeWidth={1.25} />
                 ) : (
-                  <Plus className="w-5 h-5 text-foreground" strokeWidth={1.5} />
+                  <Plus className="w-4 h-4 text-foreground/60" strokeWidth={1.25} />
                 )}
               </button>
             </div>
 
             {(translated.categoria || hotspot.zona) && (
-              <div className="mt-4 mb-4 flex flex-wrap items-center gap-2">
-                {translated.categoria && (
-                  <span className="px-3 py-1.5 text-xs font-bold rounded-full bg-foreground text-background">
-                    {translated.categoria}
-                  </span>
-                )}
-                {hotspot.zona && (
-                  <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold bg-foreground text-background">
-                    📍 {t("zone")} {hotspot.zona}
-                  </span>
-                )}
+              <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 font-sans uppercase tracking-widest text-[10px] text-foreground/50">
+                {translated.categoria && <span>{translated.categoria}</span>}
+                {translated.categoria && hotspot.zona && <span>·</span>}
+                {hotspot.zona && <span>{t("zone")} {hotspot.zona}</span>}
               </div>
             )}
 
             {hotspot.tags && hotspot.tags.length > 0 && (
-              <p className="mt-2 font-mono text-sm text-foreground">
-                {hotspot.tags.map((tag, i) => (
-                  <span key={i}>• {tag} </span>
-                ))}
+              <p className="mt-2 font-sans text-xs text-foreground/50">
+                {hotspot.tags.join(" · ")}
               </p>
             )}
 
-            <p className="mt-2 leading-relaxed font-sans text-sm text-foreground">
+            <p className="mt-3 leading-relaxed font-sans text-sm text-foreground/80">
               {translated.descrizione_breve}
             </p>
 
@@ -154,7 +145,7 @@ const HotspotCard = ({ hotspot, index = 0, onBeforeExpand }: HotspotCardProps) =
               )}
             >
               <div className="overflow-hidden">
-                <p className="leading-relaxed whitespace-pre-line font-sans text-sm text-foreground">
+                <p className="leading-relaxed whitespace-pre-line font-sans text-sm text-foreground/80">
                   <Linkify text={translated.descrizione_completa} />
                 </p>
 
@@ -163,9 +154,9 @@ const HotspotCard = ({ hotspot, index = 0, onBeforeExpand }: HotspotCardProps) =
                     href={hotspot.link_google_maps}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-sans font-semibold text-sm text-white transition-all duration-300 hover:scale-105 hover:shadow-lg shadow-md active:scale-95 bg-orange-500"
+                    className="mt-5 inline-flex items-center gap-2 font-sans uppercase tracking-widest text-xs text-foreground border-b border-foreground/30 hover:border-foreground pb-1 transition-colors"
                   >
-                    <Map className="w-5 h-5" />
+                    <Map className="w-4 h-4" strokeWidth={1.25} />
                     {t("meetPipo")}
                   </a>
                 )}
