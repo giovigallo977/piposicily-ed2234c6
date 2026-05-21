@@ -109,7 +109,7 @@ const Admin = () => {
       [catImgNaturaContent, setCatImgNatura],
       [catImgBorghiContent, setCatImgBorghi],
       [catImgArteContent, setCatImgArte],
-      [catImgCollezioniContent, setCatImgCollezioni],
+      
       [exploreCtaContent, setExploreCtaText],
       [freeSpotsLabelContent, setFreeSpotsLabel],
       [freeSpotsSubLabelContent, setFreeSpotsSubLabel],
