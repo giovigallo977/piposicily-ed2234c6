@@ -124,7 +124,7 @@ const Admin = () => {
     heroHeadlineContent, heroSubtitleContent, homepageBgColorContent,
     catImgLuoghiContent, catImgNaturaContent, catImgBorghiContent, catImgArteContent,
     exploreCtaContent, freeSpotsLabelContent, freeSpotsSubLabelContent,
-    catImgCollezioniContent, exploreCtaContent, freeSpotsLabelContent, freeSpotsSubLabelContent,
+    
     catImgFreeSpotsContent, heroBgImageContent, heroFontColorContent,
   ]);
 
