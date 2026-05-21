@@ -2,11 +2,9 @@ import { useEffect, useMemo, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import HotspotCard from "@/components/HotspotCard";
-import EmailGateModal from "@/components/EmailGateModal";
 import SiteHeader from "@/components/SiteHeader";
 import { useHotspots, type Hotspot } from "@/hooks/useHotspots";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useCardGate } from "@/hooks/useCardGate";
 
 type Filter =
   | "all"
@@ -27,7 +25,6 @@ const MagazineHome = () => {
   }, [location.state]);
 
   const { data: hotspots, isLoading } = useHotspots();
-  const { onBeforeExpand, gateModalOpen, setGateModalOpen, onEmailProvided, gateSource } = useCardGate();
 
   const items = useMemo<Hotspot[]>(() => {
     if (filter === "all") return hotspots || [];
@@ -54,18 +51,11 @@ const MagazineHome = () => {
         {!isLoading && items.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
             {items.map((hotspot, i) => (
-              <HotspotCard
-                key={hotspot.id}
-                hotspot={hotspot}
-                index={i}
-                onBeforeExpand={onBeforeExpand}
-              />
+              <HotspotCard key={hotspot.id} hotspot={hotspot} index={i} />
             ))}
           </div>
         )}
       </main>
-
-      <EmailGateModal open={gateModalOpen} onOpenChange={setGateModalOpen} onEmailProvided={onEmailProvided} source={gateSource} />
     </div>
   );
 };

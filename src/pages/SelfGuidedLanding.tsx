@@ -1,7 +1,4 @@
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { trackEvent } from "@/lib/trackEvent";
-import EmailCaptureForm from "@/components/EmailCaptureForm";
 
 const examples = [
   { name: "Arte e Cultura", desc: "Passeggiata tra ville, dettagli e storia nascosta" },
@@ -10,11 +7,8 @@ const examples = [
 ];
 
 const SelfGuidedLanding = () => {
-  useEffect(() => { trackEvent("page_view"); }, []);
-
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Minimal logo + back */}
       <div className="px-6 pt-6">
         <Link to="/" className="font-heading text-2xl hover:opacity-70 transition-opacity">Pipo</Link>
         <div className="mt-1">
@@ -22,7 +16,6 @@ const SelfGuidedLanding = () => {
         </div>
       </div>
 
-      {/* Hero */}
       <section className="px-6 pt-12 pb-8 max-w-2xl mx-auto text-center">
         <h1 className="text-3xl md:text-5xl font-bold leading-tight mb-4">
           Esplora la Sicilia senza sbagliare
@@ -32,7 +25,6 @@ const SelfGuidedLanding = () => {
         </p>
       </section>
 
-      {/* Esempi */}
       <section className="px-6 py-8 max-w-2xl mx-auto">
         <h2 className="text-xl font-bold mb-6 text-center">I primi itinerari in arrivo</h2>
         <div className="flex flex-col gap-4">
@@ -45,35 +37,11 @@ const SelfGuidedLanding = () => {
         </div>
       </section>
 
-      {/* Value */}
-      <section className="px-6 py-8 max-w-2xl mx-auto text-center">
+      <section className="px-6 py-8 pb-20 max-w-2xl mx-auto text-center">
         <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
           Percorsi semplici, testati sul campo, con indicazioni chiare su cosa vedere e come muoverti.
           <br />Segui il tracciato o usalo come base per la tua giornata.
         </p>
-      </section>
-
-      {/* CTA Email */}
-      <section className="px-6 py-10 max-w-2xl mx-auto text-center">
-        <h2 className="text-xl font-bold mb-2">Vuoi accedere ai primi itinerari?</h2>
-        <p className="text-muted-foreground mb-6">
-          Stiamo aprendo i primi percorsi. Lascia la tua email e ti avvisiamo appena sono disponibili.
-        </p>
-        <EmailCaptureForm
-          source="self_guided"
-          ctaText="Avvisami"
-          microcopy="Niente spam. Solo i primi itinerari Pipo."
-        />
-      </section>
-
-      {/* Spacer + CTA ripetuta */}
-      <section className="px-6 py-16 max-w-2xl mx-auto text-center border-t border-border">
-        <p className="text-muted-foreground mb-4">Non perderti i primi itinerari</p>
-        <EmailCaptureForm
-          source="self_guided"
-          ctaText="Avvisami"
-          microcopy="Niente spam. Solo i primi itinerari Pipo."
-        />
       </section>
     </div>
   );

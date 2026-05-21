@@ -1,7 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { Plus, Minus, Map, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { trackEvent } from "@/lib/trackEvent";
 import type { Hotspot } from "@/hooks/useHotspots";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedHotspot } from "@/hooks/useTranslation";
@@ -69,7 +68,6 @@ const HotspotCard = ({ hotspot, index = 0, onBeforeExpand }: HotspotCardProps) =
   const handleToggleExpand = () => {
     if (!isExpanded) {
       if (onBeforeExpand && !onBeforeExpand()) return;
-      trackEvent("hotspot_view");
       gtag('event', 'hotspot_click', { label: hotspot.categoria || hotspot.titolo });
     }
     setIsExpanded(!isExpanded);

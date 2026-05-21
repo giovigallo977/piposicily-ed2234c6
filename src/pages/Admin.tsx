@@ -198,10 +198,6 @@ const Admin = () => {
               <h1 className="font-brand text-xl font-black italic">Pipo Admin</h1>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="ghost" size="sm" onClick={() => navigate("/admin-analytics")}>
-                <BarChart3 className="h-4 w-4 mr-2" />
-                Analytics
-              </Button>
               <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Vedi Sito
@@ -218,7 +214,7 @@ const Admin = () => {
       <main className="container mx-auto px-4 py-6">
         <div className="max-w-4xl mx-auto">
           <Tabs defaultValue="hotspots" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="hotspots" className="flex items-center gap-2">
                 <MapPin className="h-4 w-4" /> Hotspots
               </TabsTrigger>
@@ -227,9 +223,6 @@ const Admin = () => {
               </TabsTrigger>
               <TabsTrigger value="contatti" className="flex items-center gap-2">
                 <FileText className="h-4 w-4" /> Contatti
-              </TabsTrigger>
-              <TabsTrigger value="email" className="flex items-center gap-2">
-                <Mail className="h-4 w-4" /> Email
               </TabsTrigger>
             </TabsList>
 
@@ -559,11 +552,6 @@ const Admin = () => {
                   <ContentField contentKey="contacts_email" label="Indirizzo email" placeholder="pipoesplora@gmail.com" />
                 </CardContent>
               </Card>
-            </TabsContent>
-
-            {/* Tab Email */}
-            <TabsContent value="email">
-              <AdminUsersTab />
             </TabsContent>
           </Tabs>
         </div>

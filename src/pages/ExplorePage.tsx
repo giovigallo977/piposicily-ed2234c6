@@ -2,17 +2,14 @@ import { useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ChevronsLeft, Loader2 } from "lucide-react";
 import HotspotCard from "@/components/HotspotCard";
-import EmailGateModal from "@/components/EmailGateModal";
 import { useHotspots } from "@/hooks/useHotspots";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useCardGate } from "@/hooks/useCardGate";
 
 const ExplorePage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { data: hotspots, isLoading, error } = useHotspots();
   const { t } = useLanguage();
-  const { onBeforeExpand, gateModalOpen, setGateModalOpen, onEmailProvided, gateSource } = useCardGate();
 
   const categoriaParam = searchParams.get("categoria");
 
@@ -32,7 +29,7 @@ const ExplorePage = () => {
         <button onClick={handleBack} className="p-2 transition-all duration-200 hover:scale-110" aria-label={t("backLabel")}>
           <ChevronsLeft className="w-8 h-8 text-foreground" strokeWidth={2.5} />
         </button>
-        
+
         <div className="flex items-center gap-2">
           <img alt="Pipo" className="h-10 w-10 object-contain" draggable={false} src="/lovable-uploads/c09259c8-f4e2-4940-b26d-61c1f4a134ae.png" />
         </div>
@@ -46,30 +43,25 @@ const ExplorePage = () => {
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
           )}
-          
+
           {error && (
             <div className="text-center py-12 text-muted-foreground">
               <p>{t("loadingHotspotsError")}</p>
             </div>
           )}
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredHotspots.map((hotspot, index) => (
-              <HotspotCard
-                key={hotspot.id}
-                hotspot={hotspot}
-                index={index}
-                onBeforeExpand={onBeforeExpand}
-              />
+              <HotspotCard key={hotspot.id} hotspot={hotspot} index={index} />
             ))}
           </div>
-          
+
           {!isLoading && filteredHotspots.length === 0 && hotspots && hotspots.length > 0 && (
             <div className="text-center py-12 text-muted-foreground font-sans italic">
               <p>{t("noHotspotsCategory")}</p>
             </div>
           )}
-          
+
           {!isLoading && hotspots?.length === 0 && (
             <div className="text-center py-12 text-muted-foreground font-sans italic">
               <p>{t("noHotspots")}</p>
@@ -77,8 +69,6 @@ const ExplorePage = () => {
           )}
         </div>
       </main>
-
-      <EmailGateModal open={gateModalOpen} onOpenChange={setGateModalOpen} onEmailProvided={onEmailProvided} source={gateSource} />
     </div>
   );
 };

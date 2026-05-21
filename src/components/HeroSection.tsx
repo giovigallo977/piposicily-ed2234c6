@@ -8,9 +8,7 @@ import { useSiteContent } from "@/hooks/useSiteContent";
 import { useTranslatedContent } from "@/hooks/useTranslation";
 import MissionSection from "@/components/MissionSection";
 
-import ExperienceWaitlistModal from "@/components/ExperienceWaitlistModal";
 import { Button } from "@/components/ui/button";
-import { trackEvent } from "@/lib/trackEvent";
 
 interface HeroSectionProps {
   bgColor?: string;
@@ -26,7 +24,6 @@ const CATEGORIES = [
 const HeroSection = ({ bgColor }: HeroSectionProps) => {
   const { t } = useLanguage();
   const navigate = useNavigate();
-  const [waitlistOpen, setWaitlistOpen] = useState(false);
   const [showCategories, setShowCategories] = useState(false);
   const { data: hotspots } = useHotspots();
 
@@ -264,8 +261,6 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
           </div>
         </div>
       </div>
-
-      <ExperienceWaitlistModal open={waitlistOpen} onOpenChange={setWaitlistOpen} />
     </section>
   );
 };

@@ -1,12 +1,9 @@
-import { useEffect } from "react";
 import SiteHeader from "@/components/SiteHeader";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSiteContent } from "@/hooks/useSiteContent";
-import { trackEvent } from "@/lib/trackEvent";
 
 const AboutPage = () => {
   const { t } = useLanguage();
-  useEffect(() => { trackEvent("page_view"); }, []);
 
   const { data } = useSiteContent("about_body");
   const body = data?.content || "";
