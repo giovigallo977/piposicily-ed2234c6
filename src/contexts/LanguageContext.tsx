@@ -221,6 +221,11 @@ export const translations = {
     exploreFreelyCta: "Explore freely",
     exploreByCategoryCta: "Explore by category",
 
+    // Contacts
+    contactsTitle: "contacts",
+    contactsIg: "IG: pipo.fuoriradar",
+    contactsEmail: "pipoesplora@gmail.com",
+
     // Experience waitlist modal
     experienceFakeDoorTitle: "Pipo Experiences are launching soon 🔥",
     experienceFakeDoorSubtitle: "Small groups, authentic places, zero mass tourism.\nYou show up, we handle the rest.",
