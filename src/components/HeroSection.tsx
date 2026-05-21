@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronDown, Instagram } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useHotspots } from "@/hooks/useHotspots";
@@ -237,26 +237,6 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
                 </button>
               </div>
             )}
-          </div>
-
-          {/* Contact CTA */}
-          <div className="mt-6 text-center">
-            <p
-              className={`font-sans text-base md:text-xl font-bold whitespace-pre-line ${!heroFontColor ? (hasHeroBg ? "text-white" : "text-foreground") : ""}`}
-              style={heroFontColor ? { color: heroFontColor } : undefined}
-            >
-              {t("contactCta")}
-            </p>
-            <a
-              href="https://instagram.com/pipo.fuoriradar"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`inline-flex items-center gap-1.5 font-sans text-base md:text-xl font-bold hover:underline ${!heroFontColor ? (hasHeroBg ? "text-white" : "text-foreground") : ""}`}
-              style={heroFontColor ? { color: heroFontColor } : undefined}
-            >
-              <Instagram className="w-5 h-5" />
-              {t("igHandle")}
-            </a>
           </div>
 
           {/* Mission Content from DB */}
