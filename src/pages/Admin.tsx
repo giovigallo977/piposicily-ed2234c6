@@ -130,7 +130,6 @@ const Admin = () => {
   const handleOpenCreate = () => {
     setEditingHotspot(null);
     setFormData({ ...emptyHotspot, ordine: (hotspots?.length ?? 0) + 1 });
-    setSelectedCollectionIds([]);
     setIsDialogOpen(true);
   };
 
@@ -149,12 +148,6 @@ const Admin = () => {
       tags: hotspot.tags || [],
       ordine: hotspot.ordine,
     });
-    // Carica collezioni associate
-    const { data } = await supabase
-      .from("collection_hotspots")
-      .select("collection_id")
-      .eq("hotspot_id", hotspot.id);
-    setSelectedCollectionIds(data?.map((r) => r.collection_id) || []);
     setIsDialogOpen(true);
   };
 
@@ -164,30 +157,23 @@ const Admin = () => {
     if (!open) {
       setEditingHotspot(null);
       setFormData({ ...emptyHotspot });
-      setSelectedCollectionIds([]);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    let hotspotId: string;
+
     if (editingHotspot) {
       await updateMutation.mutateAsync({ id: editingHotspot.id, updates: formData });
-      hotspotId = editingHotspot.id;
     } else {
-      const created = await createMutation.mutateAsync(formData);
-      hotspotId = created.id;
+      await createMutation.mutateAsync(formData);
     }
-    
-    // Sync collezioni
-    await syncHotspotCollections.mutateAsync({ hotspotId, collectionIds: selectedCollectionIds });
-    
+
     setEditingHotspot(null);
     setFormData({ ...emptyHotspot });
-    setSelectedCollectionIds([]);
     setIsDialogOpen(false);
   };
+
 
   const handleDelete = async (id: string) => {
     await deleteMutation.mutateAsync(id);
