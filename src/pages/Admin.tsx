@@ -1,14 +1,10 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useHotspots, useCreateHotspot, useUpdateHotspot, useDeleteHotspot, useReorderHotspots, Hotspot, HotspotInsert } from "@/hooks/useHotspots";
-
-
-
 import { useSiteContent, useUpdateSiteContent } from "@/hooks/useSiteContent";
 import { ImageUpload, MultiImageUpload } from "@/components/ImageUpload";
 import { EmojiPicker } from "@/components/EmojiPicker";
-import { FALLBACK_MISSION_TEXT } from "@/components/MissionSection";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -18,11 +14,17 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Plus, Pencil, Trash2, LogOut, ArrowLeft, FileText, MapPin, Users, Coffee, ArrowUp, ArrowDown, BarChart3, Mail } from "lucide-react";
+import { Loader2, Plus, Pencil, Trash2, LogOut, ArrowLeft, FileText, MapPin, ArrowUp, ArrowDown, BarChart3, Mail, User } from "lucide-react";
 import pipoAlien from "@/assets/pipo-alien-new.png";
-
 import AdminUsersTab from "@/components/AdminUsersTab";
-import AdminFreeSpotsTab from "@/components/AdminFreeSpotsTab";
+
+const CATEGORIES = [
+  "Luoghi Fantasma",
+  "Natura",
+  "Borghi",
+  "Arte e Cultura",
+  "Work Study Eat&Drink",
+];
 
 const emptyHotspot: HotspotInsert = {
   titolo: "",
@@ -38,6 +40,75 @@ const emptyHotspot: HotspotInsert = {
   ordine: 0,
 };
 
+// Helper: editable site_content field
+const ContentField = ({
+  contentKey,
+  label,
+  multiline = false,
+  rows = 4,
+  placeholder = "",
+}: {
+  contentKey: string;
+  label: string;
+  multiline?: boolean;
+  rows?: number;
+  placeholder?: string;
+}) => {
+  const { data, isLoading } = useSiteContent(contentKey);
+  const update = useUpdateSiteContent();
+  const [value, setValue] = useState("");
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    if (!loaded && data !== undefined) {
+      setValue(data?.content || "");
+      setLoaded(true);
+    }
+  }, [data, loaded]);
+
+  const dirty = loaded && value !== (data?.content || "");
+
+  return (
+    <div className="space-y-2">
+      <Label>{label}</Label>
+      {multiline ? (
+        <div className="flex gap-2 items-start">
+          <Textarea
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            rows={rows}
+            placeholder={placeholder}
+            className="flex-1"
+            disabled={isLoading}
+          />
+          <EmojiPicker onSelect={(emoji) => setValue(value + emoji)} />
+        </div>
+      ) : (
+        <div className="flex gap-2">
+          <Input
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            placeholder={placeholder}
+            className="flex-1"
+            disabled={isLoading}
+          />
+          <EmojiPicker onSelect={(emoji) => setValue(value + emoji)} />
+        </div>
+      )}
+      <div className="flex justify-end">
+        <Button
+          size="sm"
+          onClick={() => update.mutate({ key: contentKey, content: value })}
+          disabled={!dirty || update.isPending}
+        >
+          {update.isPending && <Loader2 className="h-3 w-3 animate-spin mr-2" />}
+          Salva
+        </Button>
+      </div>
+    </div>
+  );
+};
+
 const Admin = () => {
   const { user, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
@@ -46,87 +117,14 @@ const Admin = () => {
   const updateMutation = useUpdateHotspot();
   const deleteMutation = useDeleteHotspot();
   const reorderMutation = useReorderHotspots();
-  // Site content
-  const { data: missionContent, isLoading: missionLoading } = useSiteContent("mission");
-  const { data: heroHeadlineContent } = useSiteContent("hero_headline");
-  const { data: heroSubtitleContent } = useSiteContent("hero_subtitle");
-  
-  const { data: homepageBgColorContent } = useSiteContent("homepage_bg_color");
-  const { data: heroBgImageContent } = useSiteContent("hero_bg_image");
-  const { data: heroFontColorContent } = useSiteContent("hero_font_color");
-  // Category images
-  const { data: catImgLuoghiContent } = useSiteContent("cat_image_luoghi_fantasma");
-  const { data: catImgNaturaContent } = useSiteContent("cat_image_natura");
-  const { data: catImgBorghiContent } = useSiteContent("cat_image_borghi");
-  const { data: catImgArteContent } = useSiteContent("cat_image_arte_cultura");
-  
-  // Free Spots card labels
-  const { data: freeSpotsLabelContent } = useSiteContent("cat_label_free_spots");
-  const { data: freeSpotsSubLabelContent } = useSiteContent("cat_sublabel_free_spots");
-  const { data: catImgFreeSpotsContent } = useSiteContent("cat_image_free_spots");
-  // Explore CTA
-  const { data: exploreCtaContent } = useSiteContent("explore_cta_text");
-  const updateSiteContent = useUpdateSiteContent();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingHotspot, setEditingHotspot] = useState<Hotspot | null>(null);
   const [formData, setFormData] = useState<HotspotInsert>(emptyHotspot);
-  const [missionText, setMissionText] = useState("");
-  const [heroHeadline, setHeroHeadline] = useState("");
-  const [heroSubtitle, setHeroSubtitle] = useState("");
-  
-  const [homepageBgColor, setHomepageBgColor] = useState("");
-  const [catImgLuoghi, setCatImgLuoghi] = useState("");
-  const [catImgNatura, setCatImgNatura] = useState("");
-  const [catImgBorghi, setCatImgBorghi] = useState("");
-  const [catImgArte, setCatImgArte] = useState("");
-  
-  const [exploreCtaText, setExploreCtaText] = useState("");
-  const [freeSpotsLabel, setFreeSpotsLabel] = useState("");
-  const [freeSpotsSubLabel, setFreeSpotsSubLabel] = useState("");
-  const [catImgFreeSpots, setCatImgFreeSpots] = useState("");
-  const [heroBgImage, setHeroBgImage] = useState("");
-  const [heroFontColor, setHeroFontColor] = useState("");
 
   useEffect(() => {
-    if (!authLoading && !user) {
-      navigate("/auth");
-    }
+    if (!authLoading && !user) navigate("/auth");
   }, [user, authLoading, navigate]);
-
-  // Sync all site_content values to local state in a single effect
-  useEffect(() => {
-    if (missionContent?.content) setMissionText(missionContent.content);
-    else if (!missionLoading) setMissionText(FALLBACK_MISSION_TEXT);
-  }, [missionContent, missionLoading]);
-
-  useEffect(() => {
-    const contentMap: Array<[{ content?: string } | undefined, (v: string) => void]> = [
-      [heroHeadlineContent, setHeroHeadline],
-      [heroSubtitleContent, setHeroSubtitle],
-      [homepageBgColorContent, setHomepageBgColor],
-      [catImgLuoghiContent, setCatImgLuoghi],
-      [catImgNaturaContent, setCatImgNatura],
-      [catImgBorghiContent, setCatImgBorghi],
-      [catImgArteContent, setCatImgArte],
-      
-      [exploreCtaContent, setExploreCtaText],
-      [freeSpotsLabelContent, setFreeSpotsLabel],
-      [freeSpotsSubLabelContent, setFreeSpotsSubLabel],
-      [catImgFreeSpotsContent, setCatImgFreeSpots],
-      [heroBgImageContent, setHeroBgImage],
-      [heroFontColorContent, setHeroFontColor],
-    ];
-    for (const [content, setter] of contentMap) {
-      if (content?.content) setter(content.content);
-    }
-  }, [
-    heroHeadlineContent, heroSubtitleContent, homepageBgColorContent,
-    catImgLuoghiContent, catImgNaturaContent, catImgBorghiContent, catImgArteContent,
-    exploreCtaContent, freeSpotsLabelContent, freeSpotsSubLabelContent,
-    
-    catImgFreeSpotsContent, heroBgImageContent, heroFontColorContent,
-  ]);
 
   const handleOpenCreate = () => {
     setEditingHotspot(null);
@@ -134,7 +132,7 @@ const Admin = () => {
     setIsDialogOpen(true);
   };
 
-  const handleOpenEdit = async (hotspot: Hotspot) => {
+  const handleOpenEdit = (hotspot: Hotspot) => {
     setEditingHotspot(hotspot);
     setFormData({
       titolo: hotspot.titolo,
@@ -152,7 +150,6 @@ const Admin = () => {
     setIsDialogOpen(true);
   };
 
-  // Handler per gestire apertura/chiusura dialog con reset del form
   const handleDialogChange = (open: boolean) => {
     setIsDialogOpen(open);
     if (!open) {
@@ -163,18 +160,15 @@ const Admin = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (editingHotspot) {
       await updateMutation.mutateAsync({ id: editingHotspot.id, updates: formData });
     } else {
       await createMutation.mutateAsync(formData);
     }
-
     setEditingHotspot(null);
     setFormData({ ...emptyHotspot });
     setIsDialogOpen(false);
   };
-
 
   const handleDelete = async (id: string) => {
     await deleteMutation.mutateAsync(id);
@@ -185,45 +179,6 @@ const Admin = () => {
     navigate("/");
   };
 
-  const handleSaveMission = async () => {
-    await updateSiteContent.mutateAsync({ key: "mission", content: missionText });
-  };
-
-
-  const handleSaveHero = async () => {
-    await updateSiteContent.mutateAsync({ key: "hero_headline", content: heroHeadline });
-    await updateSiteContent.mutateAsync({ key: "hero_subtitle", content: heroSubtitle });
-    
-    if (homepageBgColor) {
-      await updateSiteContent.mutateAsync({ key: "homepage_bg_color", content: homepageBgColor });
-    }
-    if (heroBgImage) {
-      await updateSiteContent.mutateAsync({ key: "hero_bg_image", content: heroBgImage });
-    } else if (heroBgImageContent?.content) {
-      // Clear the image if removed
-      await updateSiteContent.mutateAsync({ key: "hero_bg_image", content: "" });
-    }
-    if (heroFontColor) {
-      await updateSiteContent.mutateAsync({ key: "hero_font_color", content: heroFontColor });
-    } else if (heroFontColorContent?.content) {
-      await updateSiteContent.mutateAsync({ key: "hero_font_color", content: "" });
-    }
-  };
-
-
-
-  const handleSaveCategoryImages = async () => {
-    if (catImgLuoghi) await updateSiteContent.mutateAsync({ key: "cat_image_luoghi_fantasma", content: catImgLuoghi });
-    if (catImgNatura) await updateSiteContent.mutateAsync({ key: "cat_image_natura", content: catImgNatura });
-    if (catImgBorghi) await updateSiteContent.mutateAsync({ key: "cat_image_borghi", content: catImgBorghi });
-    if (catImgArte) await updateSiteContent.mutateAsync({ key: "cat_image_arte_cultura", content: catImgArte });
-    
-    if (catImgFreeSpots) await updateSiteContent.mutateAsync({ key: "cat_image_free_spots", content: catImgFreeSpots });
-    if (exploreCtaText) await updateSiteContent.mutateAsync({ key: "explore_cta_text", content: exploreCtaText });
-    if (freeSpotsLabel) await updateSiteContent.mutateAsync({ key: "cat_label_free_spots", content: freeSpotsLabel });
-    if (freeSpotsSubLabel) await updateSiteContent.mutateAsync({ key: "cat_sublabel_free_spots", content: freeSpotsSubLabel });
-  };
-
   if (authLoading || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -231,12 +186,10 @@ const Admin = () => {
       </div>
     );
   }
-
   if (!user) return null;
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between gap-4">
@@ -267,33 +220,27 @@ const Admin = () => {
           <Tabs defaultValue="hotspots" className="space-y-6">
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="hotspots" className="flex items-center gap-2">
-                <MapPin className="h-4 w-4" />
-                Hotspots
+                <MapPin className="h-4 w-4" /> Hotspots
               </TabsTrigger>
-              <TabsTrigger value="free-spots" className="flex items-center gap-2">
-                <Coffee className="h-4 w-4" />
-                Free Spots
+              <TabsTrigger value="about" className="flex items-center gap-2">
+                <User className="h-4 w-4" /> About Pipo
               </TabsTrigger>
-              <TabsTrigger value="contenuti" className="flex items-center gap-2">
-                <FileText className="h-4 w-4" />
-                Contenuti
+              <TabsTrigger value="contatti" className="flex items-center gap-2">
+                <FileText className="h-4 w-4" /> Contatti
               </TabsTrigger>
-              <TabsTrigger value="utenti" className="flex items-center gap-2">
-                <Mail className="h-4 w-4" />
-                Email
+              <TabsTrigger value="email" className="flex items-center gap-2">
+                <Mail className="h-4 w-4" /> Email
               </TabsTrigger>
             </TabsList>
 
             {/* Tab Hotspots */}
             <TabsContent value="hotspots" className="space-y-6">
-              {/* Toolbar */}
               <div className="flex items-center justify-between">
                 <h2 className="font-heading text-2xl font-bold">Gestione Hotspot</h2>
                 <Dialog open={isDialogOpen} onOpenChange={handleDialogChange}>
                   <DialogTrigger asChild>
                     <Button onClick={handleOpenCreate}>
-                      <Plus className="h-4 w-4 mr-2" />
-                      Nuovo Hotspot
+                      <Plus className="h-4 w-4 mr-2" /> Nuovo Hotspot
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -310,12 +257,11 @@ const Admin = () => {
                             id="titolo"
                             value={formData.titolo}
                             onChange={(e) => setFormData({ ...formData, titolo: e.target.value })}
-                            placeholder="Nome del luogo"
                             required
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="categoria">Categoria</Label>
+                          <Label htmlFor="categoria">Categoria *</Label>
                           <Select
                             value={formData.categoria || ""}
                             onValueChange={(value) => setFormData({ ...formData, categoria: value })}
@@ -324,11 +270,9 @@ const Admin = () => {
                               <SelectValue placeholder="Seleziona categoria..." />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="Luoghi Fantasma">Luoghi Fantasma</SelectItem>
-                              <SelectItem value="Natura">Natura</SelectItem>
-                              <SelectItem value="Borghi">Borghi</SelectItem>
-                              <SelectItem value="Arte e Cultura">Arte e Cultura</SelectItem>
-                              <SelectItem value="Free Spots">Free Spots</SelectItem>
+                              {CATEGORIES.map((c) => (
+                                <SelectItem key={c} value={c}>{c}</SelectItem>
+                              ))}
                             </SelectContent>
                           </Select>
                         </div>
@@ -341,7 +285,7 @@ const Admin = () => {
                             id="zona"
                             value={formData.zona || ""}
                             onChange={(e) => setFormData({ ...formData, zona: e.target.value })}
-                            placeholder="Es: Messina, Palermo, Catania..."
+                            placeholder="Es: Messina, Palermo..."
                           />
                         </div>
                         <div className="space-y-2">
@@ -362,7 +306,6 @@ const Admin = () => {
                             id="descrizione_breve"
                             value={formData.descrizione_breve}
                             onChange={(e) => setFormData({ ...formData, descrizione_breve: e.target.value })}
-                            placeholder="Una frase breve (max ~60 caratteri)"
                             required
                             className="flex-1"
                           />
@@ -377,7 +320,6 @@ const Admin = () => {
                             id="descrizione_completa"
                             value={formData.descrizione_completa}
                             onChange={(e) => setFormData({ ...formData, descrizione_completa: e.target.value })}
-                            placeholder="Descrizione dettagliata del luogo..."
                             rows={4}
                             required
                             className="flex-1"
@@ -406,42 +348,23 @@ const Admin = () => {
                         />
                       </div>
 
-                      {/* Tag */}
                       <div className="space-y-2">
-                        <Label>Tag (opzionali - max 3)</Label>
+                        <Label>Tag (max 3)</Label>
                         <div className="grid grid-cols-3 gap-2">
-                          <Input
-                            placeholder="Es: Silenzio"
-                            value={formData.tags?.[0] || ""}
-                            onChange={(e) => {
-                              const newTags = [...(formData.tags || [])];
-                              newTags[0] = e.target.value;
-                              setFormData({ ...formData, tags: newTags });
-                            }}
-                          />
-                          <Input
-                            placeholder="Es: Camminate"
-                            value={formData.tags?.[1] || ""}
-                            onChange={(e) => {
-                              const newTags = [...(formData.tags || [])];
-                              newTags[1] = e.target.value;
-                              setFormData({ ...formData, tags: newTags });
-                            }}
-                          />
-                          <Input
-                            placeholder="Es: Aria fresca"
-                            value={formData.tags?.[2] || ""}
-                            onChange={(e) => {
-                              const newTags = [...(formData.tags || [])];
-                              newTags[2] = e.target.value;
-                              setFormData({ ...formData, tags: newTags });
-                            }}
-                          />
+                          {[0, 1, 2].map((i) => (
+                            <Input
+                              key={i}
+                              placeholder={`Tag ${i + 1}`}
+                              value={formData.tags?.[i] || ""}
+                              onChange={(e) => {
+                                const newTags = [...(formData.tags || [])];
+                                newTags[i] = e.target.value;
+                                setFormData({ ...formData, tags: newTags });
+                              }}
+                            />
+                          ))}
                         </div>
                       </div>
-
-
-
 
                       <div className="space-y-2">
                         <Label htmlFor="link_google_maps">Link Google Maps</Label>
@@ -467,10 +390,7 @@ const Admin = () => {
                         <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
                           Annulla
                         </Button>
-                        <Button 
-                          type="submit" 
-                          disabled={createMutation.isPending || updateMutation.isPending}
-                        >
+                        <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>
                           {(createMutation.isPending || updateMutation.isPending) && (
                             <Loader2 className="h-4 w-4 animate-spin mr-2" />
                           )}
@@ -492,8 +412,7 @@ const Admin = () => {
                       acc[cat].push(h);
                       return acc;
                     }, {});
-                    // Sort each group by ordine
-                    Object.values(grouped).forEach(arr => arr.sort((a, b) => (a.ordine ?? 999) - (b.ordine ?? 999)));
+                    Object.values(grouped).forEach((arr) => arr.sort((a, b) => (a.ordine ?? 999) - (b.ordine ?? 999)));
 
                     const handleSwap = (catItems: Hotspot[], idx: number, direction: "up" | "down") => {
                       const targetIdx = direction === "up" ? idx - 1 : idx + 1;
@@ -516,51 +435,26 @@ const Admin = () => {
                           {items.map((hotspot, idx) => (
                             <Card key={hotspot.id} className="overflow-hidden">
                               <div className="flex items-start gap-4 p-4">
-                                {/* Reorder arrows */}
                                 <div className="flex flex-col gap-1 flex-shrink-0 pt-1">
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-6 w-6"
+                                  <Button variant="ghost" size="icon" className="h-6 w-6"
                                     disabled={idx === 0 || reorderMutation.isPending}
-                                    onClick={() => handleSwap(items, idx, "up")}
-                                  >
+                                    onClick={() => handleSwap(items, idx, "up")}>
                                     <ArrowUp className="h-3 w-3" />
                                   </Button>
-                                  <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-6 w-6"
+                                  <Button variant="ghost" size="icon" className="h-6 w-6"
                                     disabled={idx === items.length - 1 || reorderMutation.isPending}
-                                    onClick={() => handleSwap(items, idx, "down")}
-                                  >
+                                    onClick={() => handleSwap(items, idx, "down")}>
                                     <ArrowDown className="h-3 w-3" />
                                   </Button>
                                 </div>
-
-                                {/* Image thumbnail */}
                                 {hotspot.foto_principale && (
-                                  <div className="flex-shrink-0">
-                                    <img
-                                      src={hotspot.foto_principale}
-                                      alt={hotspot.titolo}
-                                      className="w-20 h-20 object-cover rounded-lg"
-                                    />
-                                  </div>
+                                  <img src={hotspot.foto_principale} alt={hotspot.titolo}
+                                    className="w-20 h-20 object-cover rounded-lg flex-shrink-0" />
                                 )}
-                                
-                                {/* Content */}
                                 <div className="flex-1 min-w-0">
                                   <div className="flex items-start justify-between gap-2">
                                     <div>
-                                      <h3 className="font-semibold text-lg truncate flex items-center gap-2">
-                                        {hotspot.titolo}
-                                        {idx === 0 && (
-                                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-green-100 text-green-800">
-                                            FREE
-                                          </span>
-                                        )}
-                                      </h3>
+                                      <h3 className="font-semibold text-lg truncate">{hotspot.titolo}</h3>
                                       <div className="flex flex-wrap gap-2 mt-1">
                                         {hotspot.zona && (
                                           <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-olive/20 text-olive">
@@ -576,11 +470,7 @@ const Admin = () => {
                                       </p>
                                     </div>
                                     <div className="flex items-center gap-1 flex-shrink-0">
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        onClick={() => handleOpenEdit(hotspot)}
-                                      >
+                                      <Button variant="ghost" size="icon" onClick={() => handleOpenEdit(hotspot)}>
                                         <Pencil className="h-4 w-4" />
                                       </Button>
                                       <AlertDialog>
@@ -593,15 +483,14 @@ const Admin = () => {
                                           <AlertDialogHeader>
                                             <AlertDialogTitle>Eliminare questo hotspot?</AlertDialogTitle>
                                             <AlertDialogDescription>
-                                              Questa azione non può essere annullata. L'hotspot "{hotspot.titolo}" sarà eliminato definitivamente.
+                                              L'hotspot "{hotspot.titolo}" sarà eliminato definitivamente.
                                             </AlertDialogDescription>
                                           </AlertDialogHeader>
                                           <AlertDialogFooter>
                                             <AlertDialogCancel>Annulla</AlertDialogCancel>
-                                            <AlertDialogAction 
+                                            <AlertDialogAction
                                               onClick={() => handleDelete(hotspot.id)}
-                                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                            >
+                                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
                                               Elimina
                                             </AlertDialogAction>
                                           </AlertDialogFooter>
@@ -620,279 +509,86 @@ const Admin = () => {
                 ) : (
                   <div className="text-center py-12 text-muted-foreground">
                     <p>Nessun hotspot presente.</p>
-                    <p className="text-sm mt-1">Clicca "Nuovo Hotspot" per iniziare.</p>
                   </div>
                 )}
               </div>
             </TabsContent>
 
-
-            {/* Tab Contenuti */}
-            <TabsContent value="contenuti" className="space-y-6">
-              <h2 className="font-heading text-2xl font-bold">Gestione Contenuti</h2>
-              
-              {/* Hero Content */}
+            {/* Tab About Pipo */}
+            <TabsContent value="about" className="space-y-6">
+              <h2 className="font-heading text-2xl font-bold">Pagina About Pipo</h2>
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <FileText className="h-5 w-5" />
-                    Homepage Hero
-                  </CardTitle>
-                  <CardDescription>
-                    Headline, sottotitolo e colore sfondo della homepage.
-                  </CardDescription>
+                  <CardTitle>Sezione 1</CardTitle>
+                  <CardDescription>Titolo e testo della prima sezione.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="hero_headline">Headline</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        id="hero_headline"
-                        value={heroHeadline}
-                        onChange={(e) => setHeroHeadline(e.target.value)}
-                        placeholder="Es: Esplorazioni aliene in Sicilia"
-                        className="flex-1"
-                      />
-                      <EmojiPicker onSelect={(emoji) => setHeroHeadline(heroHeadline + emoji)} />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="hero_subtitle">Sottotitolo</Label>
-                    <div className="flex gap-2">
-                      <Textarea
-                        id="hero_subtitle"
-                        value={heroSubtitle}
-                        onChange={(e) => setHeroSubtitle(e.target.value)}
-                        placeholder="Es: Ti mostro posti iper selezionati..."
-                        rows={3}
-                        className="flex-1"
-                      />
-                      <EmojiPicker onSelect={(emoji) => setHeroSubtitle(heroSubtitle + emoji)} />
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="homepage_bg_color">Colore Sfondo Homepage (esadecimale)</Label>
-                    <Input
-                      id="homepage_bg_color"
-                      value={homepageBgColor}
-                      onChange={(e) => setHomepageBgColor(e.target.value)}
-                      placeholder="Es: #D2F779"
-                    />
-                    {homepageBgColor && (
-                      <div 
-                        className="w-full h-8 rounded border"
-                        style={{ backgroundColor: homepageBgColor }}
-                      />
-                    )}
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Immagine di Sfondo Hero</Label>
-                    <ImageUpload
-                      value={heroBgImage}
-                      onChange={(url) => setHeroBgImage(url)}
-                      onRemove={() => setHeroBgImage("")}
-                      folder="hero"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="hero_font_color">Colore Font Hero (esadecimale)</Label>
-                    <Input
-                      id="hero_font_color"
-                      value={heroFontColor}
-                      onChange={(e) => setHeroFontColor(e.target.value)}
-                      placeholder="Es: #FFFFFF"
-                    />
-                    {heroFontColor && (
-                      <div 
-                        className="w-full h-8 rounded border flex items-center justify-center text-sm font-bold"
-                        style={{ backgroundColor: homepageBgColor || '#000', color: heroFontColor }}
-                      >
-                        Anteprima testo
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex justify-end">
-                    <Button 
-                      onClick={handleSaveHero}
-                      disabled={updateSiteContent.isPending || (
-                        heroHeadline === heroHeadlineContent?.content && 
-                        heroSubtitle === heroSubtitleContent?.content && 
-                        homepageBgColor === (homepageBgColorContent?.content || "") &&
-                        heroBgImage === (heroBgImageContent?.content || "") &&
-                        heroFontColor === (heroFontColorContent?.content || "")
-                      )}
-                    >
-                      {updateSiteContent.isPending && (
-                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                      )}
-                      Salva Hero
-                    </Button>
-                  </div>
+                  <ContentField contentKey="about_chi_title" label="Titolo" placeholder="Es: CHI È PIPO" />
+                  <ContentField contentKey="about_chi_body" label="Testo" multiline rows={6} />
                 </CardContent>
               </Card>
-
-              {/* Foto Categorie Homepage */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <FileText className="h-5 w-5" />
-                    Foto Categorie Homepage
-                  </CardTitle>
-                  <CardDescription>
-                    Le immagini delle 5 schede nella homepage (Luoghi Fantasma, Natura, Borghi, Arte e Cultura, Day Trip e Day Walk) e il testo CTA "Esplora".
-                  </CardDescription>
+                  <CardTitle>Sezione 2</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label>Luoghi Fantasma</Label>
-                      <ImageUpload
-                        value={catImgLuoghi}
-                        onChange={(url) => setCatImgLuoghi(url)}
-                        onRemove={() => setCatImgLuoghi("")}
-                        folder="categories"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Natura</Label>
-                      <ImageUpload
-                        value={catImgNatura}
-                        onChange={(url) => setCatImgNatura(url)}
-                        onRemove={() => setCatImgNatura("")}
-                        folder="categories"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Borghi</Label>
-                      <ImageUpload
-                        value={catImgBorghi}
-                        onChange={(url) => setCatImgBorghi(url)}
-                        onRemove={() => setCatImgBorghi("")}
-                        folder="categories"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Arte e Cultura</Label>
-                      <ImageUpload
-                        value={catImgArte}
-                        onChange={(url) => setCatImgArte(url)}
-                        onRemove={() => setCatImgArte("")}
-                        folder="categories"
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Free Spots</Label>
-                    <ImageUpload
-                      value={catImgFreeSpots}
-                      onChange={(url) => setCatImgFreeSpots(url)}
-                      onRemove={() => setCatImgFreeSpots("")}
-                      folder="categories"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="free_spots_label">Titolo card Free Spots</Label>
-                    <Input
-                      id="free_spots_label"
-                      value={freeSpotsLabel}
-                      onChange={(e) => setFreeSpotsLabel(e.target.value)}
-                      placeholder="Es: Free Spots"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="free_spots_sublabel">Sottotitolo card Free Spots</Label>
-                    <Input
-                      id="free_spots_sublabel"
-                      value={freeSpotsSubLabel}
-                      onChange={(e) => setFreeSpotsSubLabel(e.target.value)}
-                      placeholder="Es: Work, Study & Eat&Drink"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="explore_cta_text">Testo CTA Esplora</Label>
-                    <Input
-                      id="explore_cta_text"
-                      value={exploreCtaText}
-                      onChange={(e) => setExploreCtaText(e.target.value)}
-                      placeholder="Es: Esplora gli itinerari di Pipo 👽"
-                    />
-                  </div>
-                  <div className="flex justify-end">
-                    <Button
-                      onClick={handleSaveCategoryImages}
-                      disabled={updateSiteContent.isPending}
-                    >
-                      {updateSiteContent.isPending && (
-                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                      )}
-                      Salva Foto e CTA
-                    </Button>
-                  </div>
+                  <ContentField contentKey="about_perchi_title" label="Titolo" placeholder="Es: PER CHI È" />
+                  <ContentField contentKey="about_perchi_body" label="Testo" multiline rows={6} />
                 </CardContent>
               </Card>
-
-
-
-              {/* Header Content */}
-
-              {/* Mission Content */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <FileText className="h-5 w-5" />
-                    Testo Missione di Pipo
-                  </CardTitle>
-                  <CardDescription>
-                    Questo testo viene mostrato nella homepage sotto le categorie. Modificalo liberamente come un unico blocco di testo.
-                  </CardDescription>
+                  <CardTitle>Sezione 3</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-6">
-                  {missionLoading ? (
-                    <div className="flex justify-center py-8">
-                      <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                    </div>
-                  ) : (
-                    <>
-                      <div className="space-y-2">
-                        <div className="flex gap-2 items-start">
-                          <Textarea
-                            value={missionText}
-                            onChange={(e) => setMissionText(e.target.value)}
-                            placeholder="Scrivi qui il testo della missione..."
-                            rows={20}
-                            className="resize-y flex-1"
-                          />
-                          <EmojiPicker onSelect={(emoji) => setMissionText(missionText + emoji)} />
-                        </div>
-                      </div>
-
-                      <div className="flex justify-end">
-                        <Button 
-                          onClick={handleSaveMission}
-                          disabled={updateSiteContent.isPending || (
-                            missionText === missionContent?.content
-                          )}
-                        >
-                          {updateSiteContent.isPending && (
-                            <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                          )}
-                          Salva Missione
-                        </Button>
-                      </div>
-                    </>
-                  )}
+                <CardContent className="space-y-4">
+                  <ContentField contentKey="about_alieno_title" label="Titolo" placeholder='Es: PERCHÈ "ALIENO"' />
+                  <ContentField contentKey="about_alieno_body" label="Testo" multiline rows={6} />
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Sezione 4</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <ContentField contentKey="about_principio_title" label="Titolo" placeholder="Es: IL PRINCIPIO" />
+                  <ContentField contentKey="about_principio_body" label="Testo" multiline rows={6} />
                 </CardContent>
               </Card>
             </TabsContent>
 
-            {/* Tab Free Spots */}
-            <TabsContent value="free-spots">
-              <AdminFreeSpotsTab />
+            {/* Tab Contatti */}
+            <TabsContent value="contatti" className="space-y-6">
+              <h2 className="font-heading text-2xl font-bold">Pagina Contatti</h2>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Testo libero</CardTitle>
+                  <CardDescription>Mostrato sopra i link di contatto. Lascia vuoto per non mostrarlo.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ContentField contentKey="contacts_body" label="Testo introduttivo" multiline rows={6} />
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Instagram</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <ContentField contentKey="contacts_ig_label" label="Etichetta link" placeholder="IG: pipo.fuoriradar" />
+                  <ContentField contentKey="contacts_ig_url" label="URL" placeholder="https://instagram.com/pipo.fuoriradar" />
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Email</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ContentField contentKey="contacts_email" label="Indirizzo email" placeholder="pipoesplora@gmail.com" />
+                </CardContent>
+              </Card>
             </TabsContent>
 
-            {/* Tab Utenti */}
-            <TabsContent value="utenti">
+            {/* Tab Email */}
+            <TabsContent value="email">
               <AdminUsersTab />
             </TabsContent>
           </Tabs>
