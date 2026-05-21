@@ -195,31 +195,48 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
               {t("browseTitle")}
             </h2>
             <p
-              className={`font-sans text-sm md:text-base text-center mb-8 ${!heroFontColor ? (hasHeroBg ? "text-white/70" : "text-muted-foreground") : ""}`}
+              className={`font-sans text-sm md:text-base text-center mb-6 ${!heroFontColor ? (hasHeroBg ? "text-white/70" : "text-muted-foreground") : ""}`}
               style={heroFontColor ? { color: heroFontColor, opacity: 0.7 } : undefined}
             >
               {t("browseSubtitle")}
             </p>
-            <div className="grid grid-cols-2 gap-3 w-full">
-              <CategoryCard cat={CATEGORIES[0]} />
-              <CategoryCard cat={CATEGORIES[1]} />
-              <CategoryCard cat={CATEGORIES[2]} />
-              <CategoryCard cat={CATEGORIES[3]} />
+            <div className="grid grid-cols-2 gap-3 w-full mb-6">
               <button
-                onClick={() => navigate("/free-spots")}
-                className="relative aspect-square rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
+                onClick={() => navigate("/esplora")}
+                className="rounded-2xl px-4 py-4 bg-foreground text-background font-sans font-bold text-sm md:text-base text-center hover:opacity-90 transition focus:outline-none focus:ring-2 focus:ring-primary"
               >
-                {catImgFreeSpots?.content ? (
-                  <img src={catImgFreeSpots.content} alt="Free Spots" className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
-                ) : (
-                  <div className="w-full h-full bg-muted" />
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-                <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-left leading-tight drop-shadow-lg">
-                  <span className="text-sm md:text-base font-bold">{freeSpotsSubLabel}</span>
-                </span>
+                {t("exploreFreelyCta")}
+              </button>
+              <button
+                onClick={() => setShowCategories((s) => !s)}
+                aria-expanded={showCategories}
+                className="rounded-2xl px-4 py-4 border-2 border-foreground text-foreground font-sans font-bold text-sm md:text-base text-center hover:bg-foreground hover:text-background transition focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                {t("exploreByCategoryCta")}
               </button>
             </div>
+            {showCategories && (
+              <div className="grid grid-cols-2 gap-3 w-full animate-in fade-in duration-300">
+                <CategoryCard cat={CATEGORIES[0]} />
+                <CategoryCard cat={CATEGORIES[1]} />
+                <CategoryCard cat={CATEGORIES[2]} />
+                <CategoryCard cat={CATEGORIES[3]} />
+                <button
+                  onClick={() => navigate("/free-spots")}
+                  className="relative aspect-square rounded-2xl overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary"
+                >
+                  {catImgFreeSpots?.content ? (
+                    <img src={catImgFreeSpots.content} alt="Free Spots" className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                  ) : (
+                    <div className="w-full h-full bg-muted" />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+                  <span className="absolute bottom-3 left-3 right-3 text-white font-sans text-left leading-tight drop-shadow-lg">
+                    <span className="text-sm md:text-base font-bold">{freeSpotsSubLabel}</span>
+                  </span>
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Contact CTA */}
