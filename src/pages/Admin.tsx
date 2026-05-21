@@ -121,8 +121,29 @@ const Admin = () => {
   const [editingHotspot, setEditingHotspot] = useState<Hotspot | null>(null);
   const [formData, setFormData] = useState<HotspotInsert>(emptyHotspot);
 
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
+
   useEffect(() => {
-    if (!authLoading && !user) navigate("/auth");
+    if (!authLoading && !user) {
+      navigate("/auth");
+      return;
+    }
+    if (user) {
+      supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .eq("role", "admin")
+        .maybeSingle()
+        .then(({ data }) => {
+          if (!data) {
+            navigate("/auth");
+            setIsAdmin(false);
+          } else {
+            setIsAdmin(true);
+          }
+        });
+    }
   }, [user, authLoading, navigate]);
 
   const handleOpenCreate = () => {
