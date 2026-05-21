@@ -10,8 +10,6 @@ import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
 
 import ExplorePage from "./pages/ExplorePage";
-import CollectionsPage from "./pages/CollectionsPage";
-import CollectionDetailPage from "./pages/CollectionDetailPage";
 import FreeSpotsPage from "./pages/FreeSpotsPage";
 import NotFound from "./pages/NotFound";
 
