@@ -1,17 +1,23 @@
 import { useEffect } from "react";
 import SiteHeader from "@/components/SiteHeader";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useSiteContent } from "@/hooks/useSiteContent";
 import { trackEvent } from "@/lib/trackEvent";
+
+const useText = (key: string, fallback: string) => {
+  const { data } = useSiteContent(key);
+  return data?.content?.trim() ? data.content : fallback;
+};
 
 const AboutPage = () => {
   const { t } = useLanguage();
   useEffect(() => { trackEvent("page_view"); }, []);
 
   const sections = [
-    { title: t("aboutChiTitle"), body: t("aboutChiBody") },
-    { title: t("aboutPerChiTitle"), body: t("aboutPerChiBody") },
-    { title: t("aboutAlienoTitle"), body: t("aboutAlienoBody") },
-    { title: t("aboutPrincipioTitle"), body: t("aboutPrincipioBody") },
+    { title: useText("about_chi_title", t("aboutChiTitle")), body: useText("about_chi_body", t("aboutChiBody")) },
+    { title: useText("about_perchi_title", t("aboutPerChiTitle")), body: useText("about_perchi_body", t("aboutPerChiBody")) },
+    { title: useText("about_alieno_title", t("aboutAlienoTitle")), body: useText("about_alieno_body", t("aboutAlienoBody")) },
+    { title: useText("about_principio_title", t("aboutPrincipioTitle")), body: useText("about_principio_body", t("aboutPrincipioBody")) },
   ];
 
   return (

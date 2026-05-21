@@ -27,7 +27,7 @@ const SiteHeader = ({ activeFilter, onFilterClick }: Props) => {
     { key: "Natura", label: t("catNatura"), onClick: () => handleFilter("Natura"), active: location.pathname === "/" && activeFilter === "Natura" },
     { key: "Borghi", label: t("catBorghi"), onClick: () => handleFilter("Borghi"), active: location.pathname === "/" && activeFilter === "Borghi" },
     { key: "Arte e Cultura", label: t("catArteECultura"), onClick: () => handleFilter("Arte e Cultura"), active: location.pathname === "/" && activeFilter === "Arte e Cultura" },
-    { key: "free-spots", label: t("navFreeSpots"), onClick: () => handleFilter("free-spots"), active: location.pathname === "/" && activeFilter === "free-spots" },
+    { key: "Work Study Eat&Drink", label: t("navFreeSpots"), onClick: () => handleFilter("Work Study Eat&Drink"), active: location.pathname === "/" && activeFilter === "Work Study Eat&Drink" },
     { key: "about", label: t("navAbout"), onClick: () => navigate("/about"), active: location.pathname === "/about" },
     { key: "contacts", label: t("navContacts"), onClick: () => navigate("/contatti"), active: location.pathname === "/contatti" },
   ];

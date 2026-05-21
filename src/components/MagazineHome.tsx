@@ -5,7 +5,6 @@ import HotspotCard from "@/components/HotspotCard";
 import EmailGateModal from "@/components/EmailGateModal";
 import SiteHeader from "@/components/SiteHeader";
 import { useHotspots, type Hotspot } from "@/hooks/useHotspots";
-import { useFreeSpots } from "@/hooks/useFreeSpots";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCardGate } from "@/hooks/useCardGate";
 
@@ -15,7 +14,7 @@ type Filter =
   | "Natura"
   | "Borghi"
   | "Arte e Cultura"
-  | "free-spots";
+  | "Work Study Eat&Drink";
 
 const MagazineHome = () => {
   const { t } = useLanguage();
@@ -27,17 +26,13 @@ const MagazineHome = () => {
     if (incoming) setFilter(incoming as Filter);
   }, [location.state]);
 
-  const { data: hotspots, isLoading: loadingHotspots } = useHotspots();
-  const { data: freeSpots, isLoading: loadingFree } = useFreeSpots();
+  const { data: hotspots, isLoading } = useHotspots();
   const { onBeforeExpand, gateModalOpen, setGateModalOpen, onEmailProvided, gateSource } = useCardGate();
 
   const items = useMemo<Hotspot[]>(() => {
-    if (filter === "free-spots") return (freeSpots || []) as unknown as Hotspot[];
-    if (filter === "all") return (hotspots || []).filter(h => h.categoria !== "Free Spots");
-    return (hotspots || []).filter(h => h.categoria === filter);
-  }, [filter, hotspots, freeSpots]);
-
-  const isLoading = filter === "free-spots" ? loadingFree : loadingHotspots;
+    if (filter === "all") return hotspots || [];
+    return (hotspots || []).filter((h) => h.categoria === filter);
+  }, [filter, hotspots]);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -52,7 +47,7 @@ const MagazineHome = () => {
 
         {!isLoading && items.length === 0 && (
           <p className="text-center py-20 text-muted-foreground font-sans italic">
-            {filter === "free-spots" ? t("noFreeSpots") : t("noHotspotsCategory")}
+            {t("noHotspotsCategory")}
           </p>
         )}
 
@@ -63,7 +58,7 @@ const MagazineHome = () => {
                 key={hotspot.id}
                 hotspot={hotspot}
                 index={i}
-                onBeforeExpand={filter === "free-spots" ? undefined : onBeforeExpand}
+                onBeforeExpand={onBeforeExpand}
               />
             ))}
           </div>
