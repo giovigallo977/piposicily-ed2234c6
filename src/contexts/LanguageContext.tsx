@@ -114,6 +114,22 @@ export const translations = {
     contactsIg: "IG: pipo.fuoriradar",
     contactsEmail: "pipoesplora@gmail.com",
 
+    // Magazine nav
+    navExploreFreely: "Esplora in libertà",
+    navFreeSpots: "Work Study Eat&Drink",
+    navAbout: "About Pipo",
+    navContacts: "Contatti",
+
+    // About Pipo
+    aboutChiTitle: "CHI È PIPO",
+    aboutChiBody: "Pipo è uno sguardo diverso sulla Sicilia.\nUn piccolo alieno che osserva la Terra da fuori, lontano dal rumore, dalle mode e dai luoghi pensati solo per essere fotografati.\n\nSeleziona pochi posti, li testa sul campo e li racconta senza filtri:\n📍 indicazioni chiare\n⏱️ tempi reali\n🧭 consigli pratici per viverli davvero",
+    aboutPerChiTitle: "PER CHI È",
+    aboutPerChiBody: "Pipo è per chi evita il turismo di massa, cerca silenzio e autenticità,\ne vuole esplorare i luoghi con rispetto, senza consumarli.\n\nSe preferisci esperienze essenziali ai percorsi preconfezionati, ti troverai a casa qui.",
+    aboutAlienoTitle: "PERCHÈ \"ALIENO\"",
+    aboutAlienoBody: "\"Alieno\" è un modo di guardare il mondo: da fuori, senza abituarsi al rumore.\nSignifica vedere ciò che spesso passa inosservato e muoversi fuori dai percorsi più battuti.",
+    aboutPrincipioTitle: "IL PRINCIPIO",
+    aboutPrincipioBody: "I luoghi non sono contenuti da consumare, ma spazi vivi da attraversare con rispetto.\nL'obiettivo non è solo arrivare, ma come ti comporti mentre ci sei.",
+
     // Experience waitlist modal
     experienceFakeDoorTitle: "Experience Pipo stanno per partire 🔥",
     experienceFakeDoorSubtitle: "Piccoli gruppi, luoghi autentici, zero turismo di massa.\nTu arrivi, noi pensiamo al resto.",
@@ -225,6 +241,22 @@ export const translations = {
     contactsTitle: "contacts",
     contactsIg: "IG: pipo.fuoriradar",
     contactsEmail: "pipoesplora@gmail.com",
+
+    // Magazine nav
+    navExploreFreely: "Explore freely",
+    navFreeSpots: "Work Study Eat&Drink",
+    navAbout: "About Pipo",
+    navContacts: "Contacts",
+
+    // About Pipo
+    aboutChiTitle: "WHO IS PIPO",
+    aboutChiBody: "Pipo is a different way of looking at Sicily.\nA little alien observing Earth from the outside, away from noise, trends and places designed only to be photographed.\n\nHe picks a few spots, tests them in the field and shares them unfiltered:\n📍 clear directions\n⏱️ real times\n🧭 practical tips to really live them",
+    aboutPerChiTitle: "WHO IT'S FOR",
+    aboutPerChiBody: "Pipo is for those who avoid mass tourism, who seek silence and authenticity,\nand who want to explore places with respect, without consuming them.\n\nIf you prefer essential experiences over pre-packaged routes, you'll feel at home here.",
+    aboutAlienoTitle: "WHY \"ALIEN\"",
+    aboutAlienoBody: "\"Alien\" is a way of looking at the world: from the outside, without getting used to the noise.\nIt means seeing what usually goes unnoticed and moving off the beaten path.",
+    aboutPrincipioTitle: "THE PRINCIPLE",
+    aboutPrincipioBody: "Places aren't content to consume, but living spaces to cross with respect.\nThe goal isn't just to arrive, but how you behave while you're there.",
 
     // Experience waitlist modal
     experienceFakeDoorTitle: "Pipo Experiences are launching soon 🔥",
