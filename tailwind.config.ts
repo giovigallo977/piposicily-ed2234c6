@@ -44,6 +44,11 @@ export default {
   		bubbles: [
   				'"Rubik Bubbles"',
   				'cursive'
+  			],
+  		serif: [
+  				'"Cormorant Garamond"',
+  				'Georgia',
+  				'serif'
   			]
   		},
   		colors: {
