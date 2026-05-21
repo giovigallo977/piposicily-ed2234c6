@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useHotspots, useCreateHotspot, useUpdateHotspot, useDeleteHotspot, useReorderHotspots, Hotspot, HotspotInsert } from "@/hooks/useHotspots";
-import { useCollections, useHotspotCollections, useSyncHotspotCollections } from "@/hooks/useCollections";
+
 import { Checkbox } from "@/components/ui/checkbox";
 import { supabase } from "@/integrations/supabase/client";
 import { useSiteContent, useUpdateSiteContent } from "@/hooks/useSiteContent";
