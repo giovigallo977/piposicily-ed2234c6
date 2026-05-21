@@ -1,12 +1,15 @@
 import SiteHeader from "@/components/SiteHeader";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSiteContent } from "@/hooks/useSiteContent";
+import { useTranslatedContent } from "@/hooks/useTranslation";
 
 const AboutPage = () => {
   const { t } = useLanguage();
 
   const { data } = useSiteContent("about_body");
   const body = data?.content || "";
+  const { translatedText } = useTranslatedContent(body);
+  const displayBody = translatedText ?? body;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -16,7 +19,7 @@ const AboutPage = () => {
           {t("navAbout")}
         </h2>
         <div className="font-sans text-sm md:text-base leading-relaxed text-foreground/80 whitespace-pre-line">
-          {body}
+          {displayBody}
         </div>
       </main>
     </div>
