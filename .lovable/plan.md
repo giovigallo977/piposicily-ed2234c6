@@ -1,31 +1,25 @@
+## Modifica sezione "Curiosare" della Homepage
 
+### Cosa cambia (in `src/components/HeroSection.tsx`)
 
-## Aggiungere navigazione "Indietro" alle landing page
+Nella sezione "Browse / Curiosare" (sotto l'hero), sostituire titolo + sottotitolo + griglia categorie sempre visibile con:
 
-### Problema
-Dalle pagine `/self-guided` e `/experience` non c'è modo di tornare alla homepage `/`. L'utente resta bloccato.
+1. **Titolo**: "Decidi come esplorare" (al posto di "Vuoi solo curiosare?" + "Esplora gli spot di Pipo...")
+2. **Due CTA affiancate** (grid 2 colonne, stile coerente con i bottoni esistenti):
+   - **Sinistra — "Esplora in libertà"** → naviga a `/esplora` (mostra tutti gli hotspot, senza filtro categoria, in un'unica pagina — funzionalità già supportata da `ExplorePage`)
+   - **Destra — "Esplora per categoria"** → toggle che mostra/nasconde sotto le 5 schede categorie attuali (Luoghi Fantasma, Natura, Borghi, Arte e Cultura, Free Spots). Di default le schede sono nascoste e compaiono solo dopo il click.
 
-### Soluzione
-Aggiungere un link "← Torna alla scelta" in cima a entrambe le landing, accanto al logo Pipo. Stessa cosa: rendere il logo Pipo cliccabile su tutte e 3 le pagine (homepage, self-guided, experience) per tornare sempre a `/`.
+### Dettagli tecnici
 
-### File modificati
+- Aggiungere uno stato locale `showCategories` in `HeroSection` per il toggle.
+- Le schede categorie (codice esistente `<CategoryCard>` + bottone Free Spots) restano invariate, solo condizionate da `showCategories`.
+- Aggiornare i testi in `src/contexts/LanguageContext.tsx`:
+  - Sostituire `browseTitle` → "Decidi come esplorare" / "Choose how to explore"
+  - Rimuovere/svuotare `browseSubtitle`
+  - Aggiungere `exploreFreelyCta` ("Esplora in libertà" / "Explore freely") e `exploreByCategoryCta` ("Esplora per categoria" / "Explore by category")
+- Nessuna modifica al database o ad altre pagine.
 
-**`src/pages/SelfGuidedLanding.tsx`** e **`src/pages/ExperienceLanding.tsx`**
-- Importare `Link` da `react-router-dom`
-- Rendere il logo "Pipo" un link a `/`
-- Aggiungere sotto il logo un link testuale "← Torna alla scelta" che riporta a `/`
+### Fuori scope
 
-**`src/pages/Index.tsx`**
-- Nessuna modifica necessaria (è già la homepage)
-
-### Dettaglio UI
-
-```text
-┌──────────────────────────┐
-│ Pipo (link → /)          │
-│ ← Torna alla scelta      │
-│                          │
-│ [resto della landing]    │
-└──────────────────────────┘
-```
-
+- Nessuna modifica a stile globale, categorie, o `ExplorePage`.
+- I testi `browseTitle`/`browseSubtitle` in Admin (se editabili) restano funzionanti; aggiornerò solo le stringhe di default i18n.
