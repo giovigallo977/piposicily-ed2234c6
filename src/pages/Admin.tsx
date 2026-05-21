@@ -782,15 +782,6 @@ const Admin = () => {
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <Label>Day Trip e Day Walk</Label>
-                    <ImageUpload
-                      value={catImgCollezioni}
-                      onChange={(url) => setCatImgCollezioni(url)}
-                      onRemove={() => setCatImgCollezioni("")}
-                      folder="categories"
-                    />
-                  </div>
-                  <div className="space-y-2">
                     <Label>Free Spots</Label>
                     <ImageUpload
                       value={catImgFreeSpots}
