@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useHotspots, useCreateHotspot, useUpdateHotspot, useDeleteHotspot, useReorderHotspots, Hotspot, HotspotInsert } from "@/hooks/useHotspots";
 
-import { Checkbox } from "@/components/ui/checkbox";
+
 import { supabase } from "@/integrations/supabase/client";
 import { useSiteContent, useUpdateSiteContent } from "@/hooks/useSiteContent";
 import { ImageUpload, MultiImageUpload } from "@/components/ImageUpload";
