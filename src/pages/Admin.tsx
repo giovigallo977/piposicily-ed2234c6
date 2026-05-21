@@ -217,7 +217,7 @@ const Admin = () => {
     if (catImgNatura) await updateSiteContent.mutateAsync({ key: "cat_image_natura", content: catImgNatura });
     if (catImgBorghi) await updateSiteContent.mutateAsync({ key: "cat_image_borghi", content: catImgBorghi });
     if (catImgArte) await updateSiteContent.mutateAsync({ key: "cat_image_arte_cultura", content: catImgArte });
-    if (catImgCollezioni) await updateSiteContent.mutateAsync({ key: "cat_image_collezioni", content: catImgCollezioni });
+    
     if (catImgFreeSpots) await updateSiteContent.mutateAsync({ key: "cat_image_free_spots", content: catImgFreeSpots });
     if (exploreCtaText) await updateSiteContent.mutateAsync({ key: "explore_cta_text", content: exploreCtaText });
     if (freeSpotsLabel) await updateSiteContent.mutateAsync({ key: "cat_label_free_spots", content: freeSpotsLabel });
