@@ -50,7 +50,7 @@ const MagazineHome = () => {
     <div className="min-h-screen bg-background text-foreground">
       {/* Top bar with PIPO logo + IG */}
       <header className="px-6 md:px-12 pt-8 md:pt-12 pb-4 flex items-start justify-between">
-        <h1 className="font-serif font-light tracking-tight leading-none text-foreground text-6xl md:text-8xl lg:text-9xl">
+        <h1 className="font-garet font-normal tracking-tight leading-none text-foreground text-6xl md:text-8xl lg:text-9xl">
           PIPO
         </h1>
         <div className="flex items-center gap-4 mt-4">

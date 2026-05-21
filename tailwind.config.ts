@@ -45,11 +45,15 @@ export default {
   				'"Rubik Bubbles"',
   				'cursive'
   			],
-  		serif: [
-  				'"Cormorant Garamond"',
-  				'Georgia',
-  				'serif'
-  			]
+			serif: [
+					'"Cormorant Garamond"',
+					'Georgia',
+					'serif'
+				],
+			garet: [
+					'"Garet"',
+					'sans-serif'
+				]
   		},
   		colors: {
   			border: 'hsl(var(--border))',
