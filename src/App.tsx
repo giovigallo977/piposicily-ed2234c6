@@ -31,8 +31,6 @@ const App = () => (
             <Route path="/self-guided" element={<SelfGuidedLanding />} />
             <Route path="/experience" element={<ExperienceLanding />} />
             <Route path="/esplora" element={<ExplorePage />} />
-            <Route path="/collezioni" element={<CollectionsPage />} />
-            <Route path="/collezioni/:id" element={<CollectionDetailPage />} />
             <Route path="/free-spots" element={<FreeSpotsPage />} />
             
             <Route path="/auth" element={<AuthProvider><Auth /></AuthProvider>} />
