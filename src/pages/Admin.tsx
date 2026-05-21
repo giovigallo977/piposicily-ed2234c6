@@ -629,10 +629,6 @@ const Admin = () => {
               </div>
             </TabsContent>
 
-            {/* Tab Day Trip e Day Walk */}
-            <TabsContent value="collezioni" className="space-y-6">
-              <AdminCollectionsTab />
-            </TabsContent>
 
             {/* Tab Contenuti */}
             <TabsContent value="contenuti" className="space-y-6">
