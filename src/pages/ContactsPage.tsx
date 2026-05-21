@@ -5,7 +5,7 @@ import { trackEvent } from "@/lib/trackEvent";
 
 const ContactsPage = () => {
   const { t } = useLanguage();
-  useEffect(() => { trackEvent("page_view", { page: "contacts" }); }, []);
+  useEffect(() => { trackEvent("page_view"); }, []);
 
   return (
     <div className="min-h-screen bg-background text-foreground">

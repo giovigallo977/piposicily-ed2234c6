@@ -5,7 +5,7 @@ import { trackEvent } from "@/lib/trackEvent";
 
 const AboutPage = () => {
   const { t } = useLanguage();
-  useEffect(() => { trackEvent("page_view", { page: "about" }); }, []);
+  useEffect(() => { trackEvent("page_view"); }, []);
 
   const sections = [
     { title: t("aboutChiTitle"), body: t("aboutChiBody") },
