@@ -10,8 +10,6 @@ import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
 
 import ExplorePage from "./pages/ExplorePage";
-import CollectionsPage from "./pages/CollectionsPage";
-import CollectionDetailPage from "./pages/CollectionDetailPage";
 import FreeSpotsPage from "./pages/FreeSpotsPage";
 import NotFound from "./pages/NotFound";
 
@@ -33,8 +31,6 @@ const App = () => (
             <Route path="/self-guided" element={<SelfGuidedLanding />} />
             <Route path="/experience" element={<ExperienceLanding />} />
             <Route path="/esplora" element={<ExplorePage />} />
-            <Route path="/collezioni" element={<CollectionsPage />} />
-            <Route path="/collezioni/:id" element={<CollectionDetailPage />} />
             <Route path="/free-spots" element={<FreeSpotsPage />} />
             
             <Route path="/auth" element={<AuthProvider><Auth /></AuthProvider>} />

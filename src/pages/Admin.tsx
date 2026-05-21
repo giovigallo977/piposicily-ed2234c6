@@ -2,9 +2,9 @@ import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useHotspots, useCreateHotspot, useUpdateHotspot, useDeleteHotspot, useReorderHotspots, Hotspot, HotspotInsert } from "@/hooks/useHotspots";
-import { useCollections, useHotspotCollections, useSyncHotspotCollections } from "@/hooks/useCollections";
-import { Checkbox } from "@/components/ui/checkbox";
-import { supabase } from "@/integrations/supabase/client";
+
+
+
 import { useSiteContent, useUpdateSiteContent } from "@/hooks/useSiteContent";
 import { ImageUpload, MultiImageUpload } from "@/components/ImageUpload";
 import { EmojiPicker } from "@/components/EmojiPicker";
@@ -18,9 +18,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Plus, Pencil, Trash2, LogOut, ArrowLeft, FileText, MapPin, FolderOpen, Users, Coffee, ArrowUp, ArrowDown, BarChart3, Mail } from "lucide-react";
+import { Loader2, Plus, Pencil, Trash2, LogOut, ArrowLeft, FileText, MapPin, Users, Coffee, ArrowUp, ArrowDown, BarChart3, Mail } from "lucide-react";
 import pipoAlien from "@/assets/pipo-alien-new.png";
-import AdminCollectionsTab from "@/components/AdminCollectionsTab";
+
 import AdminUsersTab from "@/components/AdminUsersTab";
 import AdminFreeSpotsTab from "@/components/AdminFreeSpotsTab";
 
@@ -46,9 +46,6 @@ const Admin = () => {
   const updateMutation = useUpdateHotspot();
   const deleteMutation = useDeleteHotspot();
   const reorderMutation = useReorderHotspots();
-  const { data: allCollections } = useCollections();
-  const syncHotspotCollections = useSyncHotspotCollections();
-  const [selectedCollectionIds, setSelectedCollectionIds] = useState<string[]>([]);
   // Site content
   const { data: missionContent, isLoading: missionLoading } = useSiteContent("mission");
   const { data: heroHeadlineContent } = useSiteContent("hero_headline");
@@ -62,7 +59,7 @@ const Admin = () => {
   const { data: catImgNaturaContent } = useSiteContent("cat_image_natura");
   const { data: catImgBorghiContent } = useSiteContent("cat_image_borghi");
   const { data: catImgArteContent } = useSiteContent("cat_image_arte_cultura");
-  const { data: catImgCollezioniContent } = useSiteContent("cat_image_collezioni");
+  
   // Free Spots card labels
   const { data: freeSpotsLabelContent } = useSiteContent("cat_label_free_spots");
   const { data: freeSpotsSubLabelContent } = useSiteContent("cat_sublabel_free_spots");
@@ -83,7 +80,7 @@ const Admin = () => {
   const [catImgNatura, setCatImgNatura] = useState("");
   const [catImgBorghi, setCatImgBorghi] = useState("");
   const [catImgArte, setCatImgArte] = useState("");
-  const [catImgCollezioni, setCatImgCollezioni] = useState("");
+  
   const [exploreCtaText, setExploreCtaText] = useState("");
   const [freeSpotsLabel, setFreeSpotsLabel] = useState("");
   const [freeSpotsSubLabel, setFreeSpotsSubLabel] = useState("");
@@ -112,7 +109,7 @@ const Admin = () => {
       [catImgNaturaContent, setCatImgNatura],
       [catImgBorghiContent, setCatImgBorghi],
       [catImgArteContent, setCatImgArte],
-      [catImgCollezioniContent, setCatImgCollezioni],
+      
       [exploreCtaContent, setExploreCtaText],
       [freeSpotsLabelContent, setFreeSpotsLabel],
       [freeSpotsSubLabelContent, setFreeSpotsSubLabel],
@@ -126,14 +123,14 @@ const Admin = () => {
   }, [
     heroHeadlineContent, heroSubtitleContent, homepageBgColorContent,
     catImgLuoghiContent, catImgNaturaContent, catImgBorghiContent, catImgArteContent,
-    catImgCollezioniContent, exploreCtaContent, freeSpotsLabelContent, freeSpotsSubLabelContent,
+    exploreCtaContent, freeSpotsLabelContent, freeSpotsSubLabelContent,
+    
     catImgFreeSpotsContent, heroBgImageContent, heroFontColorContent,
   ]);
 
   const handleOpenCreate = () => {
     setEditingHotspot(null);
     setFormData({ ...emptyHotspot, ordine: (hotspots?.length ?? 0) + 1 });
-    setSelectedCollectionIds([]);
     setIsDialogOpen(true);
   };
 
@@ -152,12 +149,6 @@ const Admin = () => {
       tags: hotspot.tags || [],
       ordine: hotspot.ordine,
     });
-    // Carica collezioni associate
-    const { data } = await supabase
-      .from("collection_hotspots")
-      .select("collection_id")
-      .eq("hotspot_id", hotspot.id);
-    setSelectedCollectionIds(data?.map((r) => r.collection_id) || []);
     setIsDialogOpen(true);
   };
 
@@ -167,30 +158,23 @@ const Admin = () => {
     if (!open) {
       setEditingHotspot(null);
       setFormData({ ...emptyHotspot });
-      setSelectedCollectionIds([]);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    let hotspotId: string;
+
     if (editingHotspot) {
       await updateMutation.mutateAsync({ id: editingHotspot.id, updates: formData });
-      hotspotId = editingHotspot.id;
     } else {
-      const created = await createMutation.mutateAsync(formData);
-      hotspotId = created.id;
+      await createMutation.mutateAsync(formData);
     }
-    
-    // Sync collezioni
-    await syncHotspotCollections.mutateAsync({ hotspotId, collectionIds: selectedCollectionIds });
-    
+
     setEditingHotspot(null);
     setFormData({ ...emptyHotspot });
-    setSelectedCollectionIds([]);
     setIsDialogOpen(false);
   };
+
 
   const handleDelete = async (id: string) => {
     await deleteMutation.mutateAsync(id);
@@ -233,7 +217,7 @@ const Admin = () => {
     if (catImgNatura) await updateSiteContent.mutateAsync({ key: "cat_image_natura", content: catImgNatura });
     if (catImgBorghi) await updateSiteContent.mutateAsync({ key: "cat_image_borghi", content: catImgBorghi });
     if (catImgArte) await updateSiteContent.mutateAsync({ key: "cat_image_arte_cultura", content: catImgArte });
-    if (catImgCollezioni) await updateSiteContent.mutateAsync({ key: "cat_image_collezioni", content: catImgCollezioni });
+    
     if (catImgFreeSpots) await updateSiteContent.mutateAsync({ key: "cat_image_free_spots", content: catImgFreeSpots });
     if (exploreCtaText) await updateSiteContent.mutateAsync({ key: "explore_cta_text", content: exploreCtaText });
     if (freeSpotsLabel) await updateSiteContent.mutateAsync({ key: "cat_label_free_spots", content: freeSpotsLabel });
@@ -281,14 +265,10 @@ const Admin = () => {
       <main className="container mx-auto px-4 py-6">
         <div className="max-w-4xl mx-auto">
           <Tabs defaultValue="hotspots" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-5">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="hotspots" className="flex items-center gap-2">
                 <MapPin className="h-4 w-4" />
                 Hotspots
-              </TabsTrigger>
-              <TabsTrigger value="collezioni" className="flex items-center gap-2">
-                <FolderOpen className="h-4 w-4" />
-                Day Trip e Day Walk
               </TabsTrigger>
               <TabsTrigger value="free-spots" className="flex items-center gap-2">
                 <Coffee className="h-4 w-4" />
@@ -460,29 +440,8 @@ const Admin = () => {
                         </div>
                       </div>
 
-                      {/* Collezioni */}
-                      {allCollections && allCollections.length > 0 && (
-                        <div className="space-y-2">
-                          <Label>Day Trip e Day Walk</Label>
-                          <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto border rounded-md p-3">
-                            {allCollections.map((col) => (
-                              <label key={col.id} className="flex items-center gap-2 text-sm cursor-pointer">
-                                <Checkbox
-                                  checked={selectedCollectionIds.includes(col.id)}
-                                  onCheckedChange={(checked) => {
-                                    setSelectedCollectionIds((prev) =>
-                                      checked
-                                        ? [...prev, col.id]
-                                        : prev.filter((id) => id !== col.id)
-                                    );
-                                  }}
-                                />
-                                {col.nome}
-                              </label>
-                            ))}
-                          </div>
-                        </div>
-                      )}
+
+
 
                       <div className="space-y-2">
                         <Label htmlFor="link_google_maps">Link Google Maps</Label>
@@ -667,10 +626,6 @@ const Admin = () => {
               </div>
             </TabsContent>
 
-            {/* Tab Day Trip e Day Walk */}
-            <TabsContent value="collezioni" className="space-y-6">
-              <AdminCollectionsTab />
-            </TabsContent>
 
             {/* Tab Contenuti */}
             <TabsContent value="contenuti" className="space-y-6">
@@ -826,15 +781,6 @@ const Admin = () => {
                         folder="categories"
                       />
                     </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Day Trip e Day Walk</Label>
-                    <ImageUpload
-                      value={catImgCollezioni}
-                      onChange={(url) => setCatImgCollezioni(url)}
-                      onRemove={() => setCatImgCollezioni("")}
-                      folder="categories"
-                    />
                   </div>
                   <div className="space-y-2">
                     <Label>Free Spots</Label>
