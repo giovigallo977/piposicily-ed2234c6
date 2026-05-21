@@ -519,39 +519,13 @@ const Admin = () => {
               <h2 className="font-heading text-2xl font-bold">Pagina About Pipo</h2>
               <Card>
                 <CardHeader>
-                  <CardTitle>Sezione 1</CardTitle>
-                  <CardDescription>Titolo e testo della prima sezione.</CardDescription>
+                  <CardTitle>Testo della pagina</CardTitle>
+                  <CardDescription>
+                    Scrivi liberamente il contenuto della pagina. Vai a capo per separare i paragrafi.
+                  </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <ContentField contentKey="about_chi_title" label="Titolo" placeholder="Es: CHI È PIPO" />
-                  <ContentField contentKey="about_chi_body" label="Testo" multiline rows={6} />
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Sezione 2</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <ContentField contentKey="about_perchi_title" label="Titolo" placeholder="Es: PER CHI È" />
-                  <ContentField contentKey="about_perchi_body" label="Testo" multiline rows={6} />
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Sezione 3</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <ContentField contentKey="about_alieno_title" label="Titolo" placeholder='Es: PERCHÈ "ALIENO"' />
-                  <ContentField contentKey="about_alieno_body" label="Testo" multiline rows={6} />
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle>Sezione 4</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <ContentField contentKey="about_principio_title" label="Titolo" placeholder="Es: IL PRINCIPIO" />
-                  <ContentField contentKey="about_principio_body" label="Testo" multiline rows={6} />
+                <CardContent>
+                  <ContentField contentKey="about_body" label="Testo" multiline rows={24} />
                 </CardContent>
               </Card>
             </TabsContent>
