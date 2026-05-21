@@ -27,6 +27,7 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const [waitlistOpen, setWaitlistOpen] = useState(false);
+  const [showCategories, setShowCategories] = useState(false);
   const { data: hotspots } = useHotspots();
 
   const { data: heroHeadlineContent, isLoading: isLoadingHeadline } = useSiteContent("hero_headline");
