@@ -4,9 +4,9 @@ import { trackEvent } from "@/lib/trackEvent";
 import EmailCaptureForm from "@/components/EmailCaptureForm";
 
 const examples = [
-  { name: "Palermo Liberty", desc: "Passeggiata tra ville, dettagli e storia nascosta" },
-  { name: "Palermo Graffiti", desc: "Street art e quartieri fuori dalle rotte turistiche" },
-  { name: "Palermo Araba", desc: "Tracce, mercati e influenze della città antica" },
+  { name: "Arte e Cultura", desc: "Passeggiata tra ville, dettagli e storia nascosta" },
+  { name: "Luoghi Fantasma", desc: "Street art e quartieri fuori dalle rotte turistiche" },
+  { name: "Natura", desc: "Tracce, mercati e influenze della città antica" },
 ];
 
 const SelfGuidedLanding = () => {
