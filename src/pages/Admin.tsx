@@ -264,14 +264,10 @@ const Admin = () => {
       <main className="container mx-auto px-4 py-6">
         <div className="max-w-4xl mx-auto">
           <Tabs defaultValue="hotspots" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-5">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="hotspots" className="flex items-center gap-2">
                 <MapPin className="h-4 w-4" />
                 Hotspots
-              </TabsTrigger>
-              <TabsTrigger value="collezioni" className="flex items-center gap-2">
-                <FolderOpen className="h-4 w-4" />
-                Day Trip e Day Walk
               </TabsTrigger>
               <TabsTrigger value="free-spots" className="flex items-center gap-2">
                 <Coffee className="h-4 w-4" />
