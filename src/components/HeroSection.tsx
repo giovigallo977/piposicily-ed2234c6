@@ -241,6 +241,27 @@ const HeroSection = ({ bgColor }: HeroSectionProps) => {
 
           {/* Mission Content from DB */}
           <MissionSection missionContent={missionContent?.content} />
+
+          {/* Contact Section */}
+          <div className="w-full max-w-lg md:mx-auto mt-16 text-center">
+            <h2 className="font-sans text-xl md:text-2xl font-bold text-foreground mb-4">
+              {t("contactsTitle")}
+            </h2>
+            <a
+              href="https://instagram.com/pipo.fuoriradar"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block font-sans text-sm md:text-base text-muted-foreground hover:text-foreground transition mb-2"
+            >
+              {t("contactsIg")}
+            </a>
+            <a
+              href="mailto:pipoesplora@gmail.com"
+              className="block font-sans text-sm md:text-base text-muted-foreground hover:text-foreground transition"
+            >
+              {t("contactsEmail")}
+            </a>
+          </div>
         </div>
       </div>
 
