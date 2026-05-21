@@ -85,7 +85,7 @@ const HotspotCard = ({ hotspot, index = 0, onBeforeExpand }: HotspotCardProps) =
           )}
         >
           {/* Main image */}
-          <div className="aspect-[4/3] bg-muted overflow-hidden relative grayscale hover:grayscale-0 transition-all duration-500">
+          <div className="aspect-[4/3] bg-muted overflow-hidden relative">
             {hotspot.foto_principale ? (
               <img
                 src={hotspot.foto_principale}
