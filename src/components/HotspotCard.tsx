@@ -80,7 +80,7 @@ const HotspotCard = ({ hotspot, index = 0, onBeforeExpand }: HotspotCardProps) =
       <div className="relative">
         <article
           className={cn(
-            "rounded-3xl overflow-hidden shadow-lg transition-all duration-300 bg-white hover:shadow-xl hover:-translate-y-1",
+            "overflow-hidden transition-opacity duration-300 bg-transparent",
             isTranslating && "opacity-75"
           )}
         >
