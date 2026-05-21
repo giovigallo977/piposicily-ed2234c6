@@ -80,7 +80,7 @@ const Admin = () => {
   const [catImgNatura, setCatImgNatura] = useState("");
   const [catImgBorghi, setCatImgBorghi] = useState("");
   const [catImgArte, setCatImgArte] = useState("");
-  const [catImgCollezioni, setCatImgCollezioni] = useState("");
+  
   const [exploreCtaText, setExploreCtaText] = useState("");
   const [freeSpotsLabel, setFreeSpotsLabel] = useState("");
   const [freeSpotsSubLabel, setFreeSpotsSubLabel] = useState("");
