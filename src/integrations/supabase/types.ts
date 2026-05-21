@@ -14,45 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      analytics_events: {
-        Row: {
-          created_at: string
-          event_type: string
-          id: string
-        }
-        Insert: {
-          created_at?: string
-          event_type: string
-          id?: string
-        }
-        Update: {
-          created_at?: string
-          event_type?: string
-          id?: string
-        }
-        Relationships: []
-      }
-      experience_waitlist: {
-        Row: {
-          created_at: string
-          email: string
-          id: string
-          source: string | null
-        }
-        Insert: {
-          created_at?: string
-          email: string
-          id?: string
-          source?: string | null
-        }
-        Update: {
-          created_at?: string
-          email?: string
-          id?: string
-          source?: string | null
-        }
-        Relationships: []
-      }
       free_spot_categories: {
         Row: {
           created_at: string
@@ -125,27 +86,6 @@ export type Database = {
           titolo?: string
           updated_at?: string
           zona?: string | null
-        }
-        Relationships: []
-      }
-      granted_emails: {
-        Row: {
-          created_at: string
-          email: string
-          id: string
-          source: string | null
-        }
-        Insert: {
-          created_at?: string
-          email: string
-          id?: string
-          source?: string | null
-        }
-        Update: {
-          created_at?: string
-          email?: string
-          id?: string
-          source?: string | null
         }
         Relationships: []
       }
@@ -427,13 +367,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      get_analytics_counts: {
-        Args: never
-        Returns: {
-          count: number
-          event_type: string
-        }[]
-      }
+      [_ in never]: never
     }
     Enums: {
       [_ in never]: never
