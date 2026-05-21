@@ -1,12 +1,9 @@
-import { useEffect } from "react";
 import SiteHeader from "@/components/SiteHeader";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSiteContent } from "@/hooks/useSiteContent";
-import { trackEvent } from "@/lib/trackEvent";
 
 const ContactsPage = () => {
   const { t } = useLanguage();
-  useEffect(() => { trackEvent("page_view"); }, []);
 
   const { data: bodyContent } = useSiteContent("contacts_body");
   const { data: igUrlContent } = useSiteContent("contacts_ig_url");

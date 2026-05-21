@@ -13,7 +13,6 @@ import ExplorePage from "./pages/ExplorePage";
 import FreeSpotsPage from "./pages/FreeSpotsPage";
 import NotFound from "./pages/NotFound";
 
-import AdminAnalytics from "./pages/AdminAnalytics";
 import SelfGuidedLanding from "./pages/SelfGuidedLanding";
 import ExperienceLanding from "./pages/ExperienceLanding";
 import AboutPage from "./pages/AboutPage";
@@ -36,10 +35,9 @@ const App = () => (
             <Route path="/free-spots" element={<FreeSpotsPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contatti" element={<ContactsPage />} />
-            
+
             <Route path="/auth" element={<AuthProvider><Auth /></AuthProvider>} />
             <Route path="/admin" element={<AuthProvider><Admin /></AuthProvider>} />
-            <Route path="/admin-analytics" element={<AuthProvider><AdminAnalytics /></AuthProvider>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

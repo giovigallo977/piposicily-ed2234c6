@@ -1,7 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { ChevronDown, Map, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { trackEvent } from "@/lib/trackEvent";
 import type { Hotspot } from "@/hooks/useHotspots";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslatedHotspot } from "@/hooks/useTranslation";
@@ -56,7 +55,6 @@ const ItineraryStageCard = ({ hotspot, stageNumber, onBeforeExpand }: ItineraryS
   const handleToggle = () => {
     if (!isExpanded) {
       if (onBeforeExpand && !onBeforeExpand()) return;
-      trackEvent("hotspot_view");
     }
     setIsExpanded(!isExpanded);
   };
