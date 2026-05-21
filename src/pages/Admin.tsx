@@ -46,9 +46,6 @@ const Admin = () => {
   const updateMutation = useUpdateHotspot();
   const deleteMutation = useDeleteHotspot();
   const reorderMutation = useReorderHotspots();
-  const { data: allCollections } = useCollections();
-  const syncHotspotCollections = useSyncHotspotCollections();
-  const [selectedCollectionIds, setSelectedCollectionIds] = useState<string[]>([]);
   // Site content
   const { data: missionContent, isLoading: missionLoading } = useSiteContent("mission");
   const { data: heroHeadlineContent } = useSiteContent("hero_headline");
