@@ -211,8 +211,10 @@ export const translations = {
     selfTripCta: "See ready itineraries",
     experienceTitle: "Don't want to plan anything?\nWe'll take you, in small groups",
     experienceCta: "Join the next experiences",
-    browseTitle: "Just want to browse?",
-    browseSubtitle: "Explore Pipo's spots to get a feel for the places.",
+    browseTitle: "Choose how to explore",
+    browseSubtitle: "",
+    exploreFreelyCta: "Explore freely",
+    exploreByCategoryCta: "Explore by category",
 
     // Experience waitlist modal
     experienceFakeDoorTitle: "Pipo Experiences are launching soon 🔥",
