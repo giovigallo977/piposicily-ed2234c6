@@ -20,7 +20,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, Plus, Pencil, Trash2, LogOut, ArrowLeft, FileText, MapPin, FolderOpen, Users, Coffee, ArrowUp, ArrowDown, BarChart3, Mail } from "lucide-react";
 import pipoAlien from "@/assets/pipo-alien-new.png";
-import AdminCollectionsTab from "@/components/AdminCollectionsTab";
+
 import AdminUsersTab from "@/components/AdminUsersTab";
 import AdminFreeSpotsTab from "@/components/AdminFreeSpotsTab";
 
