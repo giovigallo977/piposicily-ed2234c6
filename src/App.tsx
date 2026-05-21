@@ -16,6 +16,8 @@ import NotFound from "./pages/NotFound";
 import AdminAnalytics from "./pages/AdminAnalytics";
 import SelfGuidedLanding from "./pages/SelfGuidedLanding";
 import ExperienceLanding from "./pages/ExperienceLanding";
+import AboutPage from "./pages/AboutPage";
+import ContactsPage from "./pages/ContactsPage";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +34,8 @@ const App = () => (
             <Route path="/experience" element={<ExperienceLanding />} />
             <Route path="/esplora" element={<ExplorePage />} />
             <Route path="/free-spots" element={<FreeSpotsPage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/contatti" element={<ContactsPage />} />
             
             <Route path="/auth" element={<AuthProvider><Auth /></AuthProvider>} />
             <Route path="/admin" element={<AuthProvider><Admin /></AuthProvider>} />
