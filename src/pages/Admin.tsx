@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useHotspots, useCreateHotspot, useUpdateHotspot, useDeleteHotspot, useReorderHotspots, Hotspot, HotspotInsert } from "@/hooks/useHotspots";
 
 
-import { supabase } from "@/integrations/supabase/client";
+
 import { useSiteContent, useUpdateSiteContent } from "@/hooks/useSiteContent";
 import { ImageUpload, MultiImageUpload } from "@/components/ImageUpload";
 import { EmojiPicker } from "@/components/EmojiPicker";
