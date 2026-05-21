@@ -18,7 +18,7 @@ type Filter =
   | "free-spots";
 
 const MagazineHome = () => {
-  const { t } = useLanguage();
+  const { t, language, setLanguage } = useLanguage();
   const [filter, setFilter] = useState<Filter>("all");
   const [aboutOpen, setAboutOpen] = useState(false);
   const [contactsOpen, setContactsOpen] = useState(false);
@@ -53,15 +53,40 @@ const MagazineHome = () => {
         <h1 className="font-serif font-light tracking-tight leading-none text-foreground text-6xl md:text-8xl lg:text-9xl">
           PIPO
         </h1>
-        <a
-          href="https://instagram.com/pipo.fuoriradar"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Instagram"
-          className="mt-4 text-foreground hover:opacity-70 transition"
-        >
-          <Instagram className="w-6 h-6" strokeWidth={1.5} />
-        </a>
+        <div className="flex items-center gap-4 mt-4">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setLanguage("it")}
+              className={cn(
+                "font-sans uppercase tracking-widest text-[11px] transition-colors",
+                language === "it" ? "text-foreground" : "text-foreground/40 hover:text-foreground/70"
+              )}
+              aria-label="Italiano"
+            >
+              IT
+            </button>
+            <span className="text-foreground/20 text-[10px]">/</span>
+            <button
+              onClick={() => setLanguage("en")}
+              className={cn(
+                "font-sans uppercase tracking-widest text-[11px] transition-colors",
+                language === "en" ? "text-foreground" : "text-foreground/40 hover:text-foreground/70"
+              )}
+              aria-label="English"
+            >
+              EN
+            </button>
+          </div>
+          <a
+            href="https://instagram.com/pipo.fuoriradar"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Instagram"
+            className="text-foreground hover:opacity-70 transition"
+          >
+            <Instagram className="w-6 h-6" strokeWidth={1.5} />
+          </a>
+        </div>
       </header>
 
       {/* Navigation */}
