@@ -18,7 +18,7 @@ type Filter =
   | "free-spots";
 
 const MagazineHome = () => {
-  const { t } = useLanguage();
+  const { t, language, setLanguage } = useLanguage();
   const [filter, setFilter] = useState<Filter>("all");
   const [aboutOpen, setAboutOpen] = useState(false);
   const [contactsOpen, setContactsOpen] = useState(false);
