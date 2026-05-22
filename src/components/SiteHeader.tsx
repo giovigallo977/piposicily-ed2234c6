@@ -35,10 +35,13 @@ const SiteHeader = ({ activeFilter, onFilterClick }: Props) => {
   return (
     <>
       <header className="px-6 md:px-12 pt-8 md:pt-12 pb-4 flex items-start justify-between">
-        <Link to="/" aria-label="PIPO home">
+        <Link to="/" aria-label="PIPO home" className="flex flex-col">
           <h1 className="font-garet font-normal tracking-tight leading-none text-foreground text-6xl md:text-8xl lg:text-9xl">
             PIPO
           </h1>
+          <p className="mt-2 md:mt-3 font-sans text-[11px] md:text-xs tracking-[0.2em] uppercase text-foreground/50 font-light">
+            {t("tagline")}
+          </p>
         </Link>
         <div className="flex items-center gap-4 mt-4">
           <div className="flex items-center gap-2">
