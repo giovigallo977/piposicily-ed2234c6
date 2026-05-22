@@ -63,16 +63,6 @@ export const translations = {
     catArteECultura: "Arte e Cultura",
 
     // Email gate
-    gateTitle: "Ti stai muovendo bene.",
-    gateDesc: "Hai già scoperto alcuni luoghi fuori radar.\nVuoi continuare a esplorare con Pipo?",
-    gateEmailPlaceholder: "La tua email",
-    gateCta: "Continua con Pipo",
-    gateSentTitle: "Controlla la tua email!",
-    gateSentDesc: "Ti abbiamo inviato un link magico. Cliccaci sopra per continuare a esplorare.",
-    gateLocationTitle: "Da dove stai esplorando?",
-    gateLocationOther: "Altro",
-    gateSkip: "Salta",
-    inlineBlockTitle: "Vuoi continuare a esplorare?",
 
     // Collections
     collections: "Day Trip e Day Walk",
@@ -194,16 +184,6 @@ export const translations = {
     catArteECultura: "Art & Culture",
 
     // Email gate
-    gateTitle: "You're doing great.",
-    gateDesc: "You've already discovered some off-radar places.\nWant to keep exploring with Pipo?",
-    gateEmailPlaceholder: "Your email",
-    gateCta: "Continue with Pipo",
-    gateSentTitle: "Check your email!",
-    gateSentDesc: "We sent you a magic link. Click it to keep exploring.",
-    gateLocationTitle: "Where are you exploring from?",
-    gateLocationOther: "Other",
-    gateSkip: "Skip",
-    inlineBlockTitle: "Want to keep exploring?",
 
     // Collections
     collections: "Day Trip & Day Walk",
