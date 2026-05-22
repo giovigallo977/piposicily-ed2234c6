@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS public.granted_emails CASCADE;
