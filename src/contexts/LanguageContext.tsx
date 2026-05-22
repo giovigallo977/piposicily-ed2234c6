@@ -114,6 +114,9 @@ export const translations = {
     contactsIg: "IG: pipo.fuoriradar",
     contactsEmail: "pipoesplora@gmail.com",
 
+    // Tagline
+    tagline: "Luoghi e storie dalla Sicilia",
+
     // Magazine nav
     navExploreFreely: "Esplora in libertà",
     navFreeSpots: "Work Study Eat&Drink",
@@ -241,6 +244,9 @@ export const translations = {
     contactsTitle: "contacts",
     contactsIg: "IG: pipo.fuoriradar",
     contactsEmail: "pipoesplora@gmail.com",
+
+    // Tagline
+    tagline: "Places and stories from Sicily",
 
     // Magazine nav
     navExploreFreely: "Explore freely",
