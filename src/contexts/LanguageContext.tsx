@@ -105,7 +105,7 @@ export const translations = {
     contactsEmail: "pipoesplora@gmail.com",
 
     // Tagline
-    tagline: "Luoghi e storie dalla Sicilia — Per viaggiatori, esploratori e anime creative",
+    tagline: "La guida pratica per esplorare la Sicilia fuori dai radar - creata per viaggiatori, esploratori ed anime creative",
 
     // Magazine nav
     navExploreFreely: "Esplora in libertà",
@@ -226,7 +226,7 @@ export const translations = {
     contactsEmail: "pipoesplora@gmail.com",
 
     // Tagline
-    tagline: "Places and stories from Sicily — For travelers, explorers, and creative souls",
+    tagline: "The practical guide to explore Sicily off the radar - created for travelers, explorers and creative souls",
 
     // Magazine nav
     navExploreFreely: "Explore freely",
