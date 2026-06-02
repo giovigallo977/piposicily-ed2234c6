@@ -1,0 +1,1 @@
+UPDATE public.hotspots SET categoria = 'luoghi fantasma e borghi rurali' WHERE categoria = 'Luoghi Fantasma';

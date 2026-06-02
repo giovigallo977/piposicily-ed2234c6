@@ -19,7 +19,7 @@ import { Loader2, Plus, Pencil, Trash2, LogOut, ArrowLeft, FileText, MapPin, Arr
 import pipoAlien from "@/assets/pipo-alien-new.png";
 
 const CATEGORIES = [
-  "Luoghi Fantasma",
+  "luoghi fantasma e borghi rurali",
   "Natura",
   "Borghi",
   "Arte e Cultura",
