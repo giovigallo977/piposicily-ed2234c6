@@ -23,7 +23,6 @@ const CATEGORIES = [
   "Natura",
   "Borghi",
   "Arte e Cultura",
-  "Work Study Eat&Drink",
 ];
 
 const emptyHotspot: HotspotInsert = {

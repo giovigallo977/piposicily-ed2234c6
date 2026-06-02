@@ -11,8 +11,7 @@ type Filter =
   | "Luoghi Fantasma"
   | "Natura"
   | "Borghi"
-  | "Arte e Cultura"
-  | "Work Study Eat&Drink";
+  | "Arte e Cultura";
 
 const MagazineHome = () => {
   const { t } = useLanguage();

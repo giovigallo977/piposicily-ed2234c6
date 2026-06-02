@@ -10,7 +10,7 @@ import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
 
 import ExplorePage from "./pages/ExplorePage";
-import FreeSpotsPage from "./pages/FreeSpotsPage";
+
 import NotFound from "./pages/NotFound";
 
 import SelfGuidedLanding from "./pages/SelfGuidedLanding";
@@ -32,7 +32,7 @@ const App = () => (
             <Route path="/self-guided" element={<SelfGuidedLanding />} />
             <Route path="/experience" element={<ExperienceLanding />} />
             <Route path="/esplora" element={<ExplorePage />} />
-            <Route path="/free-spots" element={<FreeSpotsPage />} />
+            
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contatti" element={<ContactsPage />} />
 
