@@ -28,6 +28,7 @@ const SiteHeader = ({ activeFilter, onFilterClick }: Props) => {
     { key: "Borghi", label: t("catBorghi"), onClick: () => handleFilter("Borghi"), active: location.pathname === "/" && activeFilter === "Borghi" },
     { key: "Arte e Cultura", label: t("catArteECultura"), onClick: () => handleFilter("Arte e Cultura"), active: location.pathname === "/" && activeFilter === "Arte e Cultura" },
     
+    { key: "map", label: t("navMap"), onClick: () => navigate("/mappa"), active: location.pathname === "/mappa" },
     { key: "about", label: t("navAbout"), onClick: () => navigate("/about"), active: location.pathname === "/about" },
     { key: "contacts", label: t("navContacts"), onClick: () => navigate("/contatti"), active: location.pathname === "/contatti" },
   ];
