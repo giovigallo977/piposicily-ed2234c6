@@ -81,8 +81,7 @@ export const translations = {
     logoutLabel: "Logout",
     loggedOut: "Sei uscito",
 
-    // Free spots
-    noFreeSpots: "Nessun free spot ancora.",
+
 
     // Contact CTA
     contactCta: "Non hai trovato il tuo posto?\nScrivimi. Forse non sei pronto… o forse sì!",
@@ -109,7 +108,6 @@ export const translations = {
 
     // Magazine nav
     navExploreFreely: "Esplora in libertà",
-    navFreeSpots: "Work Study Eat&Drink",
     navAbout: "About Pipo",
     navContacts: "Contatti",
 
@@ -202,8 +200,8 @@ export const translations = {
     logoutLabel: "Logout",
     loggedOut: "Logged out",
 
-    // Free spots
-    noFreeSpots: "No free spots yet.",
+
+
 
     // Contact CTA
     contactCta: "Haven't found your spot?\nWrite me. Maybe you're not ready… or maybe you are!",
@@ -230,7 +228,7 @@ export const translations = {
 
     // Magazine nav
     navExploreFreely: "Explore freely",
-    navFreeSpots: "Work Study Eat&Drink",
+    
     navAbout: "About Pipo",
     navContacts: "Contacts",
 
