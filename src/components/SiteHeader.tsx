@@ -23,7 +23,7 @@ const SiteHeader = ({ activeFilter, onFilterClick }: Props) => {
 
   const navItems: { key: string; label: string; onClick: () => void; active: boolean }[] = [
     { key: "all", label: t("navExploreFreely"), onClick: () => handleFilter("all"), active: location.pathname === "/" && activeFilter === "all" },
-    { key: "Luoghi Fantasma", label: t("catLuoghiFantasma"), onClick: () => handleFilter("Luoghi Fantasma"), active: location.pathname === "/" && activeFilter === "Luoghi Fantasma" },
+    { key: "luoghi fantasma e borghi rurali", label: t("catLuoghiFantasma"), onClick: () => handleFilter("luoghi fantasma e borghi rurali"), active: location.pathname === "/" && activeFilter === "luoghi fantasma e borghi rurali" },
     { key: "Natura", label: t("catNatura"), onClick: () => handleFilter("Natura"), active: location.pathname === "/" && activeFilter === "Natura" },
     { key: "Borghi", label: t("catBorghi"), onClick: () => handleFilter("Borghi"), active: location.pathname === "/" && activeFilter === "Borghi" },
     { key: "Arte e Cultura", label: t("catArteECultura"), onClick: () => handleFilter("Arte e Cultura"), active: location.pathname === "/" && activeFilter === "Arte e Cultura" },

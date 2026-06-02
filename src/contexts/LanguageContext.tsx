@@ -57,7 +57,7 @@ export const translations = {
     
     // Category grid
     exploreCta: "Esplora gli itinerari di Pipo",
-    catLuoghiFantasma: "Luoghi Fantasma",
+    catLuoghiFantasma: "luoghi fantasma e borghi rurali",
     catNatura: "Natura",
     catBorghi: "Borghi",
     catArteECultura: "Arte e Cultura",
@@ -176,7 +176,7 @@ export const translations = {
     
     // Category grid
     exploreCta: "Explore Pipo's itineraries",
-    catLuoghiFantasma: "Ghost Places",
+    catLuoghiFantasma: "ghost places and rural villages",
     catNatura: "Nature",
     catBorghi: "Villages",
     catArteECultura: "Art & Culture",

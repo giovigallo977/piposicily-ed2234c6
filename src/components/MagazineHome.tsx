@@ -8,7 +8,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 type Filter =
   | "all"
-  | "Luoghi Fantasma"
+  | "luoghi fantasma e borghi rurali"
   | "Natura"
   | "Borghi"
   | "Arte e Cultura";

@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 const examples = [
   { name: "Arte e Cultura", desc: "Passeggiata tra ville, dettagli e storia nascosta" },
-  { name: "Luoghi Fantasma", desc: "Street art e quartieri fuori dalle rotte turistiche" },
+  { name: "luoghi fantasma e borghi rurali", desc: "Street art e quartieri fuori dalle rotte turistiche" },
   { name: "Natura", desc: "Tracce, mercati e influenze della città antica" },
 ];
 
