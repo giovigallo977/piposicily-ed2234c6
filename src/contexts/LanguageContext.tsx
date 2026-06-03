@@ -227,7 +227,7 @@ export const translations = {
     contactsEmail: "pipoesplora@gmail.com",
 
     // Tagline
-    tagline: "The platform to explore Sicily off the radar - created for travelers, explorers and creative souls",
+    tagline: "Pipo is the project that tells the story of Sicily off the radar: we map the inland — ghost villages, nature, art and the places that keep it alive — and open it up to those who want to truly live it. You choose, Pipo takes you off the radar.",
 
     // Magazine nav
     navExploreFreely: "Explore freely",
