@@ -104,7 +104,7 @@ export const translations = {
     contactsEmail: "pipoesplora@gmail.com",
 
     // Tagline
-    tagline: "La guida per esplorare la Sicilia fuori dai radar - creata per viaggiatori, esploratori ed anime creative",
+    tagline: "La piattaforma per esplorare la Sicilia fuori dai radar - creata per viaggiatori, esploratori ed anime creative",
 
     // Magazine nav
     navExploreFreely: "Esplora in libertà",
