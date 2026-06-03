@@ -104,7 +104,7 @@ export const translations = {
     contactsEmail: "pipoesplora@gmail.com",
 
     // Tagline
-    tagline: "Pipo è il progetto che racconta la Sicilia fuori dai radar: mappiamo l'entroterra — borghi fantasma, natura, arte e i luoghi che lo tengono vivo — e lo apriamo a chi vuole viverlo davvero.",
+    tagline: "Pipo è il progetto che racconta la Sicilia fuori dai radar: mappiamo l'entroterra — i luoghi e le storie che lo tengono vivo — e lo apriamo a chi vuole viverlo davvero.",
     taglineClaim: "Tu scegli, Pipo ti porta fuori dai radar.",
 
     // Magazine nav
@@ -228,7 +228,7 @@ export const translations = {
     contactsEmail: "pipoesplora@gmail.com",
 
     // Tagline
-    tagline: "Pipo is the project that tells the story of Sicily off the radar: we map the inland — ghost villages, nature, art and the places that keep it alive — and open it up to those who want to truly live it.",
+    tagline: "Pipo is the project that tells the story of Sicily off the radar: we map the inland — the places and the stories that keep it alive — and open it up to those who want to truly live it.",
     taglineClaim: "You choose, Pipo takes you off the radar.",
 
     // Magazine nav
