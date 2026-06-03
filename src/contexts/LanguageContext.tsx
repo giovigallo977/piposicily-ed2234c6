@@ -104,7 +104,7 @@ export const translations = {
     contactsEmail: "pipoesplora@gmail.com",
 
     // Tagline
-    tagline: "La piattaforma per esplorare la Sicilia fuori dai radar - creata per viaggiatori, esploratori ed anime creative",
+    tagline: "Pipo è il progetto che racconta la Sicilia fuori dai radar: mappiamo l'entroterra — borghi fantasma, natura, arte e i luoghi che lo tengono vivo — e lo apriamo a chi vuole viverlo davvero. Tu scegli, Pipo ti porta fuori dai radar.",
 
     // Magazine nav
     navExploreFreely: "Esplora in libertà",
