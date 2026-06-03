@@ -227,7 +227,7 @@ export const translations = {
     contactsEmail: "pipoesplora@gmail.com",
 
     // Tagline
-    tagline: "The guide to explore Sicily off the radar - created for travelers, explorers and creative souls",
+    tagline: "The platform to explore Sicily off the radar - created for travelers, explorers and creative souls",
 
     // Magazine nav
     navExploreFreely: "Explore freely",
