@@ -110,6 +110,7 @@ export const translations = {
     // Magazine nav
     navExploreFreely: "Esplora in libertà",
     navMap: "Mappa",
+    navPlaylist: "Playlist",
     navAbout: "About Pipo",
     navContacts: "Contatti",
     mapTitle: "La mappa di Pipo",
@@ -234,6 +235,7 @@ export const translations = {
     // Magazine nav
     navExploreFreely: "Explore freely",
     navMap: "Map",
+    navPlaylist: "Playlist",
     navAbout: "About Pipo",
     navContacts: "Contacts",
     mapTitle: "Pipo's map",
