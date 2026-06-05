@@ -14,7 +14,7 @@ const PlaylistPage = () => {
         <div className="max-w-3xl mx-auto">
           <iframe
             style={{ borderRadius: "12px" }}
-            src="https://open.spotify.com/embed/playlist/4v5jFs2Ui39HT5nba2MXHS?utm_source=generator&theme=0"
+            src="https://open.spotify.com/embed/playlist/6u8rWGnZeiU5OPezbBlLfS?utm_source=generator&theme=0"
             width="100%"
             height="352"
             frameBorder="0"
