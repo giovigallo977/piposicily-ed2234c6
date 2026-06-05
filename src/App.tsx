@@ -16,6 +16,7 @@ import NotFound from "./pages/NotFound";
 import SelfGuidedLanding from "./pages/SelfGuidedLanding";
 import ExperienceLanding from "./pages/ExperienceLanding";
 import AboutPage from "./pages/AboutPage";
+import PlaylistPage from "./pages/PlaylistPage";
 import ContactsPage from "./pages/ContactsPage";
 import MapPage from "./pages/MapPage";
 
