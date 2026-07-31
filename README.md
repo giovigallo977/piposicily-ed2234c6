@@ -1,73 +1,65 @@
-# Welcome to your Lovable project
+# Pipo Sicily
 
-## Project info
+Prompt per Lovable (Layout Editoriale + Espansione)
+"Crea una PWA con un layout pulito ed editoriale ispirato a una rivista di fotografia, seguendo queste specifiche:
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+Struttura della Card:
 
-## How can I edit this code?
+Immagine: Una card con bordi arrotondati (20px), ma leggermente più quadrata rispetto al formato mobile standard. Non deve andare a filo schermo (lascia del padding laterale).
 
-There are several ways of editing your application.
+Contenuto sotto la foto (Area Bianca): Il testo non è sopra la foto, ma subito sotto su sfondo bianco pulito.
 
-**Use Lovable**
+Titolo: 'Nome Borgo' in grassetto (font sans-serif elegante), allineato a sinistra.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+Descrizione Breve: Una riga di testo subito sotto il titolo.
 
-Changes made via Lovable will be committed automatically to this repo.
+Tasto Espansione: Allineato al Titolo, ma all'estrema destra, inserisci un piccolo tasto '+' circolare.
 
-**Use your preferred IDE**
+Interattività (Espansione):
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+Al click sul tasto '+', la card si espande verso il basso con un'animazione fluida (Accordion).
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+Contenuto Espanso: Mostra la descrizione completa e una galleria di altre 2-3 foto del borgo.
 
-Follow these steps:
+Una volta espanso, il tasto '+' diventa un '-'.
+
+Tasto Naviga:
+
+Inserisci un tasto 'NAVIGA' (colore verde oliva/naturale) posizionato sotto la descrizione breve. Deve essere ben visibile e collegato a un link esterno di Google Maps.
+
+Stile Generale:
+
+Padding generoso tra le schede.
+
+Sfondo dell'app bianco per far risaltare le foto.
+
+Focus totale sulla qualità fotografica e sulla leggibilità del testo (stile Aperture.org)."5. Gestione Dati Manuale (MOLTO IMPORTANTE):
+
+Struttura il codice in modo che ci sia un array di oggetti JavaScript (o una costante) chiaramente identificabile nel codice.
+
+Ogni oggetto deve contenere: titolo, descrizioneBreve, descrizioneCompleta, fotoPrincipale, fotoGallery (array di link), e linkGoogleMaps.
+
+In questo modo, io potrò aggiungere o modificare manualmente i contenuti (hotspot) semplicemente aggiornando questo array."
+
+This project was built with [Lovable](https://lovable.dev).
+
+**Live app**: https://piposicily.lovable.app
+
+## Build with Lovable
+
+Continue developing this project in the [Lovable editor](https://lovable.dev/projects/325c1d2a-8aeb-430a-b245-458b6ce405ef).
+
+- **Ship faster**: describe what you want to build and Lovable handles the code.
+- **Stay in sync**: every change made in Lovable is committed straight to this repository.
+- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+
+## Development
+
+Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
+git clone <this-repository-url>
+cd <repository-name>
 npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
 ```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
