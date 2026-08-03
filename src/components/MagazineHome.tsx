@@ -34,7 +34,7 @@ const MagazineHome = () => {
     <div className="min-h-screen bg-background text-foreground">
       <SiteHeader activeFilter={filter} onFilterClick={(k) => setFilter(k as Filter)} />
 
-      <main className="px-6 md:px-12 py-10 md:py-14 pb-24">
+      <main className="px-6 md:px-12 py-5 md:py-7 pb-24">
         {isLoading && (
           <div className="flex justify-center py-20">
             <Loader2 className="h-8 w-8 animate-spin text-foreground/60" />
