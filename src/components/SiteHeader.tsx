@@ -76,7 +76,7 @@ const SiteHeader = ({ activeFilter, onFilterClick }: Props) => {
         </div>
       </header>
 
-      <nav className="px-6 md:px-12 pt-10 md:pt-16 pb-10 md:pb-16">
+      <nav className="px-6 md:px-12 pt-10 md:pt-16 pb-5 md:pb-8">
         <ul className="flex flex-wrap gap-x-8 gap-y-3 md:gap-x-12 items-center">
           {navItems.map((item) => (
             <li key={item.key}>
