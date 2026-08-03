@@ -65,5 +65,7 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground font-body;
+    line-height: 1.6;
+    letter-spacing: 0;
   }
 }
