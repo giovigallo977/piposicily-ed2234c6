@@ -36,7 +36,7 @@ const SiteHeader = ({ activeFilter, onFilterClick }: Props) => {
     <>
       <header className="px-6 md:px-12 pt-8 md:pt-12 pb-0 flex items-center justify-between">
         <Link to="/" aria-label="PIPO home" className="flex flex-col flex-1">
-          <h1 className="font-sans italic font-black tracking-[-0.02em] leading-[1.0] text-foreground text-6xl md:text-8xl lg:text-9xl">
+          <h1 className="font-sans uppercase font-light tracking-[0.05em] leading-[1.0] text-foreground text-6xl md:text-8xl lg:text-9xl">
             Pipo
           </h1>
         </Link>
@@ -83,10 +83,10 @@ const SiteHeader = ({ activeFilter, onFilterClick }: Props) => {
               <button
                 onClick={item.onClick}
                 className={cn(
-                  "font-sans uppercase tracking-[0.35em] leading-[1.1] text-[11px] md:text-xs transition-colors",
+                  "font-sans uppercase tracking-[0.1em] leading-[1.1] text-[13px] md:text-sm font-medium transition-colors",
                   item.active
-                    ? "text-foreground font-medium"
-                    : "text-foreground/60 font-normal hover:text-foreground"
+                    ? "text-foreground"
+                    : "text-foreground/60 hover:text-foreground"
                 )}
               >
                 {item.label}

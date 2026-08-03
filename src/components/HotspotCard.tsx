@@ -101,7 +101,7 @@ const HotspotCard = ({ hotspot, index = 0, onBeforeExpand }: HotspotCardProps) =
           {/* Content */}
           <div className="p-5">
             <div className="flex items-start justify-between gap-4">
-              <h2 className="leading-tight flex-1 min-w-0 font-sans uppercase tracking-widest text-sm text-foreground">
+              <h2 className="leading-tight flex-1 min-w-0 font-sans uppercase tracking-[0.1em] text-[12px] font-medium text-foreground/70">
                 {translated.titolo}
               </h2>
               <button
@@ -119,7 +119,7 @@ const HotspotCard = ({ hotspot, index = 0, onBeforeExpand }: HotspotCardProps) =
             </div>
 
             {(translated.categoria || hotspot.zona) && (
-              <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 font-sans uppercase tracking-widest text-[10px] text-foreground/50">
+              <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 font-sans uppercase tracking-[0.1em] text-[10px] font-medium text-foreground/60">
                 {translated.categoria && <span>{translated.categoria}</span>}
                 {translated.categoria && hotspot.zona && <span>·</span>}
                 {hotspot.zona && <span>{t("zone")} {hotspot.zona}</span>}
