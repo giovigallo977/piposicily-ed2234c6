@@ -40,7 +40,7 @@ const SiteHeader = ({ activeFilter, onFilterClick }: Props) => {
             Pipo
           </h1>
         </Link>
-        <div className="flex items-center gap-4 mt-4">
+        <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <button
               onClick={() => setLanguage("it")}
