@@ -87,16 +87,16 @@ const SiteHeader = ({ activeFilter, onFilterClick }: Props) => {
       </header>
 
       <nav className="px-6 md:px-12 pb-10 md:pb-14 border-b border-foreground/10">
-        <ul className="flex flex-wrap gap-x-6 gap-y-3 md:gap-x-10 items-center">
+        <ul className="flex flex-wrap gap-x-8 gap-y-3 md:gap-x-12 items-center">
           {navItems.map((item) => (
             <li key={item.key}>
               <button
                 onClick={item.onClick}
                 className={cn(
-                  "font-sans uppercase tracking-widest text-[11px] md:text-xs transition-colors",
+                  "font-sans uppercase tracking-[0.35em] leading-[1.1] text-[11px] md:text-xs transition-colors",
                   item.active
-                    ? "text-foreground font-semibold"
-                    : "text-foreground/60 hover:text-foreground"
+                    ? "text-foreground font-medium"
+                    : "text-foreground/60 font-normal hover:text-foreground"
                 )}
               >
                 {item.label}
