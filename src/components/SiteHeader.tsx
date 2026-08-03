@@ -34,13 +34,13 @@ const SiteHeader = ({ activeFilter, onFilterClick }: Props) => {
 
   return (
     <>
-      <header className="px-6 md:px-12 pt-8 md:pt-12 pb-4 flex items-start justify-between">
+      <header className="px-6 md:px-12 pt-8 md:pt-12 pb-0 flex items-center justify-between">
         <Link to="/" aria-label="PIPO home" className="flex flex-col flex-1">
           <h1 className="font-sans italic font-black tracking-[-0.02em] leading-[1.0] text-foreground text-6xl md:text-8xl lg:text-9xl">
             Pipo
           </h1>
         </Link>
-        <div className="flex items-center gap-4 mt-4">
+        <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <button
               onClick={() => setLanguage("it")}
@@ -76,7 +76,7 @@ const SiteHeader = ({ activeFilter, onFilterClick }: Props) => {
         </div>
       </header>
 
-      <nav className="px-6 md:px-12 pb-10 md:pb-14 border-b border-foreground/10">
+      <nav className="px-6 md:px-12 pt-10 md:pt-16 pb-10 md:pb-16">
         <ul className="flex flex-wrap gap-x-8 gap-y-3 md:gap-x-12 items-center">
           {navItems.map((item) => (
             <li key={item.key}>
