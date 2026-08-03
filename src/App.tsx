@@ -16,9 +16,7 @@ import NotFound from "./pages/NotFound";
 import SelfGuidedLanding from "./pages/SelfGuidedLanding";
 import ExperienceLanding from "./pages/ExperienceLanding";
 import AboutPage from "./pages/AboutPage";
-import PlaylistPage from "./pages/PlaylistPage";
 import ContactsPage from "./pages/ContactsPage";
-import MapPage from "./pages/MapPage";
 
 const queryClient = new QueryClient();
 
@@ -36,8 +34,6 @@ const App = () => (
             <Route path="/esplora" element={<ExplorePage />} />
             
             <Route path="/about" element={<AboutPage />} />
-            <Route path="/playlist" element={<PlaylistPage />} />
-            <Route path="/mappa" element={<MapPage />} />
             <Route path="/contatti" element={<ContactsPage />} />
 
             <Route path="/auth" element={<AuthProvider><Auth /></AuthProvider>} />
