@@ -76,14 +76,14 @@ const SiteHeader = ({ activeFilter, onFilterClick }: Props) => {
         </div>
       </header>
 
-      <nav className="px-6 md:px-12 pt-10 md:pt-14 pb-6 md:pb-8">
-        <ul className="flex flex-nowrap gap-x-5 md:gap-x-8 items-center overflow-x-auto">
+      <nav className="px-4 md:px-12 pt-10 md:pt-14 pb-6 md:pb-8">
+        <ul className="flex gap-x-3 md:gap-x-6 items-center justify-start">
           {navItems.map((item) => (
-            <li key={item.key} className="flex-shrink-0">
+            <li key={item.key}>
               <button
                 onClick={item.onClick}
                 className={cn(
-                  "font-sans uppercase tracking-[0.3em] leading-[1.1] text-[10px] md:text-[11px] transition-colors",
+                  "font-sans uppercase tracking-[0.25em] leading-[1.1] text-[9px] md:text-[10px] transition-colors",
                   item.active
                     ? "text-foreground font-medium"
                     : "text-foreground/60 font-normal hover:text-foreground"
