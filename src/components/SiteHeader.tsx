@@ -42,10 +42,7 @@ const SiteHeader = ({ activeFilter, onFilterClick }: Props) => {
             Pipo
           </h1>
         <div className="mt-5 md:mt-7">
-          <p className="font-sans normal-case tracking-normal leading-[1.6] text-xs md:text-sm text-foreground">
-            {t("tagline")}
-          </p>
-          <p className="font-sans text-xs md:text-sm font-semibold tracking-normal leading-[1.6] text-foreground mt-1.5">
+          <p className="font-sans text-xs md:text-sm font-semibold tracking-normal leading-[1.6] text-foreground">
             {t("taglineClaim")}
           </p>
         </div>
