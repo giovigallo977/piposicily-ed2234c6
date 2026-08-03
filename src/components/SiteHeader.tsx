@@ -34,7 +34,7 @@ const SiteHeader = ({ activeFilter, onFilterClick }: Props) => {
 
   return (
     <>
-      <header className="px-6 md:px-12 pt-8 md:pt-12 pb-4 flex items-start justify-between">
+      <header className="px-6 md:px-12 pt-8 md:pt-12 pb-0 flex items-center justify-between">
         <Link to="/" aria-label="PIPO home" className="flex flex-col flex-1">
           <h1 className="font-sans italic font-black tracking-[-0.02em] leading-[1.0] text-foreground text-6xl md:text-8xl lg:text-9xl">
             Pipo
